@@ -11,6 +11,7 @@ import {
   type BindQuoteCommand,
   type CreateQuoteCommand,
   createPolicyService,
+  type PolicyReferenceData,
   type TransitionPolicyCommand,
 } from "@testbed/policy-service";
 import { createPolicyStateService } from "@testbed/policy-state-service";
@@ -123,17 +124,18 @@ export function createInsuranceRuntime(seed: RuntimeSeed = {}, options: RuntimeO
       messages.push(clone(message));
     },
   };
+  const referenceData: PolicyReferenceData = {
+    ownsProperty: ({ tenantId, customerId, propertyId }) =>
+      customers.some((c) => c.tenantId === tenantId && c.id === customerId) &&
+      properties.some(
+        (p) => p.tenantId === tenantId && p.id === propertyId && p.customerId === customerId,
+      ),
+  };
   const policy = createPolicyService({
     bus,
     clock: () => commandTime,
     ids,
-    referenceData: {
-      ownsProperty: ({ tenantId, customerId, propertyId }) =>
-        customers.some((c) => c.tenantId === tenantId && c.id === customerId) &&
-        properties.some(
-          (p) => p.tenantId === tenantId && p.id === propertyId && p.customerId === customerId,
-        ),
-    },
+    referenceData,
   });
   const policyState = createPolicyStateService({ bus });
   const finance = createFinanceService({ bus, now: () => commandTime });
@@ -157,6 +159,13 @@ export function createInsuranceRuntime(seed: RuntimeSeed = {}, options: RuntimeO
     required(command.correlationId, "Correlation ID");
     if (command.schemaVersion !== 1)
       throw new RuntimeError("invalid_schema", "Only command schema version 1 is supported.");
+    // Reject foreign reference data before either the replay or new-command path drains.
+    // Policy still validates the same ownership rule at its own command boundary.
+    if (command.type === "create_quote" && !referenceData.ownsProperty(command))
+      throw new RuntimeError(
+        "invalid_quote",
+        "Property is not owned by the customer in this tenant.",
+      );
     const fingerprint = canonical(command);
     const key = JSON.stringify([command.tenantId, command.commandId]);
     const previous = receipts.get(key);

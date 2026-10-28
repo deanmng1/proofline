@@ -30,6 +30,45 @@ const finance = (commandId: string, type = "premium_payment_settled", amountCent
 });
 
 describe("createTestApi", () => {
+  test("rejects_foreign_quote_references_before_retrying_pending_finance_delivery", async () => {
+    const api = createTestApi(
+      { ...runtimeSeed, commands: [quoteCommand] },
+      { busFactory: failFinanceOnce },
+    );
+    const bind = { commandId: "bind-command", correlationId: "workflow", policyId: "policy" };
+    expect((await api.handle(request("quotes/quote/bind", bind))).status).toBe(409);
+    const pending: TestApiSnapshot = await (await api.handle(request("test/state"))).json();
+    expect(pending.pendingMessages).toHaveLength(1);
+    expect(pending.finance.ledgers).toEqual([]);
+
+    const rejected = await api.handle(
+      request(
+        "quotes",
+        {
+          commandId: "foreign-quote",
+          correlationId: "foreign-workflow",
+          customerId: "customer",
+          propertyId: "property",
+          product: "risk_secure",
+          premiumCents: 10000,
+          commissionPlan: {
+            timing: "on_bind",
+            rateBasisPoints: 1000,
+            holdPeriodDays: 0,
+            reverseOnRefund: true,
+          },
+        },
+        "tenant-b",
+      ),
+    );
+    expect(rejected.status).toBe(400);
+    expect(await (await api.handle(request("test/state"))).json()).toEqual(pending);
+
+    expect((await api.handle(request("quotes/quote/bind", bind))).status).toBe(201);
+    const recovered: TestApiSnapshot = await (await api.handle(request("test/state"))).json();
+    expect(recovered.pendingMessages).toEqual([]);
+    expect(recovered.finance.ledgers[0].commissionEntries).toHaveLength(1);
+  });
   test("creates_generated_quote_and_policy_once_and_rejects_changed_replay", async () => {
     const api = createTestApi(runtimeSeed);
     const body = {

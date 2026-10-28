@@ -4,6 +4,28 @@ import { createInsuranceRuntime } from "./runtime";
 import { bindCommand, failFinanceOnce, quoteCommand, runtimeSeed } from "./test-fixtures";
 
 describe("insurance runtime", () => {
+  test("rejects_foreign_quote_references_without_draining_another_tenants_pending_delivery", () => {
+    const runtime = createInsuranceRuntime(runtimeSeed, { busFactory: failFinanceOnce });
+    runtime.execute(quoteCommand);
+    expect(() => runtime.execute(bindCommand)).toThrow("pending");
+    const pending = runtime.snapshot("tenant-a");
+    expect(pending.pendingMessages).toHaveLength(1);
+    expect(pending.finance.ledgers).toEqual([]);
+
+    expect(() =>
+      runtime.execute({
+        ...quoteCommand,
+        tenantId: "tenant-b",
+        commandId: "foreign-quote",
+      }),
+    ).toThrow("Property is not owned by the customer in this tenant.");
+
+    expect(runtime.snapshot("tenant-a")).toEqual(pending);
+    expect(runtime.snapshot("tenant-b").messages).toEqual([]);
+    runtime.execute(bindCommand);
+    expect(runtime.snapshot("tenant-a").pendingMessages).toEqual([]);
+    expect(runtime.getLedger("tenant-a", "policy")?.commissionEntries).toHaveLength(1);
+  });
   test("same_command_ids_and_entity_ids_are_independent_across_tenants", () => {
     const runtime = createInsuranceRuntime({
       tenants: ["tenant-a", "tenant-b"],
