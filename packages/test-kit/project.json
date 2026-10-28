@@ -1,0 +1,12 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "name": "test-kit",
+  "projectType": "library",
+  "root": "packages/test-kit",
+  "sourceRoot": "packages/test-kit/src",
+  "targets": {
+    "test": {
+      "command": "pnpm exec vitest run packages/test-kit/src --passWithNoTests"
+    }
+  }
+}

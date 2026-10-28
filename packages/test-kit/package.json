@@ -1,0 +1,12 @@
+{
+  "name": "@testbed/test-kit",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@testbed/api-contracts": "workspace:*",
+    "@testbed/domain": "workspace:*"
+  }
+}

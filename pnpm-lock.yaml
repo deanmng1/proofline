@@ -157,7 +157,22 @@ importers:
         specifier: ^3.2.7
         version: 3.2.7(@types/node@22.20.1)(jiti@2.7.0)(jsdom@26.1.0(supports-color@7.2.0))(lightningcss@1.32.0)(msw@2.15.0(@types/node@22.20.1)(typescript@5.8.3))(supports-color@7.2.0)(yaml@2.9.0)
 
+  packages/api-contracts:
+    dependencies:
+      '@testbed/domain':
+        specifier: workspace:*
+        version: link:../domain
+
   packages/domain: {}
+
+  packages/test-kit:
+    dependencies:
+      '@testbed/api-contracts':
+        specifier: workspace:*
+        version: link:../api-contracts
+      '@testbed/domain':
+        specifier: workspace:*
+        version: link:../domain
 
 packages:
 
