@@ -29,6 +29,12 @@ the run-specific evidence for impacted-test decisions. They are intentionally
 ignored build artifacts; the JSONL record retains the command and outcome
 needed to reproduce them.
 
+Use `artifacts/coverage/<project>/coverage-summary.json` for the measured
+line, branch, function, and statement baseline of `crm-web`, `domain`, and
+`api-contracts`. Record the coverage command and report locations, but do not
+turn a first baseline into a threshold policy without a reviewed product
+decision.
+
 ## Future Codex/Cursor adapter boundary
 
 A future skill or plugin should have four small adapters around this portable

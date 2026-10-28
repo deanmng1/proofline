@@ -66,6 +66,23 @@ jobs:
       - name: Run full Chromium safety gate
         run: pnpm e2e
 
+      - name: Generate Vitest coverage baseline
+        shell: bash
+        run: |
+          set -o pipefail
+          pnpm coverage 2>&1 | tee artifacts/coverage-output.txt
+
+      - name: Upload coverage baseline
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-baseline
+          if-no-files-found: warn
+          retention-days: 14
+          path: |
+            artifacts/coverage/
+            artifacts/coverage-output.txt
+
       - name: Upload diagnostics
         if: ${{ always() && (failure() || steps.impact.outputs.fallback == 'all-tests') }}
         uses: actions/upload-artifact@v4
@@ -76,5 +93,6 @@ jobs:
           path: |
             artifacts/impact/
             artifacts/vitest-output.txt
+            artifacts/coverage-output.txt
             playwright-report/
             test-results/

@@ -33,7 +33,16 @@ IMPACT_BASE=main IMPACT_HEAD=HEAD pnpm test:impacted
 
 # Required release-quality safety gate.
 pnpm lint && pnpm typecheck && pnpm test && pnpm e2e
+
+# Generate line, branch, function, and statement baselines for production code.
+pnpm coverage
 ```
+
+`pnpm coverage` creates separate CRM web, domain, and Test API reports below
+`artifacts/coverage/`. Open a project's `index.html` for the local HTML
+report; `lcov.info` and `coverage-summary.json` support later CI dashboards or
+threshold discussions. This is a baseline, not a percentage gate: included
+but untested production files intentionally appear with zero coverage.
 
 ## Test layers
 
@@ -59,6 +68,7 @@ Playwright saves the HTML report in `playwright-report/` and failures in
 `test-results/` (trace, screenshot, and video where configured). These,
 along with impact manifests and the full-Vitest log, are uploaded by
 `verify.yml` on failure or when selection falls back to the complete suite.
+Coverage is uploaded as a separate artifact on every CI run.
 
 ## Portable execution record
 
@@ -73,8 +83,9 @@ protocol and the adapter boundary for a future Codex or Cursor integration.
 
 Pull requests check out full Git history, install dependencies, lint and
 typecheck, preview impact selection, run selected tests, run all Vitest
-projects, then run the complete Chromium suite. The workflow supplies the PR
-base and head explicitly to prevent selection from guessing at CI history.
+projects, then run the complete Chromium suite and generate coverage for the
+production-bearing projects. The workflow supplies the PR base and head
+explicitly to prevent selection from guessing at CI history.
 
 No test path should use live Epay, GhostDraft, Smarty, Sage, or other provider
 credentials. Provider integration belongs behind a contract adapter and must

@@ -12,6 +12,7 @@
     "build": "pnpm nx run crm-web:build",
     "preview": "pnpm nx run crm-web:preview",
     "test": "pnpm nx run-many --target=test --all",
+    "coverage": "pnpm nx run-many --target=coverage --projects=domain,api-contracts,crm-web --parallel=1 --output-style=static",
     "test:watch": "pnpm nx run crm-web:test-watch",
     "e2e": "pnpm nx run crm-e2e:e2e",
     "test:e2e": "pnpm nx run crm-e2e:e2e",
