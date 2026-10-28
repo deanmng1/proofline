@@ -32,6 +32,7 @@ export default defineConfig({
     coverage: {
       all: true,
       provider: "v8",
+      reportOnFailure: true,
       reportsDirectory: "../../artifacts/coverage/crm-web",
       reporter: ["text", "html", "lcov", "json-summary"],
       include: ["src/**/*.{ts,tsx}"],

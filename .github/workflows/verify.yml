@@ -36,6 +36,7 @@ jobs:
           cache: pnpm
 
       - name: Install dependencies
+        id: dependencies
         run: pnpm install --frozen-lockfile
 
       - name: Lint
@@ -67,8 +68,10 @@ jobs:
         run: pnpm e2e
 
       - name: Generate Vitest coverage baseline
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
         shell: bash
         run: |
+          mkdir -p artifacts
           set -o pipefail
           pnpm coverage 2>&1 | tee artifacts/coverage-output.txt
 

@@ -9,7 +9,7 @@
       "command": "pnpm exec vitest run packages/api-contracts/src"
     },
     "coverage": {
-      "command": "pnpm exec vitest run packages/api-contracts/src --coverage --coverage.all --coverage.provider=v8 --coverage.reportsDirectory=artifacts/coverage/api-contracts --coverage.reporter=text --coverage.reporter=html --coverage.reporter=lcov --coverage.reporter=json-summary --coverage.include='packages/api-contracts/src/**/*.{ts,tsx}' --coverage.exclude='**/*.test.{ts,tsx}' --coverage.exclude='**/*.d.ts'",
+      "command": "pnpm exec vitest run packages/api-contracts/src --coverage --coverage.all --coverage.provider=v8 --coverage.reportOnFailure --coverage.reportsDirectory=artifacts/coverage/api-contracts --coverage.reporter=text --coverage.reporter=html --coverage.reporter=lcov --coverage.reporter=json-summary --coverage.include='packages/api-contracts/src/**/*.{ts,tsx}' --coverage.exclude='**/*.test.{ts,tsx}' --coverage.exclude='**/*.d.ts'",
       "outputs": ["{workspaceRoot}/artifacts/coverage/api-contracts"],
       "cache": false
     },

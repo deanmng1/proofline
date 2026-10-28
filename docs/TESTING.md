@@ -43,6 +43,9 @@ pnpm coverage
 report; `lcov.info` and `coverage-summary.json` support later CI dashboards or
 threshold discussions. This is a baseline, not a percentage gate: included
 but untested production files intentionally appear with zero coverage.
+Vitest preserves those reports when a covered suite fails; CI still reports
+the failure and uploads the available coverage evidence after dependency
+installation succeeds.
 
 ## Test layers
 
