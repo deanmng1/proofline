@@ -1,6 +1,7 @@
+import { onlineManager } from "@tanstack/react-query";
 import { createMswHandlers, createTestApi, type TestSeed } from "@testbed/api-contracts";
 import { ledgerSeed, renderWithProviders } from "@testbed/test-kit";
-import { screen, within } from "@testing-library/react";
+import { act, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { HttpResponse, http } from "msw";
 import { beforeEach, describe, expect, test, vi } from "vitest";
@@ -206,6 +207,77 @@ describe("insurance CRM reference workflow", () => {
       { allocationId: expect.any(String), financeEntryId: expect.any(String), amountCents: 1000 },
       { allocationId: expect.any(String), financeEntryId: expect.any(String), amountCents: 1500 },
     ]);
+  });
+
+  test("retries an unchanged accepted refund after reconnect refreshes the remaining balance", async () => {
+    const seed = ledgerSeed();
+    const api = useTestApi({
+      ...seed,
+      commands: [
+        ...(seed.commands ?? []),
+        {
+          type: "premium_payment_settled",
+          schemaVersion: 1,
+          tenantId: "test-tenant",
+          policyId: "fixture-policy-1",
+          commandId: "seed-premium",
+          correlationId: "seed-finance",
+          amountCents: 2000,
+        },
+      ],
+    });
+    const attempts: Record<string, unknown>[] = [];
+    server.use(
+      http.post("/api/policies/fixture-policy-1/finance-events", async ({ request }) => {
+        attempts.push((await request.clone().json()) as Record<string, unknown>);
+        const response = await api.handle(request);
+        return attempts.length === 1 ? new HttpResponse(null, { status: 503 }) : response;
+      }),
+    );
+    const user = userEvent.setup();
+    renderWithProviders(<PolicyDetailPage policyId="fixture-policy-1" />);
+    await screen.findByRole("heading", { name: "Policy fixture-policy-1" });
+    await user.selectOptions(screen.getByLabelText("Finance event"), "refund_recorded");
+    await user.selectOptions(
+      screen.getByLabelText("Refund source 1"),
+      screen.getByRole("option", { name: "Premium payment — 2000 cents remaining" }),
+    );
+    await user.type(screen.getByLabelText("Refund amount in cents 1"), "1500");
+    await user.click(screen.getByRole("button", { name: "Record finance event" }));
+    await screen.findByText("Finance event could not be recorded.");
+
+    act(() => {
+      onlineManager.setOnline(false);
+      onlineManager.setOnline(true);
+    });
+    await screen.findByRole("option", { name: "Premium payment — 500 cents remaining" });
+    expect(screen.getByRole("button", { name: "Record finance event" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Retry finance event" })).toBeEnabled();
+
+    // Edited input is a new submission and must still satisfy the updated balance.
+    await user.clear(screen.getByLabelText("Refund amount in cents 1"));
+    await user.type(screen.getByLabelText("Refund amount in cents 1"), "1600");
+    expect(screen.getByRole("button", { name: "Retry finance event" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Record finance event" })).toBeDisabled();
+    await user.clear(screen.getByLabelText("Refund amount in cents 1"));
+    await user.type(screen.getByLabelText("Refund amount in cents 1"), "1500");
+    await user.click(screen.getByRole("button", { name: "Retry finance event" }));
+
+    await waitFor(() =>
+      expect(screen.queryByText("Finance event could not be recorded.")).not.toBeInTheDocument(),
+    );
+    expect(attempts).toHaveLength(2);
+    expect(attempts[1]).toEqual(attempts[0]);
+    expect(
+      within(screen.getByLabelText("Finance ledger entries")).getAllByText("refund", {
+        exact: true,
+      }),
+    ).toHaveLength(1);
+    expect(
+      within(screen.getByLabelText("Commission entries")).getAllByText("refund adjustment"),
+    ).toHaveLength(1);
+    expect(within(screen.getByLabelText("Commission entries")).getByText("-$1.50")).toBeVisible();
+    expect(screen.queryByRole("button", { name: "Retry finance event" })).not.toBeInTheDocument();
   });
 
   test("shows an error panel when the customer contract fails", async () => {

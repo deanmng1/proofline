@@ -110,6 +110,20 @@ export const PolicyDetailPage = ({ policyId }: PolicyDetailPageProps) => {
       rows.map((row) => (row.allocationId === allocationId ? { ...row, ...update } : row)),
     );
   };
+  const refundAllocations = allocations.map((row) => ({
+    ...row,
+    amountCents: Number(row.amountCents),
+  }));
+  const submittedRefund =
+    recordMutation.isError && recordMutation.variables?.type === "refund_recorded"
+      ? recordMutation.variables
+      : null;
+  // An accepted refund may already be reflected in a background ledger refresh.
+  // Replay its captured command without applying the balance check for new refunds.
+  const canRetryRefund =
+    eventType === "refund_recorded" &&
+    submittedRefund !== null &&
+    JSON.stringify(refundAllocations) === JSON.stringify(submittedRefund.allocations);
   const submitFinanceEvent = () => {
     if (!canSubmit) return;
     const cents = Number(amountCents);
@@ -117,10 +131,7 @@ export const PolicyDetailPage = ({ policyId }: PolicyDetailPageProps) => {
       recordMutation.mutate(
         command.prepare({
           type: eventType,
-          allocations: allocations.map((row) => ({
-            ...row,
-            amountCents: Number(row.amountCents),
-          })),
+          allocations: refundAllocations,
         }),
       );
       return;
@@ -245,6 +256,22 @@ export const PolicyDetailPage = ({ policyId }: PolicyDetailPageProps) => {
           <p className="mt-3 text-sm text-rose-600" role="alert">
             Finance event could not be recorded.
           </p>
+        ) : null}
+        {submittedRefund ? (
+          <div className="mt-3 space-y-2">
+            <p className="text-sm text-[var(--foreground-muted)]">
+              Retry the previously submitted refund with its allocations unchanged.
+            </p>
+            <Button
+              type="button"
+              disabled={!canRetryRefund}
+              onClick={() => {
+                if (canRetryRefund) recordMutation.mutate(submittedRefund);
+              }}
+            >
+              Retry finance event
+            </Button>
+          </div>
         ) : null}
       </section>
       <div className="grid gap-6 xl:grid-cols-2">
