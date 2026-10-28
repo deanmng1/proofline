@@ -1,0 +1,13 @@
+{
+  "name": "@testbed/policy-state-service",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@testbed/domain": "workspace:*",
+    "@testbed/service-bus": "workspace:*"
+  }
+}

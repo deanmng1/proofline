@@ -183,6 +183,15 @@ importers:
         specifier: workspace:*
         version: link:../service-bus
 
+  packages/policy-state-service:
+    dependencies:
+      '@testbed/domain':
+        specifier: workspace:*
+        version: link:../domain
+      '@testbed/service-bus':
+        specifier: workspace:*
+        version: link:../service-bus
+
   packages/service-bus:
     dependencies:
       '@testbed/domain':
