@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { PageHeader } from "@/components/shared/page-header";
 import { StatePanel } from "@/components/shared/state-panel";
@@ -44,7 +44,14 @@ const isTerminalBindError = (error: unknown) =>
   error.status >= 400 &&
   error.status < 500 &&
   error.status !== 408 &&
-  error.status !== 429;
+  error.status !== 429 &&
+  !error.recoverable;
+
+type BindCommand = {
+  quoteId: string;
+  commandId: string;
+  correlationId: string;
+};
 
 export const QuoteForm = () => {
   const queryClient = useQueryClient();
@@ -53,19 +60,25 @@ export const QuoteForm = () => {
   const [product, setProduct] = useState<keyof typeof plans>("risk_secure");
   const [premiumCents, setPremiumCents] = useState("12000");
   const [boundQuote, setBoundQuote] = useState<QuoteSummary | null>(null);
-  const [pendingBind, setPendingBind] = useState<{
-    quoteId: string;
-    commandId: string;
-    correlationId: string;
-  } | null>(null);
+  const [pendingBind, setPendingBind] = useState<BindCommand | null>(null);
+  const pendingBindRef = useRef<BindCommand | null>(null);
+  const [isReconcilingBind, setIsReconcilingBind] = useState(false);
   const quoteCommand = useCommand();
   const bindCommand = useCommand();
   const customersQuery = useQuery({ queryKey: ["crm", "customers"], queryFn: getCustomers });
   const propertiesQuery = useQuery({ queryKey: ["crm", "properties"], queryFn: getProperties });
   const quotesQuery = useQuery({ queryKey: ["crm", "quotes"], queryFn: getQuotes });
-  const completePendingBind = () => {
+  const replacePendingBind = (command: BindCommand | null) => {
+    pendingBindRef.current = command;
+    setPendingBind(command);
+  };
+  const completePendingBind = (expectedCommand?: BindCommand) => {
+    if (expectedCommand && pendingBindRef.current?.commandId !== expectedCommand.commandId) {
+      return false;
+    }
     bindCommand.complete();
-    setPendingBind(null);
+    replacePendingBind(null);
+    return true;
   };
   const quoteMutation = useMutation({
     mutationFn: createQuote,
@@ -77,11 +90,11 @@ export const QuoteForm = () => {
     },
   });
   const bindMutation = useMutation({
-    mutationFn: (input: { quoteId: string; commandId: string; correlationId: string }) =>
+    mutationFn: (input: BindCommand) =>
       bindQuote(input.quoteId, { commandId: input.commandId, correlationId: input.correlationId }),
-    onSuccess: (policy, { quoteId }) => {
-      completePendingBind();
-      const quote = (quotesQuery.data ?? []).find((entry) => entry.id === quoteId);
+    onSuccess: (policy, command) => {
+      if (!completePendingBind(command)) return policy;
+      const quote = (quotesQuery.data ?? []).find((entry) => entry.id === command.quoteId);
       if (quote) setBoundQuote({ ...quote, status: "bound" });
       void queryClient.invalidateQueries({ queryKey: ["crm", "quotes"] });
       void queryClient.invalidateQueries({ queryKey: ["crm", "policies"] });
@@ -90,17 +103,23 @@ export const QuoteForm = () => {
   });
 
   const reconcilePendingBind = async () => {
-    if (!pendingBind) return;
-    const refreshed = await quotesQuery.refetch();
-    const quote = refreshed.data?.find((entry) => entry.id === pendingBind.quoteId);
-    if (quote?.status !== "bound") return;
-    setBoundQuote(quote);
-    completePendingBind();
-    bindMutation.reset();
-    void queryClient.invalidateQueries({ queryKey: ["crm", "policies"] });
+    const command = pendingBindRef.current;
+    if (!command || isReconcilingBind || bindMutation.isPending) return;
+    setIsReconcilingBind(true);
+    try {
+      const refreshed = await quotesQuery.refetch();
+      const quote = refreshed.data?.find((entry) => entry.id === command.quoteId);
+      if (quote?.status !== "bound" || !completePendingBind(command)) return;
+      setBoundQuote(quote);
+      bindMutation.reset();
+      void queryClient.invalidateQueries({ queryKey: ["crm", "policies"] });
+    } finally {
+      setIsReconcilingBind(false);
+    }
   };
   const dismissRejectedBind = () => {
-    completePendingBind();
+    const command = pendingBindRef.current;
+    if (!command || !completePendingBind(command)) return;
     bindMutation.reset();
   };
   const terminalBindError = isTerminalBindError(bindMutation.error);
@@ -239,10 +258,10 @@ export const QuoteForm = () => {
                   {quote.status === "quoted" ? (
                     <Button
                       size="sm"
-                      disabled={bindMutation.isPending || pendingBind !== null}
+                      disabled={bindMutation.isPending || pendingBind !== null || isReconcilingBind}
                       onClick={() => {
                         const command = bindCommand.prepare({ quoteId: quote.id });
-                        setPendingBind(command);
+                        replacePendingBind(command);
                         bindMutation.mutate(command);
                       }}
                     >
@@ -267,7 +286,11 @@ export const QuoteForm = () => {
           ) : null}
           {pendingBind && bindMutation.isError ? (
             <div className="mt-3 flex flex-wrap gap-2">
-              <Button size="sm" onClick={() => bindMutation.mutate(pendingBind)}>
+              <Button
+                size="sm"
+                disabled={isReconcilingBind || bindMutation.isPending}
+                onClick={() => bindMutation.mutate(pendingBind)}
+              >
                 Retry bind quote
               </Button>
               {terminalBindError ? (
@@ -275,7 +298,12 @@ export const QuoteForm = () => {
                   Dismiss rejected bind
                 </Button>
               ) : (
-                <Button size="sm" variant="outline" onClick={() => void reconcilePendingBind()}>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  disabled={isReconcilingBind || bindMutation.isPending}
+                  onClick={() => void reconcilePendingBind()}
+                >
                   Check bind status
                 </Button>
               )}

@@ -587,7 +587,7 @@
     },
     {
       "id": "UI-001",
-      "description": "A bind command is retained for uncertain delivery outcomes until it is retried or reconciled, while a confirmed client rejection can be dismissed without blocking another quote.",
+      "description": "A bind command remains pending for recoverable delivery outcomes until retry or serialized reconciliation confirms it, while a confirmed client rejection can be dismissed without blocking another quote.",
       "criticality": "critical",
       "paths": [
         "apps/crm-web/src/features/quotes/**",
@@ -595,6 +595,11 @@
         "apps/crm-web/src/lib/http.ts"
       ],
       "vitest": [
+        {
+          "file": "apps/crm-web/src/test/api.test.ts",
+          "title": "api layer (http wrapper) > preserves the API recoverability contract on non-2xx responses",
+          "line": 28
+        },
         {
           "file": "apps/crm-web/src/features/crm-workflow.test.tsx",
           "title": "insurance CRM reference workflow > releases a terminal bind retry so another quoted policy can bind",
@@ -607,13 +612,18 @@
         },
         {
           "file": "apps/crm-web/src/features/crm-workflow.test.tsx",
-          "title": "insurance CRM reference workflow > recovers accepted bind after quote refetch with lost response",
+          "title": "insurance CRM reference workflow > serializes a pending bind reconciliation before allowing another bind action",
           "line": 414
         },
         {
           "file": "apps/crm-web/src/features/crm-workflow.test.tsx",
+          "title": "insurance CRM reference workflow > recovers accepted bind after quote refetch with lost response",
+          "line": 472
+        },
+        {
+          "file": "apps/crm-web/src/features/crm-workflow.test.tsx",
           "title": "insurance CRM reference workflow > recovers accepted bind after quote refetch with pending delivery",
-          "line": 414
+          "line": 472
         }
       ],
       "playwright": []

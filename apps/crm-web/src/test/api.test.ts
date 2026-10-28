@@ -25,6 +25,31 @@ describe("api layer (http wrapper)", () => {
     });
   });
 
+  it("preserves the API recoverability contract on non-2xx responses", async () => {
+    server.use(
+      http.get("/api/users", () =>
+        HttpResponse.json(
+          {
+            error: {
+              code: "delivery_pending",
+              message: "Retry delivery",
+              recoverable: true,
+            },
+          },
+          { status: 409 },
+        ),
+      ),
+    );
+
+    await expect(getUsersRequest()).rejects.toMatchObject({
+      name: HttpError.name,
+      status: 409,
+      code: "delivery_pending",
+      recoverable: true,
+      message: "Retry delivery",
+    });
+  });
+
   it("sends a JSON body on PATCH and returns the updated resource", async () => {
     const payload: SettingsPayload = {
       profile: { companyName: "Acme", contactEmail: "a@acme.io", timezone: "UTC" },

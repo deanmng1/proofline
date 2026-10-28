@@ -411,6 +411,64 @@ describe("insurance CRM reference workflow", () => {
     expect(await screen.findByRole("link", { name: "Review bound policy" })).toBeVisible();
   });
 
+  test("serializes a pending bind reconciliation before allowing another bind action", async () => {
+    const api = useTestApi(ledgerSeed({ commands: [] }));
+    const user = userEvent.setup();
+    let loseFirstResponse = true;
+    server.use(
+      http.post(/\/api\/quotes\/[^/]+\/bind$/, async ({ request }) => {
+        const response = await api.handle(request);
+        if (loseFirstResponse) {
+          loseFirstResponse = false;
+          return new HttpResponse(null, { status: 503 });
+        }
+        return response;
+      }),
+    );
+    renderWithProviders(<QuoteForm />);
+
+    await screen.findByRole("option", { name: /100 Market Street/i });
+    await user.selectOptions(screen.getByLabelText("Policyholder"), "fixture-customer-1");
+    await user.selectOptions(screen.getByLabelText("Insured property"), "fixture-property-1");
+    await user.click(screen.getByRole("button", { name: "Create quote" }));
+    await user.click(screen.getByRole("button", { name: "Create quote" }));
+    await user.click((await screen.findAllByRole("button", { name: "Bind quote" }))[0]);
+    await screen.findByRole("alert");
+
+    let reconciliationStarted!: () => void;
+    const reconciliationHasStarted = new Promise<void>((resolve) => {
+      reconciliationStarted = resolve;
+    });
+    let releaseQuoteRead!: () => void;
+    const quoteReadReleased = new Promise<void>((resolve) => {
+      releaseQuoteRead = resolve;
+    });
+    let holdNextQuoteRead = true;
+    server.use(
+      http.get("/api/quotes", async ({ request }) => {
+        const response = await api.handle(request);
+        if (!holdNextQuoteRead) return response;
+        holdNextQuoteRead = false;
+        reconciliationStarted();
+        await quoteReadReleased;
+        return response;
+      }),
+    );
+
+    await user.click(screen.getByRole("button", { name: "Check bind status" }));
+    await reconciliationHasStarted;
+
+    expect(screen.getByRole("button", { name: "Retry bind quote" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Check bind status" })).toBeDisabled();
+    for (const button of screen.getAllByRole("button", { name: "Bind quote" })) {
+      expect(button).toBeDisabled();
+    }
+
+    releaseQuoteRead();
+    expect(await screen.findByText("Written — payable when the policy binds")).toBeVisible();
+    expect(screen.getByRole("button", { name: "Bind quote" })).toBeEnabled();
+  });
+
   test.each(["lost response", "pending delivery"])(
     "recovers accepted bind after quote refetch with %s",
     async (failure) => {
@@ -451,6 +509,12 @@ describe("insurance CRM reference workflow", () => {
       await user.click(screen.getByRole("button", { name: "Create quote" }));
       await user.click(await screen.findByRole("button", { name: "Bind quote" }));
       await screen.findByRole("alert");
+      if (failure === "pending delivery") {
+        expect(
+          screen.queryByRole("button", { name: "Dismiss rejected bind" }),
+        ).not.toBeInTheDocument();
+        expect(screen.getByRole("button", { name: "Check bind status" })).toBeVisible();
+      }
       act(() => {
         onlineManager.setOnline(false);
         onlineManager.setOnline(true);

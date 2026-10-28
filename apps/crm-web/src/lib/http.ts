@@ -5,13 +5,27 @@ let getAccessToken: (() => string | null) | null = null;
 let refreshAuthSession: (() => Promise<boolean>) | null = null;
 let onUnauthorized: (() => void) | null = null;
 
+type ErrorPayload = {
+  error?: {
+    code?: unknown;
+    message?: unknown;
+    recoverable?: unknown;
+  };
+};
+
 export class HttpError extends Error {
   readonly status: number;
+  readonly code: string | undefined;
+  readonly recoverable: boolean;
 
-  constructor(status: number) {
-    super(`Request failed with status ${status}`);
+  constructor(status: number, payload?: ErrorPayload) {
+    const details = payload?.error;
+    const message = typeof details?.message === "string" ? details.message : undefined;
+    super(message ?? `Request failed with status ${status}`);
     this.name = "HttpError";
     this.status = status;
+    this.code = typeof details?.code === "string" ? details.code : undefined;
+    this.recoverable = details?.recoverable === true;
   }
 }
 
@@ -70,7 +84,11 @@ export const http = async <T>(
   }
 
   if (!response.ok) {
-    throw new HttpError(response.status);
+    const payload = (await response
+      .clone()
+      .json()
+      .catch(() => undefined)) as ErrorPayload | undefined;
+    throw new HttpError(response.status, payload);
   }
 
   return response.json() as Promise<T>;
