@@ -334,6 +334,40 @@ describe("insurance CRM reference workflow", () => {
     expect(await screen.findByRole("alert")).toHaveTextContent("Quote could not be bound");
   });
 
+  test("releases a terminal bind retry so another quoted policy can bind", async () => {
+    const api = useTestApi(ledgerSeed({ commands: [] }));
+    const user = userEvent.setup();
+    let rejectFirstBind = true;
+    server.use(
+      http.post(/\/api\/quotes\/[^/]+\/bind$/, ({ request }) => {
+        if (rejectFirstBind) {
+          rejectFirstBind = false;
+          return new HttpResponse(null, { status: 409 });
+        }
+        return api.handle(request);
+      }),
+    );
+    renderWithProviders(<QuoteForm />);
+
+    await screen.findByRole("option", { name: /100 Market Street/i });
+    await user.selectOptions(screen.getByLabelText("Policyholder"), "fixture-customer-1");
+    await user.selectOptions(screen.getByLabelText("Insured property"), "fixture-property-1");
+    await user.click(screen.getByRole("button", { name: "Create quote" }));
+    await user.click(screen.getByRole("button", { name: "Create quote" }));
+
+    const bindButtons = await screen.findAllByRole("button", { name: "Bind quote" });
+    await user.click(bindButtons[0]);
+    expect(await screen.findByRole("alert")).toHaveTextContent("Quote could not be bound");
+    expect(bindButtons[1]).toBeDisabled();
+
+    await user.click(screen.getByRole("button", { name: "Dismiss bind retry" }));
+    expect(screen.queryByRole("button", { name: "Retry bind quote" })).not.toBeInTheDocument();
+    expect(screen.getAllByRole("button", { name: "Bind quote" })[1]).toBeEnabled();
+
+    await user.click(screen.getAllByRole("button", { name: "Bind quote" })[1]);
+    expect(await screen.findByRole("link", { name: "Review bound policy" })).toBeVisible();
+  });
+
   test.each(["lost response", "pending delivery"])(
     "recovers accepted bind after quote refetch with %s",
     async (failure) => {

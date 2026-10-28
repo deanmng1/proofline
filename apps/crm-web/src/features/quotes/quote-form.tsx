@@ -233,13 +233,25 @@ export const QuoteForm = () => {
           ) : null}
           {bindMutation.isError ? (
             <p className="mt-3 text-sm text-rose-600" role="alert">
-              Quote could not be bound. Retry binding to complete the request.
+              Quote could not be bound. Retry the request, or dismiss it to bind another quote.
             </p>
           ) : null}
           {pendingBind && bindMutation.isError ? (
-            <Button size="sm" className="mt-3" onClick={() => bindMutation.mutate(pendingBind)}>
-              Retry bind quote
-            </Button>
+            <div className="mt-3 flex flex-wrap gap-2">
+              <Button size="sm" onClick={() => bindMutation.mutate(pendingBind)}>
+                Retry bind quote
+              </Button>
+              <Button
+                size="sm"
+                onClick={() => {
+                  bindCommand.complete();
+                  setPendingBind(null);
+                  bindMutation.reset();
+                }}
+              >
+                Dismiss bind retry
+              </Button>
+            </div>
           ) : null}
           {bindMutation.data ? (
             <Link
