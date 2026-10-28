@@ -587,27 +587,33 @@
     },
     {
       "id": "UI-001",
-      "description": "A captured bind retry survives an accepted command refetch, while a terminally rejected attempt can be dismissed so another quoted policy remains bindable.",
+      "description": "A bind command is retained for uncertain delivery outcomes until it is retried or reconciled, while a confirmed client rejection can be dismissed without blocking another quote.",
       "criticality": "critical",
       "paths": [
         "apps/crm-web/src/features/quotes/**",
-        "apps/crm-web/src/features/crm/use-command.ts"
+        "apps/crm-web/src/features/crm/use-command.ts",
+        "apps/crm-web/src/lib/http.ts"
       ],
       "vitest": [
         {
           "file": "apps/crm-web/src/features/crm-workflow.test.tsx",
           "title": "insurance CRM reference workflow > releases a terminal bind retry so another quoted policy can bind",
-          "line": 337
+          "line": 341
+        },
+        {
+          "file": "apps/crm-web/src/features/crm-workflow.test.tsx",
+          "title": "insurance CRM reference workflow > reconciles an uncertain accepted bind instead of allowing it to be dismissed",
+          "line": 377
         },
         {
           "file": "apps/crm-web/src/features/crm-workflow.test.tsx",
           "title": "insurance CRM reference workflow > recovers accepted bind after quote refetch with lost response",
-          "line": 371
+          "line": 414
         },
         {
           "file": "apps/crm-web/src/features/crm-workflow.test.tsx",
           "title": "insurance CRM reference workflow > recovers accepted bind after quote refetch with pending delivery",
-          "line": 371
+          "line": 414
         }
       ],
       "playwright": []

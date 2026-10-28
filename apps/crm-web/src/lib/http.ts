@@ -5,6 +5,16 @@ let getAccessToken: (() => string | null) | null = null;
 let refreshAuthSession: (() => Promise<boolean>) | null = null;
 let onUnauthorized: (() => void) | null = null;
 
+export class HttpError extends Error {
+  readonly status: number;
+
+  constructor(status: number) {
+    super(`Request failed with status ${status}`);
+    this.name = "HttpError";
+    this.status = status;
+  }
+}
+
 export const setActiveTenantId = (id: string | null) => {
   activeTenantId = id;
 };
@@ -60,7 +70,7 @@ export const http = async <T>(
   }
 
   if (!response.ok) {
-    throw new Error(`Request failed with status ${response.status}`);
+    throw new HttpError(response.status);
   }
 
   return response.json() as Promise<T>;

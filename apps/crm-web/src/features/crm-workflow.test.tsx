@@ -98,7 +98,9 @@ describe("insurance CRM reference workflow", () => {
     expect(await screen.findByRole("alert")).toHaveTextContent("Quote could not be created");
     await user.click(screen.getByRole("button", { name: "Create quote" }));
     await user.click(await screen.findByRole("button", { name: "Bind quote" }));
-    expect(await screen.findByRole("alert")).toHaveTextContent("Quote could not be bound");
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "could not confirm whether the quote was bound",
+    );
     await user.click(screen.getByRole("button", { name: "Retry bind quote" }));
     expect(await screen.findByRole("link", { name: "Review bound policy" })).toBeVisible();
     expect(requests.size).toBe(2);
@@ -316,7 +318,7 @@ describe("insurance CRM reference workflow", () => {
     expect(await screen.findByRole("alert")).toHaveTextContent("Quote could not be created");
   });
 
-  test("shows an accessible error when binding is rejected", async () => {
+  test("shows an accessible reconciliation prompt when the bind outcome is unknown", async () => {
     useTestApi();
     const user = userEvent.setup();
     renderWithProviders(<QuoteForm />);
@@ -331,7 +333,9 @@ describe("insurance CRM reference workflow", () => {
     );
     await user.click(screen.getByRole("button", { name: "Bind quote" }));
 
-    expect(await screen.findByRole("alert")).toHaveTextContent("Quote could not be bound");
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "could not confirm whether the quote was bound",
+    );
   });
 
   test("releases a terminal bind retry so another quoted policy can bind", async () => {
@@ -357,14 +361,53 @@ describe("insurance CRM reference workflow", () => {
 
     const bindButtons = await screen.findAllByRole("button", { name: "Bind quote" });
     await user.click(bindButtons[0]);
-    expect(await screen.findByRole("alert")).toHaveTextContent("Quote could not be bound");
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "Quote was rejected and was not bound",
+    );
     expect(bindButtons[1]).toBeDisabled();
 
-    await user.click(screen.getByRole("button", { name: "Dismiss bind retry" }));
+    await user.click(screen.getByRole("button", { name: "Dismiss rejected bind" }));
     expect(screen.queryByRole("button", { name: "Retry bind quote" })).not.toBeInTheDocument();
     expect(screen.getAllByRole("button", { name: "Bind quote" })[1]).toBeEnabled();
 
     await user.click(screen.getAllByRole("button", { name: "Bind quote" })[1]);
+    expect(await screen.findByRole("link", { name: "Review bound policy" })).toBeVisible();
+  });
+
+  test("reconciles an uncertain accepted bind instead of allowing it to be dismissed", async () => {
+    const api = useTestApi(ledgerSeed({ commands: [] }));
+    const user = userEvent.setup();
+    let loseFirstResponse = true;
+    server.use(
+      http.post(/\/api\/quotes\/[^/]+\/bind$/, async ({ request }) => {
+        const response = await api.handle(request);
+        if (loseFirstResponse) {
+          loseFirstResponse = false;
+          return new HttpResponse(null, { status: 503 });
+        }
+        return response;
+      }),
+    );
+    renderWithProviders(<QuoteForm />);
+
+    await screen.findByRole("option", { name: /100 Market Street/i });
+    await user.selectOptions(screen.getByLabelText("Policyholder"), "fixture-customer-1");
+    await user.selectOptions(screen.getByLabelText("Insured property"), "fixture-property-1");
+    await user.click(screen.getByRole("button", { name: "Create quote" }));
+    await user.click(screen.getByRole("button", { name: "Create quote" }));
+    await user.click((await screen.findAllByRole("button", { name: "Bind quote" }))[0]);
+
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "could not confirm whether the quote was bound",
+    );
+    expect(screen.queryByRole("button", { name: "Dismiss rejected bind" })).not.toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Check bind status" }));
+
+    expect(await screen.findByText("Written — payable when the policy binds")).toBeVisible();
+    expect(screen.queryByRole("button", { name: "Retry bind quote" })).not.toBeInTheDocument();
+    const remainingBind = screen.getByRole("button", { name: "Bind quote" });
+    expect(remainingBind).toBeEnabled();
+    await user.click(remainingBind);
     expect(await screen.findByRole("link", { name: "Review bound policy" })).toBeVisible();
   });
 

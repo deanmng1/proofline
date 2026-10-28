@@ -15,6 +15,7 @@ import {
   type QuoteSummary,
 } from "@/features/crm/crm-api";
 import { useCommand } from "@/features/crm/use-command";
+import { HttpError } from "@/lib/http";
 
 const plans = {
   risk_secure: {
@@ -38,6 +39,13 @@ const describeCommission = (quote: QuoteSummary) =>
     ? "Written — payable when the policy binds"
     : `As earned — payable after ${quote.commissionPlan.holdPeriodDays} days`;
 
+const isTerminalBindError = (error: unknown) =>
+  error instanceof HttpError &&
+  error.status >= 400 &&
+  error.status < 500 &&
+  error.status !== 408 &&
+  error.status !== 429;
+
 export const QuoteForm = () => {
   const queryClient = useQueryClient();
   const [customerId, setCustomerId] = useState("");
@@ -55,6 +63,10 @@ export const QuoteForm = () => {
   const customersQuery = useQuery({ queryKey: ["crm", "customers"], queryFn: getCustomers });
   const propertiesQuery = useQuery({ queryKey: ["crm", "properties"], queryFn: getProperties });
   const quotesQuery = useQuery({ queryKey: ["crm", "quotes"], queryFn: getQuotes });
+  const completePendingBind = () => {
+    bindCommand.complete();
+    setPendingBind(null);
+  };
   const quoteMutation = useMutation({
     mutationFn: createQuote,
     onSuccess: (quote) => {
@@ -68,8 +80,7 @@ export const QuoteForm = () => {
     mutationFn: (input: { quoteId: string; commandId: string; correlationId: string }) =>
       bindQuote(input.quoteId, { commandId: input.commandId, correlationId: input.correlationId }),
     onSuccess: (policy, { quoteId }) => {
-      bindCommand.complete();
-      setPendingBind(null);
+      completePendingBind();
       const quote = (quotesQuery.data ?? []).find((entry) => entry.id === quoteId);
       if (quote) setBoundQuote({ ...quote, status: "bound" });
       void queryClient.invalidateQueries({ queryKey: ["crm", "quotes"] });
@@ -77,6 +88,22 @@ export const QuoteForm = () => {
       return policy;
     },
   });
+
+  const reconcilePendingBind = async () => {
+    if (!pendingBind) return;
+    const refreshed = await quotesQuery.refetch();
+    const quote = refreshed.data?.find((entry) => entry.id === pendingBind.quoteId);
+    if (quote?.status !== "bound") return;
+    setBoundQuote(quote);
+    completePendingBind();
+    bindMutation.reset();
+    void queryClient.invalidateQueries({ queryKey: ["crm", "policies"] });
+  };
+  const dismissRejectedBind = () => {
+    completePendingBind();
+    bindMutation.reset();
+  };
+  const terminalBindError = isTerminalBindError(bindMutation.error);
 
   if (customersQuery.isError || propertiesQuery.isError || quotesQuery.isError) {
     return (
@@ -233,7 +260,9 @@ export const QuoteForm = () => {
           ) : null}
           {bindMutation.isError ? (
             <p className="mt-3 text-sm text-rose-600" role="alert">
-              Quote could not be bound. Retry the request, or dismiss it to bind another quote.
+              {terminalBindError
+                ? "Quote was rejected and was not bound. Dismiss the rejected request to bind another quote."
+                : "We could not confirm whether the quote was bound. Check the bind status before retrying."}
             </p>
           ) : null}
           {pendingBind && bindMutation.isError ? (
@@ -241,16 +270,15 @@ export const QuoteForm = () => {
               <Button size="sm" onClick={() => bindMutation.mutate(pendingBind)}>
                 Retry bind quote
               </Button>
-              <Button
-                size="sm"
-                onClick={() => {
-                  bindCommand.complete();
-                  setPendingBind(null);
-                  bindMutation.reset();
-                }}
-              >
-                Dismiss bind retry
-              </Button>
+              {terminalBindError ? (
+                <Button size="sm" variant="outline" onClick={dismissRejectedBind}>
+                  Dismiss rejected bind
+                </Button>
+              ) : (
+                <Button size="sm" variant="outline" onClick={() => void reconcilePendingBind()}>
+                  Check bind status
+                </Button>
+              )}
             </div>
           ) : null}
           {bindMutation.data ? (

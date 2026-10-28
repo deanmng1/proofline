@@ -3,6 +3,7 @@ import { afterEach, describe, expect, it } from "vitest";
 import { getOverviewRequest } from "@/features/overview/overview-api";
 import { updateSettingsRequest } from "@/features/settings/settings-api";
 import { getUsersRequest } from "@/features/users/users-api";
+import { HttpError } from "@/lib/http";
 import { server } from "@/test/server";
 import type { SettingsPayload } from "@/types";
 
@@ -15,9 +16,13 @@ describe("api layer (http wrapper)", () => {
     expect(users.length).toBeGreaterThan(0);
   });
 
-  it("throws on non-2xx responses", async () => {
+  it("throws a structured error on non-2xx responses", async () => {
     server.use(http.get("/api/users", () => new HttpResponse(null, { status: 500 })));
-    await expect(getUsersRequest()).rejects.toThrow(/status 500/);
+    await expect(getUsersRequest()).rejects.toMatchObject({
+      name: HttpError.name,
+      status: 500,
+      message: "Request failed with status 500",
+    });
   });
 
   it("sends a JSON body on PATCH and returns the updated resource", async () => {
