@@ -26,6 +26,41 @@ const choose = (files: Parameters<typeof selectImpact>[0]["manifest"]["files"]) 
   });
 
 describe("conservative impact selection", () => {
+  test.each(["@quote", "@other"])(
+    "preserves %s feature evidence from distinct tests in the same Playwright spec",
+    (tag) => {
+      const spec = "apps/crm-e2e/src/features/quote-bind-finance.spec.ts";
+      const source = "apps/crm-web/src/features/quotes/quote-form.tsx";
+      const selection = selectImpact({
+        manifest: {
+          base: "base",
+          head: "head",
+          files: [{ path: source, status: "modified" }],
+          uncertainty: [],
+        },
+        featureMap: {
+          version: 1,
+          features: [{ id: "tag-owner", paths: [source], vitest: [], playwrightTags: [tag] }],
+        },
+        candidates: {
+          vitest: [],
+          playwright: [
+            { path: spec, title: "quote journey", line: 3, tags: ["@quote"] },
+            { path: spec, title: "other journey", line: 20, tags: ["@other"] },
+          ],
+        },
+        sourceFiles: {},
+      });
+
+      expect(selection).toMatchObject({
+        playwrightTests: [spec],
+        fallback: "none",
+        errors: [],
+      });
+      expect(selection.reasons[spec]).toEqual(["feature:tag-owner"]);
+    },
+  );
+
   test("selects a directly edited test without broad fallback", () => {
     const selection = choose([
       { path: "packages/domain/src/apply-event.test.ts", status: "modified" },

@@ -269,9 +269,12 @@ export const selectImpact = ({
 
   const reasons = new Map<string, Set<string>>();
   const vitestCandidates = new Set(candidates.vitest);
-  const playwrightCandidates = new Map(
-    candidates.playwright.map((candidate) => [candidate.path, candidate]),
-  );
+  const playwrightCandidates = new Map<string, Set<string>>();
+  for (const candidate of candidates.playwright) {
+    const tags = playwrightCandidates.get(candidate.path) ?? new Set<string>();
+    for (const tag of candidate.tags) tags.add(tag);
+    playwrightCandidates.set(candidate.path, tags);
+  }
   const allCandidates = testCandidates(candidates);
   const closures = new Map(
     allCandidates.map((candidate) => [candidate, dependencyClosure(candidate, sourceFiles)]),
@@ -315,8 +318,8 @@ export const selectImpact = ({
         }
       }
 
-      for (const [test, candidate] of playwrightCandidates) {
-        if (candidate.tags.some((tag) => feature.playwrightTags.includes(tag))) {
+      for (const [test, tags] of playwrightCandidates) {
+        if (feature.playwrightTags.some((tag) => tags.has(tag))) {
           addReason(reasons, test, `feature:${feature.id}`);
         }
       }
