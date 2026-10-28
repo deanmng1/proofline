@@ -1,5 +1,15 @@
 export type ChangeStatus = "added" | "modified" | "deleted" | "renamed" | "untracked";
 
+export type {
+  CoverageGroup,
+  GoldenWorkflowMatrix,
+  HarnessCommand,
+  HarnessManifest,
+  HarnessOwnership,
+  HarnessTestBinding,
+  LifecycleMatrix,
+} from "./harness-manifest.ts";
+
 export type ChangedFile = {
   path: string;
   previousPath?: string;

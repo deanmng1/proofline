@@ -1,0 +1,66 @@
+{
+  "version": 1,
+  "unchangedStateConvention": "null-or-same",
+  "rows": [
+    {
+      "state": "quoted",
+      "operation": "bind",
+      "role": "agent",
+      "tenantScope": "own",
+      "expectedResult": "accepted",
+      "nextState": "bound",
+      "ruleIds": ["POL-001"],
+      "testLayer": "service"
+    },
+    {
+      "state": "bound",
+      "operation": "cancel",
+      "role": "agent",
+      "tenantScope": "own",
+      "expectedResult": "accepted",
+      "nextState": "cancelled",
+      "ruleIds": ["POL-003"],
+      "testLayer": "service"
+    },
+    {
+      "state": "bound",
+      "operation": "bind-same-command",
+      "role": "agent",
+      "tenantScope": "own",
+      "expectedResult": "no-op",
+      "nextState": "bound",
+      "ruleIds": ["POL-001"],
+      "testLayer": "service"
+    },
+    {
+      "state": "cancelled",
+      "operation": "cancel-same-command",
+      "role": "agent",
+      "tenantScope": "own",
+      "expectedResult": "no-op",
+      "nextState": null,
+      "ruleIds": ["POL-003"],
+      "testLayer": "service"
+    },
+    {
+      "state": "cancelled",
+      "operation": "bind",
+      "role": "agent",
+      "tenantScope": "own",
+      "expectedResult": "rejected",
+      "nextState": null,
+      "ruleIds": ["POL-003"],
+      "testLayer": "service"
+    },
+    {
+      "state": "bound",
+      "operation": "bind-conflicting-command",
+      "role": "agent",
+      "tenantScope": "own",
+      "expectedResult": "rejected",
+      "nextState": "bound",
+      "ruleIds": ["POL-002"],
+      "testLayer": "service"
+    }
+  ]
+}

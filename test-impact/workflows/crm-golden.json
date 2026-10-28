@@ -1,0 +1,125 @@
+{
+  "version": 1,
+  "tenantIsolationMode": "authenticated-contexts",
+  "rows": [
+    {
+      "id": "protected-intake-bind-finance-logout",
+      "status": "planned",
+      "adapterSetup": [
+        "Fresh unauthenticated scenario with deterministic identity, reference products and providers."
+      ],
+      "userActions": [
+        "Open protected CRM deep link; sign in through the login form.",
+        "Use sidebar Customer intake; create customer and property.",
+        "Use sidebar Quotes and policies; create quote, bind and open policy detail.",
+        "Record finance event through visible controls; log out; revisit protected route."
+      ],
+      "urlTransitions": [
+        "/app/crm/quotes -> /login -> /app/crm/quotes",
+        "/app/crm/customers -> /app/crm/quotes -> /app/crm/policies/:id -> /login"
+      ],
+      "visibleAssertions": [
+        "Login form and restored Quotes and policies heading.",
+        "Customer and property appear in accessible intake controls.",
+        "Bound policy detail and finance transaction are visible.",
+        "Protected revisit shows login and no protected content."
+      ],
+      "persistedInvariants": [
+        "After final visible outcome, query exactly one customer/property/quote/bound policy and matching policy-state and finance entries."
+      ],
+      "ruleIds": ["AUTH-001", "POL-001", "API-002", "FIN-001"],
+      "exclusions": []
+    },
+    {
+      "id": "recoverable-bind",
+      "status": "planned",
+      "adapterSetup": [
+        "Fresh authenticated scenario with one-shot accepted-bind response loss or pending delivery fault."
+      ],
+      "userActions": [
+        "Create and bind a quote through the UI.",
+        "Observe disabled competing actions; check status or retry; open resulting policy."
+      ],
+      "urlTransitions": ["/app/crm/quotes -> /app/crm/policies/:id"],
+      "visibleAssertions": [
+        "Recoverable command status and disabled competing actions.",
+        "Final bound policy and initialized finance are visible."
+      ],
+      "persistedInvariants": [
+        "After visible success, query exactly one policy, projection and ledger initialization for the command."
+      ],
+      "ruleIds": ["UI-001", "BUS-003", "POL-001"],
+      "exclusions": []
+    },
+    {
+      "id": "role-denied-navigation",
+      "status": "planned",
+      "adapterSetup": ["Fresh authenticated scenario with a role denied CRM access."],
+      "userActions": ["Inspect sidebar and attempt protected CRM direct route."],
+      "urlTransitions": ["/ -> /app/crm/quotes -> access-denied route"],
+      "visibleAssertions": ["Restricted navigation absent; direct access shows accessible denial."],
+      "persistedInvariants": [
+        "After denial, inspect request log: no protected API command issued."
+      ],
+      "ruleIds": ["AUTH-001", "API-001"],
+      "exclusions": []
+    },
+    {
+      "id": "tenant-isolation",
+      "status": "planned",
+      "adapterSetup": [
+        "One fresh scenario runtime; two independently authenticated BrowserContexts with distinct tenant memberships."
+      ],
+      "userActions": [
+        "Each tenant creates intake, quote, bind and finance state through visible controls.",
+        "Attempt foreign resource routes and exercise a pending retry in its owning context."
+      ],
+      "urlTransitions": [
+        "/app/crm/customers -> /app/crm/quotes -> /app/crm/policies/:id in each context"
+      ],
+      "visibleAssertions": [
+        "Customer, quote, policy, ledger and retry state are visible only to the owning tenant.",
+        "Foreign resources display denial without tenant data."
+      ],
+      "persistedInvariants": [
+        "After visible outcomes, contract reads and mutation attempts deny cross-tenant customer, quote, policy, ledger and retry access."
+      ],
+      "ruleIds": ["TEN-001", "API-001"],
+      "exclusions": []
+    },
+    {
+      "id": "cancellation-refund-commission-payment",
+      "status": "excluded",
+      "adapterSetup": [
+        "Fresh deterministic service/runtime or Test API fixture; no browser setup performs these operations."
+      ],
+      "userActions": [],
+      "urlTransitions": [],
+      "visibleAssertions": [],
+      "persistedInvariants": [
+        "Service and contract tests preserve cancellation lifecycle, allocated refund corrections, and append-only commission payment evidence."
+      ],
+      "ruleIds": ["POL-003", "COM-003", "COM-005", "FIN-004"],
+      "exclusions": [
+        {
+          "operation": "cancellation",
+          "reason": "No user-visible reference control exists; add a browser workflow when the UI exposes this operation.",
+          "ownerLayer": "service",
+          "ruleIds": ["POL-003"]
+        },
+        {
+          "operation": "refund",
+          "reason": "No user-visible reference control exists; add a browser workflow when the UI exposes this operation.",
+          "ownerLayer": "service",
+          "ruleIds": ["COM-003", "FIN-004"]
+        },
+        {
+          "operation": "commission-payment",
+          "reason": "No user-visible reference control exists; add a browser workflow when the UI exposes this operation.",
+          "ownerLayer": "service",
+          "ruleIds": ["COM-005"]
+        }
+      ]
+    }
+  ]
+}

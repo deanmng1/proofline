@@ -5,6 +5,7 @@ import { pathToFileURL } from "node:url";
 import { z } from "zod";
 import { readChangedFiles } from "./changed-files.ts";
 import { normalizeRepoPath } from "./coverage-policy.ts";
+import { validateHarness } from "./harness-manifest.ts";
 import { parsePlaywrightIdentities } from "./playwright-discovery.ts";
 import { playwrightCommand, selectImpact, selectRuleTests, vitestCommand } from "./select.ts";
 import type { DiscoveredTests, FeatureMap, VitestIdentity } from "./types.ts";
@@ -188,6 +189,23 @@ const perform = (cwd: string, args: string[]) => {
   if (!args.includes("--dry-run")) runSelection(cwd, exact);
 };
 export const main = (cwd = process.cwd(), args = process.argv.slice(2)) => {
+  if (args.includes("--validate-harness")) {
+    let errors: string[];
+    try {
+      const manifest = JSON.parse(readFileSync(path.join(cwd, "proofline.harness.json"), "utf8"));
+      errors = validateHarness({ cwd, manifest }).errors;
+    } catch (error) {
+      errors = [String(error)];
+    }
+    const directory = path.join(cwd, "artifacts/harness");
+    mkdirSync(directory, { recursive: true });
+    writeFileSync(
+      path.join(directory, "validation.json"),
+      `${JSON.stringify({ errors }, null, 2)}\n`,
+    );
+    if (errors.length) throw new Error(errors.join("\n"));
+    return;
+  }
   try {
     perform(cwd, args);
   } catch (error) {

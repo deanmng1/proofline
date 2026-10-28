@@ -29,7 +29,8 @@
     "prepare": "husky",
     "coverage:check": "node --experimental-strip-types tools/impact/src/coverage-policy.ts",
     "record:check": "node --experimental-strip-types tools/impact/src/record-check.ts",
-    "rules:generate": "node --experimental-strip-types tools/impact/src/main.ts --generate-rules"
+    "rules:generate": "node --experimental-strip-types tools/impact/src/main.ts --generate-rules",
+    "harness:validate": "node --experimental-strip-types tools/impact/src/main.ts --validate-harness"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx,json,css,html,svg}": [

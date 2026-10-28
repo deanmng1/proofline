@@ -120,3 +120,52 @@ explicitly to prevent selection from guessing at CI history.
 No test path should use live Epay, GhostDraft, Smarty, Sage, or other provider
 credentials. Provider integration belongs behind a contract adapter and must
 be exercised with deterministic test doubles in this harness.
+
+## Portable manifest and workflow contracts
+
+Run `pnpm harness:validate` before selection or other harness gates. It reads
+`proofline.harness.json`, checks canonical command argv/package scripts,
+repository-contained paths, every Nx workspace, coverage group metadata,
+ownership bindings, and the referenced lifecycle and golden workflow matrices.
+It always writes `artifacts/harness/validation.json`, including on malformed
+JSON or missing files, and exits unsuccessfully if any errors remain. Validation
+never executes a manifest command or imports a test module.
+
+The reusable schemas and types live in `tools/impact/src/harness-manifest.ts`.
+Commands contain an executable and arguments plus a repository-relative `cwd`;
+workspace command fields reference those keys. A browser-only workspace may
+set `unitCommand: null`; an empty `browserCommands` list requires an explicit
+`browserOptOutReason`. Chromium is mandatory; optional Firefox/WebKit smoke
+projects must also be enabled in `browser.projects`.
+
+Ownership rows declare explicit `ruleLayers` pairs, each requiring exact evidence.
+Bindings name a globally unique stable `testId`, rule, layer, command key, runner,
+file, exact full title and declaration line; Playwright can additionally require
+an exact tag. A shared test may appear under several owners or rules, but
+each binding has a distinct ID. Binding runner/command/workspace membership must
+agree, and `ruleRegistry` supplies the catalog checked for exact evidence parity. Without supplied runner discovery,
+the static validator recognizes literal `describe`/`test.describe` and `test`/`it`
+declarations and literal Playwright tags. Dynamic/generated identities require
+explicit `discovered` runner output supplied to `validateHarness`; unsupported
+or ambiguous identities fail closed. Keep at least one literal binding per
+declared rule/layer pair for the standalone static gate.
+
+`test-impact/lifecycle-matrix.json` requires a next state for accepted operations.
+Rejected and no-op rows use `null` or the unchanged state. Each row declares its
+role, tenant scope, rule IDs and owning deterministic layer.
+`test-impact/workflows/crm-golden.json` declares adapter-only setup, UI actions,
+URL transitions, visible outcomes, and persisted invariants inspected after the
+visible outcome. The initial four browser journeys are explicitly `planned`;
+they are acceptance contracts, not claims of completed browser coverage.
+Cancellation, refunds, and commission payments are `excluded` until user-visible
+controls exist, with explicit service ownership and reasons. The initial manifest
+points at the existing development entrypoint and adapters; the subsequent
+isolation task replaces these with the capability-gated test entrypoint.
+
+The initial seven coverage groups correspond exactly to the existing critical
+ratchet reports, not every Nx coverage output. Existing business-rule ownership
+is consolidated so no current file has multiple owners. Unmapped template and
+new runtime code remains unclassified and must force the full impact gate; a
+manifest validation pass alone does not claim complete behavioral coverage.
+Workspace metadata discovery currently reads explicit Nx `project.json` files
+without invoking Nx; canonical runner discovery remains a later consumer.

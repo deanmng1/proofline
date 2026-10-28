@@ -1,0 +1,1398 @@
+{
+  "version": 1,
+  "commands": {
+    "lint": {
+      "argv": ["pnpm", "lint"],
+      "cwd": "."
+    },
+    "typecheck": {
+      "argv": ["pnpm", "typecheck"],
+      "cwd": "."
+    },
+    "unit": {
+      "argv": ["pnpm", "test"],
+      "cwd": "."
+    },
+    "browser": {
+      "argv": ["pnpm", "test:e2e"],
+      "cwd": "."
+    },
+    "coverage": {
+      "argv": ["pnpm", "coverage"],
+      "cwd": "."
+    },
+    "coverageCheck": {
+      "argv": ["pnpm", "coverage:check"],
+      "cwd": "."
+    },
+    "recordCheck": {
+      "argv": ["pnpm", "record:check"],
+      "cwd": "."
+    },
+    "testEntrypoint": {
+      "argv": ["pnpm", "dev"],
+      "cwd": "."
+    }
+  },
+  "workspaces": [
+    {
+      "path": "apps/crm-e2e",
+      "unitCommand": null,
+      "browserCommands": ["browser"]
+    },
+    {
+      "path": "apps/crm-web",
+      "unitCommand": "unit",
+      "browserCommands": ["browser"]
+    },
+    {
+      "path": "packages/api-contracts",
+      "unitCommand": "unit",
+      "browserCommands": [],
+      "browserOptOutReason": "Deterministic library/tool behavior is owned by Vitest; cross-screen evidence runs through crm-e2e."
+    },
+    {
+      "path": "packages/domain",
+      "unitCommand": "unit",
+      "browserCommands": [],
+      "browserOptOutReason": "Deterministic library/tool behavior is owned by Vitest; cross-screen evidence runs through crm-e2e."
+    },
+    {
+      "path": "packages/finance-service",
+      "unitCommand": "unit",
+      "browserCommands": [],
+      "browserOptOutReason": "Deterministic library/tool behavior is owned by Vitest; cross-screen evidence runs through crm-e2e."
+    },
+    {
+      "path": "packages/insurance-runtime",
+      "unitCommand": "unit",
+      "browserCommands": [],
+      "browserOptOutReason": "Deterministic library/tool behavior is owned by Vitest; cross-screen evidence runs through crm-e2e."
+    },
+    {
+      "path": "packages/policy-service",
+      "unitCommand": "unit",
+      "browserCommands": [],
+      "browserOptOutReason": "Deterministic library/tool behavior is owned by Vitest; cross-screen evidence runs through crm-e2e."
+    },
+    {
+      "path": "packages/policy-state-service",
+      "unitCommand": "unit",
+      "browserCommands": [],
+      "browserOptOutReason": "Deterministic library/tool behavior is owned by Vitest; cross-screen evidence runs through crm-e2e."
+    },
+    {
+      "path": "packages/service-bus",
+      "unitCommand": "unit",
+      "browserCommands": [],
+      "browserOptOutReason": "Deterministic library/tool behavior is owned by Vitest; cross-screen evidence runs through crm-e2e."
+    },
+    {
+      "path": "packages/test-kit",
+      "unitCommand": "unit",
+      "browserCommands": [],
+      "browserOptOutReason": "Deterministic library/tool behavior is owned by Vitest; cross-screen evidence runs through crm-e2e."
+    },
+    {
+      "path": "tools/impact",
+      "unitCommand": "unit",
+      "browserCommands": [],
+      "browserOptOutReason": "Deterministic library/tool behavior is owned by Vitest; cross-screen evidence runs through crm-e2e."
+    }
+  ],
+  "browser": {
+    "projects": ["chromium"],
+    "crossBrowserSmokeProjects": [],
+    "localOrigins": ["http://127.0.0.1"],
+    "testEntrypoint": "testEntrypoint"
+  },
+  "adapters": {
+    "testModeEnvironment": "apps/crm-web/src/mocks/browser.ts",
+    "auth": "apps/crm-web/src/mocks/handlers.ts",
+    "api": "packages/api-contracts/src/test-api.ts",
+    "providers": ["packages/insurance-runtime/src/test-fixtures.ts"]
+  },
+  "coverage": [
+    {
+      "workspace": "packages/service-bus",
+      "provider": "v8",
+      "providerVersion": "3.2.7",
+      "sourceGlobs": ["packages/service-bus/src/service-bus.ts"],
+      "exclusions": [],
+      "report": "artifacts/coverage/service-bus/coverage-summary.json",
+      "reportFormat": "istanbul-json-summary",
+      "metrics": ["lines", "functions", "branches", "statements"],
+      "aggregation": "per-file"
+    },
+    {
+      "workspace": "packages/policy-service",
+      "provider": "v8",
+      "providerVersion": "3.2.7",
+      "sourceGlobs": ["packages/policy-service/src/policy-service.ts"],
+      "exclusions": [],
+      "report": "artifacts/coverage/policy-service/coverage-summary.json",
+      "reportFormat": "istanbul-json-summary",
+      "metrics": ["lines", "functions", "branches", "statements"],
+      "aggregation": "per-file"
+    },
+    {
+      "workspace": "packages/policy-state-service",
+      "provider": "v8",
+      "providerVersion": "3.2.7",
+      "sourceGlobs": ["packages/policy-state-service/src/policy-state-service.ts"],
+      "exclusions": [],
+      "report": "artifacts/coverage/policy-state-service/coverage-summary.json",
+      "reportFormat": "istanbul-json-summary",
+      "metrics": ["lines", "functions", "branches", "statements"],
+      "aggregation": "per-file"
+    },
+    {
+      "workspace": "packages/finance-service",
+      "provider": "v8",
+      "providerVersion": "3.2.7",
+      "sourceGlobs": ["packages/finance-service/src/finance-service.ts"],
+      "exclusions": [],
+      "report": "artifacts/coverage/finance-service/coverage-summary.json",
+      "reportFormat": "istanbul-json-summary",
+      "metrics": ["lines", "functions", "branches", "statements"],
+      "aggregation": "per-file"
+    },
+    {
+      "workspace": "packages/insurance-runtime",
+      "provider": "v8",
+      "providerVersion": "3.2.7",
+      "sourceGlobs": ["packages/insurance-runtime/src/runtime.ts"],
+      "exclusions": [],
+      "report": "artifacts/coverage/insurance-runtime/coverage-summary.json",
+      "reportFormat": "istanbul-json-summary",
+      "metrics": ["lines", "functions", "branches", "statements"],
+      "aggregation": "per-file"
+    },
+    {
+      "workspace": "packages/api-contracts",
+      "provider": "v8",
+      "providerVersion": "3.2.7",
+      "sourceGlobs": ["packages/api-contracts/src/test-api.ts"],
+      "exclusions": [],
+      "report": "artifacts/coverage/api-contracts/coverage-summary.json",
+      "reportFormat": "istanbul-json-summary",
+      "metrics": ["lines", "functions", "branches", "statements"],
+      "aggregation": "per-file"
+    },
+    {
+      "workspace": "tools/impact",
+      "provider": "v8",
+      "providerVersion": "3.2.7",
+      "sourceGlobs": ["tools/impact/src/validate.ts"],
+      "exclusions": [],
+      "report": "artifacts/coverage/impact-tools/coverage-summary.json",
+      "reportFormat": "istanbul-json-summary",
+      "metrics": ["lines", "functions", "branches", "statements"],
+      "aggregation": "per-file"
+    }
+  ],
+  "ownership": [
+    {
+      "glob": "packages/policy-service/src/**",
+      "entrypoints": ["packages/policy-service/src/index.ts"],
+      "ruleIds": ["POL-001", "POL-002", "POL-003", "TIME-001"],
+      "layers": ["service", "runtime", "playwright"],
+      "testBindings": [
+        {
+          "ruleId": "POL-001",
+          "layer": "service",
+          "testId": "binding-27a8bc9a65dc9f61098c",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "packages/policy-service/src/policy-service.test.ts",
+          "title": "Policy service > binds_a_quote_once_and_publishes_policy_lifecycle_changed",
+          "line": 91
+        },
+        {
+          "ruleId": "POL-001",
+          "layer": "runtime",
+          "testId": "binding-7af2518ef62f297a48ac",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "packages/insurance-runtime/src/runtime.test.ts",
+          "title": "insurance runtime > bind_chain_is_idempotent_across_all_consumers",
+          "line": 54
+        },
+        {
+          "ruleId": "POL-001",
+          "layer": "playwright",
+          "testId": "binding-c46c59d1b0e4d807cf40",
+          "commandKey": "browser",
+          "runner": "playwright",
+          "file": "apps/crm-e2e/src/features/quote-bind-finance.spec.ts",
+          "title": "@quote @policy @finance creates, binds, and funds a Risk Secure Plus policy",
+          "line": 3,
+          "tag": "@quote"
+        },
+        {
+          "ruleId": "POL-002",
+          "layer": "service",
+          "testId": "binding-059e41be6fcbd4796345",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "packages/policy-service/src/policy-service.test.ts",
+          "title": "Policy service > rejects_same_command_id_with_different_payload",
+          "line": 159
+        },
+        {
+          "ruleId": "POL-003",
+          "layer": "service",
+          "testId": "binding-71e3a7ac2db1bbd98460",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "packages/policy-service/src/policy-service.test.ts",
+          "title": "Policy service > transitions_bound_policy_to_cancelled_at_next_revision",
+          "line": 116
+        },
+        {
+          "ruleId": "POL-003",
+          "layer": "runtime",
+          "testId": "binding-d606fe3de94da3d05ed7",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "packages/insurance-runtime/src/runtime.test.ts",
+          "title": "insurance runtime > cancellation_is_terminal_and_replay_does_not_restore_bound_state",
+          "line": 121
+        },
+        {
+          "ruleId": "TIME-001",
+          "layer": "runtime",
+          "testId": "binding-6aaaf5bb9f13dd80ed87",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "packages/insurance-runtime/src/timestamps.test.ts",
+          "title": "UTC timestamp boundaries > policy_clock_rejection_leaves_each_command_retryable_without_partial_state",
+          "line": 44
+        }
+      ],
+      "ruleLayers": [
+        {
+          "ruleId": "POL-001",
+          "layer": "service"
+        },
+        {
+          "ruleId": "POL-001",
+          "layer": "runtime"
+        },
+        {
+          "ruleId": "POL-001",
+          "layer": "playwright"
+        },
+        {
+          "ruleId": "POL-002",
+          "layer": "service"
+        },
+        {
+          "ruleId": "POL-003",
+          "layer": "service"
+        },
+        {
+          "ruleId": "POL-003",
+          "layer": "runtime"
+        },
+        {
+          "ruleId": "TIME-001",
+          "layer": "runtime"
+        }
+      ]
+    },
+    {
+      "glob": "packages/insurance-runtime/src/**",
+      "entrypoints": ["packages/insurance-runtime/src/index.ts"],
+      "ruleIds": ["POL-001", "POL-003", "BUS-003", "TEN-001", "API-001", "API-002", "TIME-001"],
+      "layers": ["service", "runtime", "playwright", "contract"],
+      "testBindings": [
+        {
+          "ruleId": "POL-001",
+          "layer": "service",
+          "testId": "binding-9b0dee9324f6b013206a",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "packages/policy-service/src/policy-service.test.ts",
+          "title": "Policy service > binds_a_quote_once_and_publishes_policy_lifecycle_changed",
+          "line": 91
+        },
+        {
+          "ruleId": "POL-001",
+          "layer": "runtime",
+          "testId": "binding-36111c2295fe39c5ea46",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "packages/insurance-runtime/src/runtime.test.ts",
+          "title": "insurance runtime > bind_chain_is_idempotent_across_all_consumers",
+          "line": 54
+        },
+        {
+          "ruleId": "POL-001",
+          "layer": "playwright",
+          "testId": "binding-78c692675a8d308719cf",
+          "commandKey": "browser",
+          "runner": "playwright",
+          "file": "apps/crm-e2e/src/features/quote-bind-finance.spec.ts",
+          "title": "@quote @policy @finance creates, binds, and funds a Risk Secure Plus policy",
+          "line": 3,
+          "tag": "@quote"
+        },
+        {
+          "ruleId": "POL-003",
+          "layer": "service",
+          "testId": "binding-3b7c7412b25c9c9c7864",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "packages/policy-service/src/policy-service.test.ts",
+          "title": "Policy service > transitions_bound_policy_to_cancelled_at_next_revision",
+          "line": 116
+        },
+        {
+          "ruleId": "POL-003",
+          "layer": "runtime",
+          "testId": "binding-2e4b95448c544c43dfcb",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "packages/insurance-runtime/src/runtime.test.ts",
+          "title": "insurance runtime > cancellation_is_terminal_and_replay_does_not_restore_bound_state",
+          "line": 121
+        },
+        {
+          "ruleId": "BUS-003",
+          "layer": "service",
+          "testId": "binding-206b7e27024ab0fd2ecc",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "packages/service-bus/src/service-bus.test.ts",
+          "title": "in-memory service bus > leaves_failed_delivery_pending_for_a_deterministic_retry",
+          "line": 128
+        },
+        {
+          "ruleId": "BUS-003",
+          "layer": "runtime",
+          "testId": "binding-f72fbd5b3b2d9a564bd9",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "packages/insurance-runtime/src/runtime.test.ts",
+          "title": "insurance runtime > retries_pending_finance_delivery_without_duplicate_policy_or_commission_records",
+          "line": 107
+        },
+        {
+          "ruleId": "TEN-001",
+          "layer": "runtime",
+          "testId": "binding-7b1c46e9b6ec1d5402e8",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "packages/insurance-runtime/src/runtime.test.ts",
+          "title": "insurance runtime > same_command_ids_and_entity_ids_are_independent_across_tenants",
+          "line": 29
+        },
+        {
+          "ruleId": "TEN-001",
+          "layer": "service",
+          "testId": "binding-b0ecb32999932b4f27d4",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "packages/policy-state-service/src/policy-state-service.test.ts",
+          "title": "Policy State service > isolates_tenant_and_policy_ids_that_contain_key_delimiters",
+          "line": 171
+        },
+        {
+          "ruleId": "TEN-001",
+          "layer": "playwright",
+          "testId": "binding-157e846929b5b736c5e7",
+          "commandKey": "browser",
+          "runner": "playwright",
+          "file": "apps/crm-e2e/src/features/isolation.spec.ts",
+          "title": "@policy isolates concurrent browser journeys",
+          "line": 15,
+          "tag": "@policy"
+        },
+        {
+          "ruleId": "API-001",
+          "layer": "contract",
+          "testId": "binding-8cd008f8a7bb24a81ff1",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "packages/api-contracts/src/test-api.test.ts",
+          "title": "createTestApi > requires_independent_command_and_correlation_identities_before_mutation",
+          "line": 256
+        },
+        {
+          "ruleId": "API-002",
+          "layer": "contract",
+          "testId": "binding-7a77f50433179b2611ed",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "packages/api-contracts/src/test-api.test.ts",
+          "title": "createTestApi > binds_over_http_and_exposes_finance_initialized_through_policy_state",
+          "line": 192
+        },
+        {
+          "ruleId": "API-002",
+          "layer": "playwright",
+          "testId": "binding-76d42255445f9aa18a75",
+          "commandKey": "browser",
+          "runner": "playwright",
+          "file": "apps/crm-e2e/src/features/browser-worker-crm.spec.ts",
+          "title": "@crm-worker starts the CRM with browser Test API handlers",
+          "line": 3,
+          "tag": "@crm-worker"
+        },
+        {
+          "ruleId": "TIME-001",
+          "layer": "runtime",
+          "testId": "binding-c2ae3b191108723c448f",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "packages/insurance-runtime/src/timestamps.test.ts",
+          "title": "UTC timestamp boundaries > policy_clock_rejection_leaves_each_command_retryable_without_partial_state",
+          "line": 44
+        }
+      ],
+      "ruleLayers": [
+        {
+          "ruleId": "POL-001",
+          "layer": "service"
+        },
+        {
+          "ruleId": "POL-001",
+          "layer": "runtime"
+        },
+        {
+          "ruleId": "POL-001",
+          "layer": "playwright"
+        },
+        {
+          "ruleId": "POL-003",
+          "layer": "service"
+        },
+        {
+          "ruleId": "POL-003",
+          "layer": "runtime"
+        },
+        {
+          "ruleId": "BUS-003",
+          "layer": "service"
+        },
+        {
+          "ruleId": "BUS-003",
+          "layer": "runtime"
+        },
+        {
+          "ruleId": "TEN-001",
+          "layer": "runtime"
+        },
+        {
+          "ruleId": "TEN-001",
+          "layer": "service"
+        },
+        {
+          "ruleId": "TEN-001",
+          "layer": "playwright"
+        },
+        {
+          "ruleId": "API-001",
+          "layer": "contract"
+        },
+        {
+          "ruleId": "API-002",
+          "layer": "contract"
+        },
+        {
+          "ruleId": "API-002",
+          "layer": "playwright"
+        },
+        {
+          "ruleId": "TIME-001",
+          "layer": "runtime"
+        }
+      ]
+    },
+    {
+      "glob": "packages/domain/src/**",
+      "entrypoints": [
+        "packages/domain/src/index.ts",
+        "packages/domain/src/snapshot.ts",
+        "packages/domain/src/types.ts",
+        "packages/domain/src/timestamp.ts"
+      ],
+      "ruleIds": ["COM-001", "COM-002", "COM-004", "COM-005", "BUS-004", "TIME-001"],
+      "layers": ["domain", "service", "playwright", "runtime"],
+      "testBindings": [
+        {
+          "ruleId": "COM-001",
+          "layer": "domain",
+          "testId": "binding-4b9d76eb502216fe2202",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "packages/domain/src/commission.test.ts",
+          "title": "commission rules > COM-001 rounds a written commission half-up and makes it immediately payable",
+          "line": 39
+        },
+        {
+          "ruleId": "COM-001",
+          "layer": "service",
+          "testId": "binding-0d8931b3d1f65bd4031a",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "packages/finance-service/src/finance-service.test.ts",
+          "title": "Finance service > written_accrues_on_bound_state",
+          "line": 101
+        },
+        {
+          "ruleId": "COM-002",
+          "layer": "domain",
+          "testId": "binding-1d97ea57390b9878ea62",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "packages/domain/src/commission.test.ts",
+          "title": "commission rules > COM-002 becomes payable at the exact hold boundary without rewriting the accrual",
+          "line": 59
+        },
+        {
+          "ruleId": "COM-002",
+          "layer": "service",
+          "testId": "binding-220d26c670cf04cd1e48",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "packages/finance-service/src/finance-service.test.ts",
+          "title": "Finance service > cash_first_accrues_only_settled_premium",
+          "line": 86
+        },
+        {
+          "ruleId": "COM-002",
+          "layer": "playwright",
+          "testId": "binding-e3d1b02baf2d90ddbc49",
+          "commandKey": "browser",
+          "runner": "playwright",
+          "file": "apps/crm-e2e/src/features/commission-refund.spec.ts",
+          "title": "commission corrections > @commission @finance @refund allocations reverse only selected settled premium commission",
+          "line": 36,
+          "tag": "@finance"
+        },
+        {
+          "ruleId": "COM-004",
+          "layer": "domain",
+          "testId": "binding-7d0b04738ec93260435d",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "packages/domain/src/commission.test.ts",
+          "title": "commission rules > COM-004 rejects malformed or negative commission plans at the domain boundary",
+          "line": 29
+        },
+        {
+          "ruleId": "COM-005",
+          "layer": "domain",
+          "testId": "binding-38aa1375005a9e38e871",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "packages/domain/src/commission.test.ts",
+          "title": "commission rules > COM-005 projects linked payment without replacing the historical accrual",
+          "line": 70
+        },
+        {
+          "ruleId": "COM-005",
+          "layer": "service",
+          "testId": "binding-f5bc9ae8a66ddcce8391",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "packages/finance-service/src/finance-service.test.ts",
+          "title": "Finance service > appends_commission_payment_without_rewriting_accrual",
+          "line": 204
+        },
+        {
+          "ruleId": "BUS-004",
+          "layer": "service",
+          "testId": "binding-a50cdcc8d3d5be236659",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "packages/service-bus/src/immutable-delivery.test.ts",
+          "title": "immutable delivery > owns_nested_publisher_and_inspection_values_before_delivery",
+          "line": 20
+        },
+        {
+          "ruleId": "TIME-001",
+          "layer": "runtime",
+          "testId": "binding-f59acd3fa6db49fe54ff",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "packages/insurance-runtime/src/timestamps.test.ts",
+          "title": "UTC timestamp boundaries > policy_clock_rejection_leaves_each_command_retryable_without_partial_state",
+          "line": 44
+        }
+      ],
+      "ruleLayers": [
+        {
+          "ruleId": "COM-001",
+          "layer": "domain"
+        },
+        {
+          "ruleId": "COM-001",
+          "layer": "service"
+        },
+        {
+          "ruleId": "COM-002",
+          "layer": "domain"
+        },
+        {
+          "ruleId": "COM-002",
+          "layer": "service"
+        },
+        {
+          "ruleId": "COM-002",
+          "layer": "playwright"
+        },
+        {
+          "ruleId": "COM-004",
+          "layer": "domain"
+        },
+        {
+          "ruleId": "COM-005",
+          "layer": "domain"
+        },
+        {
+          "ruleId": "COM-005",
+          "layer": "service"
+        },
+        {
+          "ruleId": "BUS-004",
+          "layer": "service"
+        },
+        {
+          "ruleId": "TIME-001",
+          "layer": "runtime"
+        }
+      ]
+    },
+    {
+      "glob": "packages/finance-service/src/**",
+      "entrypoints": ["packages/finance-service/src/index.ts"],
+      "ruleIds": [
+        "COM-001",
+        "COM-002",
+        "COM-003",
+        "COM-005",
+        "FIN-001",
+        "FIN-002",
+        "FIN-003",
+        "FIN-004",
+        "TEN-001",
+        "TIME-001"
+      ],
+      "layers": ["domain", "service", "playwright", "runtime"],
+      "testBindings": [
+        {
+          "ruleId": "COM-001",
+          "layer": "domain",
+          "testId": "binding-338d40873054f4cd1ee2",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "packages/domain/src/commission.test.ts",
+          "title": "commission rules > COM-001 rounds a written commission half-up and makes it immediately payable",
+          "line": 39
+        },
+        {
+          "ruleId": "COM-001",
+          "layer": "service",
+          "testId": "binding-bcb7c4584954c3d2d640",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "packages/finance-service/src/finance-service.test.ts",
+          "title": "Finance service > written_accrues_on_bound_state",
+          "line": 101
+        },
+        {
+          "ruleId": "COM-002",
+          "layer": "domain",
+          "testId": "binding-e27db0f2bc5937d6d571",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "packages/domain/src/commission.test.ts",
+          "title": "commission rules > COM-002 becomes payable at the exact hold boundary without rewriting the accrual",
+          "line": 59
+        },
+        {
+          "ruleId": "COM-002",
+          "layer": "service",
+          "testId": "binding-fad8b85c92d3b1484a03",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "packages/finance-service/src/finance-service.test.ts",
+          "title": "Finance service > cash_first_accrues_only_settled_premium",
+          "line": 86
+        },
+        {
+          "ruleId": "COM-002",
+          "layer": "playwright",
+          "testId": "binding-332a160bc4d3f671de11",
+          "commandKey": "browser",
+          "runner": "playwright",
+          "file": "apps/crm-e2e/src/features/commission-refund.spec.ts",
+          "title": "commission corrections > @commission @finance @refund allocations reverse only selected settled premium commission",
+          "line": 36,
+          "tag": "@finance"
+        },
+        {
+          "ruleId": "COM-003",
+          "layer": "service",
+          "testId": "binding-9b42db8893bda966dfad",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "packages/finance-service/src/finance-service.test.ts",
+          "title": "Finance service > reverses_only_allocated_settled_premium_in_a_mixed_refund",
+          "line": 141
+        },
+        {
+          "ruleId": "COM-003",
+          "layer": "playwright",
+          "testId": "binding-53c37d00183e9c45c37a",
+          "commandKey": "browser",
+          "runner": "playwright",
+          "file": "apps/crm-e2e/src/features/commission-refund.spec.ts",
+          "title": "commission corrections > @commission @finance @refund allocations reverse only selected settled premium commission",
+          "line": 36,
+          "tag": "@refund"
+        },
+        {
+          "ruleId": "COM-005",
+          "layer": "domain",
+          "testId": "binding-d0a3b99ce059fcbd27f3",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "packages/domain/src/commission.test.ts",
+          "title": "commission rules > COM-005 projects linked payment without replacing the historical accrual",
+          "line": 70
+        },
+        {
+          "ruleId": "COM-005",
+          "layer": "service",
+          "testId": "binding-fda2f5f227e4adb5df5c",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "packages/finance-service/src/finance-service.test.ts",
+          "title": "Finance service > appends_commission_payment_without_rewriting_accrual",
+          "line": 204
+        },
+        {
+          "ruleId": "FIN-001",
+          "layer": "service",
+          "testId": "binding-5814d1a7e41871b2fdac",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "packages/finance-service/src/finance-service.test.ts",
+          "title": "Finance service > replays_commands_once_and_rejects_conflicting_input",
+          "line": 229
+        },
+        {
+          "ruleId": "FIN-002",
+          "layer": "service",
+          "testId": "binding-9bb406121555e978c4ee",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "packages/finance-service/src/finance-service.test.ts",
+          "title": "Finance service > cash_first_accrues_only_settled_premium",
+          "line": 86
+        },
+        {
+          "ruleId": "FIN-003",
+          "layer": "service",
+          "testId": "binding-191fca813151708cea8d",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "packages/finance-service/src/finance-service.test.ts",
+          "title": "Finance service > initializes_ledger_from_policy_state",
+          "line": 58
+        },
+        {
+          "ruleId": "FIN-003",
+          "layer": "playwright",
+          "testId": "binding-d6a591e5da26d0893b65",
+          "commandKey": "browser",
+          "runner": "playwright",
+          "file": "apps/crm-e2e/src/features/commission-refund.spec.ts",
+          "title": "commission corrections > @commission @finance @refund allocations reverse only selected settled premium commission",
+          "line": 36,
+          "tag": "@finance"
+        },
+        {
+          "ruleId": "FIN-004",
+          "layer": "service",
+          "testId": "binding-f114aa53c55e3db7815f",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "packages/finance-service/src/finance-service.test.ts",
+          "title": "Finance service > rejects_over_refund_or_cross_tenant_allocation",
+          "line": 174
+        },
+        {
+          "ruleId": "TEN-001",
+          "layer": "runtime",
+          "testId": "binding-a2e8e919b8f4b95a4bb2",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "packages/insurance-runtime/src/runtime.test.ts",
+          "title": "insurance runtime > same_command_ids_and_entity_ids_are_independent_across_tenants",
+          "line": 29
+        },
+        {
+          "ruleId": "TEN-001",
+          "layer": "service",
+          "testId": "binding-89807146f85051f94aea",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "packages/policy-state-service/src/policy-state-service.test.ts",
+          "title": "Policy State service > isolates_tenant_and_policy_ids_that_contain_key_delimiters",
+          "line": 171
+        },
+        {
+          "ruleId": "TEN-001",
+          "layer": "playwright",
+          "testId": "binding-1ac88c85356460b501fb",
+          "commandKey": "browser",
+          "runner": "playwright",
+          "file": "apps/crm-e2e/src/features/isolation.spec.ts",
+          "title": "@policy isolates concurrent browser journeys",
+          "line": 15,
+          "tag": "@policy"
+        },
+        {
+          "ruleId": "TIME-001",
+          "layer": "runtime",
+          "testId": "binding-8e7e605aa4c52351431b",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "packages/insurance-runtime/src/timestamps.test.ts",
+          "title": "UTC timestamp boundaries > policy_clock_rejection_leaves_each_command_retryable_without_partial_state",
+          "line": 44
+        }
+      ],
+      "ruleLayers": [
+        {
+          "ruleId": "COM-001",
+          "layer": "domain"
+        },
+        {
+          "ruleId": "COM-001",
+          "layer": "service"
+        },
+        {
+          "ruleId": "COM-002",
+          "layer": "domain"
+        },
+        {
+          "ruleId": "COM-002",
+          "layer": "service"
+        },
+        {
+          "ruleId": "COM-002",
+          "layer": "playwright"
+        },
+        {
+          "ruleId": "COM-003",
+          "layer": "service"
+        },
+        {
+          "ruleId": "COM-003",
+          "layer": "playwright"
+        },
+        {
+          "ruleId": "COM-005",
+          "layer": "domain"
+        },
+        {
+          "ruleId": "COM-005",
+          "layer": "service"
+        },
+        {
+          "ruleId": "FIN-001",
+          "layer": "service"
+        },
+        {
+          "ruleId": "FIN-002",
+          "layer": "service"
+        },
+        {
+          "ruleId": "FIN-003",
+          "layer": "service"
+        },
+        {
+          "ruleId": "FIN-003",
+          "layer": "playwright"
+        },
+        {
+          "ruleId": "FIN-004",
+          "layer": "service"
+        },
+        {
+          "ruleId": "TEN-001",
+          "layer": "runtime"
+        },
+        {
+          "ruleId": "TEN-001",
+          "layer": "service"
+        },
+        {
+          "ruleId": "TEN-001",
+          "layer": "playwright"
+        },
+        {
+          "ruleId": "TIME-001",
+          "layer": "runtime"
+        }
+      ]
+    },
+    {
+      "glob": "packages/policy-state-service/src/**",
+      "entrypoints": ["packages/policy-state-service/src/index.ts"],
+      "ruleIds": ["FIN-003", "PST-001", "PST-002", "TEN-001", "TIME-001"],
+      "layers": ["service", "playwright", "runtime"],
+      "testBindings": [
+        {
+          "ruleId": "FIN-003",
+          "layer": "service",
+          "testId": "binding-b20916e12a8abc9c57bc",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "packages/finance-service/src/finance-service.test.ts",
+          "title": "Finance service > initializes_ledger_from_policy_state",
+          "line": 58
+        },
+        {
+          "ruleId": "FIN-003",
+          "layer": "playwright",
+          "testId": "binding-7abba43434f4c2d7617c",
+          "commandKey": "browser",
+          "runner": "playwright",
+          "file": "apps/crm-e2e/src/features/commission-refund.spec.ts",
+          "title": "commission corrections > @commission @finance @refund allocations reverse only selected settled premium commission",
+          "line": 36,
+          "tag": "@finance"
+        },
+        {
+          "ruleId": "PST-001",
+          "layer": "service",
+          "testId": "binding-ab91952a0c18308669bf",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "packages/policy-state-service/src/policy-state-service.test.ts",
+          "title": "Policy State service > projects_bound_policy_and_publishes_state_change",
+          "line": 52
+        },
+        {
+          "ruleId": "PST-002",
+          "layer": "service",
+          "testId": "binding-dc97ec07d02b4982ad49",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "packages/policy-state-service/src/policy-state-service.test.ts",
+          "title": "Policy State service > ignores_duplicate_policy_lifecycle_delivery",
+          "line": 133
+        },
+        {
+          "ruleId": "TEN-001",
+          "layer": "runtime",
+          "testId": "binding-c79e1de24b70fdad14af",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "packages/insurance-runtime/src/runtime.test.ts",
+          "title": "insurance runtime > same_command_ids_and_entity_ids_are_independent_across_tenants",
+          "line": 29
+        },
+        {
+          "ruleId": "TEN-001",
+          "layer": "service",
+          "testId": "binding-9ac91834153f29479cfe",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "packages/policy-state-service/src/policy-state-service.test.ts",
+          "title": "Policy State service > isolates_tenant_and_policy_ids_that_contain_key_delimiters",
+          "line": 171
+        },
+        {
+          "ruleId": "TEN-001",
+          "layer": "playwright",
+          "testId": "binding-1bba958edcb950588479",
+          "commandKey": "browser",
+          "runner": "playwright",
+          "file": "apps/crm-e2e/src/features/isolation.spec.ts",
+          "title": "@policy isolates concurrent browser journeys",
+          "line": 15,
+          "tag": "@policy"
+        },
+        {
+          "ruleId": "TIME-001",
+          "layer": "runtime",
+          "testId": "binding-c7684f7d824f26229885",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "packages/insurance-runtime/src/timestamps.test.ts",
+          "title": "UTC timestamp boundaries > policy_clock_rejection_leaves_each_command_retryable_without_partial_state",
+          "line": 44
+        }
+      ],
+      "ruleLayers": [
+        {
+          "ruleId": "FIN-003",
+          "layer": "service"
+        },
+        {
+          "ruleId": "FIN-003",
+          "layer": "playwright"
+        },
+        {
+          "ruleId": "PST-001",
+          "layer": "service"
+        },
+        {
+          "ruleId": "PST-002",
+          "layer": "service"
+        },
+        {
+          "ruleId": "TEN-001",
+          "layer": "runtime"
+        },
+        {
+          "ruleId": "TEN-001",
+          "layer": "service"
+        },
+        {
+          "ruleId": "TEN-001",
+          "layer": "playwright"
+        },
+        {
+          "ruleId": "TIME-001",
+          "layer": "runtime"
+        }
+      ]
+    },
+    {
+      "glob": "packages/service-bus/src/**",
+      "entrypoints": ["packages/service-bus/src/index.ts"],
+      "ruleIds": ["BUS-001", "BUS-002", "BUS-003", "BUS-004", "TIME-001"],
+      "layers": ["service", "runtime"],
+      "testBindings": [
+        {
+          "ruleId": "BUS-001",
+          "layer": "service",
+          "testId": "binding-b93f3fd64b54e909d678",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "packages/service-bus/src/service-bus.test.ts",
+          "title": "in-memory service bus > delivers_once_per_consumer_and_preserves_delivery_log",
+          "line": 62
+        },
+        {
+          "ruleId": "BUS-002",
+          "layer": "service",
+          "testId": "binding-4cedbfa7101c26ede404",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "packages/service-bus/src/service-bus.test.ts",
+          "title": "in-memory service bus > drains_messages_in_publish_order",
+          "line": 95
+        },
+        {
+          "ruleId": "BUS-003",
+          "layer": "service",
+          "testId": "binding-488d8bdd8d76dc4c46fd",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "packages/service-bus/src/service-bus.test.ts",
+          "title": "in-memory service bus > leaves_failed_delivery_pending_for_a_deterministic_retry",
+          "line": 128
+        },
+        {
+          "ruleId": "BUS-003",
+          "layer": "runtime",
+          "testId": "binding-504f69ce6840d69a06d8",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "packages/insurance-runtime/src/runtime.test.ts",
+          "title": "insurance runtime > retries_pending_finance_delivery_without_duplicate_policy_or_commission_records",
+          "line": 107
+        },
+        {
+          "ruleId": "BUS-004",
+          "layer": "service",
+          "testId": "binding-152e1c1c7edee3705f12",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "packages/service-bus/src/immutable-delivery.test.ts",
+          "title": "immutable delivery > owns_nested_publisher_and_inspection_values_before_delivery",
+          "line": 20
+        },
+        {
+          "ruleId": "TIME-001",
+          "layer": "runtime",
+          "testId": "binding-f7102c32aacd3b84b73c",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "packages/insurance-runtime/src/timestamps.test.ts",
+          "title": "UTC timestamp boundaries > policy_clock_rejection_leaves_each_command_retryable_without_partial_state",
+          "line": 44
+        }
+      ],
+      "ruleLayers": [
+        {
+          "ruleId": "BUS-001",
+          "layer": "service"
+        },
+        {
+          "ruleId": "BUS-002",
+          "layer": "service"
+        },
+        {
+          "ruleId": "BUS-003",
+          "layer": "service"
+        },
+        {
+          "ruleId": "BUS-003",
+          "layer": "runtime"
+        },
+        {
+          "ruleId": "BUS-004",
+          "layer": "service"
+        },
+        {
+          "ruleId": "TIME-001",
+          "layer": "runtime"
+        }
+      ]
+    },
+    {
+      "glob": "packages/api-contracts/src/**",
+      "entrypoints": ["packages/api-contracts/src/index.ts"],
+      "ruleIds": ["TEN-001", "API-001", "API-002"],
+      "layers": ["runtime", "service", "playwright", "contract"],
+      "testBindings": [
+        {
+          "ruleId": "TEN-001",
+          "layer": "runtime",
+          "testId": "binding-ccf697e1bb003336aa28",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "packages/insurance-runtime/src/runtime.test.ts",
+          "title": "insurance runtime > same_command_ids_and_entity_ids_are_independent_across_tenants",
+          "line": 29
+        },
+        {
+          "ruleId": "TEN-001",
+          "layer": "service",
+          "testId": "binding-dd526aa71a178cf84534",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "packages/policy-state-service/src/policy-state-service.test.ts",
+          "title": "Policy State service > isolates_tenant_and_policy_ids_that_contain_key_delimiters",
+          "line": 171
+        },
+        {
+          "ruleId": "TEN-001",
+          "layer": "playwright",
+          "testId": "binding-c3ee252002de4b7b312e",
+          "commandKey": "browser",
+          "runner": "playwright",
+          "file": "apps/crm-e2e/src/features/isolation.spec.ts",
+          "title": "@policy isolates concurrent browser journeys",
+          "line": 15,
+          "tag": "@policy"
+        },
+        {
+          "ruleId": "API-001",
+          "layer": "contract",
+          "testId": "binding-4a9c06aebec818022b7f",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "packages/api-contracts/src/test-api.test.ts",
+          "title": "createTestApi > requires_independent_command_and_correlation_identities_before_mutation",
+          "line": 256
+        },
+        {
+          "ruleId": "API-002",
+          "layer": "contract",
+          "testId": "binding-35eeff12a0bb8d1d025e",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "packages/api-contracts/src/test-api.test.ts",
+          "title": "createTestApi > binds_over_http_and_exposes_finance_initialized_through_policy_state",
+          "line": 192
+        },
+        {
+          "ruleId": "API-002",
+          "layer": "playwright",
+          "testId": "binding-01911b2ced6b6181c499",
+          "commandKey": "browser",
+          "runner": "playwright",
+          "file": "apps/crm-e2e/src/features/browser-worker-crm.spec.ts",
+          "title": "@crm-worker starts the CRM with browser Test API handlers",
+          "line": 3,
+          "tag": "@crm-worker"
+        }
+      ],
+      "ruleLayers": [
+        {
+          "ruleId": "TEN-001",
+          "layer": "runtime"
+        },
+        {
+          "ruleId": "TEN-001",
+          "layer": "service"
+        },
+        {
+          "ruleId": "TEN-001",
+          "layer": "playwright"
+        },
+        {
+          "ruleId": "API-001",
+          "layer": "contract"
+        },
+        {
+          "ruleId": "API-002",
+          "layer": "contract"
+        },
+        {
+          "ruleId": "API-002",
+          "layer": "playwright"
+        }
+      ]
+    },
+    {
+      "glob": "tools/impact/src/**",
+      "entrypoints": ["tools/impact/src/changed-files.ts"],
+      "ruleIds": ["REG-001", "REG-002"],
+      "layers": ["contract"],
+      "testBindings": [
+        {
+          "ruleId": "REG-001",
+          "layer": "contract",
+          "testId": "binding-e52007eb05f4eb92c633",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/impact/src/validate.test.ts",
+          "title": "feature-map validation > reports stale tags instead of silently selecting zero Playwright tests",
+          "line": 24
+        },
+        {
+          "ruleId": "REG-002",
+          "layer": "contract",
+          "testId": "binding-8aafd77a2ee54488cb1b",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/impact/src/main-selection.test.ts",
+          "title": "main_executes_only_feature_tag_matches_and_exact_rule_references_in_a_shared_spec",
+          "line": 17
+        }
+      ],
+      "ruleLayers": [
+        {
+          "ruleId": "REG-001",
+          "layer": "contract"
+        },
+        {
+          "ruleId": "REG-002",
+          "layer": "contract"
+        }
+      ]
+    },
+    {
+      "glob": "apps/crm-web/src/features/quotes/**",
+      "entrypoints": ["apps/crm-web/src/features/quotes/quote-form.tsx"],
+      "ruleIds": ["UI-001"],
+      "layers": ["ui"],
+      "testBindings": [
+        {
+          "ruleId": "UI-001",
+          "layer": "ui",
+          "testId": "binding-acc9d78a8fce787b7677",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "apps/crm-web/src/test/api.test.ts",
+          "title": "api layer (http wrapper) > preserves the API recoverability contract on non-2xx responses",
+          "line": 28
+        }
+      ],
+      "ruleLayers": [
+        {
+          "ruleId": "UI-001",
+          "layer": "ui"
+        }
+      ]
+    },
+    {
+      "glob": "apps/crm-web/src/features/crm/use-command.ts",
+      "entrypoints": ["apps/crm-web/src/features/crm/use-command.ts"],
+      "ruleIds": ["UI-001"],
+      "layers": ["ui"],
+      "testBindings": [
+        {
+          "ruleId": "UI-001",
+          "layer": "ui",
+          "testId": "binding-56bf56a5118dd65b8505",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "apps/crm-web/src/test/api.test.ts",
+          "title": "api layer (http wrapper) > preserves the API recoverability contract on non-2xx responses",
+          "line": 28
+        }
+      ],
+      "ruleLayers": [
+        {
+          "ruleId": "UI-001",
+          "layer": "ui"
+        }
+      ]
+    },
+    {
+      "glob": "apps/crm-web/src/lib/http.ts",
+      "entrypoints": ["apps/crm-web/src/lib/http.ts"],
+      "ruleIds": ["UI-001"],
+      "layers": ["ui"],
+      "testBindings": [
+        {
+          "ruleId": "UI-001",
+          "layer": "ui",
+          "testId": "binding-4ed86ab8db0c767cfae9",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "apps/crm-web/src/test/api.test.ts",
+          "title": "api layer (http wrapper) > preserves the API recoverability contract on non-2xx responses",
+          "line": 28
+        }
+      ],
+      "ruleLayers": [
+        {
+          "ruleId": "UI-001",
+          "layer": "ui"
+        }
+      ]
+    },
+    {
+      "glob": "apps/crm-web/src/features/auth/**",
+      "entrypoints": ["apps/crm-web/src/features/auth/auth-context.tsx"],
+      "ruleIds": ["AUTH-001"],
+      "layers": ["ui"],
+      "testBindings": [
+        {
+          "ruleId": "AUTH-001",
+          "layer": "ui",
+          "testId": "binding-d484c1f6e0d430f6d731",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "apps/crm-web/src/test/rbac.test.tsx",
+          "title": "role-based access control > redirects a Manager away from a restricted route",
+          "line": 52
+        }
+      ],
+      "ruleLayers": [
+        {
+          "ruleId": "AUTH-001",
+          "layer": "ui"
+        }
+      ]
+    }
+  ],
+  "lifecycleMatrix": "test-impact/lifecycle-matrix.json",
+  "goldenWorkflowMatrix": "test-impact/workflows/crm-golden.json",
+  "ruleRegistry": "test-impact/rules.json"
+}
