@@ -1,0 +1,15 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "name": "impact-tools",
+  "projectType": "library",
+  "root": "tools/impact",
+  "sourceRoot": "tools/impact/src",
+  "targets": {
+    "test": {
+      "command": "pnpm exec vitest run tools/impact/src"
+    },
+    "typecheck": {
+      "command": "pnpm exec tsc --noEmit --allowImportingTsExtensions --target ES2022 --module NodeNext --moduleResolution NodeNext --strict tools/impact/src/*.ts"
+    }
+  }
+}

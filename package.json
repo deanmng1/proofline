@@ -17,7 +17,7 @@
     "test:e2e": "pnpm nx run crm-e2e:e2e",
     "e2e:ui": "pnpm exec playwright test --config apps/crm-e2e/playwright.config.ts --ui",
     "e2e:report": "pnpm exec playwright show-report",
-    "test:impacted": "pnpm test && pnpm test:e2e",
+    "test:impacted": "node --experimental-strip-types tools/impact/src/main.ts",
     "typecheck": "pnpm nx run crm-web:typecheck",
     "verify": "pnpm lint && pnpm typecheck && pnpm test && pnpm test:e2e",
     "lint": "biome check",

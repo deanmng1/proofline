@@ -12,6 +12,7 @@ blob-report/
 apps/crm-e2e/.cache/
 .nx/
 .superpowers/
+artifacts/
 
 # Local/AI tooling — not part of the distributed template
 .codegraph/
