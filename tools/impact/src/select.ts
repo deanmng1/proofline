@@ -2,11 +2,15 @@ import path from "node:path";
 import type {
   ChangedFile,
   ChangeManifest,
+  DiscoveredTests,
   FeatureMap,
   ImpactSelection,
+  PlaywrightIdentity,
+  RuleRegistry,
   TestCandidates,
+  VitestIdentity,
 } from "./types.ts";
-import { validateFeatureMap } from "./validate.ts";
+import { validateFeatureMap, validateRules } from "./validate.ts";
 
 type SelectionInput = {
   manifest: ChangeManifest;
@@ -21,6 +25,11 @@ const knownRoots = [
   "packages/domain/",
   "packages/api-contracts/",
   "packages/test-kit/",
+  "packages/service-bus/",
+  "packages/policy-service/",
+  "packages/policy-state-service/",
+  "packages/finance-service/",
+  "packages/insurance-runtime/",
   "tools/impact/",
 ];
 
@@ -31,6 +40,9 @@ const configurationFiles = new Set([
   "nx.json",
   "biome.json",
   "test-impact/features.json",
+  "test-impact/rules.json",
+  "test-impact/rules.schema.json",
+  "test-impact/coverage-baseline.json",
 ]);
 
 const sourceExtensions = ["", ".ts", ".tsx", ".js", ".jsx", "/index.ts", "/index.tsx"];
@@ -97,6 +109,12 @@ const resolveImport = (from: string, specifier: string, sourceFiles: Record<stri
     unextendedPath = "packages/api-contracts/src/index";
   } else if (specifier === "@testbed/test-kit") {
     unextendedPath = "packages/test-kit/src/index";
+  } else if (
+    /^@testbed\/(service-bus|policy-service|policy-state-service|finance-service|insurance-runtime)$/.test(
+      specifier,
+    )
+  ) {
+    unextendedPath = `packages/${specifier.slice("@testbed/".length)}/src/index`;
   }
 
   if (!unextendedPath) {
@@ -106,6 +124,62 @@ const resolveImport = (from: string, specifier: string, sourceFiles: Record<stri
   return sourceExtensions
     .map((extension) => `${unextendedPath}${extension}`)
     .find((candidate) => Object.hasOwn(sourceFiles, candidate));
+};
+
+export const vitestCommand = (test: VitestIdentity) => [
+  "exec",
+  "vitest",
+  "run",
+  ...(test.file.startsWith("apps/crm-web/") ? ["--config", "apps/crm-web/vite.config.ts"] : []),
+  test.file,
+  "--testNamePattern",
+  // List output uses " > " between suites; a test title can contain that literal too.
+  // Discovery rejects normalized-title collisions before either form can execute.
+  `^${test.title
+    .split(" > ")
+    .map((part) => part.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
+    .join("(?: > | )")}$`,
+];
+
+export const playwrightCommand = (tests: PlaywrightIdentity[]) => [
+  "exec",
+  "playwright",
+  "test",
+  "--config",
+  "apps/crm-e2e/playwright.config.ts",
+  "--project=chromium",
+  ...tests.map((test) => `${test.path}:${test.line}`),
+];
+
+export const selectRuleTests = (
+  paths: string[],
+  registry: RuleRegistry,
+  discovered: DiscoveredTests,
+) => {
+  const { errors } = validateRules(registry, discovered);
+  if (errors.length) throw new Error(errors.join("\n"));
+  const selected: DiscoveredTests = { vitest: [], playwright: [] };
+  const reasons: Record<string, string[]> = {};
+  for (const rule of registry.rules) {
+    if (!paths.some((file) => rule.paths.some((glob) => matchesGlob(file, glob)))) continue;
+    for (const reference of rule.vitest) {
+      const test = discovered.vitest.find(
+        (test) => test.file === reference.file && test.title === reference.title,
+      );
+      if (test && !selected.vitest.includes(test)) selected.vitest.push(test);
+      reasons[reference.title] ??= [];
+      reasons[reference.title].push(`rule:${rule.id}`);
+    }
+    for (const reference of rule.playwright) {
+      const test = discovered.playwright.find(
+        (test) => test.path === reference.path && test.line === reference.line,
+      );
+      if (test && !selected.playwright.includes(test)) selected.playwright.push(test);
+      reasons[reference.title] ??= [];
+      reasons[reference.title].push(`rule:${rule.id}`);
+    }
+  }
+  return { ...selected, reasons };
 };
 
 const importsFor = (source: string) => {

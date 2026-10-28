@@ -1,0 +1,476 @@
+{
+  "version": 1,
+  "rules": [
+    {
+      "id": "POL-001",
+      "description": "A quote binds once into an immutable policy; replay returns the original result.",
+      "criticality": "critical",
+      "paths": ["packages/policy-service/src/**", "packages/insurance-runtime/src/**"],
+      "vitest": [
+        {
+          "file": "packages/policy-service/src/policy-service.test.ts",
+          "title": "Policy service > binds_a_quote_once_and_publishes_policy_lifecycle_changed",
+          "line": 91
+        },
+        {
+          "file": "packages/insurance-runtime/src/runtime.test.ts",
+          "title": "insurance runtime > bind_chain_is_idempotent_across_all_consumers",
+          "line": 54
+        }
+      ],
+      "playwright": [
+        {
+          "path": "apps/crm-e2e/src/features/quote-bind-finance.spec.ts",
+          "title": "@quote @policy @finance creates, binds, and funds a Risk Secure Plus policy",
+          "line": 3,
+          "tag": "@quote"
+        }
+      ]
+    },
+    {
+      "id": "POL-002",
+      "description": "Quote ownership and command payload identities are checked before publishing.",
+      "criticality": "critical",
+      "paths": ["packages/policy-service/src/**"],
+      "vitest": [
+        {
+          "file": "packages/policy-service/src/policy-service.test.ts",
+          "title": "Policy service > rejects_same_command_id_with_different_payload",
+          "line": 159
+        },
+        {
+          "file": "packages/policy-service/src/policy-service.test.ts",
+          "title": "Policy service > rejects_property_from_another_tenant_or_customer",
+          "line": 172
+        }
+      ],
+      "playwright": []
+    },
+    {
+      "id": "POL-003",
+      "description": "Cancellation advances a bound policy to terminal revision two.",
+      "criticality": "critical",
+      "paths": ["packages/policy-service/src/**", "packages/insurance-runtime/src/**"],
+      "vitest": [
+        {
+          "file": "packages/policy-service/src/policy-service.test.ts",
+          "title": "Policy service > transitions_bound_policy_to_cancelled_at_next_revision",
+          "line": 116
+        },
+        {
+          "file": "packages/insurance-runtime/src/runtime.test.ts",
+          "title": "insurance runtime > cancellation_is_terminal_and_replay_does_not_restore_bound_state",
+          "line": 121
+        }
+      ],
+      "playwright": []
+    },
+    {
+      "id": "COM-001",
+      "description": "Written commission rounds half-up in integer cents and is immediately payable.",
+      "criticality": "critical",
+      "paths": ["packages/domain/src/**", "packages/finance-service/src/**"],
+      "vitest": [
+        {
+          "file": "packages/domain/src/commission.test.ts",
+          "title": "commission rules > COM-001 rounds a written commission half-up and makes it immediately payable",
+          "line": 39
+        },
+        {
+          "file": "packages/finance-service/src/finance-service.test.ts",
+          "title": "Finance service > written_accrues_on_bound_state",
+          "line": 96
+        }
+      ],
+      "playwright": []
+    },
+    {
+      "id": "COM-002",
+      "description": "Cash-first commission accrues only on settled premiums and is payable at its exact UTC hold boundary.",
+      "criticality": "critical",
+      "paths": ["packages/domain/src/**", "packages/finance-service/src/**"],
+      "vitest": [
+        {
+          "file": "packages/domain/src/commission.test.ts",
+          "title": "commission rules > COM-002 becomes payable at the exact hold boundary without rewriting the accrual",
+          "line": 59
+        },
+        {
+          "file": "packages/finance-service/src/finance-service.test.ts",
+          "title": "Finance service > cash_first_accrues_only_settled_premium",
+          "line": 81
+        }
+      ],
+      "playwright": [
+        {
+          "path": "apps/crm-e2e/src/features/commission-refund.spec.ts",
+          "title": "commission corrections > @commission @finance @refund allocations reverse only selected settled premium commission",
+          "line": 36,
+          "tag": "@finance"
+        }
+      ]
+    },
+    {
+      "id": "COM-003",
+      "description": "Allocated refunds reverse only eligible premium commission incrementally, retaining source identity and cumulative rounding.",
+      "criticality": "critical",
+      "paths": ["packages/finance-service/src/**"],
+      "vitest": [
+        {
+          "file": "packages/finance-service/src/finance-service.test.ts",
+          "title": "Finance service > reverses_only_allocated_settled_premium_in_a_mixed_refund",
+          "line": 136
+        },
+        {
+          "file": "packages/finance-service/src/finance-service.test.ts",
+          "title": "Finance service > preserves_allocation_identity_and_rounds_partial_refunds_cumulatively",
+          "line": 402
+        },
+        {
+          "file": "packages/finance-service/src/finance-service.test.ts",
+          "title": "Finance service > honors_reverse_on_refund_and_caps_written_reversal_at_bound_accrual",
+          "line": 458
+        }
+      ],
+      "playwright": [
+        {
+          "path": "apps/crm-e2e/src/features/commission-refund.spec.ts",
+          "title": "commission corrections > @commission @finance @refund allocations reverse only selected settled premium commission",
+          "line": 36,
+          "tag": "@refund"
+        }
+      ]
+    },
+    {
+      "id": "COM-004",
+      "description": "Malformed or negative commission plans fail at the domain boundary.",
+      "criticality": "critical",
+      "paths": ["packages/domain/src/**"],
+      "vitest": [
+        {
+          "file": "packages/domain/src/commission.test.ts",
+          "title": "commission rules > COM-004 rejects malformed or negative commission plans at the domain boundary",
+          "line": 29
+        }
+      ],
+      "playwright": []
+    },
+    {
+      "id": "COM-005",
+      "description": "Commission payment appends a linked record without rewriting historical accrual.",
+      "criticality": "critical",
+      "paths": ["packages/domain/src/**", "packages/finance-service/src/**"],
+      "vitest": [
+        {
+          "file": "packages/domain/src/commission.test.ts",
+          "title": "commission rules > COM-005 projects linked payment without replacing the historical accrual",
+          "line": 70
+        },
+        {
+          "file": "packages/finance-service/src/finance-service.test.ts",
+          "title": "Finance service > appends_commission_payment_without_rewriting_accrual",
+          "line": 199
+        }
+      ],
+      "playwright": []
+    },
+    {
+      "id": "FIN-001",
+      "description": "Finance commands create append-only entries once; conflicting replay fails and command identity remains independent of workflow correlation.",
+      "criticality": "critical",
+      "paths": ["packages/finance-service/src/**"],
+      "vitest": [
+        {
+          "file": "packages/finance-service/src/finance-service.test.ts",
+          "title": "Finance service > replays_commands_once_and_rejects_conflicting_input",
+          "line": 224
+        },
+        {
+          "file": "packages/finance-service/src/finance-service.test.ts",
+          "title": "Finance service > distinct_commands_share_workflow_correlation_and_retry_independently",
+          "line": 241
+        }
+      ],
+      "playwright": []
+    },
+    {
+      "id": "FIN-002",
+      "description": "Deposits and claim payments never create commission; deposit refunds never reverse it.",
+      "criticality": "critical",
+      "paths": ["packages/finance-service/src/**"],
+      "vitest": [
+        {
+          "file": "packages/finance-service/src/finance-service.test.ts",
+          "title": "Finance service > cash_first_accrues_only_settled_premium",
+          "line": 81
+        },
+        {
+          "file": "packages/finance-service/src/finance-service.test.ts",
+          "title": "Finance service > does_not_reverse_an_allocated_deposit_refund",
+          "line": 115
+        }
+      ],
+      "playwright": []
+    },
+    {
+      "id": "FIN-003",
+      "description": "Finance initializes only from approved Policy State and rejects an uninitialized policy.",
+      "criticality": "critical",
+      "paths": ["packages/finance-service/src/**", "packages/policy-state-service/src/**"],
+      "vitest": [
+        {
+          "file": "packages/finance-service/src/finance-service.test.ts",
+          "title": "Finance service > initializes_ledger_from_policy_state",
+          "line": 53
+        },
+        {
+          "file": "packages/finance-service/src/finance-service.test.ts",
+          "title": "Finance service > rejects_finance_events_for_uninitialized_policy",
+          "line": 65
+        }
+      ],
+      "playwright": [
+        {
+          "path": "apps/crm-e2e/src/features/commission-refund.spec.ts",
+          "title": "commission corrections > @commission @finance @refund allocations reverse only selected settled premium commission",
+          "line": 36,
+          "tag": "@finance"
+        }
+      ]
+    },
+    {
+      "id": "FIN-004",
+      "description": "Refunds reject foreign/nonrefundable sources, duplicate allocations, and over-refunds atomically.",
+      "criticality": "critical",
+      "paths": ["packages/finance-service/src/**"],
+      "vitest": [
+        {
+          "file": "packages/finance-service/src/finance-service.test.ts",
+          "title": "Finance service > rejects_over_refund_or_cross_tenant_allocation",
+          "line": 169
+        },
+        {
+          "file": "packages/finance-service/src/finance-service.test.ts",
+          "title": "Finance service > validates_full_refund_atomically_and_rechecks_queued_balance",
+          "line": 323
+        },
+        {
+          "file": "packages/finance-service/src/finance-service.test.ts",
+          "title": "Finance service > requires_unique_nonempty_allocation_ids_before_publishing",
+          "line": 438
+        },
+        {
+          "file": "packages/finance-service/src/finance-service.test.ts",
+          "title": "Finance service > rejects_refund_sources_that_are_claims_or_other_policies",
+          "line": 367
+        }
+      ],
+      "playwright": []
+    },
+    {
+      "id": "BUS-001",
+      "description": "Each consumer processes a message once and preserves its delivery log.",
+      "criticality": "critical",
+      "paths": ["packages/service-bus/src/**"],
+      "vitest": [
+        {
+          "file": "packages/service-bus/src/service-bus.test.ts",
+          "title": "in-memory service bus > delivers_once_per_consumer_and_preserves_delivery_log",
+          "line": 62
+        }
+      ],
+      "playwright": []
+    },
+    {
+      "id": "BUS-002",
+      "description": "Bus delivery is FIFO and nested publications join the queue tail.",
+      "criticality": "critical",
+      "paths": ["packages/service-bus/src/**"],
+      "vitest": [
+        {
+          "file": "packages/service-bus/src/service-bus.test.ts",
+          "title": "in-memory service bus > drains_messages_in_publish_order",
+          "line": 95
+        },
+        {
+          "file": "packages/service-bus/src/service-bus.test.ts",
+          "title": "in-memory service bus > appends_nested_publications_to_the_queue_tail",
+          "line": 110
+        }
+      ],
+      "playwright": []
+    },
+    {
+      "id": "BUS-003",
+      "description": "A failed delivery stays pending for deterministic retry without repeating earlier successful consumers.",
+      "criticality": "critical",
+      "paths": ["packages/service-bus/src/**", "packages/insurance-runtime/src/**"],
+      "vitest": [
+        {
+          "file": "packages/service-bus/src/service-bus.test.ts",
+          "title": "in-memory service bus > leaves_failed_delivery_pending_for_a_deterministic_retry",
+          "line": 128
+        },
+        {
+          "file": "packages/insurance-runtime/src/runtime.test.ts",
+          "title": "insurance runtime > retries_pending_finance_delivery_without_duplicate_policy_or_commission_records",
+          "line": 107
+        }
+      ],
+      "playwright": []
+    },
+    {
+      "id": "PST-001",
+      "description": "Policy State projects complete approved snapshots and publishes the corresponding state change.",
+      "criticality": "critical",
+      "paths": ["packages/policy-state-service/src/**"],
+      "vitest": [
+        {
+          "file": "packages/policy-state-service/src/policy-state-service.test.ts",
+          "title": "Policy State service > projects_bound_policy_and_publishes_state_change",
+          "line": 52
+        },
+        {
+          "file": "packages/policy-state-service/src/policy-state-service.test.ts",
+          "title": "Policy State service > projects_valid_cancelled_revision",
+          "line": 106
+        }
+      ],
+      "playwright": []
+    },
+    {
+      "id": "PST-002",
+      "description": "Policy State ignores duplicate/older messages and rejects conflicting or skipped revisions.",
+      "criticality": "critical",
+      "paths": ["packages/policy-state-service/src/**"],
+      "vitest": [
+        {
+          "file": "packages/policy-state-service/src/policy-state-service.test.ts",
+          "title": "Policy State service > ignores_duplicate_policy_lifecycle_delivery",
+          "line": 133
+        },
+        {
+          "file": "packages/policy-state-service/src/policy-state-service.test.ts",
+          "title": "Policy State service > ignores_stale_policy_state_revision",
+          "line": 150
+        },
+        {
+          "file": "packages/policy-state-service/src/policy-state-service.test.ts",
+          "title": "Policy State service > rejects_conflicting_same_revision",
+          "line": 208
+        },
+        {
+          "file": "packages/policy-state-service/src/policy-state-service.test.ts",
+          "title": "Policy State service > rejects_skipped_or_invalid_lifecycle_transition",
+          "line": 223
+        }
+      ],
+      "playwright": []
+    },
+    {
+      "id": "TEN-001",
+      "description": "Tenant/entity identities and fresh runtimes isolate policy, ledger, and bus state.",
+      "criticality": "critical",
+      "paths": [
+        "packages/insurance-runtime/src/**",
+        "packages/policy-state-service/src/**",
+        "packages/finance-service/src/**",
+        "packages/api-contracts/src/**"
+      ],
+      "vitest": [
+        {
+          "file": "packages/insurance-runtime/src/runtime.test.ts",
+          "title": "insurance runtime > same_command_ids_and_entity_ids_are_independent_across_tenants",
+          "line": 29
+        },
+        {
+          "file": "packages/insurance-runtime/src/runtime.test.ts",
+          "title": "insurance runtime > fresh_runtimes_do_not_share_bus_or_ledger_state",
+          "line": 79
+        },
+        {
+          "file": "packages/policy-state-service/src/policy-state-service.test.ts",
+          "title": "Policy State service > isolates_tenant_and_policy_ids_that_contain_key_delimiters",
+          "line": 171
+        },
+        {
+          "file": "packages/finance-service/src/finance-service.test.ts",
+          "title": "Finance service > isolates_same_command_and_policy_ids_across_tenants_and_detaches_snapshots",
+          "line": 336
+        }
+      ],
+      "playwright": [
+        {
+          "path": "apps/crm-e2e/src/features/isolation.spec.ts",
+          "title": "@policy isolates concurrent browser journeys",
+          "line": 15,
+          "tag": "@policy"
+        }
+      ]
+    },
+    {
+      "id": "API-001",
+      "description": "HTTP mutations require tenant, command, and independent workflow identities before mutation or retry drainage.",
+      "criticality": "critical",
+      "paths": ["packages/api-contracts/src/**", "packages/insurance-runtime/src/**"],
+      "vitest": [
+        {
+          "file": "packages/api-contracts/src/test-api.test.ts",
+          "title": "createTestApi > requires_independent_command_and_correlation_identities_before_mutation",
+          "line": 256
+        },
+        {
+          "file": "packages/api-contracts/src/test-api.test.ts",
+          "title": "createTestApi > rejects_missing_or_cross_tenant_request_context",
+          "line": 147
+        },
+        {
+          "file": "packages/api-contracts/src/test-api.test.ts",
+          "title": "createTestApi > rejects_foreign_quote_references_before_retrying_pending_finance_delivery",
+          "line": 33
+        }
+      ],
+      "playwright": []
+    },
+    {
+      "id": "API-002",
+      "description": "The Test API and browser worker use the composed event-driven runtime for bind and finance.",
+      "criticality": "critical",
+      "paths": ["packages/api-contracts/src/**", "packages/insurance-runtime/src/**"],
+      "vitest": [
+        {
+          "file": "packages/api-contracts/src/test-api.test.ts",
+          "title": "createTestApi > binds_over_http_and_exposes_finance_initialized_through_policy_state",
+          "line": 192
+        },
+        {
+          "file": "packages/api-contracts/src/test-api.test.ts",
+          "title": "createTestApi > uses the identical contract through MSW handlers",
+          "line": 269
+        }
+      ],
+      "playwright": [
+        {
+          "path": "apps/crm-e2e/src/features/browser-worker-crm.spec.ts",
+          "title": "@crm-worker starts the CRM with browser Test API handlers",
+          "line": 3,
+          "tag": "@crm-worker"
+        }
+      ]
+    },
+    {
+      "id": "REG-001",
+      "description": "Stale or missing regression ownership must fail validation.",
+      "criticality": "critical",
+      "paths": ["tools/impact/src/**"],
+      "vitest": [
+        {
+          "file": "tools/impact/src/validate.test.ts",
+          "title": "feature-map validation > reports stale tags instead of silently selecting zero Playwright tests",
+          "line": 24
+        }
+      ],
+      "playwright": []
+    }
+  ]
+}

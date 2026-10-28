@@ -7,6 +7,14 @@
   "targets": {
     "test": {
       "command": "pnpm exec vitest run packages/test-kit/src --passWithNoTests"
+    },
+    "coverage": {
+      "command": "pnpm exec vitest run packages/test-kit/src --passWithNoTests --coverage --coverage.all --coverage.provider=v8 --coverage.reportOnFailure --coverage.reportsDirectory=artifacts/coverage/test-kit --coverage.reporter=text --coverage.reporter=html --coverage.reporter=lcov --coverage.reporter=json-summary --coverage.include='packages/test-kit/src/**/*.{ts,tsx}' --coverage.exclude='**/*.test.{ts,tsx}' --coverage.exclude='**/*.d.ts'",
+      "outputs": ["{workspaceRoot}/artifacts/coverage/test-kit"],
+      "cache": false
+    },
+    "typecheck": {
+      "command": "pnpm exec tsc --noEmit --target ES2022 --module ESNext --moduleResolution Bundler --strict --jsx react-jsx --esModuleInterop --skipLibCheck packages/test-kit/src/*.ts packages/test-kit/src/*.tsx"
     }
   }
 }

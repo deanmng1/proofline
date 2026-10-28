@@ -29,11 +29,19 @@ the run-specific evidence for impacted-test decisions. They are intentionally
 ignored build artifacts; the JSONL record retains the command and outcome
 needed to reproduce them.
 
-Use `artifacts/coverage/<project>/coverage-summary.json` for the measured
-line, branch, function, and statement baseline of `crm-web`, `domain`, and
-`api-contracts`. Record the coverage command and report locations, but do not
-turn a first baseline into a threshold policy without a reviewed product
-decision.
+Use `artifacts/coverage/<project>/coverage-summary.json` for measured line,
+branch, function, and statement coverage. The approved scoped policy is in
+`test-impact/coverage-baseline.json`: seven critical service, Test API, and
+validator files may not regress on any metric. `pnpm coverage:check` normalizes
+report paths to repository-relative names, fails for missing evidence, and
+writes `artifacts/coverage/ratchet.json`. There is no global coverage target.
+Record any reviewed baseline change with its reason and evidence.
+
+Run `pnpm record:check` to reject malformed/empty JSONL lines, invalid fields,
+absolute scope/artifact paths, duplicate event IDs, or `rules.md` drift. Only
+one trailing newline is allowed; blank interior lines are invalid. The
+machine-readable rule registry is authoritative; `pnpm rules:generate` writes
+its deterministic human-readable view. CI validates but never edits the record.
 
 ## Future Codex/Cursor adapter boundary
 
@@ -53,6 +61,12 @@ The portable core must remain Node/shell/JSON based. An IDE integration may
 add rich views, prompts, or navigation, but it should never be the only place
 where decisions, test ownership, or verification evidence exists.
 
+Agents author and review tests and ownership rules before merge. Normal CI
+uses no agent or model tokens: it runs deterministic discovery, validation,
+selected execution, full Vitest/Chromium gates, and coverage/record checks.
+Future Cursor and Codex adapters consume the same checked-in JSON and JSONL
+artifacts and invoke these same commands without requiring this conversation.
+
 ## Guardrails for an automated test author
 
 - Read existing rules and the execution record before proposing tests.
@@ -60,7 +74,8 @@ where decisions, test ownership, or verification evidence exists.
   in fixtures or records.
 - Add an acceptance rule ID before a new business behavior.
 - Use fresh Test API state per test and isolate each browser context.
-- Update `test-impact/features.json` with every test-owner or tag change.
+- Update `test-impact/features.json` and `rules.json` with every test-owner,
+  exact-title, line, or tag change; regenerate `rules.md`.
 - Fail closed when ownership, tags, Git history, or discovery is uncertain.
 - Record the review, its fixes, and final verification before describing work
   as complete.

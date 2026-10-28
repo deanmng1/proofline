@@ -5,9 +5,16 @@
   "root": "packages/finance-service",
   "sourceRoot": "packages/finance-service/src",
   "targets": {
-    "test": { "command": "pnpm exec vitest run packages/finance-service/src" },
+    "test": {
+      "command": "pnpm exec vitest run packages/finance-service/src"
+    },
     "typecheck": {
       "command": "pnpm exec tsc --noEmit --target ES2022 --module ESNext --moduleResolution Bundler --strict packages/finance-service/src/*.ts"
+    },
+    "coverage": {
+      "command": "pnpm exec vitest run packages/finance-service/src --coverage --coverage.all --coverage.provider=v8 --coverage.reportOnFailure --coverage.reportsDirectory=artifacts/coverage/finance-service --coverage.reporter=text --coverage.reporter=html --coverage.reporter=lcov --coverage.reporter=json-summary --coverage.include='packages/finance-service/src/**/*.{ts,tsx}' --coverage.exclude='**/*.test.{ts,tsx}' --coverage.exclude='**/*.d.ts'",
+      "outputs": ["{workspaceRoot}/artifacts/coverage/finance-service"],
+      "cache": false
     }
   }
 }

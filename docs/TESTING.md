@@ -8,7 +8,8 @@ chooses a fast, explainable first pass.
 ## Rule-to-regression workflow
 
 1. Write an acceptance example with a stable rule ID in
-   [`test-impact/rules.md`](../test-impact/rules.md). State the input, the
+   [`test-impact/rules.json`](../test-impact/rules.json), then run
+   `pnpm rules:generate` to update the checked-in Markdown catalog. State the input, the
    expected ledger/policy/commission outcome, and the rule ID (for example,
    `COM-002` for cash-first commission).
 2. Add a deterministic Vitest rule test in `packages/domain/src`. Use integer
@@ -19,9 +20,11 @@ chooses a fast, explainable first pass.
 4. Add a Playwright journey only when the value crosses screens or guards a
    real browser regression. Reuse the Test API fixture; it aborts unexpected
    CRM API calls instead of reaching a provider or live service.
-5. Update `test-impact/features.json` when paths, Vitest files, or Playwright
-   tags change. Review this metadata with the production change: a stale tag
-   intentionally makes the selector fail safe.
+5. Update `test-impact/features.json` and the rule registry when ownership or
+   tests change. Each critical rule needs deterministic Vitest evidence with
+   its full discovered title, file, and line. Supplemental Playwright evidence
+   needs the exact spec, nested title, line, and tag. A tag elsewhere in the
+   same spec is not evidence. Run discovery to refresh moved locations.
 6. Run the selected tests and then the complete gate before merging.
 
 ```bash
@@ -32,17 +35,23 @@ pnpm test:impacted -- --dry-run
 IMPACT_BASE=main IMPACT_HEAD=HEAD pnpm test:impacted
 
 # Required release-quality safety gate.
-pnpm lint && pnpm typecheck && pnpm test && pnpm e2e
+pnpm lint && pnpm typecheck && pnpm test:impacted -- --dry-run && pnpm test && pnpm e2e
 
 # Generate line, branch, function, and statement baselines for production code.
-pnpm coverage
+pnpm coverage && pnpm coverage:check && pnpm record:check
 ```
 
-`pnpm coverage` creates separate CRM web, domain, and Test API reports below
+`pnpm coverage` includes CRM web, domain, Test API, all five service/runtime
+packages, test-kit, and impact-tools targets. Reports live below
 `artifacts/coverage/`. Open a project's `index.html` for the local HTML
 report; `lcov.info` and `coverage-summary.json` support later CI dashboards or
-threshold discussions. This is a baseline, not a percentage gate: included
-but untested production files intentionally appear with zero coverage.
+threshold discussions. `test-impact/coverage-baseline.json` ratchets each
+line, branch, function, and statement percentage for seven reviewed critical
+files: service bus, Policy, Policy State, Finance, runtime, Test API, and the
+impact validator. Missing reports/files/metrics and lower coverage fail.
+There is no global percentage gate; untested template code remains visible.
+Baseline reductions require a recorded review decision. Raise the checked-in
+metrics after reviewing improved reports; ordinary CI never rewrites them.
 Vitest preserves those reports when a covered suite fails; CI still reports
 the failure and uploads the available coverage evidence after dependency
 installation succeeds.
@@ -60,12 +69,22 @@ installation succeeds.
 
 `pnpm test:impacted` builds a manifest in `artifacts/impact/manifest.json`
 and selection in `artifacts/impact/selection.json`. The selection is a union
-of changed tests, static imports, and reviewed feature metadata. Each chosen
-file records its reason.
+of changed tests, static imports, reviewed feature metadata, and rule ownership.
+`discovery.json` records actual runner identities; `selection.json` retains
+both file-selection and rule reasons plus the exact selected identities.
+Vitest discovery runs `list --json --includeTaskLocation`, using the CRM Vite
+configuration for UI tests. Execution batches only selected anchored full
+titles in the same file. Playwright execution uses exact `file:line` locations.
+Selected runs never substitute a whole Nx test project. The later full gates
+still run every test.
 
 The selector runs **all** tests if it cannot make a safe claim: Git history
 is missing, configuration changes, an executable path has no owner, or feature
-metadata has stale Playwright tags. Do not suppress that fallback.
+metadata has stale Playwright tags. Invalid or ambiguous evidence/discovery
+also fails the command and writes an `executionBlocked` fallback artifact.
+Missing/malformed registries, duplicate IDs, critical rules without Vitest,
+undiscovered references, and generated Markdown drift cannot pass a dry run.
+Do not suppress that fallback or its failure.
 
 Playwright saves the HTML report in `playwright-report/` and failures in
 `test-results/` (trace, screenshot, and video where configured). These,
@@ -86,8 +105,11 @@ protocol and the adapter boundary for a future Codex or Cursor integration.
 
 Pull requests check out full Git history, install dependencies, lint and
 typecheck, preview impact selection, run selected tests, run all Vitest
-projects, then run the complete Chromium suite and generate coverage for the
-production-bearing projects. The workflow supplies the PR base and head
+projects, then run the complete Chromium suite and generate/check coverage.
+CI validates the JSONL record and generated catalog. Playwright retries remain
+available for diagnostics, but CI sets `failOnFlakyTests`: passing on a retry
+still fails the gate. Local runs do not enable this setting.
+The workflow supplies the PR base and head
 explicitly to prevent selection from guessing at CI history.
 
 No test path should use live Epay, GhostDraft, Smarty, Sage, or other provider

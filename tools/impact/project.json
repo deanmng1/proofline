@@ -10,6 +10,11 @@
     },
     "typecheck": {
       "command": "pnpm exec tsc --noEmit --allowImportingTsExtensions --target ES2022 --module NodeNext --moduleResolution NodeNext --strict tools/impact/src/*.ts"
+    },
+    "coverage": {
+      "command": "pnpm exec vitest run tools/impact/src --coverage --coverage.all --coverage.provider=v8 --coverage.reportOnFailure --coverage.reportsDirectory=artifacts/coverage/impact-tools --coverage.reporter=text --coverage.reporter=html --coverage.reporter=lcov --coverage.reporter=json-summary --coverage.include='tools/impact/src/**/*.{ts,tsx}' --coverage.exclude='**/*.test.{ts,tsx}' --coverage.exclude='**/*.d.ts'",
+      "outputs": ["{workspaceRoot}/artifacts/coverage/impact-tools"],
+      "cache": false
     }
   }
 }

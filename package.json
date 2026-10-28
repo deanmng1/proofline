@@ -12,7 +12,7 @@
     "build": "pnpm nx run crm-web:build",
     "preview": "pnpm nx run crm-web:preview",
     "test": "pnpm nx run-many --target=test --all",
-    "coverage": "pnpm nx run-many --target=coverage --projects=domain,api-contracts,crm-web --parallel=1 --output-style=static",
+    "coverage": "pnpm nx run-many --target=coverage --all --parallel=1 --output-style=static",
     "test:watch": "pnpm nx run crm-web:test-watch",
     "e2e": "pnpm nx run crm-e2e:e2e",
     "test:e2e": "pnpm nx run crm-e2e:e2e",
@@ -20,13 +20,16 @@
     "e2e:report": "pnpm exec playwright show-report",
     "test:impacted": "node --experimental-strip-types tools/impact/src/main.ts",
     "test:impacted:dry-run": "pnpm test:impacted -- --dry-run",
-    "typecheck": "pnpm nx run-many --target=typecheck --projects=crm-web,domain,api-contracts,impact-tools",
+    "typecheck": "pnpm nx run-many --target=typecheck --all",
     "verify": "pnpm lint && pnpm typecheck && pnpm test && pnpm test:e2e",
     "lint": "biome check",
     "lint:fix": "biome check --write",
     "format": "biome format --write .",
     "format:check": "biome format .",
-    "prepare": "husky"
+    "prepare": "husky",
+    "coverage:check": "node --experimental-strip-types tools/impact/src/coverage-policy.ts",
+    "record:check": "node --experimental-strip-types tools/impact/src/record-check.ts",
+    "rules:generate": "node --experimental-strip-types tools/impact/src/main.ts --generate-rules"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx,json,css,html,svg}": [

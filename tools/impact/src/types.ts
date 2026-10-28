@@ -28,6 +28,23 @@ export type FeatureMap = {
 export type PlaywrightCandidate = {
   path: string;
   tags: string[];
+  title?: string;
+  line?: number;
+};
+
+export type VitestIdentity = { file: string; title: string; line: number };
+export type PlaywrightIdentity = { path: string; title: string; line: number; tags: string[] };
+export type DiscoveredTests = { vitest: VitestIdentity[]; playwright: PlaywrightIdentity[] };
+export type RuleRegistry = {
+  version: 1;
+  rules: {
+    id: string;
+    description: string;
+    criticality: "critical" | "standard";
+    paths: string[];
+    vitest: VitestIdentity[];
+    playwright: { path: string; title: string; line: number; tag: string }[];
+  }[];
 };
 
 export type TestCandidates = {

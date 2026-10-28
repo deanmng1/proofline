@@ -5,9 +5,16 @@
   "root": "packages/insurance-runtime",
   "sourceRoot": "packages/insurance-runtime/src",
   "targets": {
-    "test": { "command": "pnpm exec vitest run packages/insurance-runtime/src" },
+    "test": {
+      "command": "pnpm exec vitest run packages/insurance-runtime/src"
+    },
     "typecheck": {
       "command": "pnpm exec tsc --noEmit --target ES2022 --module ESNext --moduleResolution Bundler --strict packages/insurance-runtime/src/*.ts"
+    },
+    "coverage": {
+      "command": "pnpm exec vitest run packages/insurance-runtime/src --coverage --coverage.all --coverage.provider=v8 --coverage.reportOnFailure --coverage.reportsDirectory=artifacts/coverage/insurance-runtime --coverage.reporter=text --coverage.reporter=html --coverage.reporter=lcov --coverage.reporter=json-summary --coverage.include='packages/insurance-runtime/src/**/*.{ts,tsx}' --coverage.exclude='**/*.test.{ts,tsx}' --coverage.exclude='**/*.d.ts'",
+      "outputs": ["{workspaceRoot}/artifacts/coverage/insurance-runtime"],
+      "cache": false
     }
   }
 }

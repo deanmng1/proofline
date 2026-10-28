@@ -45,6 +45,9 @@ jobs:
       - name: Typecheck
         run: pnpm typecheck
 
+      - name: Validate portable execution record and generated catalog
+        run: pnpm record:check
+
       - name: Install Chromium
         run: pnpm exec playwright install --with-deps chromium
 
@@ -59,12 +62,15 @@ jobs:
         run: pnpm test:impacted
 
       - name: Run full Vitest safety gate
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
         shell: bash
         run: |
+          mkdir -p artifacts
           set -o pipefail
           pnpm test 2>&1 | tee artifacts/vitest-output.txt
 
       - name: Run full Chromium safety gate
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
         run: pnpm e2e
 
       - name: Generate Vitest coverage baseline
@@ -74,6 +80,10 @@ jobs:
           mkdir -p artifacts
           set -o pipefail
           pnpm coverage 2>&1 | tee artifacts/coverage-output.txt
+
+      - name: Check scoped critical-file coverage ratchets
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
+        run: pnpm coverage:check
 
       - name: Upload coverage baseline
         if: ${{ always() }}
