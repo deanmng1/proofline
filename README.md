@@ -1,4 +1,8 @@
-# Insurance CRM regression testbed
+# Proofline
+
+A deterministic, agent-authored regression harness for React/Vite apps—Vitest service and UI tests, Playwright end-to-end journeys, coverage ratchets, change-aware test selection, and portable execution evidence.
+
+## Reference implementation
 
 A production-shaped **React 19 + Vite 6 + TypeScript** insurance CRM reference application and regression-testing harness. It models Risk Secure and Risk Secure Plus quoting, binding, finance events, and commission timing without requiring a live backend or provider account.
 
