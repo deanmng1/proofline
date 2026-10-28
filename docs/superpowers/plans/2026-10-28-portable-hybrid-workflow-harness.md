@@ -226,6 +226,9 @@ git commit -m "feat: enforce merge-base coverage and evidence governance"
 - Modify: `packages/api-contracts/src/test-api.ts`
 - Modify: `packages/api-contracts/src/test-api.test.ts`
 - Modify: `apps/crm-web/src/features/crm/crm-api.ts`
+- Modify: `apps/crm-web/src/features/crm/use-command.ts`
+- Modify: `apps/crm-web/src/features/customers/customer-list-page.tsx`
+- Modify: `apps/crm-web/src/features/crm-workflow.test.tsx`
 
 **Interfaces:**
 
@@ -238,9 +241,11 @@ git commit -m "feat: enforce merge-base coverage and evidence governance"
 
 Add tests named `restores_command_accepted_before_delivery_without_repeating_mutation`, `restores_after_one_consumer_receipt_and_finance_failure`, `replays_same_command_after_recreation_without_duplicate_policy_projection_or_ledger`, and `projects_cancelled_policy_status_in_list_and_detail_queries`. Snapshot at named crash points using the existing one-time Finance failure transport; reconstruct a new runtime from the checkpoint and assert command IDs, messages, consumer receipts, policy state, ledger entries, and generated IDs remain deterministic.
 
+Add customer and property intake regressions that prove each mutation requires a stable command/correlation identity, an accepted-but-response-lost retry reuses that identity and returns the original generated entity, and neither runtime/API nor UI state appends a duplicate. These intake cases must exercise the same conservative retry contract as quote, bind, and finance commands rather than relying only on checkpoint snapshots.
+
 - [ ] **Step 2: Run focused service/runtime/API tests to verify they fail**
 
-Run: `pnpm exec vitest run packages/service-bus/src/service-bus.test.ts packages/policy-service/src/policy-service.test.ts packages/policy-state-service/src/policy-state-service.test.ts packages/finance-service/src/finance-service.test.ts packages/insurance-runtime/src/runtime.test.ts packages/api-contracts/src/test-api.test.ts`
+Run: `pnpm exec vitest run packages/service-bus/src/service-bus.test.ts packages/policy-service/src/policy-service.test.ts packages/policy-state-service/src/policy-state-service.test.ts packages/finance-service/src/finance-service.test.ts packages/insurance-runtime/src/runtime.test.ts packages/api-contracts/src/test-api.test.ts && pnpm exec vitest run --config apps/crm-web/vite.config.ts apps/crm-web/src/features/crm-workflow.test.tsx`
 
 Expected: FAIL because state is closure-only, the bus cannot restore receipts/queue, and a cancelled policy still exposes `bound` policy facts.
 
@@ -248,11 +253,13 @@ Expected: FAIL because state is closure-only, the bus cannot restore receipts/qu
 
 Keep each service's mutable store private. Add clone/freeze-based snapshot and restore functions that serialize only receipts, state records, generated identity sequence, published envelopes, queue, completed consumer receipts, and delivery diagnostics. Hydrate the bus before replay; recreate subscriptions through normal service construction; then hydrate stores and runtime receipts. Preserve current idempotency fingerprints and make a replay first drain pending delivery before it returns the stored result. Update Policy's transition record/query snapshot so its public status advances to `cancelled`, while Policy State still owns the chronological projection.
 
+Move customer/property creation behind the runtime command-receipt boundary, require identity fields in the Test API, and keep the UI command identity stable across an uncertain response and retry. Hydration must preserve intake receipts and generated IDs exactly as it preserves quote, bind, and finance identities.
+
 - [ ] **Step 4: Verify focused recovery evidence**
 
-Run: `pnpm exec vitest run packages/service-bus/src/service-bus.test.ts packages/policy-service/src/policy-service.test.ts packages/policy-state-service/src/policy-state-service.test.ts packages/finance-service/src/finance-service.test.ts packages/insurance-runtime/src/runtime.test.ts packages/api-contracts/src/test-api.test.ts`
+Run: `pnpm exec vitest run packages/service-bus/src/service-bus.test.ts packages/policy-service/src/policy-service.test.ts packages/policy-state-service/src/policy-state-service.test.ts packages/finance-service/src/finance-service.test.ts packages/insurance-runtime/src/runtime.test.ts packages/api-contracts/src/test-api.test.ts && pnpm exec vitest run --config apps/crm-web/vite.config.ts apps/crm-web/src/features/crm-workflow.test.tsx`
 
-Expected: PASS; a recreation drains pending work exactly once and API replay exposes a recoverable pending result before final success.
+Expected: PASS; a recreation drains pending work exactly once, API replay exposes a recoverable pending result before final success, and lost customer/property responses replay the same accepted mutation without duplicate entities.
 
 - [ ] **Step 5: Commit durable service behavior**
 
@@ -289,6 +296,8 @@ git commit -m "feat: add recoverable runtime checkpoints"
 - [ ] **Step 1: Write failing production-negative and runner-egress tests**
 
 Add `rejects_test_markers_in_a_production_bundle`, `allows_only_declared_loopback_runner_requests`, `denies_fetch_http_https_websocket_and_inherited_child_egress`, and `refuses_test_entry_without_a_launcher_capability`. The egress tests must spawn a child Node process so environment propagation is proven, not assumed.
+
+Use a bounded plane table to prove deterministic denial and diagnostics for runner `fetch`, HTTP, HTTPS, WebSocket, inherited child requests, and the actual server/runtime startup path. The launch-path test must prove the guard preload is installed before application code can dispatch an undeclared request.
 
 - [ ] **Step 2: Run the focused Proofline tool tests to verify they fail**
 
@@ -343,9 +352,11 @@ git commit -m "feat: isolate test entrypoints and deny runner egress"
 
 Add Playwright fixture tests named `starts_unauthenticated_and_logs_in_through_routed_auth`, `fails_an_undeclared_browser_request_with_scenario_context`, `cleans_up_after_a_failed_scenario_assertion`, and `rejects_role_and_cross_tenant_mutations_through_the_test_api`. Include a multi-context test that shares one runtime only when explicitly created from the same scenario, and assert separate tests receive different runtime IDs.
 
+Add bounded egress-plane cases for page requests, worker requests, service-worker registration/cleanup policy, and browser WebSocket interception (or a deterministic fail-closed unsupported-platform result). Add parameterized isolation cases that write distinguishable scenario state, prove unique worker server ports, and demonstrate no state/storage leakage under multiple workers and across both shard halves.
+
 - [ ] **Step 2: Run the fixture contract specs to verify they fail**
 
-Run: `pnpm exec playwright test --config apps/crm-e2e/playwright.config.ts apps/crm-e2e/src/fixtures/scenario-contract.spec.ts --project=chromium`
+Run: `pnpm exec playwright test --config apps/crm-e2e/playwright.config.ts apps/crm-e2e/src/fixtures/scenario-contract.spec.ts --project=chromium --workers=2 && pnpm exec playwright test --config apps/crm-e2e/playwright.config.ts apps/crm-e2e/src/fixtures/scenario-contract.spec.ts --project=chromium --shard=1/2 && pnpm exec playwright test --config apps/crm-e2e/playwright.config.ts apps/crm-e2e/src/fixtures/scenario-contract.spec.ts --project=chromium --shard=2/2`
 
 Expected: FAIL because the current page-only fixture seeds authenticated local storage, routes only `/api/**`, uses a shared fixed preview server, and has no role authority boundary.
 
@@ -357,9 +368,9 @@ Use one Test API/runtime for a scenario. Have the fixture attach test-only beare
 
 - [ ] **Step 4: Run fixture and Test API contract suites**
 
-Run: `pnpm exec vitest run packages/api-contracts/src/test-api.test.ts && pnpm exec playwright test --config apps/crm-e2e/playwright.config.ts apps/crm-e2e/src/fixtures/scenario-contract.spec.ts --project=chromium`
+Run: `pnpm exec vitest run packages/api-contracts/src/test-api.test.ts && pnpm exec playwright test --config apps/crm-e2e/playwright.config.ts apps/crm-e2e/src/fixtures/scenario-contract.spec.ts --project=chromium --workers=2 && pnpm exec playwright test --config apps/crm-e2e/playwright.config.ts apps/crm-e2e/src/fixtures/scenario-contract.spec.ts --project=chromium --shard=1/2 && pnpm exec playwright test --config apps/crm-e2e/playwright.config.ts apps/crm-e2e/src/fixtures/scenario-contract.spec.ts --project=chromium --shard=2/2`
 
-Expected: PASS; direct route and HTTP authority violations fail, unexpected egress is recorded, and cleanup leaves no scenario state for the next test.
+Expected: PASS; direct route and HTTP authority violations fail, every enabled browser egress plane is denied or fails closed with diagnostics, cleanup leaves no scenario state for the next test, and multi-worker plus both shard runs prove isolated runtime state and server ports.
 
 - [ ] **Step 5: Commit composed browser isolation**
 
@@ -485,6 +496,7 @@ git commit -m "docs: record portable workflow harness verification"
 - Real navigation, protected deep links/login/logout, recovery, role/tenant behavior, and optional cross-browser smoke are Task 7.
 - Target adaptation guidance, portability toward a future skill/plugin, complete evidence, and all required gates are Task 8.
 - State-model test generation is intentionally not implemented; Task 1 supplies only the portable lifecycle contract needed to add it later.
+- Post-plan acceptance audit assigned the previously implicit intake command-identity/response-loss proof to Task 4 and made per-plane egress plus parallel/shard isolation proof explicit in Tasks 5–6.
 
 ### Step and interface consistency
 
