@@ -16,6 +16,11 @@
     "test": {
       "command": "pnpm exec vitest run --config apps/crm-web/vite.config.ts"
     },
+    "coverage": {
+      "command": "pnpm exec vitest run --config apps/crm-web/vite.config.ts --coverage",
+      "outputs": ["{workspaceRoot}/artifacts/coverage/crm-web"],
+      "cache": false
+    },
     "test-watch": {
       "command": "pnpm exec vitest --config apps/crm-web/vite.config.ts",
       "cache": false

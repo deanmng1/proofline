@@ -29,5 +29,19 @@ export default defineConfig({
       "**/.{idea,git,cache,output,temp}/**",
       "**/coverage/**",
     ],
+    coverage: {
+      all: true,
+      provider: "v8",
+      reportsDirectory: "../../artifacts/coverage/crm-web",
+      reporter: ["text", "html", "lcov", "json-summary"],
+      include: ["src/**/*.{ts,tsx}"],
+      exclude: [
+        "src/**/*.test.{ts,tsx}",
+        "src/test/**",
+        "src/mocks/**",
+        "src/**/*.d.ts",
+        "src/main.tsx",
+      ],
+    },
   },
 });
