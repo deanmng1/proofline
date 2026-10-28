@@ -17,7 +17,11 @@ const text = z.string().refine((value) => value.trim().length > 0, "Expected non
 const strings = z.array(text).min(1);
 const layer = z.enum(["domain", "service", "runtime", "contract", "ui", "playwright"]);
 const commandSchema = z
-  .object({ argv: z.array(text).min(1), cwd: z.union([z.literal("."), relativePath]) })
+  .object({
+    argv: z.array(text).min(1),
+    cwd: z.union([z.literal("."), relativePath]),
+    runner: z.enum(["vitest", "playwright"]).optional(),
+  })
   .strict();
 const identity = { file: relativePath, title: text, line: z.number().int().positive() };
 const bindingBase = { ruleId: text, layer, testId: text, commandKey: text, ...identity };
@@ -99,7 +103,7 @@ export const harnessManifestSchema = z
     browser: z
       .object({
         projects: z
-          .array(text)
+          .array(z.enum(["chromium", "firefox", "webkit"]))
           .min(1)
           .refine((projects) => projects.includes("chromium"), "Chromium is required"),
         crossBrowserSmokeProjects: z.array(z.enum(["firefox", "webkit"])),
@@ -352,6 +356,21 @@ const validateHarnessUnchecked = ({
   const commandKey = (key: string) => {
     if (!manifest.commands[key]) errors.push(`Unknown command key: ${key}`);
   };
+  const canonicalRunners: Record<string, "vitest" | "playwright" | null> = {
+    lint: null,
+    typecheck: null,
+    unit: "vitest",
+    browser: "playwright",
+    coverage: null,
+    coverageCheck: null,
+    recordCheck: null,
+  };
+  const commandRole = (key: string, runner: "vitest" | "playwright") => {
+    const actual = Object.hasOwn(canonicalRunners, key)
+      ? canonicalRunners[key]
+      : manifest.commands[key]?.runner;
+    if (actual !== runner) errors.push(`Command ${key} has no ${runner} test role`);
+  };
   const executable = (name: string) => {
     if (name.includes("/") || name.includes("\\")) return false;
     return [
@@ -367,6 +386,12 @@ const validateHarnessUnchecked = ({
     });
   };
   for (const [key, command] of Object.entries(manifest.commands)) {
+    if (
+      command.runner &&
+      Object.hasOwn(canonicalRunners, key) &&
+      command.runner !== canonicalRunners[key]
+    )
+      errors.push(`Command ${key} runner conflicts with its canonical role`);
     if (!inspectPath(command.cwd, "directory")) continue;
     const [binary, ...args] = command.argv;
     if (!executable(binary)) {
@@ -413,10 +438,15 @@ const validateHarnessUnchecked = ({
   unique(workspacePaths, "workspace");
   for (const workspace of manifest.workspaces) {
     inspectPath(workspace.path, "directory");
-    if (workspace.unitCommand) commandKey(workspace.unitCommand);
-    else if (!workspace.browserCommands.length)
+    if (workspace.unitCommand) {
+      commandKey(workspace.unitCommand);
+      commandRole(workspace.unitCommand, "vitest");
+    } else if (!workspace.browserCommands.length)
       errors.push(`${workspace.path}: workspace has no test command`);
-    for (const key of workspace.browserCommands) commandKey(key);
+    for (const key of workspace.browserCommands) {
+      commandKey(key);
+      commandRole(key, "playwright");
+    }
     unique(workspace.browserCommands, "workspace browser command");
   }
   const files: string[] = [];
@@ -489,6 +519,9 @@ const validateHarnessUnchecked = ({
   for (const project of manifest.browser.crossBrowserSmokeProjects)
     if (!manifest.browser.projects.includes(project))
       errors.push(`Smoke project ${project} is not enabled`);
+  for (const project of manifest.browser.projects)
+    if (project !== "chromium" && !manifest.browser.crossBrowserSmokeProjects.includes(project))
+      errors.push(`Enabled browser ${project} requires a declared smoke scope`);
   for (const file of [
     manifest.adapters.testModeEnvironment,
     manifest.adapters.auth,
@@ -500,6 +533,26 @@ const validateHarnessUnchecked = ({
     manifest.coverage.map((group) => group.report),
     "coverage report",
   );
+  unique(
+    manifest.coverage.map((group) =>
+      JSON.stringify([
+        group.workspace,
+        [...group.sourceGlobs].sort(),
+        group.exclusions.map((exclusion) => exclusion.glob).sort(),
+      ]),
+    ),
+    "coverage source group",
+  );
+  for (const file of files) {
+    const reports = manifest.coverage
+      .filter(
+        (group) =>
+          group.sourceGlobs.some((glob) => path.matchesGlob(file, glob)) &&
+          !group.exclusions.some((exclusion) => path.matchesGlob(file, exclusion.glob)),
+      )
+      .map((group) => group.report);
+    if (reports.length > 1) errors.push(`Ambiguous coverage source ${file}: ${reports.join(", ")}`);
+  }
   for (const group of manifest.coverage) {
     unique(group.sourceGlobs, "coverage source glob");
     for (const glob of group.sourceGlobs) inspectGlob(glob);
@@ -563,6 +616,7 @@ const validateHarnessUnchecked = ({
         errors.push(`Unbound layer ${ownedLayer} for ${owner.glob}`);
     for (const binding of owner.testBindings) {
       commandKey(binding.commandKey);
+      commandRole(binding.commandKey, binding.runner);
       if (!owner.ruleIds.includes(binding.ruleId) || !owner.layers.includes(binding.layer))
         errors.push(`Unowned binding ${binding.testId}`);
       if ((binding.layer === "playwright") !== (binding.runner === "playwright"))

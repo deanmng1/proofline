@@ -440,3 +440,98 @@ test("preserves_exact_test_title_whitespace", () => {
   manifest.ownership[0].testBindings[0].title += " ";
   expect(validateHarness({ cwd, manifest }).errors.join(" ")).toMatch(/identity|catalog/);
 });
+
+test("rejects_non_test_command_roles_even_when_workspace_and_binding_agree", () => {
+  const { cwd, manifest } = fixture();
+  for (const commandKey of [
+    "lint",
+    "typecheck",
+    "coverage",
+    "coverageCheck",
+    "recordCheck",
+    "browser",
+  ]) {
+    const bad = structuredClone(manifest);
+    bad.workspaces[0].unitCommand = commandKey;
+    bad.ownership[0].testBindings[0].commandKey = commandKey;
+    expect(validateHarness({ cwd, manifest: bad }).errors.join(" ")).toMatch(/command.*role/i);
+  }
+  for (const commandKey of ["lint", "coverage", "unit"]) {
+    const bad = structuredClone(manifest);
+    bad.workspaces[0].browserCommands = [commandKey];
+    bad.ownership[0].testBindings[1].commandKey = commandKey;
+    expect(validateHarness({ cwd, manifest: bad }).errors.join(" ")).toMatch(/command.*role/i);
+  }
+});
+
+test("requires_explicit_runner_roles_for_custom_test_commands", () => {
+  const { cwd, manifest } = fixture();
+  manifest.workspaces[0].unitCommand = "serve";
+  manifest.ownership[0].testBindings[0].commandKey = "serve";
+  expect(validateHarness({ cwd, manifest }).errors.join(" ")).toMatch(/command.*role/i);
+  const custom = {
+    ...manifest,
+    commands: { ...manifest.commands, serve: { ...manifest.commands.serve, runner: "vitest" } },
+  };
+  expect(validateHarness({ cwd, manifest: custom }).errors).toEqual([]);
+  const conflict = {
+    ...custom,
+    commands: { ...custom.commands, lint: { ...custom.commands.lint, runner: "vitest" } },
+  };
+  expect(validateHarness({ cwd, manifest: conflict }).errors.join(" ")).toMatch(/command.*role/i);
+});
+
+test("rejects_duplicate_and_overlapping_coverage_sources_across_reports", () => {
+  const { cwd, manifest } = fixture();
+  for (const sourceGlobs of [manifest.coverage[0].sourceGlobs, ["app/src/value.ts"]]) {
+    const bad = structuredClone(manifest);
+    bad.coverage.push({
+      ...structuredClone(bad.coverage[0]),
+      sourceGlobs,
+      report: "artifacts/coverage/duplicate/coverage-summary.json",
+    });
+    expect(validateHarness({ cwd, manifest: bad }).errors.join(" ")).toMatch(
+      /duplicate coverage source|ambiguous coverage source/i,
+    );
+  }
+});
+
+test("allows_disjoint_effective_coverage_sources_when_exclusions_partition_groups", () => {
+  const { cwd, manifest } = fixture();
+  manifest.coverage.push({
+    ...structuredClone(manifest.coverage[0]),
+    sourceGlobs: ["app/src/value.test.ts"],
+    exclusions: [],
+    report: "artifacts/coverage/second/coverage-summary.json",
+  });
+  expect(validateHarness({ cwd, manifest }).errors).toEqual([]);
+  manifest.coverage[0].exclusions = [];
+  expect(validateHarness({ cwd, manifest }).errors.join(" ")).toMatch(
+    /ambiguous coverage source.*value.test.ts/i,
+  );
+});
+
+test("requires_explicit_smoke_scope_for_every_supported_non_chromium_browser", () => {
+  const { cwd, manifest } = fixture();
+  for (const project of ["firefox", "webkit"]) {
+    const browser = { ...manifest.browser, projects: ["chromium", project] };
+    expect(validateHarness({ cwd, manifest: { ...manifest, browser } }).errors.join(" ")).toMatch(
+      /smoke/i,
+    );
+    expect(
+      validateHarness({
+        cwd,
+        manifest: { ...manifest, browser: { ...browser, crossBrowserSmokeProjects: [project] } },
+      }).errors,
+    ).toEqual([]);
+  }
+  expect(
+    validateHarness({
+      cwd,
+      manifest: {
+        ...manifest,
+        browser: { ...manifest.browser, projects: ["chromium", "custom-browser"] },
+      },
+    }).errors.join(" "),
+  ).toMatch(/projects/);
+});

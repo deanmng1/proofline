@@ -133,10 +133,16 @@ never executes a manifest command or imports a test module.
 
 The reusable schemas and types live in `tools/impact/src/harness-manifest.ts`.
 Commands contain an executable and arguments plus a repository-relative `cwd`;
-workspace command fields reference those keys. A browser-only workspace may
+workspace command fields reference those keys. Canonical `unit` and `browser`
+commands have fixed Vitest and Playwright roles; other canonical gates cannot
+be used as test commands. Custom test commands must declare `runner: "vitest"`
+or `runner: "playwright"`, matching their workspace slots and test bindings.
+A browser-only workspace may
 set `unitCommand: null`; an empty `browserCommands` list requires an explicit
 `browserOptOutReason`. Chromium is mandatory; optional Firefox/WebKit smoke
-projects must also be enabled in `browser.projects`.
+projects must also be enabled in `browser.projects`; every enabled Firefox or
+WebKit project must declare smoke scope. Other project names are unsupported
+until the manifest schema defines their browser and execution scope.
 
 Ownership rows declare explicit `ruleLayers` pairs, each requiring exact evidence.
 Bindings name a globally unique stable `testId`, rule, layer, command key, runner,
@@ -163,7 +169,10 @@ points at the existing development entrypoint and adapters; the subsequent
 isolation task replaces these with the capability-gated test entrypoint.
 
 The initial seven coverage groups correspond exactly to the existing critical
-ratchet reports, not every Nx coverage output. Existing business-rule ownership
+ratchet reports, not every Nx coverage output. Coverage groups must have unique
+workspace/source/exclusion identities, and no existing effective source file
+may belong to multiple groups. Exclusions can partition otherwise overlapping
+source globs into disjoint groups. Existing business-rule ownership
 is consolidated so no current file has multiple owners. Unmapped template and
 new runtime code remains unclassified and must force the full impact gate; a
 manifest validation pass alone does not claim complete behavioral coverage.
