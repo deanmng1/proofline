@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Portable test automation execution record",
+  "description": "One JSON object per line in execution-record.jsonl. Paths are repository-relative so another IDE agent can read and extend the same history.",
+  "type": "object",
+  "required": ["schemaVersion", "eventId", "recordedAt", "phase", "kind", "status", "summary"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "eventId": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]*$" },
+    "recordedAt": { "type": "string", "format": "date-time" },
+    "phase": {
+      "enum": ["design", "review", "planning", "implementation", "verification", "decision"]
+    },
+    "kind": { "type": "string" },
+    "status": { "enum": ["completed", "passed", "failed", "deferred"] },
+    "summary": { "type": "string", "minLength": 1 },
+    "scope": { "type": "array", "items": { "type": "string" } },
+    "command": { "type": "string" },
+    "exitCode": { "type": "integer" },
+    "evidence": { "type": "array", "items": { "type": "string" } },
+    "decisions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["ruling", "reason"],
+        "properties": {
+          "ruling": { "type": "string" },
+          "reason": { "type": "string" },
+          "costIfWrong": { "type": "string" }
+        }
+      }
+    },
+    "artifacts": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": false
+}

@@ -1,5 +1,10 @@
 import type { DomainEvent, DomainState } from "@testbed/domain";
-import { applyEvent, emptyDomainState } from "@testbed/domain";
+import {
+  applyEvent,
+  emptyDomainState,
+  isCommissionPlan,
+  projectCommissionEntries,
+} from "@testbed/domain";
 
 import type {
   ApiError,
@@ -62,6 +67,7 @@ function policyLedger(
   state: DomainState,
   policyId: string,
   auditSourceEventIds: ReadonlySet<string>,
+  now: string,
 ): PolicyLedger | undefined {
   const policy = state.policies[policyId];
   if (!policy) {
@@ -75,7 +81,9 @@ function policyLedger(
     policy,
     quote,
     financeEntries: state.financeEntries.filter((entry) => entry.policyId === policyId),
-    commissionEntries: state.commissionEntries.filter((entry) => entry.policyId === policyId),
+    commissionEntries: projectCommissionEntries(state.commissionEntries, now).filter(
+      (entry) => entry.policyId === policyId,
+    ),
     auditEntries: state.auditEntries.filter((entry) =>
       auditSourceEventIds.has(entry.sourceEventId),
     ),
@@ -175,7 +183,7 @@ export function createTestApi(seed: TestSeed = {}, options: TestApiOptions = {})
       !propertyId ||
       (product !== "risk_secure" && product !== "risk_secure_plus") ||
       premiumCents === undefined ||
-      !isRecord(commissionPlan)
+      !isCommissionPlan(commissionPlan)
     ) {
       return error(
         400,
@@ -291,7 +299,7 @@ export function createTestApi(seed: TestSeed = {}, options: TestApiOptions = {})
       domain = applyEvent(domain, event, now);
       associateAuditEvent(event);
       return json(
-        policyLedger(domain, policyId, policyAuditSourceEventIds.get(policyId) ?? new Set()),
+        policyLedger(domain, policyId, policyAuditSourceEventIds.get(policyId) ?? new Set(), now),
         201,
       );
     } catch (cause) {
@@ -350,6 +358,7 @@ export function createTestApi(seed: TestSeed = {}, options: TestApiOptions = {})
           domain,
           policyId,
           policyAuditSourceEventIds.get(policyId) ?? new Set(),
+          now,
         );
         return ledger
           ? json(ledger)

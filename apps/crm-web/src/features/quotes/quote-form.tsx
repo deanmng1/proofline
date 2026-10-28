@@ -173,6 +173,11 @@ export const QuoteForm = () => {
               Create quote
             </Button>
           </form>
+          {quoteMutation.isError ? (
+            <p className="mt-3 text-sm text-rose-600" role="alert">
+              Quote could not be created. Check the quote details and try again.
+            </p>
+          ) : null}
         </section>
         <section className="rounded-[1.25rem] border border-[var(--border)] bg-[var(--surface)] p-5">
           <h2 className="text-lg font-semibold">Open quotes</h2>
@@ -206,6 +211,11 @@ export const QuoteForm = () => {
           {boundQuote ? (
             <p className="mt-4 rounded-lg bg-[var(--muted)] p-3 text-sm" role="status">
               {describeCommission(boundQuote)} · <span className="font-semibold">COM-002</span>
+            </p>
+          ) : null}
+          {bindMutation.isError ? (
+            <p className="mt-3 text-sm text-rose-600" role="alert">
+              Quote could not be bound. Refresh the quote and try again.
             </p>
           ) : null}
           {bindMutation.data ? (

@@ -65,12 +65,18 @@ const matchesGlob = (value: string, glob: string) => {
 const isConfigurationChange = (file: string) =>
   configurationFiles.has(file) ||
   file.startsWith(".github/") ||
+  /(?:^|\/)package\.json$/.test(file) ||
+  /(?:^|\/)tsconfig(?:\.[^/]+)?\.json$/.test(file) ||
   file.endsWith("/project.json") ||
   /(?:^|\/)vite\.config\.[^/]+$/.test(file) ||
   /(?:^|\/)playwright\.config\.[^/]+$/.test(file);
 
 const hasUnknownExecutableOwner = (file: string) =>
   /^(apps|packages|tools)\//.test(file) && !knownRoots.some((root) => file.startsWith(root));
+
+const isRuntimeFile = (file: string) =>
+  knownRoots.some((root) => file.startsWith(root)) &&
+  (file.includes("/src/") || /\.(?:css|json)$/.test(file));
 
 const addReason = (reasons: Map<string, Set<string>>, test: string, reason: string) => {
   const existing = reasons.get(test) ?? new Set<string>();
@@ -196,11 +202,13 @@ export const selectImpact = ({
   const closures = new Map(
     allCandidates.map((candidate) => [candidate, dependencyClosure(candidate, sourceFiles)]),
   );
+  const unmappedRuntimePaths: string[] = [];
 
   for (const changed of manifest.files) {
     const changedTestDirectly = pathVariants(changed).some((changedPath) =>
       allCandidates.includes(changedPath),
     );
+    let hasSelectionEvidence = changedTestDirectly;
 
     for (const candidate of allCandidates) {
       if (pathVariants(changed).includes(candidate)) {
@@ -212,6 +220,7 @@ export const selectImpact = ({
       for (const changedPath of pathVariants(changed)) {
         if (closure.has(changedPath)) {
           addReason(reasons, candidate, `static-import:${changedPath}`);
+          hasSelectionEvidence = true;
         }
       }
     }
@@ -225,6 +234,7 @@ export const selectImpact = ({
         );
 
     for (const feature of matchedFeatures) {
+      hasSelectionEvidence = true;
       for (const test of feature.vitest) {
         if (vitestCandidates.has(test)) {
           addReason(reasons, test, `feature:${feature.id}`);
@@ -237,6 +247,20 @@ export const selectImpact = ({
         }
       }
     }
+
+    for (const changedPath of pathVariants(changed)) {
+      if (isRuntimeFile(changedPath) && !hasSelectionEvidence) {
+        unmappedRuntimePaths.push(changedPath);
+      }
+    }
+  }
+
+  if (unmappedRuntimePaths.length > 0) {
+    return selectAll(
+      candidates,
+      validation.errors,
+      sortUnique(unmappedRuntimePaths.map((changedPath) => `unmapped-runtime:${changedPath}`)),
+    );
   }
 
   const selected = sortUnique(reasons.keys());

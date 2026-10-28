@@ -60,6 +60,15 @@ Playwright saves the HTML report in `playwright-report/` and failures in
 along with impact manifests and the full-Vitest log, are uploaded by
 `verify.yml` on failure or when selection falls back to the complete suite.
 
+## Portable execution record
+
+The append-only
+[`test-impact/execution-record.jsonl`](../test-impact/execution-record.jsonl)
+records design, review, implementation, verification, evidence, and durable
+decisions in a tool-neutral form. See
+[`PORTABLE_TEST_AUTOMATION.md`](PORTABLE_TEST_AUTOMATION.md) for the recording
+protocol and the adapter boundary for a future Codex or Cursor integration.
+
 ## CI order
 
 Pull requests check out full Git history, install dependencies, lint and

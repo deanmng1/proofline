@@ -109,11 +109,10 @@ export const readChangedFiles = ({
 }): ChangeManifest => {
   const head = resolveRevision(cwd, env.IMPACT_HEAD || env.GITHUB_SHA || "HEAD") ?? "HEAD";
   const ci = env.CI === "true";
-  const baseCandidates = ci
-    ? [env.IMPACT_BASE, env.GITHUB_BASE_SHA].filter((candidate): candidate is string =>
-        Boolean(candidate),
-      )
-    : ["origin/main", "main", "HEAD~1"];
+  const explicitBases = [env.IMPACT_BASE, env.GITHUB_BASE_SHA].filter(
+    (candidate): candidate is string => Boolean(candidate),
+  );
+  const baseCandidates = ci ? explicitBases : [...explicitBases, "origin/main", "main", "HEAD~1"];
   const base = baseCandidates
     .map((candidate) => {
       const result = git(cwd, ["merge-base", candidate, head]);

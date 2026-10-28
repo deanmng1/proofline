@@ -1,6 +1,7 @@
 import { describe, expect, test } from "vitest";
 
 import { applyEvent, emptyDomainState } from "./apply-event";
+import { projectCommissionEntries } from "./commission";
 import { moneyFromBasisPoints } from "./money";
 
 const createdAt = "2026-01-01T00:00:00.000Z";
@@ -40,6 +41,21 @@ function bindQuote() {
 }
 
 describe("commission rules", () => {
+  test("COM-004 rejects malformed or negative commission plans at the domain boundary", () => {
+    expect(() =>
+      applyEvent(
+        emptyDomainState(),
+        createQuote({
+          timing: "on_bind",
+          rateBasisPoints: -1_000,
+          holdPeriodDays: 0,
+          reverseOnRefund: true,
+        }),
+        createdAt,
+      ),
+    ).toThrow("Commission rate basis points must be a non-negative safe integer.");
+  });
+
   test("COM-001 rounds a written commission half-up and makes it payable on bind", () => {
     expect(moneyFromBasisPoints(101, 1_250)).toBe(13);
 
@@ -58,7 +74,7 @@ describe("commission rules", () => {
     );
     const bound = applyEvent(quoted, bindQuote(), createdAt);
 
-    expect(bound.commissionEntries).toEqual([
+    expect(projectCommissionEntries(bound.commissionEntries, createdAt)).toEqual([
       expect.objectContaining({
         amountCents: 13,
         kind: "accrual",
@@ -94,7 +110,7 @@ describe("commission rules", () => {
       },
       settledAt,
     );
-    expect(settled.commissionEntries[0]).toEqual(
+    expect(projectCommissionEntries(settled.commissionEntries, settledAt)[0]).toEqual(
       expect.objectContaining({ amountCents: 1_000, status: "earned" }),
     );
 
@@ -109,9 +125,9 @@ describe("commission rules", () => {
       },
       "2026-01-31T23:59:59.999Z",
     );
-    expect(beforeBoundary.commissionEntries[0]).toEqual(
-      expect.objectContaining({ status: "earned" }),
-    );
+    expect(
+      projectCommissionEntries(beforeBoundary.commissionEntries, "2026-01-31T23:59:59.999Z")[0],
+    ).toEqual(expect.objectContaining({ status: "earned" }));
 
     const atBoundary = applyEvent(
       beforeBoundary,
@@ -124,7 +140,9 @@ describe("commission rules", () => {
       },
       "2026-02-01T00:00:00.000Z",
     );
-    expect(atBoundary.commissionEntries[0]).toEqual(expect.objectContaining({ status: "payable" }));
+    expect(
+      projectCommissionEntries(atBoundary.commissionEntries, "2026-02-01T00:00:00.000Z")[0],
+    ).toEqual(expect.objectContaining({ status: "payable" }));
   });
 
   test("FIN-002 records deposits and claims without creating agent commission", () => {
@@ -167,5 +185,88 @@ describe("commission rules", () => {
       ["claim_payment", -1_700],
     ]);
     expect(claimed.commissionEntries).toHaveLength(0);
+  });
+
+  test("COM-003 does not reverse commission for an as-earned deposit that never accrued", () => {
+    const quoted = applyEvent(
+      emptyDomainState(),
+      createQuote({
+        timing: "as_earned",
+        rateBasisPoints: 1_000,
+        holdPeriodDays: 0,
+        reverseOnRefund: true,
+      }),
+      createdAt,
+    );
+    const bound = applyEvent(quoted, bindQuote(), createdAt);
+    const deposited = applyEvent(
+      bound,
+      {
+        type: "deposit_recorded",
+        sourceEventId: "deposit-1",
+        occurredAt: createdAt,
+        policyId: "policy-1",
+        amountCents: 4_000,
+      },
+      createdAt,
+    );
+
+    const refunded = applyEvent(
+      deposited,
+      {
+        type: "refund_recorded",
+        sourceEventId: "refund-4k",
+        occurredAt: createdAt,
+        policyId: "policy-1",
+        totalRefundedCents: 4_000,
+      },
+      createdAt,
+    );
+
+    expect(refunded.commissionEntries).toEqual([]);
+  });
+
+  test("COM-005 appends a linked payment instead of replacing a payable accrual", () => {
+    const quoted = applyEvent(
+      emptyDomainState(),
+      createQuote({
+        timing: "on_bind",
+        rateBasisPoints: 1_000,
+        holdPeriodDays: 0,
+        reverseOnRefund: true,
+      }),
+      createdAt,
+    );
+    const bound = applyEvent(quoted, bindQuote(), createdAt);
+    const paid = applyEvent(
+      bound,
+      {
+        type: "commission_paid",
+        sourceEventId: "commission-payment-1",
+        occurredAt: createdAt,
+        policyId: "policy-1",
+        commissionEntryId: "commission:quote-bound-1",
+      },
+      createdAt,
+    );
+
+    expect(paid.commissionEntries).toEqual([
+      expect.objectContaining({
+        id: "commission:quote-bound-1",
+        kind: "accrual",
+        status: "earned",
+      }),
+      expect.objectContaining({
+        kind: "payment",
+        settlesCommissionEntryId: "commission:quote-bound-1",
+        status: "paid",
+      }),
+    ]);
+    expect(projectCommissionEntries(paid.commissionEntries, createdAt)[0]).toEqual(
+      expect.objectContaining({ status: "paid" }),
+    );
+    expect(paid.auditEntries.at(-1)).toEqual(
+      expect.objectContaining({ commissionEntryId: "commission:quote-bound-1" }),
+    );
   });
 });

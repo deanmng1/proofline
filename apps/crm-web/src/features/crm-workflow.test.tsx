@@ -67,4 +67,50 @@ describe("insurance CRM reference workflow", () => {
 
     expect(await screen.findByRole("alert")).toHaveTextContent("Customers unavailable");
   });
+
+  test("shows an accessible error when customer creation is rejected", async () => {
+    useTestApi();
+    server.use(http.post("/api/customers", () => new HttpResponse(null, { status: 500 })));
+    const user = userEvent.setup();
+    renderWithProviders(<CustomerListPage />);
+
+    await screen.findByLabelText("Customer name");
+    await user.type(screen.getByLabelText("Customer name"), "Rejected Customer");
+    await user.type(screen.getByLabelText("Customer email"), "rejected@example.test");
+    await user.click(screen.getByRole("button", { name: "Add customer" }));
+
+    expect(await screen.findByRole("alert")).toHaveTextContent("Customer could not be created");
+  });
+
+  test("shows accessible quote and bind failures", async () => {
+    useTestApi();
+    const user = userEvent.setup();
+    server.use(http.post("/api/quotes", () => new HttpResponse(null, { status: 500 })));
+    renderWithProviders(<QuoteForm />);
+
+    await screen.findByRole("option", { name: /100 Market Street/i });
+    await user.selectOptions(screen.getByLabelText("Policyholder"), "fixture-customer-1");
+    await user.selectOptions(screen.getByLabelText("Insured property"), "fixture-property-1");
+    await user.click(screen.getByRole("button", { name: "Create quote" }));
+
+    expect(await screen.findByRole("alert")).toHaveTextContent("Quote could not be created");
+  });
+
+  test("shows an accessible error when binding is rejected", async () => {
+    useTestApi();
+    const user = userEvent.setup();
+    renderWithProviders(<QuoteForm />);
+
+    await screen.findByRole("option", { name: /100 Market Street/i });
+    await user.selectOptions(screen.getByLabelText("Policyholder"), "fixture-customer-1");
+    await user.selectOptions(screen.getByLabelText("Insured property"), "fixture-property-1");
+    await user.click(screen.getByRole("button", { name: "Create quote" }));
+    await screen.findByRole("button", { name: "Bind quote" });
+    server.use(
+      http.post(/\/api\/quotes\/[^/]+\/bind$/, () => new HttpResponse(null, { status: 500 })),
+    );
+    await user.click(screen.getByRole("button", { name: "Bind quote" }));
+
+    expect(await screen.findByRole("alert")).toHaveTextContent("Quote could not be bound");
+  });
 });

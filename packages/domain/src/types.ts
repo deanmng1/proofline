@@ -52,12 +52,14 @@ export type CommissionEntry = {
   payableAt: string;
   paidAt?: string;
   reversesCommissionEntryId?: string;
+  settlesCommissionEntryId?: string;
 };
 
 export type AuditEntry = {
   sourceEventId: string;
   type: DomainEvent["type"];
   occurredAt: string;
+  commissionEntryId?: string;
 };
 
 export type DomainState = {

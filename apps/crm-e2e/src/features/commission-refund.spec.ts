@@ -2,8 +2,24 @@ import { ledgerSeed } from "@testbed/test-kit";
 
 import { expect, test } from "../fixtures/test";
 
+const seededLedger = ledgerSeed();
+
 test.describe("commission corrections", () => {
-  test.use({ seed: ledgerSeed() });
+  test.use({
+    seed: {
+      ...seededLedger,
+      events: [
+        ...seededLedger.events,
+        {
+          type: "premium_payment_settled",
+          sourceEventId: "fixture-event-premium-payment",
+          occurredAt: "2026-01-01T00:00:00.000Z",
+          policyId: "fixture-policy-1",
+          amountCents: 4_000,
+        },
+      ],
+    },
+  });
 
   test("@commission records a compensating negative refund entry", async ({ page }) => {
     await page.goto("/app/crm/policies/fixture-policy-1");

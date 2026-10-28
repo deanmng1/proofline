@@ -93,6 +93,11 @@ export const CustomerListPage = () => {
               Add customer
             </Button>
           </form>
+          {customerMutation.isError ? (
+            <p className="mt-3 text-sm text-rose-600" role="alert">
+              Customer could not be created. Check the policyholder details and try again.
+            </p>
+          ) : null}
           <ul className="mt-5 divide-y divide-[var(--border)]" aria-label="Customers">
             {(customersQuery.data ?? []).map((entry) => (
               <li key={entry.id} className="py-3 text-sm">
@@ -163,6 +168,11 @@ export const CustomerListPage = () => {
               Add property
             </Button>
           </form>
+          {propertyMutation.isError ? (
+            <p className="mt-3 text-sm text-rose-600" role="alert">
+              Property could not be created. Check the insured address and try again.
+            </p>
+          ) : null}
           <ul className="mt-5 divide-y divide-[var(--border)]" aria-label="Insured properties">
             {(propertiesQuery.data ?? []).map((entry) => (
               <li key={entry.id} className="py-3 text-sm">

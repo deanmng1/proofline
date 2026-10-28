@@ -107,4 +107,44 @@ describe("createTestApi", () => {
       server.close();
     }
   });
+
+  test("rejects an invalid commission plan before it reaches domain transitions", async () => {
+    const api = createTestApi({
+      customers: [{ id: "customer-1", name: "Alex", email: "alex@example.test" }],
+      properties: [
+        {
+          id: "property-1",
+          customerId: "customer-1",
+          addressLine1: "1 Main Street",
+          city: "Austin",
+          state: "TX",
+          postalCode: "78701",
+        },
+      ],
+    });
+
+    const response = await api.handle(
+      new Request("http://test.local/api/quotes", {
+        method: "POST",
+        body: JSON.stringify({
+          customerId: "customer-1",
+          propertyId: "property-1",
+          product: "risk_secure",
+          premiumCents: 10_000,
+          commissionPlan: {
+            timing: "on_bind",
+            rateBasisPoints: -1_000,
+            holdPeriodDays: 0,
+            reverseOnRefund: true,
+          },
+        }),
+        headers: { "content-type": "application/json" },
+      }),
+    );
+
+    expect(response.status).toBe(400);
+    await expect(readJson(response)).resolves.toMatchObject({
+      error: { code: "invalid_quote" },
+    });
+  });
 });

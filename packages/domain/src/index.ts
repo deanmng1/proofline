@@ -1,4 +1,5 @@
 export { applyEvent, emptyDomainState } from "./apply-event";
+export { isCommissionPlan, projectCommissionEntries } from "./commission";
 export { moneyFromBasisPoints } from "./money";
 export type {
   AuditEntry,

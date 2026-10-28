@@ -106,4 +106,18 @@ describe("conservative impact selection", () => {
       );
     }
   });
+
+  test("falls back when runtime code has no static or reviewed test ownership", () => {
+    for (const path of [
+      "tsconfig.json",
+      "packages/domain/package.json",
+      "apps/crm-web/src/main.tsx",
+      "apps/crm-web/src/styles.css",
+      "apps/crm-web/src/features/i18n/locales/en.json",
+    ]) {
+      const selection = choose([{ path, status: "modified" }]);
+
+      expect(selection.fallback).toBe("all-tests");
+    }
+  });
 });

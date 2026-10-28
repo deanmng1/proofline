@@ -3,6 +3,7 @@ import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSy
 import path from "node:path";
 
 import { readChangedFiles } from "./changed-files.ts";
+import { parsePlaywrightDiscovery } from "./playwright-discovery.ts";
 import { selectImpact } from "./select.ts";
 import type { FeatureMap, PlaywrightCandidate, TestCandidates } from "./types.ts";
 
@@ -36,6 +37,30 @@ const hasSourceExtension = (file: string) => sourceExtensions.has(path.extname(f
 const isVitest = (file: string) => file.endsWith(".test.ts") || file.endsWith(".test.tsx");
 const isPlaywright = (file: string) => file.endsWith(".spec.ts") || file.endsWith(".spec.tsx");
 
+const discoverPlaywright = (cwd: string) => {
+  const result = spawnSync(
+    "pnpm",
+    [
+      "exec",
+      "playwright",
+      "test",
+      "--config",
+      "apps/crm-e2e/playwright.config.ts",
+      "--list",
+      "--reporter=json",
+    ],
+    { cwd, encoding: "utf8" },
+  );
+  if (result.status !== 0) {
+    return { candidates: undefined, uncertainty: "Playwright discovery failed" };
+  }
+  try {
+    return { candidates: parsePlaywrightDiscovery(JSON.parse(result.stdout)) };
+  } catch {
+    return { candidates: undefined, uncertainty: "Playwright discovery returned invalid JSON" };
+  }
+};
+
 export const discoverCandidates = (cwd: string) => {
   const files = sourceRoots.flatMap((root) => walkFiles(cwd, root)).sort();
   const sourceFiles = Object.fromEntries(
@@ -43,17 +68,24 @@ export const discoverCandidates = (cwd: string) => {
       .filter(hasSourceExtension)
       .map((file) => [file, readFileSync(path.join(cwd, file), "utf8")]),
   );
+  const playwrightDiscovery = discoverPlaywright(cwd);
   const candidates: TestCandidates = {
     vitest: files.filter(isVitest),
-    playwright: files.filter(isPlaywright).map(
-      (file): PlaywrightCandidate => ({
-        path: file,
-        tags: [...sourceFiles[file].matchAll(/(?<![\w-])@[a-z0-9-]+/gi)].map((match) => match[0]),
-      }),
-    ),
+    playwright:
+      playwrightDiscovery.candidates ??
+      files.filter(isPlaywright).map(
+        (file): PlaywrightCandidate => ({
+          path: file,
+          tags: [],
+        }),
+      ),
   };
 
-  return { candidates, sourceFiles };
+  return {
+    candidates,
+    sourceFiles,
+    uncertainty: playwrightDiscovery.uncertainty ? [playwrightDiscovery.uncertainty] : [],
+  };
 };
 
 const loadFeatureMap = (cwd: string): FeatureMap => {
@@ -95,8 +127,12 @@ const runSelection = (cwd: string, selection: ReturnType<typeof selectImpact>) =
 };
 
 export const main = (cwd = process.cwd(), args = process.argv.slice(2)) => {
-  const manifest = readChangedFiles({ cwd });
-  const { candidates, sourceFiles } = discoverCandidates(cwd);
+  const changedFiles = readChangedFiles({ cwd });
+  const { candidates, sourceFiles, uncertainty } = discoverCandidates(cwd);
+  const manifest = {
+    ...changedFiles,
+    uncertainty: [...changedFiles.uncertainty, ...uncertainty],
+  };
   const selection = selectImpact({
     manifest,
     featureMap: loadFeatureMap(cwd),
