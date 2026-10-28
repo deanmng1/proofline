@@ -14,9 +14,8 @@ apps/crm-e2e/.cache/
 .superpowers/
 artifacts/
 
-# Local/AI tooling — not part of the distributed template
+# Local tooling that should remain machine-specific
 .codegraph/
-AGENTS.md
 
 # Vercel project link (contains org/project ids)
 .vercel/
