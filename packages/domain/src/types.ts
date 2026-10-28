@@ -135,3 +135,88 @@ export type DomainEvent =
   | RefundRecordedEvent
   | ClaimPaymentRecordedEvent
   | CommissionPaidEvent;
+
+export type PolicyLifecycle = "bound" | "cancelled";
+
+export type PolicyStateProjection = {
+  policyId: string;
+  lifecycle: PolicyLifecycle;
+  revision: number;
+  product: Product;
+  premiumCents: number;
+  commissionPlan: CommissionPlan;
+  sourcePolicyMessageId: string;
+};
+
+export type RefundAllocation = {
+  allocationId: string;
+  financeEntryId: string;
+  amountCents: number;
+};
+
+export type PolicyQuoteCreatedMessage = {
+  type: "policy.quote.created";
+  quote: Quote;
+};
+
+export type PolicyLifecycleChangedMessage = {
+  type: "policy.lifecycle.changed";
+  policy: Policy;
+  lifecycle: PolicyLifecycle;
+  revision: number;
+};
+
+export type PolicyStateChangedMessage = {
+  type: "policy.state.changed";
+  state: PolicyStateProjection;
+};
+
+export type FinanceDepositRecordedMessage = {
+  type: "finance.deposit.recorded";
+  policyId: string;
+  amountCents: number;
+};
+
+export type FinancePremiumPaymentSettledMessage = {
+  type: "finance.premium.payment.settled";
+  policyId: string;
+  amountCents: number;
+};
+
+export type FinanceRefundRecordedMessage = {
+  type: "finance.refund.recorded";
+  policyId: string;
+  allocations: RefundAllocation[];
+};
+
+export type FinanceClaimPaymentRecordedMessage = {
+  type: "finance.claim.payment.recorded";
+  policyId: string;
+  amountCents: number;
+};
+
+export type FinanceCommissionPaidMessage = {
+  type: "finance.commission.paid";
+  policyId: string;
+  commissionEntryId: string;
+};
+
+export type ServiceEvent =
+  | PolicyQuoteCreatedMessage
+  | PolicyLifecycleChangedMessage
+  | PolicyStateChangedMessage
+  | FinanceDepositRecordedMessage
+  | FinancePremiumPaymentSettledMessage
+  | FinanceRefundRecordedMessage
+  | FinanceClaimPaymentRecordedMessage
+  | FinanceCommissionPaidMessage;
+
+export type EventEnvelope<TEvent extends ServiceEvent = ServiceEvent> = {
+  messageId: string;
+  correlationId: string;
+  causationId?: string;
+  tenantId: string;
+  schemaVersion: number;
+  occurredAt: string;
+  event: TEvent;
+};

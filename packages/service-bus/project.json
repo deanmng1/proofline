@@ -1,0 +1,15 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "name": "service-bus",
+  "projectType": "library",
+  "root": "packages/service-bus",
+  "sourceRoot": "packages/service-bus/src",
+  "targets": {
+    "test": {
+      "command": "pnpm exec vitest run packages/service-bus/src"
+    },
+    "typecheck": {
+      "command": "pnpm exec tsc --noEmit --target ES2022 --module ESNext --moduleResolution Bundler --strict packages/service-bus/src/*.ts"
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "@testbed/service-bus",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@testbed/domain": "workspace:*"
+  }
+}
