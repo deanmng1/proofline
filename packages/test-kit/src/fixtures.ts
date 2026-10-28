@@ -43,7 +43,7 @@ export function quoteFixture(overrides: Partial<Quote> = {}): Quote {
     id: "fixture-quote-1",
     customerId: "fixture-customer-1",
     propertyId: "fixture-property-1",
-    product: "risk_secure",
+    product: "risk_secure_plus",
     premiumCents: 12_000,
     commissionPlan: commissionPlanFixture(),
     createdAt: occurredAt,

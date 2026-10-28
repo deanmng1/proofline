@@ -94,6 +94,29 @@ export const navGroups: NavGroup[] = [
     ],
   },
   {
+    label: "Insurance CRM",
+    items: [
+      {
+        title: "Insurance workflow",
+        icon: "Wallet",
+        children: [
+          {
+            title: "Customer intake",
+            href: "/app/crm/customers",
+            icon: "UsersRound",
+            roles: ["Owner", "Admin", "Manager"],
+          },
+          {
+            title: "Quotes and policies",
+            href: "/app/crm/quotes",
+            icon: "Receipt",
+            roles: ["Owner", "Admin", "Manager"],
+          },
+        ],
+      },
+    ],
+  },
+  {
     label: "nav.group.uiElements",
     items: [{ title: "nav.uiKit", href: "/app/ui", icon: "Shapes" }],
   },

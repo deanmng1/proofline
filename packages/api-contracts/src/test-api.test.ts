@@ -79,6 +79,19 @@ describe("createTestApi", () => {
     });
   });
 
+  test("includes quote and bind audit events in a policy ledger", async () => {
+    const api = createTestApi(seed);
+
+    const ledger = await readJson<{ auditEntries: Array<{ type: string }> }>(
+      await api.handle(new Request("http://test.local/api/policies/policy-1/ledger")),
+    );
+
+    expect(ledger.auditEntries.map((entry) => entry.type)).toEqual([
+      "quote_created",
+      "quote_bound",
+    ]);
+  });
+
   test("uses the identical contract through MSW handlers", async () => {
     const server = setupServer(...createMswHandlers(createTestApi(seed)));
     server.listen({ onUnhandledRequest: "error" });

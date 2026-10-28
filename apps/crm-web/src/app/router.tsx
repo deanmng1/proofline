@@ -1,5 +1,5 @@
 import { lazy, Suspense } from "react";
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes, useParams } from "react-router-dom";
 import { AppShell } from "@/components/layout/app-shell";
 import { StatePanel } from "@/components/shared/state-panel";
 import { ProtectedRoute } from "@/features/auth/protected-route";
@@ -59,6 +59,19 @@ const SettingsPage = lazy(() =>
 const UserSettingsPage = lazy(() =>
   import("@/pages/user-settings-page").then((module) => ({ default: module.UserSettingsPage })),
 );
+const CustomerListPage = lazy(() =>
+  import("@/features/customers/customer-list-page").then((module) => ({
+    default: module.CustomerListPage,
+  })),
+);
+const QuoteForm = lazy(() =>
+  import("@/features/quotes/quote-form").then((module) => ({ default: module.QuoteForm })),
+);
+const PolicyDetailPage = lazy(() =>
+  import("@/features/policies/policy-detail-page").then((module) => ({
+    default: module.PolicyDetailPage,
+  })),
+);
 const NotFoundPage = lazy(() =>
   import("@/pages/not-found-page").then((module) => ({ default: module.NotFoundPage })),
 );
@@ -68,6 +81,15 @@ const RouteFallback = () => (
     <StatePanel kind="loading" title="Loading route" description="Preparing the dashboard view." />
   </div>
 );
+
+const PolicyRoute = () => {
+  const { policyId } = useParams();
+  return policyId ? (
+    <PolicyDetailPage policyId={policyId} />
+  ) : (
+    <Navigate to="/app/crm/quotes" replace />
+  );
+};
 
 export const AppRouter = () => (
   <Suspense fallback={<RouteFallback />}>
@@ -143,6 +165,9 @@ export const AppRouter = () => (
           />
           <Route path="/app/settings" element={<SettingsPage />} />
           <Route path="/app/settings/user" element={<UserSettingsPage />} />
+          <Route path="/app/crm/customers" element={<CustomerListPage />} />
+          <Route path="/app/crm/quotes" element={<QuoteForm />} />
+          <Route path="/app/crm/policies/:policyId" element={<PolicyRoute />} />
         </Route>
       </Route>
       <Route path="/" element={<Navigate to="/app/overview" replace />} />

@@ -58,7 +58,11 @@ function isResponse(value: JsonRecord | Response): value is Response {
   return value instanceof Response;
 }
 
-function policyLedger(state: DomainState, policyId: string): PolicyLedger | undefined {
+function policyLedger(
+  state: DomainState,
+  policyId: string,
+  auditSourceEventIds: ReadonlySet<string>,
+): PolicyLedger | undefined {
   const policy = state.policies[policyId];
   if (!policy) {
     return undefined;
@@ -72,22 +76,9 @@ function policyLedger(state: DomainState, policyId: string): PolicyLedger | unde
     quote,
     financeEntries: state.financeEntries.filter((entry) => entry.policyId === policyId),
     commissionEntries: state.commissionEntries.filter((entry) => entry.policyId === policyId),
-    auditEntries: state.auditEntries.filter((entry) => {
-      const sourceEventId = entry.sourceEventId;
-      return (
-        sourceEventId === policy.quoteId ||
-        sourceEventId === policyId ||
-        state.financeEntries.some(
-          (financeEntry) =>
-            financeEntry.policyId === policyId && financeEntry.sourceEventId === sourceEventId,
-        ) ||
-        state.commissionEntries.some(
-          (commissionEntry) =>
-            commissionEntry.policyId === policyId &&
-            commissionEntry.sourceEventId === sourceEventId,
-        )
-      );
-    }),
+    auditEntries: state.auditEntries.filter((entry) =>
+      auditSourceEventIds.has(entry.sourceEventId),
+    ),
   };
 }
 
@@ -98,9 +89,32 @@ export function createTestApi(seed: TestSeed = {}, options: TestApiOptions = {})
   let customers = [...(seed.customers ?? [])];
   let properties = [...(seed.properties ?? [])];
   let domain = emptyDomainState();
+  const quoteAuditSourceEventIds = new Map<string, Set<string>>();
+  const policyAuditSourceEventIds = new Map<string, Set<string>>();
+
+  const addPolicyAuditSource = (policyId: string, sourceEventId: string) => {
+    const sourceEventIds = policyAuditSourceEventIds.get(policyId) ?? new Set<string>();
+    sourceEventIds.add(sourceEventId);
+    policyAuditSourceEventIds.set(policyId, sourceEventIds);
+  };
+  const associateAuditEvent = (event: DomainEvent) => {
+    if (event.type === "quote_created") {
+      quoteAuditSourceEventIds.set(event.quote.id, new Set([event.sourceEventId]));
+      return;
+    }
+    if (event.type === "quote_bound") {
+      for (const sourceEventId of quoteAuditSourceEventIds.get(event.quoteId) ?? []) {
+        addPolicyAuditSource(event.policyId, sourceEventId);
+      }
+      addPolicyAuditSource(event.policyId, event.sourceEventId);
+      return;
+    }
+    addPolicyAuditSource(event.policyId, event.sourceEventId);
+  };
 
   for (const event of seed.events ?? []) {
     domain = applyEvent(domain, event, now);
+    associateAuditEvent(event);
   }
 
   const createId = (kind: string) => `${idPrefix}-${kind}-${nextId++}`;
@@ -178,23 +192,21 @@ export function createTestApi(seed: TestSeed = {}, options: TestApiOptions = {})
     const input = body as CreateQuoteInput;
     const quoteId = input.id ?? createId("quote");
     try {
-      domain = applyEvent(
-        domain,
-        {
-          type: "quote_created",
-          sourceEventId: createEventId("quote_created"),
-          occurredAt: now,
-          quote: {
-            id: quoteId,
-            customerId,
-            propertyId,
-            product,
-            premiumCents,
-            commissionPlan: input.commissionPlan,
-          },
+      const event: DomainEvent = {
+        type: "quote_created",
+        sourceEventId: createEventId("quote_created"),
+        occurredAt: now,
+        quote: {
+          id: quoteId,
+          customerId,
+          propertyId,
+          product,
+          premiumCents,
+          commissionPlan: input.commissionPlan,
         },
-        now,
-      );
+      };
+      domain = applyEvent(domain, event, now);
+      associateAuditEvent(event);
       return json(domain.quotes[quoteId], 201);
     } catch (cause) {
       return error(400, "invalid_quote", cause instanceof Error ? cause.message : "Invalid quote.");
@@ -208,17 +220,15 @@ export function createTestApi(seed: TestSeed = {}, options: TestApiOptions = {})
     const input = body as BindQuoteInput;
     const policyId = input.policyId ?? createId("policy");
     try {
-      domain = applyEvent(
-        domain,
-        {
-          type: "quote_bound",
-          sourceEventId: createEventId("quote_bound"),
-          occurredAt: now,
-          quoteId,
-          policyId,
-        },
-        now,
-      );
+      const event: DomainEvent = {
+        type: "quote_bound",
+        sourceEventId: createEventId("quote_bound"),
+        occurredAt: now,
+        quoteId,
+        policyId,
+      };
+      domain = applyEvent(domain, event, now);
+      associateAuditEvent(event);
       return json(domain.policies[policyId], 201);
     } catch (cause) {
       return error(
@@ -279,7 +289,11 @@ export function createTestApi(seed: TestSeed = {}, options: TestApiOptions = {})
     }
     try {
       domain = applyEvent(domain, event, now);
-      return json(policyLedger(domain, policyId), 201);
+      associateAuditEvent(event);
+      return json(
+        policyLedger(domain, policyId, policyAuditSourceEventIds.get(policyId) ?? new Set()),
+        201,
+      );
     } catch (cause) {
       return error(
         400,
@@ -331,7 +345,12 @@ export function createTestApi(seed: TestSeed = {}, options: TestApiOptions = {})
 
       const ledgerMatch = path.match(/^\/api\/policies\/([^/]+)\/ledger$/);
       if (method === "GET" && ledgerMatch) {
-        const ledger = policyLedger(domain, decodeURIComponent(ledgerMatch[1]));
+        const policyId = decodeURIComponent(ledgerMatch[1]);
+        const ledger = policyLedger(
+          domain,
+          policyId,
+          policyAuditSourceEventIds.get(policyId) ?? new Set(),
+        );
         return ledger
           ? json(ledger)
           : error(
