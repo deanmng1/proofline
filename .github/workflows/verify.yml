@@ -1,0 +1,80 @@
+name: Verify CRM regression harness
+
+on:
+  pull_request:
+  push:
+    branches: [main, master]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    env:
+      IMPACT_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+      IMPACT_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+    steps:
+      - name: Checkout full history for impact analysis
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11.24.0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Install Chromium
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Preview impact selection
+        id: impact
+        shell: bash
+        run: |
+          pnpm test:impacted -- --dry-run
+          echo "fallback=$(node -p \"require('./artifacts/impact/selection.json').fallback\")" >> "$GITHUB_OUTPUT"
+
+      - name: Run impact-selected tests
+        run: pnpm test:impacted
+
+      - name: Run full Vitest safety gate
+        shell: bash
+        run: |
+          set -o pipefail
+          pnpm test 2>&1 | tee artifacts/vitest-output.txt
+
+      - name: Run full Chromium safety gate
+        run: pnpm e2e
+
+      - name: Upload diagnostics
+        if: ${{ always() && (failure() || steps.impact.outputs.fallback == 'all-tests') }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: verification-diagnostics
+          if-no-files-found: ignore
+          retention-days: 14
+          path: |
+            artifacts/impact/
+            artifacts/vitest-output.txt
+            playwright-report/
+            test-results/

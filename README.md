@@ -1,13 +1,13 @@
-# Admin Dashboard Template
+# Insurance CRM regression testbed
 
-A production-shaped **React 19 + Vite 6 + TypeScript** admin dashboard starter — 13 fully wired module pages, multi-tenancy, RBAC, theming, i18n, and a complete in-browser mock API so it runs with **zero backend**, then drops onto your real API with a single env var.
+A production-shaped **React 19 + Vite 6 + TypeScript** insurance CRM reference application and regression-testing harness. It models Risk Secure and Risk Secure Plus quoting, binding, finance events, and commission timing without requiring a live backend or provider account.
 
-**Live demo:** [admin-dashboard-template-fawn.vercel.app](https://admin-dashboard-template-fawn.vercel.app)
+**Purpose:** build product rules once, exercise them at the domain/API/UI/browser
+layers, and keep future changes from consuming agent time on rediscovering old
+regressions.
 
-[![CI](https://github.com/tomtapia/admin-dashboard-template/actions/workflows/ci.yml/badge.svg)](https://github.com/tomtapia/admin-dashboard-template/actions/workflows/ci.yml)
-[![Deploy Demo](https://github.com/tomtapia/admin-dashboard-template/actions/workflows/deploy-demo.yml/badge.svg)](https://github.com/tomtapia/admin-dashboard-template/actions/workflows/deploy-demo.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-2563eb)](LICENSE)
-[![Version](https://img.shields.io/badge/version-0.7.0-2563eb)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.8.0-2563eb)](CHANGELOG.md)
 [![React](https://img.shields.io/badge/React-19-087ea4?logo=react&logoColor=white)](https://react.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8_strict-3178c6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
 [![Vite](https://img.shields.io/badge/Vite-6-646cff?logo=vite&logoColor=white)](https://vite.dev)
@@ -17,9 +17,26 @@ A production-shaped **React 19 + Vite 6 + TypeScript** admin dashboard starter �
 
 ## About
 
-Standing up an internal admin console usually means weeks of plumbing before the first real feature: session handling, tenant scoping, data tables, theme tokens, loading/error states, accessibility, and a test pipeline. This template makes those decisions for you — and proves them with unit and end-to-end tests.
+Standing up an insurance CRM usually means weeks of plumbing before the first real feature: session handling, tenant scoping, data tables, finance transitions, commissions, audit history, accessibility, and a test pipeline. This reference app makes those decisions concrete — and proves the business rules with unit, contract, UI, and end-to-end tests.
 
-Every screen runs against a [Mock Service Worker](https://mswjs.io) API layer, so the app is a fully interactive product demo out of the box. When it's time for production, set `VITE_API_BASE_URL` and the same `/api/*` requests flow straight to your backend — no feature-code changes required.
+The CRM journeys use a fresh in-memory Test API per browser test. That makes quoting and finance flows deterministic, blocks unplanned `/api/*` calls, and avoids consuming provider credentials while regressions are diagnosed.
+
+## Regression harness
+
+The test strategy is intentionally layered: pure insurance rules first,
+contract and UI behavior next, and browser journeys only where a real workflow
+crosses screens. The conservative selector explains why each test ran and
+falls back to the entire suite when it cannot safely narrow scope.
+
+```bash
+pnpm test:impacted -- --dry-run  # inspect the conservative selection and reasons
+pnpm test:impacted               # run selected project tests and browser journeys
+pnpm test                        # every Vitest project
+pnpm e2e                         # complete Chromium regression suite
+```
+
+See [the testing guide](docs/TESTING.md) for the required rule-to-regression
+workflow, artifact locations, and CI behavior.
 
 ## Key Features
 
@@ -34,7 +51,7 @@ Every screen runs against a [Mock Service Worker](https://mswjs.io) API layer, s
 - **Dashboard hierarchy done right** — KPI cards with sparklines on top, interactive charts in the middle, operational tables at the bottom (inverted pyramid).
 - **Accessible to WCAG 2.2 AA** — skip link, focus management on navigation, keyboard-operable tables, sr-only chart data tables, AA-contrast tokens, `prefers-reduced-motion`; enforced by jest-axe in CI.
 - **Observability-ready** — Sentry error reporting activates lazily when `VITE_SENTRY_DSN` is set; console fallback otherwise.
-- **Quality pipeline** — Vitest (jsdom) + Playwright suites, Biome lint/format, Husky pre-commit, and a GitHub Actions gate (typecheck → lint → test → build → e2e).
+- **Quality pipeline** — domain, contract, UI, and Playwright regression suites; conservative impact selection; Biome lint/format; and a GitHub Actions safety gate.
 - **⌘K command palette** — fuzzy navigation across every routable page (auto-flattened from the nav tree), theme switching, and account actions.
 
 ## Getting Started
@@ -79,9 +96,10 @@ The MSW worker starts automatically unless a real backend is configured via `VIT
 pnpm dev          # Vite dev server + MSW worker
 pnpm build        # tsc -b typecheck + vite build -> dist/
 pnpm preview      # serve the production build
-pnpm test         # Vitest suite (unit/integration, jsdom)
-pnpm e2e          # Playwright suite (boots pnpm dev automatically)
-pnpm typecheck    # tsc -b alone
+pnpm test         # every Vitest project (domain, contract, UI, selector)
+pnpm e2e          # isolated Chromium CRM/browser suite
+pnpm test:impacted -- --dry-run  # explain the conservative test selection
+pnpm typecheck    # typecheck all projects that own a typecheck target
 pnpm lint         # Biome check
 pnpm format       # Biome format --write .
 ```
@@ -121,24 +139,16 @@ Unauthorized roles are redirected to `/app/overview`. Note this is client-side g
 ## Project Structure
 
 ```text
-src/
-├── app/            # Providers, Router, ErrorBoundary, QueryClient
-├── components/
-│   ├── ui/         # shadcn/ui primitives (Radix-based)
-│   ├── layout/     # AppShell, SidebarNav, Topbar, nav-items (3-level tree), nav-group-list, Breadcrumbs
-│   ├── shared/     # DataTable, DetailDrawer, StatePanel, skeletons, ConfirmDialog, CommandPalette…
-│   ├── mail/       # MailList, MailReader
-│   ├── calendar/   # CalendarGrid
-│   ├── users/      # UsersTable, InviteUserDialog
-│   └── settings/   # SettingsForm, AppearancePicker, LanguagePicker
-├── features/       # Per-module contexts + data access (auth, tenants, theme, i18n, mail, calendar…)
-├── lib/            # http() fetch wrapper, rbac(), notify, monitoring, download (CSV), cn()
-├── mocks/          # MSW handlers, browser worker, seed data
-├── pages/          # Route components (one per module + login + 404)
-├── test/           # Vitest setup, MSW node server, renderApp helper
-├── types/          # Shared domain types
-└── styles.css      # Tailwind v4 entry + theme CSS variables
-e2e/                # Playwright specs (auth, navigation, mobile @ 390×844)
+apps/
+├── crm-web/        # Vite React application and CRM UI/component tests
+└── crm-e2e/        # Playwright journeys and isolated Test API fixture
+packages/
+├── domain/         # Deterministic policy, finance, commission, and audit rules
+├── api-contracts/  # HTTP contract and in-memory Test API
+└── test-kit/       # Shared deterministic fixtures and rendering helpers
+test-impact/        # Reviewed feature map and business-rule catalog
+tools/impact/       # Changed-file manifest and conservative test selector
+docs/TESTING.md     # Rule-to-regression and CI workflow guide
 ```
 
 Imports always use the `@/` path alias (mapped to `src/`).
@@ -167,7 +177,7 @@ Candidate milestones toward **v1.0**:
 | [Changelog](CHANGELOG.md) | Release history, generated from Conventional Commits |
 | [Environment variables](.env.example) | Backend URL, Sentry DSN, environment label |
 
-**Contributing** — see the [contributing guide](CONTRIBUTING.md) for setup and conventions. In short: commits follow [Conventional Commits](https://www.conventionalcommits.org/), a Husky pre-commit hook runs Biome on staged files, and PRs must pass the full CI pipeline: typecheck, Biome, unit tests, E2E, and build.
+**Contributing** — see the [contributing guide](CONTRIBUTING.md) for setup and conventions. In short: commits follow [Conventional Commits](https://www.conventionalcommits.org/), a Husky pre-commit hook runs Biome on staged files, and PRs must pass conservative impact selection plus the complete lint, typecheck, Vitest, and Chromium safety gates.
 
 **Support** — please open a GitHub issue for bugs and feature requests.
 
