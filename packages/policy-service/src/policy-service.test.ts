@@ -4,6 +4,7 @@ import { describe, expect, test } from "vitest";
 import { createPolicyService } from "./policy-service";
 
 const command = {
+  correlationId: "workflow-1",
   tenantId: "tenant-test",
   customerId: "customer-1",
   propertyId: "property-1",
@@ -41,6 +42,32 @@ const createService = () => {
 };
 
 describe("Policy service", () => {
+  test("preserves_independent_workflow_correlation_on_every_policy_command", () => {
+    const { bus, service } = createService();
+    const quote = service.createQuote({ commandId: "create", ...command });
+    service.bindQuote({
+      commandId: "bind",
+      correlationId: "workflow-1",
+      tenantId: command.tenantId,
+      quoteId: quote.id,
+      policyId: "policy",
+    });
+    service.transitionPolicy({
+      commandId: "cancel",
+      correlationId: "cancellation-workflow",
+      tenantId: command.tenantId,
+      policyId: "policy",
+      lifecycle: "cancelled",
+    });
+    expect(bus.pendingMessages().map((m) => m.correlationId)).toEqual([
+      "workflow-1",
+      "workflow-1",
+      "cancellation-workflow",
+    ]);
+    expect(() =>
+      service.createQuote({ ...command, commandId: "invalid", correlationId: "" }),
+    ).toThrow("Correlation ID");
+  });
   test("creates_quote_and_publishes_policy_quote_created", () => {
     const { bus, service } = createService();
     const published: string[] = [];
@@ -75,6 +102,7 @@ describe("Policy service", () => {
 
     const policy = service.bindQuote({
       commandId: "command-bind-1",
+      correlationId: "workflow-1",
       tenantId: command.tenantId,
       quoteId: quote.id,
       policyId: "policy-1",
@@ -90,6 +118,7 @@ describe("Policy service", () => {
     const quote = service.createQuote({ commandId: "command-create-1", ...command });
     service.bindQuote({
       commandId: "command-bind-1",
+      correlationId: "workflow-1",
       tenantId: command.tenantId,
       quoteId: quote.id,
       policyId: "policy-1",
@@ -101,6 +130,7 @@ describe("Policy service", () => {
 
     service.transitionPolicy({
       commandId: "command-cancel-1",
+      correlationId: "workflow-1",
       tenantId: command.tenantId,
       policyId: "policy-1",
       lifecycle: "cancelled",

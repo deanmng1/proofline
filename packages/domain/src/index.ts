@@ -1,4 +1,3 @@
-export { applyEvent, emptyDomainState } from "./apply-event";
 export {
   assertCommissionPlan,
   createAccrualEntry,
@@ -10,12 +9,9 @@ export {
 } from "./commission";
 export { moneyFromBasisPoints } from "./money";
 export type {
-  AuditEntry,
   CommissionEntry,
   CommissionPlan,
   CommissionStatus,
-  DomainEvent,
-  DomainState,
   EventEnvelope,
   FinanceClaimPaymentRecordedMessage,
   FinanceCommissionPaidMessage,

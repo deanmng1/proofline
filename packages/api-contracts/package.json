@@ -6,6 +6,7 @@
     ".": "./src/index.ts"
   },
   "dependencies": {
-    "@testbed/domain": "workspace:*"
+    "@testbed/domain": "workspace:*",
+    "@testbed/insurance-runtime": "workspace:*"
   }
 }

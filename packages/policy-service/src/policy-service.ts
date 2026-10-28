@@ -23,6 +23,7 @@ export type PolicyReferenceData = {
 
 export type CreateQuoteCommand = {
   commandId: string;
+  correlationId: string;
   tenantId: string;
   customerId: string;
   propertyId: string;
@@ -34,6 +35,7 @@ export type CreateQuoteCommand = {
 
 export type BindQuoteCommand = {
   commandId: string;
+  correlationId: string;
   tenantId: string;
   quoteId: string;
   policyId?: string;
@@ -41,6 +43,7 @@ export type BindQuoteCommand = {
 
 export type TransitionPolicyCommand = {
   commandId: string;
+  correlationId: string;
   tenantId: string;
   policyId: string;
   lifecycle: "cancelled";
@@ -80,12 +83,12 @@ type CommandReceipt = {
   result: unknown;
 };
 
-const recordKey = (tenantId: string, id: string) => `${tenantId}:${id}`;
+const recordKey = (tenantId: string, id: string) => JSON.stringify([tenantId, id]);
 
 const commandFingerprint = (input: object) => JSON.stringify(input);
 
 const assertNonEmpty = (value: string, label: string) => {
-  if (!value) {
+  if (typeof value !== "string" || !value.trim()) {
     throw new Error(`${label} is required.`);
   }
 };
@@ -106,10 +109,12 @@ export function createPolicyService({
   const policies = new Map<string, PolicyRecord>();
   const commandReceipts = new Map<string, CommandReceipt>();
 
-  const runCommand = <T>(commandId: string, input: object, action: () => T): T => {
+  const runCommand = <T>(commandId: string, input: { tenantId: string }, action: () => T): T => {
     assertNonEmpty(commandId, "Command ID");
+    assertNonEmpty(input.tenantId, "Tenant ID");
     const fingerprint = commandFingerprint(input);
-    const receipt = commandReceipts.get(commandId);
+    const key = recordKey(input.tenantId, commandId);
+    const receipt = commandReceipts.get(key);
     if (receipt) {
       if (receipt.fingerprint !== fingerprint) {
         throw new Error("Command ID was already used with different input.");
@@ -118,7 +123,7 @@ export function createPolicyService({
     }
 
     const result = action();
-    commandReceipts.set(commandId, { fingerprint, result });
+    commandReceipts.set(key, { fingerprint, result });
     return result;
   };
 
@@ -132,6 +137,7 @@ export function createPolicyService({
     createQuote(command) {
       return runCommand(command.commandId, command, () => {
         assertNonEmpty(command.tenantId, "Tenant ID");
+        assertNonEmpty(command.correlationId, "Correlation ID");
         assertNonEmpty(command.customerId, "Customer ID");
         assertNonEmpty(command.propertyId, "Property ID");
         assertPositiveCents(command.premiumCents);
@@ -165,11 +171,11 @@ export function createPolicyService({
         quotes.set(key, {
           quote,
           createdMessageId: messageId,
-          correlationId: command.commandId,
+          correlationId: command.correlationId,
         });
         publish({
           messageId,
-          correlationId: command.commandId,
+          correlationId: command.correlationId,
           tenantId: command.tenantId,
           schemaVersion: 1,
           occurredAt: quote.createdAt,
@@ -181,6 +187,7 @@ export function createPolicyService({
     bindQuote(command) {
       return runCommand(command.commandId, command, () => {
         assertNonEmpty(command.tenantId, "Tenant ID");
+        assertNonEmpty(command.correlationId, "Correlation ID");
         assertNonEmpty(command.quoteId, "Quote ID");
         const quoteKey = recordKey(command.tenantId, command.quoteId);
         const quoteRecord = quotes.get(quoteKey);
@@ -210,14 +217,14 @@ export function createPolicyService({
         quotes.set(quoteKey, { ...quoteRecord, quote: { ...quoteRecord.quote, status: "bound" } });
         policies.set(policyKey, {
           policy,
-          correlationId: quoteRecord.correlationId,
+          correlationId: command.correlationId,
           lifecycle: "bound",
           revision: 1,
           lifecycleMessageId: messageId,
         });
         publish({
           messageId,
-          correlationId: quoteRecord.correlationId,
+          correlationId: command.correlationId,
           causationId: quoteRecord.createdMessageId,
           tenantId: command.tenantId,
           schemaVersion: 1,
@@ -235,6 +242,7 @@ export function createPolicyService({
     transitionPolicy(command) {
       runCommand(command.commandId, command, () => {
         assertNonEmpty(command.tenantId, "Tenant ID");
+        assertNonEmpty(command.correlationId, "Correlation ID");
         const key = recordKey(command.tenantId, command.policyId);
         const policyRecord = policies.get(key);
         if (!policyRecord) {
@@ -255,7 +263,7 @@ export function createPolicyService({
         });
         publish({
           messageId,
-          correlationId: policyRecord.correlationId,
+          correlationId: command.correlationId,
           causationId: policyRecord.lifecycleMessageId,
           tenantId: command.tenantId,
           schemaVersion: 1,

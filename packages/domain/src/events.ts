@@ -1,1 +1,1 @@
-export type { DomainEvent } from "./types";
+export type { EventEnvelope, ServiceEvent } from "./types";

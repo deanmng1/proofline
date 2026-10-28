@@ -1,0 +1,13 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "name": "insurance-runtime",
+  "projectType": "library",
+  "root": "packages/insurance-runtime",
+  "sourceRoot": "packages/insurance-runtime/src",
+  "targets": {
+    "test": { "command": "pnpm exec vitest run packages/insurance-runtime/src" },
+    "typecheck": {
+      "command": "pnpm exec tsc --noEmit --target ES2022 --module ESNext --moduleResolution Bundler --strict packages/insurance-runtime/src/*.ts"
+    }
+  }
+}

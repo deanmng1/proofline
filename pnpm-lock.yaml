@@ -171,6 +171,9 @@ importers:
       '@testbed/domain':
         specifier: workspace:*
         version: link:../domain
+      '@testbed/insurance-runtime':
+        specifier: workspace:*
+        version: link:../insurance-runtime
 
   packages/domain: {}
 
@@ -179,6 +182,24 @@ importers:
       '@testbed/domain':
         specifier: workspace:*
         version: link:../domain
+      '@testbed/service-bus':
+        specifier: workspace:*
+        version: link:../service-bus
+
+  packages/insurance-runtime:
+    dependencies:
+      '@testbed/domain':
+        specifier: workspace:*
+        version: link:../domain
+      '@testbed/finance-service':
+        specifier: workspace:*
+        version: link:../finance-service
+      '@testbed/policy-service':
+        specifier: workspace:*
+        version: link:../policy-service
+      '@testbed/policy-state-service':
+        specifier: workspace:*
+        version: link:../policy-state-service
       '@testbed/service-bus':
         specifier: workspace:*
         version: link:../service-bus
@@ -215,6 +236,9 @@ importers:
       '@testbed/domain':
         specifier: workspace:*
         version: link:../domain
+      '@testbed/insurance-runtime':
+        specifier: workspace:*
+        version: link:../insurance-runtime
 
 packages:
 

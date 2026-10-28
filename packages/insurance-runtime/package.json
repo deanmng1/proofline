@@ -1,0 +1,15 @@
+{
+  "name": "@testbed/insurance-runtime",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@testbed/domain": "workspace:*",
+    "@testbed/service-bus": "workspace:*",
+    "@testbed/policy-service": "workspace:*",
+    "@testbed/policy-state-service": "workspace:*",
+    "@testbed/finance-service": "workspace:*"
+  }
+}

@@ -1,6 +1,7 @@
 export type {
   ApiError,
   BindQuoteInput,
+  CommandIdentity,
   CreateCustomerInput,
   CreatePropertyInput,
   CreateQuoteInput,
@@ -12,6 +13,7 @@ export type {
   TestApiOptions,
   TestApiSnapshot,
   TestSeed,
+  TransitionPolicyInput,
 } from "./contracts";
 export { createMswHandlers } from "./handlers";
 export { createTestApi } from "./test-api";
