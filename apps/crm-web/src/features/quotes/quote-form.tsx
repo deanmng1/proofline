@@ -14,6 +14,7 @@ import {
   getQuotes,
   type QuoteSummary,
 } from "@/features/crm/crm-api";
+import { useCommand } from "@/features/crm/use-command";
 
 const plans = {
   risk_secure: {
@@ -44,20 +45,25 @@ export const QuoteForm = () => {
   const [product, setProduct] = useState<keyof typeof plans>("risk_secure");
   const [premiumCents, setPremiumCents] = useState("12000");
   const [boundQuote, setBoundQuote] = useState<QuoteSummary | null>(null);
+  const quoteCommand = useCommand();
+  const bindCommand = useCommand();
   const customersQuery = useQuery({ queryKey: ["crm", "customers"], queryFn: getCustomers });
   const propertiesQuery = useQuery({ queryKey: ["crm", "properties"], queryFn: getProperties });
   const quotesQuery = useQuery({ queryKey: ["crm", "quotes"], queryFn: getQuotes });
   const quoteMutation = useMutation({
     mutationFn: createQuote,
     onSuccess: (quote) => {
+      quoteCommand.complete();
       void queryClient.invalidateQueries({ queryKey: ["crm", "quotes"] });
       setBoundQuote(null);
       return quote;
     },
   });
   const bindMutation = useMutation({
-    mutationFn: (quoteId: string) => bindQuote(quoteId),
-    onSuccess: (policy, quoteId) => {
+    mutationFn: (input: { quoteId: string; commandId: string; correlationId: string }) =>
+      bindQuote(input.quoteId, { commandId: input.commandId, correlationId: input.correlationId }),
+    onSuccess: (policy, { quoteId }) => {
+      bindCommand.complete();
       const quote = (quotesQuery.data ?? []).find((entry) => entry.id === quoteId);
       if (quote) setBoundQuote({ ...quote, status: "bound" });
       void queryClient.invalidateQueries({ queryKey: ["crm", "quotes"] });
@@ -99,13 +105,15 @@ export const QuoteForm = () => {
             className="mt-4 grid gap-4"
             onSubmit={(event) => {
               event.preventDefault();
-              quoteMutation.mutate({
-                customerId,
-                propertyId,
-                product,
-                premiumCents: Number(premiumCents),
-                commissionPlan: plans[product],
-              });
+              quoteMutation.mutate(
+                quoteCommand.prepare({
+                  customerId,
+                  propertyId,
+                  product,
+                  premiumCents: Number(premiumCents),
+                  commissionPlan: plans[product],
+                }),
+              );
             }}
           >
             <div className="grid gap-2">
@@ -199,7 +207,9 @@ export const QuoteForm = () => {
                     <Button
                       size="sm"
                       disabled={bindMutation.isPending}
-                      onClick={() => bindMutation.mutate(quote.id)}
+                      onClick={() =>
+                        bindMutation.mutate(bindCommand.prepare({ quoteId: quote.id }))
+                      }
                     >
                       Bind quote
                     </Button>

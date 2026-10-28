@@ -1,5 +1,6 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { createContext, type ReactNode, useContext, useEffect, useMemo, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { listTenants } from "@/features/tenants/tenants-api";
 import { setActiveTenantId } from "@/lib/http";
 import type { Tenant } from "@/types";
@@ -21,6 +22,7 @@ const readStoredTenantId = (): string | null => {
 };
 
 export const TenantProvider = ({ children }: { children: ReactNode }) => {
+  const { pathname } = useLocation();
   const queryClient = useQueryClient();
   const [tenants, setTenants] = useState<Tenant[]>([]);
   const [currentTenant, setCurrentTenantState] = useState<Tenant | null>(null);
@@ -65,7 +67,11 @@ export const TenantProvider = ({ children }: { children: ReactNode }) => {
     [tenants, currentTenant, isLoaded, queryClient],
   );
 
-  return <TenantContext.Provider value={value}>{children}</TenantContext.Provider>;
+  return (
+    <TenantContext.Provider value={value}>
+      {isLoaded || !pathname.startsWith("/app") ? children : <p role="status">Loading workspace</p>}
+    </TenantContext.Provider>
+  );
 };
 
 export const useTenant = () => {

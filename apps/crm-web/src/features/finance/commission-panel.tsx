@@ -27,6 +27,9 @@ export const CommissionPanel = ({ entries, timing, holdPeriodDays }: CommissionP
     <p className="mt-2 text-sm text-[var(--foreground-muted)]">
       {timingCopy(timing, holdPeriodDays)}
     </p>
+    <p className="mt-2 text-sm text-[var(--foreground-muted)]">
+      Append-only commission records. Refund adjustments apply only to allocated settled premiums.
+    </p>
     {entries.length === 0 ? (
       <p className="mt-4 text-sm text-[var(--foreground-muted)]">No commission entries yet.</p>
     ) : (

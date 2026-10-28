@@ -36,6 +36,10 @@ test("@quote @policy @finance creates, binds, and funds a Risk Secure Plus polic
   await page.getByRole("link", { name: "Review bound policy" }).click();
 
   await expect(page.getByRole("heading", { name: /Policy test-policy/i })).toBeVisible();
+  await expect(page.getByRole("status", { name: "Policy State" })).toHaveText(
+    "Policy State: bound",
+  );
+  await expect(page.getByRole("heading", { name: "Immutable event-driven history" })).toBeVisible();
   await page.getByLabel("Finance event").selectOption("premium_payment_settled");
   await page.getByLabel("Amount in cents").fill("10000");
   await page.getByRole("button", { name: "Record finance event" }).click();

@@ -13,7 +13,7 @@ export const AuditTimeline = ({ entries }: AuditTimelineProps) => (
       Audit trail
     </p>
     <h2 id="audit-heading" className="mt-1 text-lg font-semibold">
-      Immutable event timeline
+      Immutable event-driven history
     </h2>
     {entries.length === 0 ? (
       <p className="mt-4 text-sm text-[var(--foreground-muted)]">No audit events are available.</p>
@@ -27,7 +27,7 @@ export const AuditTimeline = ({ entries }: AuditTimelineProps) => (
             key={entry.sourceEventId}
             className="relative text-sm before:absolute before:-left-[1.34rem] before:top-1.5 before:h-2 before:w-2 before:rounded-full before:bg-[var(--accent)]"
           >
-            <p className="font-medium capitalize">{entry.type.replaceAll("_", " ")}</p>
+            <p className="font-medium capitalize">{entry.type.replace(/[._]/g, " ")}</p>
             <p className="mt-1 text-xs text-[var(--foreground-muted)]">{entry.occurredAt}</p>
           </li>
         ))}

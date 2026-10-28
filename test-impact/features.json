@@ -9,16 +9,31 @@
         "apps/crm-web/src/features/policies/**",
         "apps/crm-web/src/features/finance/**",
         "apps/crm-web/src/features/audit/**",
+        "apps/crm-web/src/features/crm/**",
+        "apps/crm-web/src/features/tenants/**",
+        "apps/crm-web/src/lib/http.ts",
+        "apps/crm-web/src/mocks/browser.ts",
+        "apps/crm-e2e/src/fixtures/**",
         "packages/api-contracts/src/**",
-        "packages/domain/src/**"
+        "packages/domain/src/**",
+        "packages/service-bus/src/**",
+        "packages/policy-service/src/**",
+        "packages/policy-state-service/src/**",
+        "packages/finance-service/src/**",
+        "packages/insurance-runtime/src/**",
+        "packages/test-kit/src/**"
       ],
       "vitest": [
         "apps/crm-web/src/features/crm-workflow.test.tsx",
         "packages/api-contracts/src/test-api.test.ts",
-        "packages/domain/src/apply-event.test.ts",
-        "packages/domain/src/commission.test.ts"
+        "packages/domain/src/commission.test.ts",
+        "packages/service-bus/src/service-bus.test.ts",
+        "packages/policy-service/src/policy-service.test.ts",
+        "packages/policy-state-service/src/policy-state-service.test.ts",
+        "packages/finance-service/src/finance-service.test.ts",
+        "packages/insurance-runtime/src/runtime.test.ts"
       ],
-      "playwrightTags": ["@quote", "@policy", "@finance", "@commission"]
+      "playwrightTags": ["@quote", "@policy", "@finance", "@commission", "@refund", "@crm-worker"]
     }
   ]
 }

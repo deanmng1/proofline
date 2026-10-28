@@ -17,7 +17,7 @@ const session = {
 
 const tenants = [
   {
-    id: "e2e-tenant",
+    id: "test-tenant",
     name: "Testbed",
     slug: "testbed",
     plan: "scale",
@@ -72,6 +72,11 @@ export async function prepareTestApiPage(
   testApi: TestApi,
 ): Promise<() => Promise<void>> {
   await page.addInitScript((authenticatedSession) => {
+    crypto.randomUUID = () => {
+      const sequence = Number(window.sessionStorage.getItem("test-command-sequence") ?? "0") + 1;
+      window.sessionStorage.setItem("test-command-sequence", String(sequence));
+      return `00000000-0000-4000-8000-${String(sequence).padStart(12, "0")}`;
+    };
     (window as Window & { __CRM_TEST_API__?: boolean }).__CRM_TEST_API__ = true;
     window.localStorage.setItem(
       "admin-dashboard-template:session",

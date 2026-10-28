@@ -23,7 +23,7 @@ export const createProperty = (input: CreatePropertyInput) =>
 
 export const getQuotes = () => http<QuoteSummary[]>("/api/quotes");
 export const createQuote = (input: CreateQuoteInput) => post<QuoteSummary>("/api/quotes", input);
-export const bindQuote = (quoteId: string, input: BindQuoteInput = {}) =>
+export const bindQuote = (quoteId: string, input: BindQuoteInput) =>
   post<PolicySummary>(`/api/quotes/${quoteId}/bind`, input);
 
 export const getPolicies = () => http<PolicySummary[]>("/api/policies");
