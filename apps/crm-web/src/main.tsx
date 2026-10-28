@@ -9,7 +9,12 @@ import "@/styles.css";
 void initMonitoring();
 
 const enableMocking = async () => {
-  if (import.meta.env.VITE_API_BASE_URL) return;
+  if (
+    import.meta.env.VITE_API_BASE_URL ||
+    (window as Window & { __CRM_TEST_API__?: boolean }).__CRM_TEST_API__
+  ) {
+    return;
+  }
   const { worker } = await import("@/mocks/browser");
   await worker.start({
     onUnhandledRequest: "bypass",

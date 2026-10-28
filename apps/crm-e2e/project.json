@@ -14,6 +14,7 @@
         }
       ],
       "command": "pnpm exec playwright test --config apps/crm-e2e/playwright.config.ts",
+      "outputs": ["{workspaceRoot}/playwright-report", "{workspaceRoot}/test-results"],
       "cache": false
     }
   }
