@@ -9,7 +9,9 @@ vite.config.d.ts
 test-results/
 playwright-report/
 blob-report/
-e2e/.cache/
+apps/crm-e2e/.cache/
+.nx/
+.superpowers/
 
 # Local/AI tooling — not part of the distributed template
 .codegraph/

@@ -1,0 +1,20 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "name": "crm-e2e",
+  "projectType": "application",
+  "root": "apps/crm-e2e",
+  "sourceRoot": "apps/crm-e2e/src",
+  "targets": {
+    "e2e": {
+      "dependsOn": [
+        {
+          "projects": ["crm-web"],
+          "target": "build",
+          "params": "ignore"
+        }
+      ],
+      "command": "pnpm exec playwright test --config apps/crm-e2e/playwright.config.ts",
+      "cache": false
+    }
+  }
+}

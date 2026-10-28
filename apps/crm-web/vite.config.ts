@@ -4,11 +4,16 @@ import react from "@vitejs/plugin-react";
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
+  root: __dirname,
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
+  },
+  build: {
+    outDir: path.resolve(__dirname, "../../dist/crm-web"),
+    emptyOutDir: true,
   },
   test: {
     environment: "jsdom",
@@ -20,7 +25,7 @@ export default defineConfig({
     exclude: [
       "**/node_modules/**",
       "**/dist/**",
-      "e2e/**",
+      "../../apps/crm-e2e/**",
       "**/.{idea,git,cache,output,temp}/**",
       "**/coverage/**",
     ],

@@ -1,0 +1,31 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "name": "crm-web",
+  "projectType": "application",
+  "root": "apps/crm-web",
+  "sourceRoot": "apps/crm-web/src",
+  "targets": {
+    "serve": {
+      "command": "pnpm exec vite --config apps/crm-web/vite.config.ts",
+      "cache": false
+    },
+    "build": {
+      "command": "pnpm exec tsc -b apps/crm-web/tsconfig.json && pnpm exec vite build --config apps/crm-web/vite.config.ts",
+      "outputs": ["{workspaceRoot}/dist/crm-web"]
+    },
+    "test": {
+      "command": "pnpm exec vitest run --config apps/crm-web/vite.config.ts"
+    },
+    "test-watch": {
+      "command": "pnpm exec vitest --config apps/crm-web/vite.config.ts",
+      "cache": false
+    },
+    "preview": {
+      "command": "pnpm exec vite preview --config apps/crm-web/vite.config.ts",
+      "cache": false
+    },
+    "typecheck": {
+      "command": "pnpm exec tsc -b apps/crm-web/tsconfig.json"
+    }
+  }
+}

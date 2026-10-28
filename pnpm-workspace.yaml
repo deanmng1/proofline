@@ -1,5 +1,11 @@
 verifyDepsBeforeRun: false
 
+packages:
+  - apps/*
+  - packages/*
+  - tools/*
+
 allowBuilds:
   esbuild: true
   msw: true
+  nx: false
