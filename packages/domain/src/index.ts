@@ -1,5 +1,13 @@
 export { applyEvent, emptyDomainState } from "./apply-event";
-export { assertCommissionPlan, isCommissionPlan, projectCommissionEntries } from "./commission";
+export {
+  assertCommissionPlan,
+  createAccrualEntry,
+  createPaymentEntry,
+  createRefundAdjustmentEntry,
+  isCommissionPlan,
+  projectCommissionEntries,
+  refundCommissionAdjustmentCents,
+} from "./commission";
 export { moneyFromBasisPoints } from "./money";
 export type {
   AuditEntry,

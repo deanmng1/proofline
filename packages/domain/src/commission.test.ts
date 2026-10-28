@@ -1,7 +1,11 @@
 import { describe, expect, test } from "vitest";
 
 import { applyEvent, emptyDomainState } from "./apply-event";
-import { projectCommissionEntries } from "./commission";
+import {
+  createAccrualEntry,
+  projectCommissionEntries,
+  refundCommissionAdjustmentCents,
+} from "./commission";
 import { moneyFromBasisPoints } from "./money";
 
 const createdAt = "2026-01-01T00:00:00.000Z";
@@ -41,6 +45,21 @@ function bindQuote() {
 }
 
 describe("commission rules", () => {
+  test("creates commission from only immutable policy identity and plan", () => {
+    const plan = {
+      timing: "as_earned" as const,
+      rateBasisPoints: 5000,
+      holdPeriodDays: 0,
+      reverseOnRefund: true,
+    };
+    expect(
+      createAccrualEntry({ id: "policy-1", commissionPlan: plan }, "premium", 1, createdAt),
+    ).toMatchObject({ amountCents: 1, policyId: "policy-1", sourceEventId: "premium" });
+    expect(refundCommissionAdjustmentCents(plan, 1, 0)).toBe(-1);
+    expect(refundCommissionAdjustmentCents(plan, 2, -1)).toBe(0);
+    expect(refundCommissionAdjustmentCents(plan, 3, -1)).toBe(-1);
+  });
+
   test("COM-004 rejects malformed or negative commission plans at the domain boundary", () => {
     expect(() =>
       applyEvent(

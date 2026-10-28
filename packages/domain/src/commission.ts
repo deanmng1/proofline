@@ -3,6 +3,9 @@ import type { CommissionEntry, CommissionPlan, Policy } from "./types";
 
 const MILLIS_PER_DAY = 24 * 60 * 60 * 1_000;
 
+/** Commission math needs immutable identity and terms, never a Policy store. */
+type CommissionPolicy = Pick<Policy, "id" | "commissionPlan">;
+
 export function isCommissionPlan(value: unknown): value is CommissionPlan {
   if (typeof value !== "object" || value === null || Array.isArray(value)) {
     return false;
@@ -42,7 +45,7 @@ function payableAt(earnedAt: string, holdPeriodDays: number): string {
 }
 
 export function createAccrualEntry(
-  policy: Policy,
+  policy: CommissionPolicy,
   sourceEventId: string,
   amountCents: number,
   earnedAt: string,
@@ -61,7 +64,7 @@ export function createAccrualEntry(
 }
 
 export function createRefundAdjustmentEntry(
-  policy: Policy,
+  policy: CommissionPolicy,
   sourceEventId: string,
   amountCents: number,
   earnedAt: string,

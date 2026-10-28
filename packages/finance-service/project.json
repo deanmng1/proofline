@@ -1,0 +1,13 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "name": "finance-service",
+  "projectType": "library",
+  "root": "packages/finance-service",
+  "sourceRoot": "packages/finance-service/src",
+  "targets": {
+    "test": { "command": "pnpm exec vitest run packages/finance-service/src" },
+    "typecheck": {
+      "command": "pnpm exec tsc --noEmit --target ES2022 --module ESNext --moduleResolution Bundler --strict packages/finance-service/src/*.ts"
+    }
+  }
+}
