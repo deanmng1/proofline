@@ -4,7 +4,7 @@ import { describe, expect, test } from "vitest";
 import { createFinanceService } from "./finance-service";
 
 const at = "2026-01-01T00:00:00.000Z";
-const base = { tenantId: "tenant-1", policyId: "policy-1" };
+const base = { tenantId: "tenant-1", policyId: "policy-1", correlationId: "workflow-1" };
 function required<T>(value: T | undefined): T {
   if (value === undefined) throw new Error("Expected fixture value.");
   return value;
@@ -67,7 +67,12 @@ describe("Finance service", () => {
     s.bus.publish({
       ...s.state,
       messageId: "deposit",
-      event: { type: "finance.deposit.recorded", policyId: base.policyId, amountCents: 100 },
+      event: {
+        type: "finance.deposit.recorded",
+        commandId: "deposit",
+        policyId: base.policyId,
+        amountCents: 100,
+      },
     });
     expect(() => s.bus.drain()).toThrow(/initialized/i);
     expect(s.finance.getLedger(base.tenantId, base.policyId)).toBeUndefined();
@@ -233,6 +238,67 @@ describe("Finance service", () => {
     expect(() => s.finance.recordDeposit({ ...command, commandId: "" })).toThrow(/command/i);
   });
 
+  test("distinct_commands_share_workflow_correlation_and_retry_independently", () => {
+    const s = setup();
+    s.initialize();
+    const deposit = { ...base, commandId: "deposit", amountCents: 100 };
+    const premium = { ...base, commandId: "premium", amountCents: 200 };
+    const first = s.finance.recordDeposit(deposit);
+    const second = s.finance.settlePremiumPayment(premium);
+    expect(first).toMatchObject({ correlationId: "workflow-1", event: { commandId: "deposit" } });
+    expect(second).toMatchObject({ correlationId: "workflow-1", event: { commandId: "premium" } });
+    expect(s.finance.recordDeposit(deposit)).toEqual(first);
+    expect(s.finance.settlePremiumPayment(premium)).toEqual(second);
+    expect(s.bus.pendingMessages()).toHaveLength(2);
+    s.bus.drain();
+    expect(s.finance.recordDeposit(deposit)).toEqual(first);
+    expect(s.finance.settlePremiumPayment(premium)).toEqual(second);
+    expect(s.ledger().financeEntries.map((e) => e.amountCents)).toEqual([100, 200]);
+    expect(
+      s
+        .ledger()
+        .auditEntries.slice(-2)
+        .map((e) => e.correlationId),
+    ).toEqual(["workflow-1", "workflow-1"]);
+    expect(s.bus.pendingMessages()).toHaveLength(0);
+  });
+
+  test("consumes_distinct_command_ids_in_one_workflow_and_rejects_missing_command_id", () => {
+    const s = setup();
+    s.initialize();
+    const first = {
+      ...s.state,
+      messageId: "external-1",
+      correlationId: "shared-workflow",
+      event: {
+        type: "finance.deposit.recorded" as const,
+        commandId: "external-command-1",
+        policyId: base.policyId,
+        amountCents: 100,
+      },
+    };
+    const second = {
+      ...first,
+      messageId: "external-2",
+      event: { ...first.event, commandId: "external-command-2", amountCents: 200 },
+    };
+    s.bus.publish(first);
+    s.bus.publish(second);
+    s.bus.drain();
+    s.bus.publish(first);
+    s.bus.publish(second);
+    s.bus.drain();
+    expect(s.ledger().financeEntries.map((e) => e.amountCents)).toEqual([100, 200]);
+    s.bus.publish({
+      ...first,
+      messageId: "missing-command",
+      correlationId: "another-workflow",
+      event: { ...first.event, commandId: "" },
+    });
+    expect(() => s.bus.drain()).toThrow(/command id/i);
+    expect(s.ledger().financeEntries).toHaveLength(2);
+  });
+
   test("keeps_refund_rounding_per_original_premium_accrual", () => {
     const s = setup();
     s.state.event.state.commissionPlan.rateBasisPoints = 5000;
@@ -361,7 +427,11 @@ describe("Finance service", () => {
     ]);
     expect(new Set(refunds.map((e) => e.id)).size).toBe(3);
     expect(refunds[0].sourceEventId).toBe(message.messageId);
-    expect(message).toMatchObject({ correlationId: "r1", causationId: "state-1" });
+    expect(message).toMatchObject({
+      correlationId: "workflow-1",
+      causationId: "state-1",
+      event: { commandId: "r1" },
+    });
     expect(s.ledger().commissionEntries.map((e) => e.amountCents)).toEqual([2, -1, -1]);
   });
 

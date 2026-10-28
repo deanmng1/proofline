@@ -17,7 +17,12 @@ import {
 import type { ServiceBus } from "@testbed/service-bus";
 
 type FinanceEvent = Extract<ServiceEvent, { type: `finance.${string}` }>;
-export type FinanceCommand = { commandId: string; tenantId: string; policyId: string };
+export type FinanceCommand = {
+  commandId: string;
+  correlationId: string;
+  tenantId: string;
+  policyId: string;
+};
 export type AmountCommand = FinanceCommand & { amountCents: number };
 export type RefundCommand = FinanceCommand & { allocations: RefundAllocation[] };
 export type CommissionPaymentCommand = FinanceCommand & { commissionEntryId: string };
@@ -62,6 +67,8 @@ export type FinanceService = {
 };
 
 const key = (...parts: string[]) => JSON.stringify(parts);
+const commandFingerprint = (event: FinanceEvent, correlationId: string) =>
+  JSON.stringify({ event, correlationId });
 const assertRequired = (value: string, label: string) => {
   if (typeof value !== "string" || !value.trim()) throw new Error(`${label} is required.`);
 };
@@ -113,7 +120,8 @@ export function createFinanceService({
   const applyFinance = (message: EventEnvelope<FinanceEvent>): FinanceLedger => {
     assertRequired(message.tenantId, "Tenant ID");
     assertRequired(message.messageId, "Message ID");
-    assertRequired(message.correlationId, "Command ID");
+    assertRequired(message.event.commandId, "Command ID");
+    assertRequired(message.correlationId, "Correlation ID");
     assertTimestamp(message.occurredAt);
     const event = message.event;
     const previous = requireLedger(message.tenantId, event.policyId);
@@ -281,8 +289,9 @@ export function createFinanceService({
   });
 
   const consume = (message: EventEnvelope<FinanceEvent>) => {
-    const receiptKey = key(message.tenantId, message.correlationId);
-    const fingerprint = JSON.stringify(message.event);
+    assertRequired(message.event.commandId, "Command ID");
+    const receiptKey = key(message.tenantId, message.event.commandId);
+    const fingerprint = commandFingerprint(message.event, message.correlationId);
     const receipt = commandReceipts.get(receiptKey);
     if (
       receipt &&
@@ -302,10 +311,11 @@ export function createFinanceService({
 
   const publish = <T extends FinanceEvent>(command: FinanceCommand, event: T): EventEnvelope<T> => {
     assertRequired(command.commandId, "Command ID");
+    assertRequired(command.correlationId, "Correlation ID");
     assertRequired(command.tenantId, "Tenant ID");
     assertRequired(command.policyId, "Policy ID");
     const receiptKey = key(command.tenantId, command.commandId);
-    const fingerprint = JSON.stringify(event);
+    const fingerprint = commandFingerprint(event, command.correlationId);
     const receipt = commandReceipts.get(receiptKey);
     if (receipt) {
       if (receipt.fingerprint !== fingerprint)
@@ -315,7 +325,7 @@ export function createFinanceService({
     const ledger = requireLedger(command.tenantId, command.policyId);
     const message: EventEnvelope<T> = snapshot({
       messageId: `finance:${key(command.tenantId, command.commandId)}`,
-      correlationId: command.commandId,
+      correlationId: command.correlationId,
       causationId: ledger.auditEntries.filter((e) => e.type === "policy.state.changed").at(-1)
         ?.sourceEventId,
       tenantId: command.tenantId,
@@ -333,30 +343,35 @@ export function createFinanceService({
     recordDeposit: (command) =>
       publish(command, {
         type: "finance.deposit.recorded",
+        commandId: command.commandId,
         policyId: command.policyId,
         amountCents: command.amountCents,
       }),
     settlePremiumPayment: (command) =>
       publish(command, {
         type: "finance.premium.payment.settled",
+        commandId: command.commandId,
         policyId: command.policyId,
         amountCents: command.amountCents,
       }),
     recordClaimPayment: (command) =>
       publish(command, {
         type: "finance.claim.payment.recorded",
+        commandId: command.commandId,
         policyId: command.policyId,
         amountCents: command.amountCents,
       }),
     recordRefund: (command) =>
       publish(command, {
         type: "finance.refund.recorded",
+        commandId: command.commandId,
         policyId: command.policyId,
         allocations: command.allocations,
       }),
     payCommission: (command) =>
       publish(command, {
         type: "finance.commission.paid",
+        commandId: command.commandId,
         policyId: command.policyId,
         commissionEntryId: command.commissionEntryId,
       }),

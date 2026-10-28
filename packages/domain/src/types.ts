@@ -173,30 +173,35 @@ export type PolicyStateChangedMessage = {
 
 export type FinanceDepositRecordedMessage = {
   type: "finance.deposit.recorded";
+  commandId: string;
   policyId: string;
   amountCents: number;
 };
 
 export type FinancePremiumPaymentSettledMessage = {
   type: "finance.premium.payment.settled";
+  commandId: string;
   policyId: string;
   amountCents: number;
 };
 
 export type FinanceRefundRecordedMessage = {
   type: "finance.refund.recorded";
+  commandId: string;
   policyId: string;
   allocations: RefundAllocation[];
 };
 
 export type FinanceClaimPaymentRecordedMessage = {
   type: "finance.claim.payment.recorded";
+  commandId: string;
   policyId: string;
   amountCents: number;
 };
 
 export type FinanceCommissionPaidMessage = {
   type: "finance.commission.paid";
+  commandId: string;
   policyId: string;
   commissionEntryId: string;
 };
