@@ -232,6 +232,7 @@ const selectAll = (candidates: TestCandidates, errors: string[], reasons: string
   return {
     vitestFiles: [...new Set(candidates.vitest)],
     playwrightTests: [...new Set(candidates.playwright.map((candidate) => candidate.path))],
+    playwrightIdentities: [...candidates.playwright],
     reasons: Object.fromEntries(
       [...impactReasons.entries()].map(([test, testReasons]) => [test, sortUnique(testReasons)]),
     ),
@@ -269,12 +270,8 @@ export const selectImpact = ({
 
   const reasons = new Map<string, Set<string>>();
   const vitestCandidates = new Set(candidates.vitest);
-  const playwrightCandidates = new Map<string, Set<string>>();
-  for (const candidate of candidates.playwright) {
-    const tags = playwrightCandidates.get(candidate.path) ?? new Set<string>();
-    for (const tag of candidate.tags) tags.add(tag);
-    playwrightCandidates.set(candidate.path, tags);
-  }
+  const playwrightCandidates = new Set(candidates.playwright.map((candidate) => candidate.path));
+  const taggedPlaywright = new Set<(typeof candidates.playwright)[number]>();
   const allCandidates = testCandidates(candidates);
   const closures = new Map(
     allCandidates.map((candidate) => [candidate, dependencyClosure(candidate, sourceFiles)]),
@@ -318,9 +315,10 @@ export const selectImpact = ({
         }
       }
 
-      for (const [test, tags] of playwrightCandidates) {
-        if (feature.playwrightTags.some((tag) => tags.has(tag))) {
-          addReason(reasons, test, `feature:${feature.id}`);
+      for (const test of candidates.playwright) {
+        if (feature.playwrightTags.some((tag) => test.tags.includes(tag))) {
+          taggedPlaywright.add(test);
+          addReason(reasons, test.path, `feature:${feature.id}`);
         }
       }
     }
@@ -344,6 +342,13 @@ export const selectImpact = ({
   return {
     vitestFiles: selected.filter((test) => vitestCandidates.has(test)),
     playwrightTests: selected.filter((test) => playwrightCandidates.has(test)),
+    playwrightIdentities: candidates.playwright.filter(
+      (test) =>
+        taggedPlaywright.has(test) ||
+        [...(reasons.get(test.path) ?? [])].some(
+          (reason) => reason === "direct-test-edit" || reason.startsWith("static-import:"),
+        ),
+    ),
     reasons: Object.fromEntries(
       selected.map((test) => [test, sortUnique(reasons.get(test) ?? [])]),
     ),

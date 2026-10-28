@@ -26,6 +26,30 @@ const choose = (files: Parameters<typeof selectImpact>[0]["manifest"]["files"]) 
   });
 
 describe("conservative impact selection", () => {
+  test.each(["direct", "import"])(
+    "widens_all_sibling_identities_only_for_%s_file_evidence",
+    (reason) => {
+      const spec = "apps/crm-e2e/src/shared.spec.ts";
+      const helper = "apps/crm-e2e/src/helper.ts";
+      const identities = [
+        { path: spec, title: "quote", line: 2, tags: ["@quote"] },
+        { path: spec, title: "other", line: 3, tags: ["@other"] },
+      ];
+      const result = selectImpact({
+        manifest: {
+          base: "base",
+          head: "head",
+          uncertainty: [],
+          files: [{ path: reason === "direct" ? spec : helper, status: "modified" }],
+        },
+        featureMap: { version: 1, features: [] },
+        candidates: { vitest: [], playwright: identities },
+        sourceFiles: { [spec]: 'import "./helper";', [helper]: "export {};" },
+      });
+      expect(result.fallback).toBe("none");
+      expect(result.playwrightIdentities).toEqual(identities);
+    },
+  );
   test.each(["@quote", "@other"])(
     "preserves %s feature evidence from distinct tests in the same Playwright spec",
     (tag) => {
@@ -58,6 +82,7 @@ describe("conservative impact selection", () => {
         errors: [],
       });
       expect(selection.reasons[spec]).toEqual(["feature:tag-owner"]);
+      expect(selection.playwrightIdentities).toEqual([expect.objectContaining({ tags: [tag] })]);
     },
   );
 

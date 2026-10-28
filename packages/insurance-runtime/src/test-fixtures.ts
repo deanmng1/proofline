@@ -15,7 +15,7 @@ export const runtimeSeed = {
     },
   ],
 } satisfies RuntimeSeed;
-export const quoteCommand: RuntimeCommand = {
+export const quoteCommand = {
   type: "create_quote",
   schemaVersion: 1,
   tenantId: "tenant-a",
@@ -32,8 +32,8 @@ export const quoteCommand: RuntimeCommand = {
     holdPeriodDays: 0,
     reverseOnRefund: true,
   },
-};
-export const bindCommand: RuntimeCommand = {
+} satisfies RuntimeCommand;
+export const bindCommand = {
   type: "bind_quote",
   schemaVersion: 1,
   tenantId: "tenant-a",
@@ -41,7 +41,7 @@ export const bindCommand: RuntimeCommand = {
   correlationId: "workflow",
   quoteId: "quote",
   policyId: "policy",
-};
+} satisfies RuntimeCommand;
 export function failFinanceOnce() {
   const bus = createInMemoryServiceBus();
   const subscribe = bus.subscribe.bind(bus);

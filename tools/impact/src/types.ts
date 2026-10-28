@@ -55,6 +55,7 @@ export type TestCandidates = {
 export type ImpactSelection = {
   vitestFiles: string[];
   playwrightTests: string[];
+  playwrightIdentities: PlaywrightCandidate[];
   reasons: Record<string, string[]>;
   fallback: "none" | "all-tests";
   errors: string[];

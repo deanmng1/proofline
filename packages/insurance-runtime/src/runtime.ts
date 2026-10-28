@@ -1,4 +1,5 @@
 import type { EventEnvelope, Policy, PolicyStateProjection, Quote } from "@testbed/domain";
+import { assertUtcTimestamp } from "@testbed/domain";
 import {
   type AmountCommand,
   type CommissionPaymentCommand,
@@ -98,9 +99,11 @@ const required = (value: unknown, label: string) => {
     throw new RuntimeError("invalid_request", `${label} is required.`);
 };
 const validTime = (value: string) => {
-  if (!Number.isFinite(new Date(value).getTime()))
-    throw new RuntimeError("invalid_request", "A valid timestamp is required.");
-  return value;
+  try {
+    return assertUtcTimestamp(value);
+  } catch {
+    throw new RuntimeError("invalid_request", "A valid ISO-UTC timestamp is required.");
+  }
 };
 export function createInsuranceRuntime(seed: RuntimeSeed = {}, options: RuntimeOptions = {}) {
   const tenants = new Set(seed.tenants ?? ["test-tenant"]);

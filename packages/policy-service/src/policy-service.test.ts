@@ -180,4 +180,51 @@ describe("Policy service", () => {
       }),
     ).toThrow("Property is not owned by the customer in this tenant");
   });
+
+  test("owns_input_terms_and_detaches_results_queries_and_replay_receipts", () => {
+    const { bus, service } = createService();
+    const input = structuredClone({ commandId: "create", ...command });
+    const original = structuredClone(input);
+    const quote = service.createQuote(input);
+    input.commissionPlan.rateBasisPoints = 9999;
+    Reflect.set(quote.commissionPlan, "rateBasisPoints", 8888);
+    Reflect.set(quote, "premiumCents", 1);
+    const queried = service.getQuote(command.tenantId, quote.id);
+    if (!queried) throw new Error("Expected created quote");
+    Reflect.set(queried.commissionPlan, "holdPeriodDays", 999);
+    const bind = {
+      commandId: "bind",
+      correlationId: "workflow",
+      tenantId: command.tenantId,
+      quoteId: quote.id,
+    };
+    const policy = service.bindQuote(bind);
+    Reflect.set(policy.commissionPlan, "rateBasisPoints", 7777);
+    const queriedPolicy = service.getPolicy(command.tenantId, policy.id);
+    const boundQuote = service.getQuote(command.tenantId, quote.id);
+    if (!queriedPolicy || !boundQuote) throw new Error("Expected bound policy and quote");
+    Reflect.set(queriedPolicy, "premiumCents", 2);
+    Reflect.set(boundQuote, "status", "quoted");
+    expect(() =>
+      service.bindQuote({ ...bind, commandId: "bind-again", policyId: "duplicate" }),
+    ).toThrow("already bound");
+    const replay = service.createQuote(original);
+    expect(replay).toMatchObject({
+      premiumCents: 10000,
+      status: "quoted",
+      commissionPlan: { rateBasisPoints: 1000, holdPeriodDays: 0 },
+    });
+    expect(replay).not.toBe(quote);
+    expect(replay.commissionPlan).not.toBe(quote.commissionPlan);
+    expect(Object.isFrozen(replay.commissionPlan)).toBe(true);
+    expect(service.bindQuote(bind)).toMatchObject({
+      premiumCents: 10000,
+      commissionPlan: { rateBasisPoints: 1000, holdPeriodDays: 0 },
+    });
+    expect(bus.pendingMessages()).toHaveLength(2);
+    const bound = bus.pendingMessages()[1];
+    expect(bound.event).toMatchObject({
+      policy: { premiumCents: 10000, commissionPlan: { rateBasisPoints: 1000 } },
+    });
+  });
 });

@@ -16,6 +16,11 @@
           "file": "packages/insurance-runtime/src/runtime.test.ts",
           "title": "insurance runtime > bind_chain_is_idempotent_across_all_consumers",
           "line": 54
+        },
+        {
+          "file": "packages/policy-service/src/policy-service.test.ts",
+          "title": "Policy service > owns_input_terms_and_detaches_results_queries_and_replay_receipts",
+          "line": 184
         }
       ],
       "playwright": [
@@ -79,7 +84,7 @@
         {
           "file": "packages/finance-service/src/finance-service.test.ts",
           "title": "Finance service > written_accrues_on_bound_state",
-          "line": 96
+          "line": 101
         }
       ],
       "playwright": []
@@ -98,7 +103,7 @@
         {
           "file": "packages/finance-service/src/finance-service.test.ts",
           "title": "Finance service > cash_first_accrues_only_settled_premium",
-          "line": 81
+          "line": 86
         }
       ],
       "playwright": [
@@ -119,17 +124,17 @@
         {
           "file": "packages/finance-service/src/finance-service.test.ts",
           "title": "Finance service > reverses_only_allocated_settled_premium_in_a_mixed_refund",
-          "line": 136
+          "line": 141
         },
         {
           "file": "packages/finance-service/src/finance-service.test.ts",
           "title": "Finance service > preserves_allocation_identity_and_rounds_partial_refunds_cumulatively",
-          "line": 402
+          "line": 407
         },
         {
           "file": "packages/finance-service/src/finance-service.test.ts",
           "title": "Finance service > honors_reverse_on_refund_and_caps_written_reversal_at_bound_accrual",
-          "line": 458
+          "line": 463
         }
       ],
       "playwright": [
@@ -169,7 +174,7 @@
         {
           "file": "packages/finance-service/src/finance-service.test.ts",
           "title": "Finance service > appends_commission_payment_without_rewriting_accrual",
-          "line": 199
+          "line": 204
         }
       ],
       "playwright": []
@@ -183,12 +188,12 @@
         {
           "file": "packages/finance-service/src/finance-service.test.ts",
           "title": "Finance service > replays_commands_once_and_rejects_conflicting_input",
-          "line": 224
+          "line": 229
         },
         {
           "file": "packages/finance-service/src/finance-service.test.ts",
           "title": "Finance service > distinct_commands_share_workflow_correlation_and_retry_independently",
-          "line": 241
+          "line": 246
         }
       ],
       "playwright": []
@@ -202,12 +207,12 @@
         {
           "file": "packages/finance-service/src/finance-service.test.ts",
           "title": "Finance service > cash_first_accrues_only_settled_premium",
-          "line": 81
+          "line": 86
         },
         {
           "file": "packages/finance-service/src/finance-service.test.ts",
           "title": "Finance service > does_not_reverse_an_allocated_deposit_refund",
-          "line": 115
+          "line": 120
         }
       ],
       "playwright": []
@@ -221,12 +226,12 @@
         {
           "file": "packages/finance-service/src/finance-service.test.ts",
           "title": "Finance service > initializes_ledger_from_policy_state",
-          "line": 53
+          "line": 58
         },
         {
           "file": "packages/finance-service/src/finance-service.test.ts",
           "title": "Finance service > rejects_finance_events_for_uninitialized_policy",
-          "line": 65
+          "line": 70
         }
       ],
       "playwright": [
@@ -247,22 +252,22 @@
         {
           "file": "packages/finance-service/src/finance-service.test.ts",
           "title": "Finance service > rejects_over_refund_or_cross_tenant_allocation",
-          "line": 169
+          "line": 174
         },
         {
           "file": "packages/finance-service/src/finance-service.test.ts",
           "title": "Finance service > validates_full_refund_atomically_and_rechecks_queued_balance",
-          "line": 323
+          "line": 328
         },
         {
           "file": "packages/finance-service/src/finance-service.test.ts",
           "title": "Finance service > requires_unique_nonempty_allocation_ids_before_publishing",
-          "line": 438
+          "line": 443
         },
         {
           "file": "packages/finance-service/src/finance-service.test.ts",
           "title": "Finance service > rejects_refund_sources_that_are_claims_or_other_policies",
-          "line": 367
+          "line": 372
         }
       ],
       "playwright": []
@@ -277,6 +282,11 @@
           "file": "packages/service-bus/src/service-bus.test.ts",
           "title": "in-memory service bus > delivers_once_per_consumer_and_preserves_delivery_log",
           "line": 62
+        },
+        {
+          "file": "packages/service-bus/src/immutable-delivery.test.ts",
+          "title": "immutable delivery > delimiter_ids_do_not_collide_between_consumers_and_messages",
+          "line": 71
         }
       ],
       "playwright": []
@@ -315,6 +325,11 @@
           "file": "packages/insurance-runtime/src/runtime.test.ts",
           "title": "insurance runtime > retries_pending_finance_delivery_without_duplicate_policy_or_commission_records",
           "line": 107
+        },
+        {
+          "file": "packages/service-bus/src/immutable-delivery.test.ts",
+          "title": "immutable delivery > consumer_mutation_cannot_change_later_delivery_or_failed_retry",
+          "line": 43
         }
       ],
       "playwright": []
@@ -396,7 +411,7 @@
         {
           "file": "packages/finance-service/src/finance-service.test.ts",
           "title": "Finance service > isolates_same_command_and_policy_ids_across_tenants_and_detaches_snapshots",
-          "line": 336
+          "line": 341
         }
       ],
       "playwright": [
@@ -468,6 +483,126 @@
           "file": "tools/impact/src/validate.test.ts",
           "title": "feature-map validation > reports stale tags instead of silently selecting zero Playwright tests",
           "line": 24
+        }
+      ],
+      "playwright": []
+    },
+    {
+      "id": "BUS-004",
+      "description": "Published envelopes own nested values; publisher, consumer, and inspection mutation cannot change delivery or retry.",
+      "criticality": "critical",
+      "paths": [
+        "packages/service-bus/src/**",
+        "packages/domain/src/snapshot.ts",
+        "packages/domain/src/types.ts"
+      ],
+      "vitest": [
+        {
+          "file": "packages/service-bus/src/immutable-delivery.test.ts",
+          "title": "immutable delivery > owns_nested_publisher_and_inspection_values_before_delivery",
+          "line": 20
+        },
+        {
+          "file": "packages/service-bus/src/immutable-delivery.test.ts",
+          "title": "immutable delivery > consumer_mutation_cannot_change_later_delivery_or_failed_retry",
+          "line": 43
+        }
+      ],
+      "playwright": []
+    },
+    {
+      "id": "TIME-001",
+      "description": "Command, envelope, and injected clock boundaries require explicit valid ISO-UTC timestamps; invalid calendar rollovers fail before mutation.",
+      "criticality": "critical",
+      "paths": [
+        "packages/domain/src/timestamp.ts",
+        "packages/service-bus/src/**",
+        "packages/policy-service/src/**",
+        "packages/policy-state-service/src/**",
+        "packages/finance-service/src/**",
+        "packages/insurance-runtime/src/**"
+      ],
+      "vitest": [
+        {
+          "file": "packages/insurance-runtime/src/timestamps.test.ts",
+          "title": "UTC timestamp boundaries > rejects_invalid_clock_command_and_envelope_2026-01-01T12:00:00",
+          "line": 17
+        },
+        {
+          "file": "packages/insurance-runtime/src/timestamps.test.ts",
+          "title": "UTC timestamp boundaries > rejects_invalid_clock_command_and_envelope_2026-01-01",
+          "line": 17
+        },
+        {
+          "file": "packages/insurance-runtime/src/timestamps.test.ts",
+          "title": "UTC timestamp boundaries > rejects_invalid_clock_command_and_envelope_bad",
+          "line": 17
+        },
+        {
+          "file": "packages/insurance-runtime/src/timestamps.test.ts",
+          "title": "UTC timestamp boundaries > rejects_invalid_clock_command_and_envelope_2026-02-30T00:00:00.000Z",
+          "line": 17
+        },
+        {
+          "file": "packages/insurance-runtime/src/timestamps.test.ts",
+          "title": "UTC timestamp boundaries > rejects_invalid_clock_command_and_envelope_2026-01-01T24:00:00.000Z",
+          "line": 17
+        },
+        {
+          "file": "packages/insurance-runtime/src/timestamps.test.ts",
+          "title": "UTC timestamp boundaries > rejects_invalid_clock_command_and_envelope_2026-01-01T12:00:00+00:00",
+          "line": 17
+        },
+        {
+          "file": "packages/insurance-runtime/src/timestamps.test.ts",
+          "title": "UTC timestamp boundaries > policy_clock_rejection_leaves_each_command_retryable_without_partial_state",
+          "line": 44
+        },
+        {
+          "file": "packages/insurance-runtime/src/timestamps.test.ts",
+          "title": "UTC timestamp boundaries > finance_rejects_invalid_command_and_projection_clocks",
+          "line": 76
+        },
+        {
+          "file": "packages/insurance-runtime/src/timestamps.test.ts",
+          "title": "UTC timestamp boundaries > preserves_explicit_UTC_across_runtime_and_commission_hold_calculation",
+          "line": 115
+        }
+      ],
+      "playwright": []
+    },
+    {
+      "id": "REG-002",
+      "description": "Feature tags and rule evidence select exact Playwright identities; only direct test edits and static imports widen sibling selection.",
+      "criticality": "critical",
+      "paths": ["tools/impact/src/**"],
+      "vitest": [
+        {
+          "file": "tools/impact/src/main-selection.test.ts",
+          "title": "main_executes_only_feature_tag_matches_and_exact_rule_references_in_a_shared_spec",
+          "line": 17
+        }
+      ],
+      "playwright": []
+    },
+    {
+      "id": "UI-001",
+      "description": "A captured bind retry survives bound quote refetch after lost response or pending delivery and completes without duplicate effects.",
+      "criticality": "critical",
+      "paths": [
+        "apps/crm-web/src/features/quotes/**",
+        "apps/crm-web/src/features/crm/use-command.ts"
+      ],
+      "vitest": [
+        {
+          "file": "apps/crm-web/src/features/crm-workflow.test.tsx",
+          "title": "insurance CRM reference workflow > recovers accepted bind after quote refetch with lost response",
+          "line": 337
+        },
+        {
+          "file": "apps/crm-web/src/features/crm-workflow.test.tsx",
+          "title": "insurance CRM reference workflow > recovers accepted bind after quote refetch with pending delivery",
+          "line": 337
         }
       ],
       "playwright": []

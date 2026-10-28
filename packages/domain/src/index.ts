@@ -8,6 +8,8 @@ export {
   refundCommissionAdjustmentCents,
 } from "./commission";
 export { moneyFromBasisPoints } from "./money";
+export { type DeepReadonly, immutableSnapshot } from "./snapshot";
+export { assertUtcTimestamp } from "./timestamp";
 export type {
   CommissionEntry,
   CommissionPlan,

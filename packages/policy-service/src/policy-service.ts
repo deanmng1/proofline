@@ -1,5 +1,6 @@
 import type {
   CommissionPlan,
+  DeepReadonly,
   EventEnvelope,
   Policy,
   PolicyLifecycle,
@@ -8,7 +9,7 @@ import type {
   Product,
   Quote,
 } from "@testbed/domain";
-import { assertCommissionPlan } from "@testbed/domain";
+import { assertCommissionPlan, assertUtcTimestamp, immutableSnapshot } from "@testbed/domain";
 import type { ServiceBus } from "@testbed/service-bus";
 
 export type Clock = () => string;
@@ -50,11 +51,11 @@ export type TransitionPolicyCommand = {
 };
 
 export type PolicyService = {
-  createQuote(command: CreateQuoteCommand): Quote;
-  bindQuote(command: BindQuoteCommand): Policy;
+  createQuote(command: CreateQuoteCommand): DeepReadonly<Quote>;
+  bindQuote(command: BindQuoteCommand): DeepReadonly<Policy>;
   transitionPolicy(command: TransitionPolicyCommand): void;
-  getQuote(tenantId: string, quoteId: string): Quote | undefined;
-  getPolicy(tenantId: string, policyId: string): Policy | undefined;
+  getQuote(tenantId: string, quoteId: string): DeepReadonly<Quote> | undefined;
+  getPolicy(tenantId: string, policyId: string): DeepReadonly<Policy> | undefined;
 };
 
 type PolicyServiceOptions = {
@@ -65,13 +66,13 @@ type PolicyServiceOptions = {
 };
 
 type QuoteRecord = {
-  quote: Quote;
+  quote: DeepReadonly<Quote>;
   createdMessageId: string;
   correlationId: string;
 };
 
 type PolicyRecord = {
-  policy: Policy;
+  policy: DeepReadonly<Policy>;
   correlationId: string;
   lifecycle: PolicyLifecycle;
   revision: number;
@@ -109,7 +110,11 @@ export function createPolicyService({
   const policies = new Map<string, PolicyRecord>();
   const commandReceipts = new Map<string, CommandReceipt>();
 
-  const runCommand = <T>(commandId: string, input: { tenantId: string }, action: () => T): T => {
+  const runCommand = <T>(
+    commandId: string,
+    input: { tenantId: string },
+    action: () => T,
+  ): DeepReadonly<T> => {
     assertNonEmpty(commandId, "Command ID");
     assertNonEmpty(input.tenantId, "Tenant ID");
     const fingerprint = commandFingerprint(input);
@@ -119,12 +124,12 @@ export function createPolicyService({
       if (receipt.fingerprint !== fingerprint) {
         throw new Error("Command ID was already used with different input.");
       }
-      return receipt.result as T;
+      return immutableSnapshot(receipt.result as T);
     }
 
     const result = action();
-    commandReceipts.set(key, { fingerprint, result });
-    return result;
+    commandReceipts.set(key, { fingerprint, result: immutableSnapshot(result) });
+    return immutableSnapshot(result);
   };
 
   const publish = <TEvent extends PolicyQuoteCreatedMessage | PolicyLifecycleChangedMessage>(
@@ -157,16 +162,16 @@ export function createPolicyService({
         if (quotes.has(key)) {
           throw new Error(`Quote already exists: ${quoteId}`);
         }
-        const quote: Quote = {
+        const quote = immutableSnapshot<Quote>({
           id: quoteId,
           customerId: command.customerId,
           propertyId: command.propertyId,
           product: command.product,
           premiumCents: command.premiumCents,
           commissionPlan: command.commissionPlan,
-          createdAt: clock(),
+          createdAt: assertUtcTimestamp(clock()),
           status: "quoted",
-        };
+        });
         const messageId = ids.next("message");
         quotes.set(key, {
           quote,
@@ -204,17 +209,20 @@ export function createPolicyService({
           throw new Error(`Policy already exists: ${policyId}`);
         }
 
-        const boundAt = clock();
+        const boundAt = assertUtcTimestamp(clock());
         const { createdAt: _createdAt, status: _quoteStatus, ...policyFields } = quoteRecord.quote;
-        const policy: Policy = {
+        const policy = immutableSnapshot<Policy>({
           ...policyFields,
           id: policyId,
           quoteId: quoteRecord.quote.id,
           boundAt,
           status: "bound",
-        };
+        });
         const messageId = ids.next("message");
-        quotes.set(quoteKey, { ...quoteRecord, quote: { ...quoteRecord.quote, status: "bound" } });
+        quotes.set(quoteKey, {
+          ...quoteRecord,
+          quote: immutableSnapshot({ ...quoteRecord.quote, status: "bound" as const }),
+        });
         policies.set(policyKey, {
           policy,
           correlationId: command.correlationId,
@@ -254,7 +262,7 @@ export function createPolicyService({
 
         const revision = policyRecord.revision + 1;
         const messageId = ids.next("message");
-        const occurredAt = clock();
+        const occurredAt = assertUtcTimestamp(clock());
         policies.set(key, {
           ...policyRecord,
           lifecycle: command.lifecycle,
@@ -278,10 +286,10 @@ export function createPolicyService({
       });
     },
     getQuote(tenantId, quoteId) {
-      return quotes.get(recordKey(tenantId, quoteId))?.quote;
+      return immutableSnapshot(quotes.get(recordKey(tenantId, quoteId))?.quote);
     },
     getPolicy(tenantId, policyId) {
-      return policies.get(recordKey(tenantId, policyId))?.policy;
+      return immutableSnapshot(policies.get(recordKey(tenantId, policyId))?.policy);
     },
   };
 }

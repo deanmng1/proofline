@@ -1,4 +1,5 @@
 import type { EventEnvelope, ServiceEvent } from "@testbed/domain";
+import { assertUtcTimestamp, immutableSnapshot } from "@testbed/domain";
 
 type EventType = ServiceEvent["type"];
 type EventFor<TEventType extends EventType> = Extract<ServiceEvent, { type: TEventType }>;
@@ -32,7 +33,8 @@ export type ServiceBus = {
   pendingMessages(): EventEnvelope[];
 };
 
-const receiptKey = (consumerId: string, messageId: string) => `${consumerId}:${messageId}`;
+const receiptKey = (consumerId: string, messageId: string) =>
+  JSON.stringify([consumerId, messageId]);
 
 export function createInMemoryServiceBus(): ServiceBus {
   const subscriptions: Subscription[] = [];
@@ -49,7 +51,8 @@ export function createInMemoryServiceBus(): ServiceBus {
       });
     },
     publish(envelope) {
-      queue.push(envelope);
+      assertUtcTimestamp(envelope.occurredAt);
+      queue.push(immutableSnapshot(envelope));
     },
     drain() {
       while (queue.length > 0) {
@@ -96,7 +99,7 @@ export function createInMemoryServiceBus(): ServiceBus {
       return deliveries.map((delivery) => ({ ...delivery }));
     },
     pendingMessages() {
-      return queue.map((envelope) => ({ ...envelope, event: { ...envelope.event } }));
+      return queue.map((envelope) => immutableSnapshot(envelope));
     },
   };
 }

@@ -13,7 +13,7 @@ function setup(timing: "on_bind" | "as_earned" = "as_earned", holdPeriodDays = 0
   const bus = createInMemoryServiceBus();
   let time = at;
   const finance = createFinanceService({ bus, now: () => time });
-  const state: EventEnvelope<PolicyStateChangedMessage> = {
+  const state = {
     messageId: "state-1",
     correlationId: "bind-1",
     tenantId: base.tenantId,
@@ -28,10 +28,15 @@ function setup(timing: "on_bind" | "as_earned" = "as_earned", holdPeriodDays = 0
         product: "risk_secure",
         premiumCents: 10_000,
         sourcePolicyMessageId: "bound-1",
-        commissionPlan: { timing, rateBasisPoints: 1_000, holdPeriodDays, reverseOnRefund: true },
+        commissionPlan: {
+          timing,
+          rateBasisPoints: 1_000,
+          holdPeriodDays,
+          reverseOnRefund: true as boolean,
+        },
       },
     },
-  };
+  } satisfies EventEnvelope<PolicyStateChangedMessage>;
   const initialize = () => {
     bus.publish(state);
     bus.drain();

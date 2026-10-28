@@ -12,8 +12,10 @@ chooses a fast, explainable first pass.
    `pnpm rules:generate` to update the checked-in Markdown catalog. State the input, the
    expected ledger/policy/commission outcome, and the rule ID (for example,
    `COM-002` for cash-first commission).
-2. Add a deterministic Vitest rule test in `packages/domain/src`. Use integer
-   cents and source-event IDs; test positive and compensating/refund cases.
+2. Add a deterministic Vitest rule test in the owning service package, or
+   `packages/insurance-runtime/src` when the behavior crosses services. Reserve
+   `packages/domain/src` tests for value and arithmetic helpers. Use integer cents
+   and source-event IDs; test positive and compensating/refund cases.
 3. When a workflow crosses the HTTP contract, add an API-boundary test in
    `packages/api-contracts/src`. It must use a fresh `createTestApi()` per
    test, never a shared mutable server.
@@ -60,7 +62,8 @@ installation succeeds.
 
 | Layer | Owns | Use it for |
 | --- | --- | --- |
-| Domain Vitest | `packages/domain` | Money, idempotency, commission timing, refunds, and append-only events. |
+| Domain Vitest | `packages/domain` | Money, arithmetic, and shared value helpers. |
+| Service/runtime Vitest | Owning service and `packages/insurance-runtime` | Command idempotency, commission timing, refunds, delivery, and append-only events. |
 | Contract Vitest | `packages/api-contracts` | HTTP shape, Test API isolation, and audit/ledger transitions. |
 | UI Vitest | `apps/crm-web` | Form validation, values displayed to users, and recoverable error states. |
 | Playwright | `apps/crm-e2e` | Customer → quote → bind → finance journeys and cross-browser-context isolation. |
@@ -75,6 +78,8 @@ both file-selection and rule reasons plus the exact selected identities.
 Vitest discovery runs `list --json --includeTaskLocation`, using the CRM Vite
 configuration for UI tests. Execution batches only selected anchored full
 titles in the same file. Playwright execution uses exact `file:line` locations.
+Feature tags and rule references select only matching Playwright identities;
+direct spec edits and static imports select every identity in the affected spec.
 Selected runs never substitute a whole Nx test project. The later full gates
 still run every test.
 

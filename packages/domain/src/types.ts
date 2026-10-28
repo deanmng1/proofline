@@ -1,3 +1,5 @@
+import type { DeepReadonly } from "./snapshot";
+
 export type Product = "risk_secure" | "risk_secure_plus";
 
 export type CommissionTiming = "on_bind" | "as_earned";
@@ -135,7 +137,7 @@ export type ServiceEvent =
   | FinanceClaimPaymentRecordedMessage
   | FinanceCommissionPaidMessage;
 
-export type EventEnvelope<TEvent extends ServiceEvent = ServiceEvent> = {
+export type EventEnvelope<TEvent extends ServiceEvent = ServiceEvent> = DeepReadonly<{
   messageId: string;
   correlationId: string;
   causationId?: string;
@@ -143,4 +145,4 @@ export type EventEnvelope<TEvent extends ServiceEvent = ServiceEvent> = {
   schemaVersion: number;
   occurredAt: string;
   event: TEvent;
-};
+}>;

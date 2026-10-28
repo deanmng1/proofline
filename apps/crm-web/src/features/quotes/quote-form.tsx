@@ -45,6 +45,11 @@ export const QuoteForm = () => {
   const [product, setProduct] = useState<keyof typeof plans>("risk_secure");
   const [premiumCents, setPremiumCents] = useState("12000");
   const [boundQuote, setBoundQuote] = useState<QuoteSummary | null>(null);
+  const [pendingBind, setPendingBind] = useState<{
+    quoteId: string;
+    commandId: string;
+    correlationId: string;
+  } | null>(null);
   const quoteCommand = useCommand();
   const bindCommand = useCommand();
   const customersQuery = useQuery({ queryKey: ["crm", "customers"], queryFn: getCustomers });
@@ -64,6 +69,7 @@ export const QuoteForm = () => {
       bindQuote(input.quoteId, { commandId: input.commandId, correlationId: input.correlationId }),
     onSuccess: (policy, { quoteId }) => {
       bindCommand.complete();
+      setPendingBind(null);
       const quote = (quotesQuery.data ?? []).find((entry) => entry.id === quoteId);
       if (quote) setBoundQuote({ ...quote, status: "bound" });
       void queryClient.invalidateQueries({ queryKey: ["crm", "quotes"] });
@@ -206,10 +212,12 @@ export const QuoteForm = () => {
                   {quote.status === "quoted" ? (
                     <Button
                       size="sm"
-                      disabled={bindMutation.isPending}
-                      onClick={() =>
-                        bindMutation.mutate(bindCommand.prepare({ quoteId: quote.id }))
-                      }
+                      disabled={bindMutation.isPending || pendingBind !== null}
+                      onClick={() => {
+                        const command = bindCommand.prepare({ quoteId: quote.id });
+                        setPendingBind(command);
+                        bindMutation.mutate(command);
+                      }}
                     >
                       Bind quote
                     </Button>
@@ -225,8 +233,13 @@ export const QuoteForm = () => {
           ) : null}
           {bindMutation.isError ? (
             <p className="mt-3 text-sm text-rose-600" role="alert">
-              Quote could not be bound. Refresh the quote and try again.
+              Quote could not be bound. Retry binding to complete the request.
             </p>
+          ) : null}
+          {pendingBind && bindMutation.isError ? (
+            <Button size="sm" className="mt-3" onClick={() => bindMutation.mutate(pendingBind)}>
+              Retry bind quote
+            </Button>
           ) : null}
           {bindMutation.data ? (
             <Link

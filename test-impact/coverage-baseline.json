@@ -3,38 +3,38 @@
   "files": {
     "packages/service-bus/src/service-bus.ts": {
       "report": "artifacts/coverage/service-bus/coverage-summary.json",
-      "lines": 93.54,
-      "branches": 88.23,
-      "functions": 87.5,
-      "statements": 93.54
+      "lines": 96.92,
+      "branches": 89.47,
+      "functions": 100,
+      "statements": 96.92
     },
     "packages/policy-service/src/policy-service.ts": {
       "report": "artifacts/coverage/policy-service/coverage-summary.json",
-      "lines": 90.57,
-      "branches": 71.42,
-      "functions": 83.33,
-      "statements": 90.57
+      "lines": 93.93,
+      "branches": 81.81,
+      "functions": 100,
+      "statements": 93.93
     },
     "packages/policy-state-service/src/policy-state-service.ts": {
       "report": "artifacts/coverage/policy-state-service/coverage-summary.json",
-      "lines": 91.83,
+      "lines": 92,
       "branches": 79.41,
       "functions": 100,
-      "statements": 91.83
+      "statements": 92
     },
     "packages/finance-service/src/finance-service.ts": {
       "report": "artifacts/coverage/finance-service/coverage-summary.json",
       "lines": 100,
-      "branches": 92.59,
+      "branches": 93.39,
       "functions": 100,
       "statements": 100
     },
     "packages/insurance-runtime/src/runtime.ts": {
       "report": "artifacts/coverage/insurance-runtime/coverage-summary.json",
-      "lines": 85.45,
-      "branches": 80.61,
+      "lines": 85.61,
+      "branches": 82.85,
       "functions": 83.33,
-      "statements": 85.45
+      "statements": 85.61
     },
     "packages/api-contracts/src/test-api.ts": {
       "report": "artifacts/coverage/api-contracts/coverage-summary.json",
@@ -46,7 +46,7 @@
     "tools/impact/src/validate.ts": {
       "report": "artifacts/coverage/impact-tools/coverage-summary.json",
       "lines": 98.57,
-      "branches": 95.45,
+      "branches": 95.91,
       "functions": 100,
       "statements": 98.57
     }

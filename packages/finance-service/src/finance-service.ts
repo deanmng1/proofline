@@ -1,5 +1,6 @@
 import type {
   CommissionEntry,
+  DeepReadonly,
   EventEnvelope,
   FinanceEntry,
   PolicyStateProjection,
@@ -8,9 +9,11 @@ import type {
 } from "@testbed/domain";
 import {
   assertCommissionPlan,
+  assertUtcTimestamp,
   createAccrualEntry,
   createPaymentEntry,
   createRefundAdjustmentEntry,
+  immutableSnapshot,
   projectCommissionEntries,
   refundCommissionAdjustmentCents,
 } from "@testbed/domain";
@@ -67,7 +70,7 @@ export type FinanceService = {
 };
 
 const key = (...parts: string[]) => JSON.stringify(parts);
-const commandFingerprint = (event: FinanceEvent, correlationId: string) =>
+const commandFingerprint = (event: DeepReadonly<FinanceEvent>, correlationId: string) =>
   JSON.stringify({ event, correlationId });
 const assertRequired = (value: string, label: string) => {
   if (typeof value !== "string" || !value.trim()) throw new Error(`${label} is required.`);
@@ -75,10 +78,6 @@ const assertRequired = (value: string, label: string) => {
 const assertCents = (value: number) => {
   if (!Number.isSafeInteger(value) || value <= 0)
     throw new Error("Amount must be positive safe integer cents.");
-};
-const assertTimestamp = (value: string) => {
-  if (!Number.isFinite(new Date(value).getTime()))
-    throw new Error("A valid timestamp is required.");
 };
 function freeze<T>(value: T): T {
   if (value && typeof value === "object") {
@@ -122,7 +121,7 @@ export function createFinanceService({
     assertRequired(message.messageId, "Message ID");
     assertRequired(message.event.commandId, "Command ID");
     assertRequired(message.correlationId, "Correlation ID");
-    assertTimestamp(message.occurredAt);
+    assertUtcTimestamp(message.occurredAt);
     const event = message.event;
     const previous = requireLedger(message.tenantId, event.policyId);
     const ledger: FinanceLedger = {
@@ -259,7 +258,7 @@ export function createFinanceService({
     assertRequired(state.policyId, "Policy ID");
     assertCents(state.premiumCents);
     assertCommissionPlan(state.commissionPlan);
-    assertTimestamp(message.occurredAt);
+    assertUtcTimestamp(message.occurredAt);
     if (!Number.isSafeInteger(state.revision) || state.revision < 1)
       throw new Error("Policy State revision must be a positive integer.");
     if (!previous && (state.revision !== 1 || state.lifecycle !== "bound"))
@@ -323,7 +322,7 @@ export function createFinanceService({
       return snapshot(receipt.envelope) as EventEnvelope<T>;
     }
     const ledger = requireLedger(command.tenantId, command.policyId);
-    const message: EventEnvelope<T> = snapshot({
+    const message: EventEnvelope<T> = immutableSnapshot({
       messageId: `finance:${key(command.tenantId, command.commandId)}`,
       correlationId: command.correlationId,
       causationId: ledger.auditEntries.filter((e) => e.type === "policy.state.changed").at(-1)
@@ -381,7 +380,10 @@ export function createFinanceService({
     },
     getCommissionEntries(tenantId, policyId) {
       return snapshot(
-        projectCommissionEntries(requireLedger(tenantId, policyId).commissionEntries, now()),
+        projectCommissionEntries(
+          requireLedger(tenantId, policyId).commissionEntries,
+          assertUtcTimestamp(now()),
+        ),
       );
     },
   };

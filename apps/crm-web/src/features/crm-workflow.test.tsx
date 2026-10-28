@@ -5,12 +5,12 @@ import { act, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { HttpResponse, http } from "msw";
 import { beforeEach, describe, expect, test, vi } from "vitest";
-
 import { CustomerListPage } from "@/features/customers/customer-list-page";
 import { PolicyDetailPage } from "@/features/policies/policy-detail-page";
 import { QuoteForm } from "@/features/quotes/quote-form";
 import { setActiveTenantId } from "@/lib/http";
 import { server } from "@/test/server";
+import { createInMemoryServiceBus } from "../../../../packages/service-bus/src";
 
 function useTestApi(seed: TestSeed = ledgerSeed()) {
   setActiveTenantId("test-tenant");
@@ -99,7 +99,7 @@ describe("insurance CRM reference workflow", () => {
     await user.click(screen.getByRole("button", { name: "Create quote" }));
     await user.click(await screen.findByRole("button", { name: "Bind quote" }));
     expect(await screen.findByRole("alert")).toHaveTextContent("Quote could not be bound");
-    await user.click(screen.getByRole("button", { name: "Bind quote" }));
+    await user.click(screen.getByRole("button", { name: "Retry bind quote" }));
     expect(await screen.findByRole("link", { name: "Review bound policy" })).toBeVisible();
     expect(requests.size).toBe(2);
     const commandIds = [];
@@ -333,4 +333,77 @@ describe("insurance CRM reference workflow", () => {
 
     expect(await screen.findByRole("alert")).toHaveTextContent("Quote could not be bound");
   });
+
+  test.each(["lost response", "pending delivery"])(
+    "recovers accepted bind after quote refetch with %s",
+    async (failure) => {
+      setActiveTenantId("test-tenant");
+      const api = createTestApi(ledgerSeed({ commands: [] }), {
+        now: "2026-01-01T00:00:00.000Z",
+        busFactory: () => {
+          const bus = createInMemoryServiceBus();
+          const subscribe = bus.subscribe.bind(bus);
+          let fail = failure === "pending delivery";
+          bus.subscribe = (consumerId, eventType, handler) =>
+            subscribe(consumerId, eventType, (message) => {
+              if (consumerId === "finance-policy-state" && fail) {
+                fail = false;
+                throw new Error("pending finance");
+              }
+              handler(message);
+            });
+          return bus;
+        },
+      });
+      server.use(...createMswHandlers(api));
+      const attempts: unknown[] = [];
+      server.use(
+        http.post(/\/api\/quotes\/[^/]+\/bind$/, async ({ request }) => {
+          attempts.push(await request.clone().json());
+          const response = await api.handle(request);
+          return failure === "lost response" && attempts.length === 1
+            ? new HttpResponse(null, { status: 503 })
+            : response;
+        }),
+      );
+      const user = userEvent.setup();
+      renderWithProviders(<QuoteForm />);
+      await screen.findByRole("option", { name: /100 Market Street/i });
+      await user.selectOptions(screen.getByLabelText("Policyholder"), "fixture-customer-1");
+      await user.selectOptions(screen.getByLabelText("Insured property"), "fixture-property-1");
+      await user.click(screen.getByRole("button", { name: "Create quote" }));
+      await user.click(await screen.findByRole("button", { name: "Bind quote" }));
+      await screen.findByRole("alert");
+      act(() => {
+        onlineManager.setOnline(false);
+        onlineManager.setOnline(true);
+      });
+      await within(screen.getByRole("list", { name: "Open quotes" })).findByText(
+        "Written — payable when the policy binds",
+      );
+      await user.click(screen.getByRole("button", { name: "Retry bind quote" }));
+      expect(await screen.findByRole("link", { name: "Review bound policy" })).toBeVisible();
+      expect(screen.queryByRole("button", { name: "Retry bind quote" })).not.toBeInTheDocument();
+      expect(attempts).toHaveLength(2);
+      expect(attempts[1]).toEqual(attempts[0]);
+      const response = await api.handle(
+        new Request("http://localhost/api/test/state", {
+          headers: { "X-Tenant-Id": "test-tenant" },
+        }),
+      );
+      const state = await response.json();
+      expect(state.policy.policies).toHaveLength(1);
+      expect(Object.values(state.policyState.timelines)).toEqual([
+        expect.arrayContaining([expect.objectContaining({ revision: 1 })]),
+      ]);
+      expect(Object.values(state.policyState.timelines)[0]).toHaveLength(1);
+      expect(state.finance.ledgers[0].commissionEntries).toHaveLength(1);
+      expect(state.pendingMessages).toEqual([]);
+      expect(state.messages.map((m: { event: { type: string } }) => m.event.type)).toEqual([
+        "policy.quote.created",
+        "policy.lifecycle.changed",
+        "policy.state.changed",
+      ]);
+    },
+  );
 });

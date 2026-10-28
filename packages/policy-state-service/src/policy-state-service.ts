@@ -4,6 +4,7 @@ import type {
   PolicyStateChangedMessage,
   PolicyStateProjection,
 } from "@testbed/domain";
+import { assertUtcTimestamp } from "@testbed/domain";
 import type { ServiceBus } from "@testbed/service-bus";
 
 export type PolicyStateService = {
@@ -79,6 +80,7 @@ export function createPolicyStateService({ bus }: PolicyStateServiceOptions): Po
   };
 
   bus.subscribe("policy-state", "policy.lifecycle.changed", (message) => {
+    assertUtcTimestamp(message.occurredAt);
     const incoming = projectState(message);
     const timeline = getTimeline(message.tenantId, incoming.policyId) ?? [];
     const current = timeline.at(-1);

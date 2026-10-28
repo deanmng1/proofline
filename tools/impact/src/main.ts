@@ -164,7 +164,7 @@ const perform = (cwd: string, args: string[]) => {
       (test) => selection.vitestFiles.includes(test.file) || rules.vitest.includes(test),
     ),
     playwright: identities.playwright.filter(
-      (test) => selection.playwrightTests.includes(test.path) || rules.playwright.includes(test),
+      (test) => selection.playwrightIdentities.includes(test) || rules.playwright.includes(test),
     ),
   };
   const artifactDirectory = path.join(cwd, "artifacts/impact");
