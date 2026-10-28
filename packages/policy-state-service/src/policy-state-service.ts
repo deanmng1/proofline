@@ -15,8 +15,6 @@ type PolicyStateServiceOptions = {
   bus: ServiceBus;
 };
 
-const recordKey = (tenantId: string, policyId: string) => `${tenantId}:${policyId}`;
-
 const copyState = (state: PolicyStateProjection): PolicyStateProjection => ({
   ...state,
   commissionPlan: { ...state.commissionPlan },
@@ -47,15 +45,23 @@ const projectState = (
 });
 
 export function createPolicyStateService({ bus }: PolicyStateServiceOptions): PolicyStateService {
-  const timelines = new Map<string, PolicyStateProjection[]>();
+  const timelinesByTenant = new Map<string, Map<string, PolicyStateProjection[]>>();
+
+  const getTimeline = (tenantId: string, policyId: string) =>
+    timelinesByTenant.get(tenantId)?.get(policyId);
+
+  const setTimeline = (tenantId: string, policyId: string, timeline: PolicyStateProjection[]) => {
+    const tenantTimelines = timelinesByTenant.get(tenantId) ?? new Map();
+    tenantTimelines.set(policyId, timeline);
+    timelinesByTenant.set(tenantId, tenantTimelines);
+  };
 
   const appendAndPublish = (
     message: EventEnvelope<PolicyLifecycleChangedMessage>,
     state: PolicyStateProjection,
   ) => {
-    const key = recordKey(message.tenantId, state.policyId);
-    const timeline = timelines.get(key) ?? [];
-    timelines.set(key, [...timeline, copyState(state)]);
+    const timeline = getTimeline(message.tenantId, state.policyId) ?? [];
+    setTimeline(message.tenantId, state.policyId, [...timeline, copyState(state)]);
 
     const envelope: EventEnvelope<PolicyStateChangedMessage> = {
       messageId: `policy-state:${message.messageId}`,
@@ -74,8 +80,7 @@ export function createPolicyStateService({ bus }: PolicyStateServiceOptions): Po
 
   bus.subscribe("policy-state", "policy.lifecycle.changed", (message) => {
     const incoming = projectState(message);
-    const key = recordKey(message.tenantId, incoming.policyId);
-    const timeline = timelines.get(key) ?? [];
+    const timeline = getTimeline(message.tenantId, incoming.policyId) ?? [];
     const current = timeline.at(-1);
 
     if (!current) {
@@ -115,11 +120,11 @@ export function createPolicyStateService({ bus }: PolicyStateServiceOptions): Po
 
   return {
     getPolicyState(tenantId, policyId) {
-      const state = timelines.get(recordKey(tenantId, policyId))?.at(-1);
+      const state = getTimeline(tenantId, policyId)?.at(-1);
       return state ? copyState(state) : undefined;
     },
     getPolicyStateTimeline(tenantId, policyId) {
-      return (timelines.get(recordKey(tenantId, policyId)) ?? []).map(copyState);
+      return (getTimeline(tenantId, policyId) ?? []).map(copyState);
     },
   };
 }

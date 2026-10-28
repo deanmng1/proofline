@@ -168,6 +168,43 @@ describe("Policy State service", () => {
     expect(service.getPolicyStateTimeline("tenant-test", "policy-1")).toHaveLength(2);
   });
 
+  test("isolates_tenant_and_policy_ids_that_contain_key_delimiters", () => {
+    const bus = createInMemoryServiceBus();
+    const service = createPolicyStateService({ bus });
+    const firstPolicy = { ...policy, id: "c" };
+    const secondPolicy = {
+      ...policy,
+      id: "b:c",
+      premiumCents: 20_000,
+      commissionPlan: { ...policy.commissionPlan },
+    };
+    bus.publish(
+      lifecycleMessage({
+        messageId: "policy-message-delimited-1",
+        policySnapshot: firstPolicy,
+        tenantId: "a:b",
+      }),
+    );
+    bus.publish(
+      lifecycleMessage({
+        messageId: "policy-message-delimited-2",
+        policySnapshot: secondPolicy,
+        tenantId: "a",
+      }),
+    );
+
+    bus.drain();
+
+    expect(service.getPolicyState("a:b", "c")).toEqual(
+      expect.objectContaining({ policyId: "c", premiumCents: 10_000 }),
+    );
+    expect(service.getPolicyState("a", "b:c")).toEqual(
+      expect.objectContaining({ policyId: "b:c", premiumCents: 20_000 }),
+    );
+    expect(service.getPolicyStateTimeline("a:b", "c")).toHaveLength(1);
+    expect(service.getPolicyStateTimeline("a", "b:c")).toHaveLength(1);
+  });
+
   test("rejects_conflicting_same_revision", () => {
     const bus = createInMemoryServiceBus();
     createPolicyStateService({ bus });
