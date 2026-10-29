@@ -65,6 +65,7 @@ export type ScenarioOptions = {
   id?: string;
   idPrefix?: string;
   now?: string;
+  videoDirectory?: string;
 };
 
 type UnexpectedRequest = {
@@ -549,6 +550,7 @@ export function createScenario(options: ScenarioOptions): ProoflineScenario {
         baseURL: options.workerServer.origin,
         serviceWorkers: "block",
         storageState: options.workerServer.storageState,
+        ...(options.videoDirectory ? { recordVideo: { dir: options.videoDirectory } } : {}),
       });
       const record: ContextRecord = {
         context,

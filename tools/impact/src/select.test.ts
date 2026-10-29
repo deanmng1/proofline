@@ -208,6 +208,47 @@ describe("manifest-owned selection", () => {
     expect(selection.identities.playwright).toEqual(discovered.playwright);
     expect(choose({ sourceFiles }).fallback).toBe("canonical-full");
   });
+  test("retains_the_exact_transitive_dynamic_import_edge_in_selection_evidence", () => {
+    const owned = manifest();
+    const bridge = "modules/orders/src/bridge.ts";
+    const target = "modules/orders/src/lazy.ts";
+    owned.ownership.push({
+      ...owned.ownership[0],
+      glob: target,
+      entrypoints: [target],
+      testBindings: owned.ownership[0].testBindings.map((binding) => ({
+        ...binding,
+        testId: `${binding.testId}-lazy`,
+        title: "sibling",
+        line: 3,
+      })),
+    });
+    const selection = choose({
+      manifest: owned,
+      sourceFiles: {
+        [source]: 'export { load } from "./bridge";',
+        [bridge]: 'export const load = () => import("./lazy");',
+        [target]: "export {};",
+      },
+    });
+    expect(selection.fallback).toBe("none");
+    expect(selection.rationale[source]).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          ownership: target,
+          evidence: expect.arrayContaining([
+            {
+              kind: "dynamic-import",
+              importer: bridge,
+              specifier: "./lazy",
+              resolvedTarget: target,
+              targetOwner: target,
+            },
+          ]),
+        }),
+      ]),
+    );
+  });
 });
 
 test("retains_path_reasons_and_registered_workspace_fallback_commands", () => {

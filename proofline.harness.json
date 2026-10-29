@@ -14,7 +14,7 @@
       "cwd": "."
     },
     "browser": {
-      "argv": ["pnpm", "test:e2e"],
+      "argv": ["pnpm", "e2e"],
       "cwd": "."
     },
     "coverage": {
@@ -892,7 +892,7 @@
           "runner": "vitest",
           "file": "packages/service-bus/src/service-bus.test.ts",
           "title": "in-memory service bus > leaves_failed_delivery_pending_for_a_deterministic_retry",
-          "line": 275
+          "line": 296
         },
         {
           "ruleId": "BUS-003",
@@ -1695,7 +1695,7 @@
           "runner": "vitest",
           "file": "packages/service-bus/src/service-bus.test.ts",
           "title": "in-memory service bus > delivers_once_per_consumer_and_preserves_delivery_log",
-          "line": 205
+          "line": 226
         },
         {
           "ruleId": "BUS-002",
@@ -1705,7 +1705,7 @@
           "runner": "vitest",
           "file": "packages/service-bus/src/service-bus.test.ts",
           "title": "in-memory service bus > drains_messages_in_publish_order",
-          "line": 238
+          "line": 259
         },
         {
           "ruleId": "BUS-003",
@@ -1715,7 +1715,7 @@
           "runner": "vitest",
           "file": "packages/service-bus/src/service-bus.test.ts",
           "title": "in-memory service bus > leaves_failed_delivery_pending_for_a_deterministic_retry",
-          "line": 275
+          "line": 296
         },
         {
           "ruleId": "BUS-003",
@@ -2273,7 +2273,7 @@
           "commandKey": "browserScenario",
           "runner": "playwright",
           "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
-          "title": "rotates_refresh_tokens_and_revokes_the_context_on_logout",
+          "title": "rotates_access_tokens_and_revokes_the_context_on_logout",
           "line": 127,
           "tag": "@authority"
         },

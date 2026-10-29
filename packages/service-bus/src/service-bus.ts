@@ -108,7 +108,11 @@ const restoreCheckpoint = (input: ServiceBusCheckpoint | undefined): ServiceBusC
       throw new Error("Invalid service bus checkpoint delivery event type.");
     }
     if (delivery.status === "completed") {
-      completedDeliveryKeys.add(receiptKey(delivery.consumerId, delivery.messageId));
+      const key = receiptKey(delivery.consumerId, delivery.messageId);
+      if (completedDeliveryKeys.has(key)) {
+        throw new Error("Invalid service bus checkpoint: duplicate completed delivery.");
+      }
+      completedDeliveryKeys.add(key);
     }
   }
   if (

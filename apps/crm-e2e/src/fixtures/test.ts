@@ -1,3 +1,4 @@
+import { rmSync } from "node:fs";
 import { test as base, expect, type Page } from "@playwright/test";
 import type { TestSeed } from "@testbed/api-contracts";
 
@@ -60,7 +61,8 @@ export const test = base.extend<CrmFixtures, CrmWorkerFixtures>({
     const page = await context.newPage();
     await use(page);
   },
-  scenarioFactory: async ({ browser, workerServer }, use) => {
+  scenarioFactory: async ({ browser, workerServer }, use, testInfo) => {
+    const videoDirectory = testInfo.outputPath("videos");
     const created = new Set<ProoflineScenario>();
     const scenarioIds = new Set<string>();
     const runtimeIds = new Set<string>();
@@ -71,6 +73,7 @@ export const test = base.extend<CrmFixtures, CrmWorkerFixtures>({
           browser,
           workerServer,
           permittedOrigins: ["https://fonts.googleapis.com", "https://fonts.gstatic.com"],
+          videoDirectory,
           ...options,
         });
         if (scenarioIds.has(scenario.id) || runtimeIds.has(scenario.runtimeId)) {
@@ -99,6 +102,8 @@ export const test = base.extend<CrmFixtures, CrmWorkerFixtures>({
     const cleanupErrors = cleanup
       .filter((result) => result.status === "rejected")
       .map((result) => (result as PromiseRejectedResult).reason);
+    if (!bodyError && cleanupErrors.length === 0 && testInfo.status === testInfo.expectedStatus)
+      rmSync(videoDirectory, { recursive: true, force: true });
     if (bodyError || cleanupErrors.length)
       throw new AggregateError(
         [...(bodyError ? [bodyError] : []), ...cleanupErrors],

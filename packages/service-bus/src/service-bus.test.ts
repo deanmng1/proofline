@@ -200,6 +200,27 @@ describe("in-memory service bus", () => {
         ],
       } as never),
     ).toThrow(/delivery status/i);
+    expect(() =>
+      createInMemoryServiceBus({
+        version: 1,
+        queue: [],
+        completedReceipts: [{ consumerId: "consumer", messageId: "message-1" }],
+        deliveries: [
+          {
+            consumerId: "consumer",
+            messageId: "message-1",
+            eventType: "policy.quote.created",
+            status: "completed",
+          },
+          {
+            consumerId: "consumer",
+            messageId: "message-1",
+            eventType: "policy.quote.created",
+            status: "completed",
+          },
+        ],
+      }),
+    ).toThrow(/duplicate completed delivery/i);
   });
 
   test("delivers_once_per_consumer_and_preserves_delivery_log", () => {

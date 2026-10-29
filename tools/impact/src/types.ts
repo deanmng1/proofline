@@ -85,7 +85,16 @@ export type ImpactSelection = {
       testId: string | null;
       commandKey: string;
       identity: VitestIdentity | PlaywrightIdentity;
-      evidence: string[];
+      evidence: (
+        | string
+        | {
+            kind: "dynamic-import";
+            importer: string;
+            specifier: string;
+            resolvedTarget: string;
+            targetOwner: string;
+          }
+      )[];
     }[]
   >;
   errors: string[];

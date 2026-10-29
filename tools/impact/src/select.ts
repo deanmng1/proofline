@@ -227,18 +227,30 @@ export const selectImpact = ({
       )
         errors.push(`unbound ownership:${file}`);
       const reachable = closure(file);
-      const relatedOwners = new Set([owner]);
+      const relatedOwners = new Map<
+        (typeof manifest.ownership)[number],
+        Extract<ImpactSelection["rationale"][string][number]["evidence"][number], object>[]
+      >([[owner, []]]);
       for (const importer of reachable)
         for (const dependency of dependencies.get(importer) ?? []) {
           if (!dependency.dynamic) continue;
           const target = resolve(importer, dependency.target, sourceFiles);
-          if (target)
+          if (target && dependency.target)
             for (const targetOwner of manifest.ownership.filter(
               (item) => path.matchesGlob(target, item.glob) && item.entrypoints.includes(target),
-            ))
-              relatedOwners.add(targetOwner);
+            )) {
+              const edges = relatedOwners.get(targetOwner) ?? [];
+              edges.push({
+                kind: "dynamic-import",
+                importer,
+                specifier: dependency.target,
+                resolvedTarget: target,
+                targetOwner: targetOwner.glob,
+              });
+              relatedOwners.set(targetOwner, edges);
+            }
         }
-      for (const selectedOwner of relatedOwners)
+      for (const [selectedOwner, dynamicEdges] of relatedOwners)
         for (const binding of selectedOwner.testBindings) {
           const identity = bindings.get(binding);
           if (!identity) {
@@ -262,9 +274,9 @@ export const selectImpact = ({
             });
             continue;
           }
-          const evidence = [
+          const evidence: ImpactSelection["rationale"][string][number]["evidence"] = [
             "manifest-binding",
-            ...(selectedOwner !== owner ? [`dynamic-import:${file}->${selectedOwner.glob}`] : []),
+            ...dynamicEdges,
           ];
           if (closure(binding.file).has(file))
             evidence.push(binding.file === file ? "direct-test-edit" : "static-import");

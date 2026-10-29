@@ -251,7 +251,7 @@
         {
           "file": "packages/service-bus/src/service-bus.test.ts",
           "title": "in-memory service bus > delivers_once_per_consumer_and_preserves_delivery_log",
-          "line": 205
+          "line": 226
         }
       ],
       "playwright": []
@@ -265,7 +265,7 @@
         {
           "file": "packages/service-bus/src/service-bus.test.ts",
           "title": "in-memory service bus > drains_messages_in_publish_order",
-          "line": 238
+          "line": 259
         }
       ],
       "playwright": []
@@ -279,7 +279,7 @@
         {
           "file": "packages/service-bus/src/service-bus.test.ts",
           "title": "in-memory service bus > leaves_failed_delivery_pending_for_a_deterministic_retry",
-          "line": 275
+          "line": 296
         },
         {
           "file": "packages/insurance-runtime/src/runtime.test.ts",
@@ -633,7 +633,7 @@
     },
     {
       "id": "AUTH-002",
-      "description": "Scenario-local bearer authority authenticates immutable role and tenant membership before Test API reads or mutations, and login refresh/logout rotate and revoke credentials.",
+      "description": "Scenario-local bearer authority authenticates immutable role and tenant membership before Test API reads or mutations, and login access-token refresh/logout rotate and revoke credentials.",
       "criticality": "critical",
       "paths": [
         "packages/api-contracts/src/**",
@@ -665,7 +665,7 @@
       "playwright": [
         {
           "path": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
-          "title": "rotates_refresh_tokens_and_revokes_the_context_on_logout",
+          "title": "rotates_access_tokens_and_revokes_the_context_on_logout",
           "line": 127,
           "tag": "@authority"
         },

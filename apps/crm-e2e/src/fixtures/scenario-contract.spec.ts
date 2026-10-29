@@ -124,7 +124,7 @@ test("starts_unauthenticated_and_logs_in_through_routed_auth", { tag: "@scenario
   expect((await scenario.inspect()).contexts[0]?.authenticated).toBe(true);
 });
 
-test("rotates_refresh_tokens_and_revokes_the_context_on_logout", { tag: "@authority" }, async ({
+test("rotates_access_tokens_and_revokes_the_context_on_logout", { tag: "@authority" }, async ({
   scenario,
 }) => {
   const page = await scenario.newPage();
