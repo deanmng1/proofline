@@ -2,22 +2,9 @@ import type { Page } from "@playwright/test";
 import type { ProoflineScenario } from "../fixtures/scenario";
 import { expect, test } from "../fixtures/test";
 
-async function guardedAuthenticatedPage(
-  scenario: ProoflineScenario,
-  observeFont: () => void,
-): Promise<Page> {
-  const context = await scenario.createContext();
-  await context.route("https://fonts.googleapis.com/**", async (route) => {
-    observeFont();
-    await route.fallback();
-  });
-  const page = await context.newPage();
-  await page.goto("/login");
-  await page.evaluate(async () => {
-    const response = await fetch("/api/auth/login", { method: "POST", body: "{}" });
-    if (!response.ok) throw new Error("Isolation scenario login failed.");
-    localStorage.setItem("admin-dashboard-template:session", JSON.stringify(await response.json()));
-  });
+async function guardedAuthenticatedPage(scenario: ProoflineScenario): Promise<Page> {
+  const page = await scenario.newPage();
+  await page.goto("/app/crm/customers");
   return page;
 }
 
@@ -32,21 +19,19 @@ async function addCustomer(page: Page, name: string) {
 }
 
 test("@policy isolates concurrent guarded browser journeys", async ({ scenarioFactory }) => {
-  const scenarioA = scenarioFactory({ idPrefix: "alpha" });
-  const scenarioB = scenarioFactory({ idPrefix: "bravo" });
-  let fontRequestsA = 0;
-  let fontRequestsB = 0;
+  const scenarioA = scenarioFactory({ idPrefix: "alpha", startAuthenticated: true });
+  const scenarioB = scenarioFactory({ idPrefix: "bravo", startAuthenticated: true });
   const [pageA, pageB] = await Promise.all([
-    guardedAuthenticatedPage(scenarioA, () => {
-      fontRequestsA += 1;
-    }),
-    guardedAuthenticatedPage(scenarioB, () => {
-      fontRequestsB += 1;
-    }),
+    guardedAuthenticatedPage(scenarioA),
+    guardedAuthenticatedPage(scenarioB),
   ]);
 
-  expect(fontRequestsA).toBeGreaterThan(0);
-  expect(fontRequestsB).toBeGreaterThan(0);
+  for (const scenario of [scenarioA, scenarioB])
+    expect(
+      (await scenario.inspect()).providerRequests.some(
+        (request) => request.url === "https://fonts.googleapis.com/css2",
+      ),
+    ).toBe(true);
   for (const page of [pageA, pageB]) {
     expect(
       await page.evaluate(() =>

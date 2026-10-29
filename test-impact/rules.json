@@ -323,7 +323,7 @@
         {
           "path": "apps/crm-e2e/src/features/isolation.spec.ts",
           "title": "@policy isolates concurrent guarded browser journeys",
-          "line": 34,
+          "line": 21,
           "tag": "@policy"
         }
       ]
@@ -524,6 +524,11 @@
           "file": "apps/crm-web/src/bootstrap.test.tsx",
           "title": "CRM application bootstrap > test_bootstrap_never_initializes_monitoring",
           "line": 29
+        },
+        {
+          "file": "tools/proofline/src/product-e2e-boundary.test.ts",
+          "title": "Proofline product E2E boundary > product_e2e_specs_delegate_transport_and_storage_to_fixtures",
+          "line": 6
         }
       ],
       "playwright": [
@@ -542,7 +547,7 @@
         {
           "path": "apps/crm-e2e/src/features/isolation.spec.ts",
           "title": "@policy isolates concurrent guarded browser journeys",
-          "line": 34,
+          "line": 21,
           "tag": "@policy"
         }
       ]
@@ -690,7 +695,7 @@
         {
           "path": "apps/crm-e2e/src/features/isolation.spec.ts",
           "title": "@policy isolates concurrent guarded browser journeys",
-          "line": 34,
+          "line": 21,
           "tag": "@policy"
         }
       ]

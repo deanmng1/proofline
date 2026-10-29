@@ -75,6 +75,8 @@ type UnexpectedRequest = {
   acknowledged?: boolean;
 };
 
+type ProviderRequest = Omit<UnexpectedRequest, "acknowledged">;
+
 type ContextRecord = {
   context: BrowserContext;
   identity: ScenarioIdentity;
@@ -90,6 +92,7 @@ export type ScenarioInspection = {
   serverPort: number;
   serviceWorkers: number;
   unexpectedRequests: readonly UnexpectedRequest[];
+  providerRequests: readonly ProviderRequest[];
   contexts: Array<{
     contextId: string;
     runtimeId: string;
@@ -175,6 +178,7 @@ export function createScenario(options: ScenarioOptions): ProoflineScenario {
   const identityDefinitions = new Map([[defaultIdentity.id, identityDefinition(defaultIdentity)]]);
   const contexts: ContextRecord[] = [];
   const unexpectedRequests: UnexpectedRequest[] = [];
+  const providerRequests: ProviderRequest[] = [];
   let contextSequence = 0;
   let lifecycle: "active" | "cleaning" | "cleanup-failed" | "closed" = "active";
   let cleanupAttempt = 0;
@@ -354,6 +358,13 @@ export function createScenario(options: ScenarioOptions): ProoflineScenario {
         return;
       }
       if (permitted.has(origin)) {
+        providerRequests.push({
+          plane: request.headers()["x-proofline-plane"] === "worker" ? "worker" : "page",
+          method: request.method(),
+          url: safeUrl(request.url()),
+          scenarioId,
+          trace,
+        });
         await route.fulfill({ status: 204, body: "" });
         return;
       }
@@ -509,6 +520,7 @@ export function createScenario(options: ScenarioOptions): ProoflineScenario {
           0,
         ),
         unexpectedRequests: [...unexpectedRequests],
+        providerRequests: [...providerRequests],
         contexts: contexts.map((record) => ({
           contextId: record.contextId,
           runtimeId,

@@ -556,6 +556,10 @@
         {
           "glob": "tools/proofline/serve-test-app.mjs",
           "reason": "The real loopback server is exercised in a separate Node process for missing, wrong, accepted, and replayed capability behavior; Vitest V8 cannot attribute that child process."
+        },
+        {
+          "glob": "tools/proofline/src/product-e2e-boundary.test.ts",
+          "reason": "Static regression test sources are not instrumented production sources."
         }
       ],
       "report": "artifacts/coverage/proofline-tools/coverage-summary.json",
@@ -620,6 +624,16 @@
           "title": "starts_unauthenticated_and_logs_in_through_routed_auth",
           "line": 113,
           "tag": "@scenario"
+        },
+        {
+          "ruleId": "SAFE-001",
+          "layer": "contract",
+          "testId": "binding-b589c5c439336c4fc99f",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/product-e2e-boundary.test.ts",
+          "title": "Proofline product E2E boundary > product_e2e_specs_delegate_transport_and_storage_to_fixtures",
+          "line": 6
         }
       ],
       "ruleLayers": [
@@ -918,7 +932,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/features/isolation.spec.ts",
           "title": "@policy isolates concurrent guarded browser journeys",
-          "line": 34,
+          "line": 21,
           "tag": "@policy"
         },
         {
@@ -1380,7 +1394,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/features/isolation.spec.ts",
           "title": "@policy isolates concurrent guarded browser journeys",
-          "line": 34,
+          "line": 21,
           "tag": "@policy"
         },
         {
@@ -1544,7 +1558,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/features/isolation.spec.ts",
           "title": "@policy isolates concurrent guarded browser journeys",
-          "line": 34,
+          "line": 21,
           "tag": "@policy"
         },
         {
@@ -1721,7 +1735,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/features/isolation.spec.ts",
           "title": "@policy isolates concurrent guarded browser journeys",
-          "line": 34,
+          "line": 21,
           "tag": "@policy"
         },
         {
@@ -2308,7 +2322,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/features/isolation.spec.ts",
           "title": "@policy isolates concurrent guarded browser journeys",
-          "line": 34,
+          "line": 21,
           "tag": "@policy"
         },
         {
@@ -2319,7 +2333,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/features/isolation.spec.ts",
           "title": "@policy isolates concurrent guarded browser journeys",
-          "line": 34,
+          "line": 21,
           "tag": "@policy"
         }
       ],
