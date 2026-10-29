@@ -415,7 +415,7 @@
           "runner": "vitest",
           "file": "packages/insurance-runtime/src/runtime.test.ts",
           "title": "insurance runtime > bind_chain_is_idempotent_across_all_consumers",
-          "line": 557
+          "line": 600
         },
         {
           "ruleId": "POL-001",
@@ -456,7 +456,7 @@
           "runner": "vitest",
           "file": "packages/insurance-runtime/src/runtime.test.ts",
           "title": "insurance runtime > cancellation_is_terminal_and_replay_does_not_restore_bound_state",
-          "line": 695
+          "line": 738
         },
         {
           "ruleId": "TIME-001",
@@ -533,7 +533,7 @@
           "runner": "vitest",
           "file": "packages/insurance-runtime/src/runtime.test.ts",
           "title": "insurance runtime > bind_chain_is_idempotent_across_all_consumers",
-          "line": 557
+          "line": 600
         },
         {
           "ruleId": "POL-001",
@@ -564,7 +564,7 @@
           "runner": "vitest",
           "file": "packages/insurance-runtime/src/runtime.test.ts",
           "title": "insurance runtime > cancellation_is_terminal_and_replay_does_not_restore_bound_state",
-          "line": 695
+          "line": 738
         },
         {
           "ruleId": "BUS-003",
@@ -584,7 +584,7 @@
           "runner": "vitest",
           "file": "packages/insurance-runtime/src/runtime.test.ts",
           "title": "insurance runtime > retries_pending_finance_delivery_without_duplicate_policy_or_commission_records",
-          "line": 681
+          "line": 724
         },
         {
           "ruleId": "TEN-001",
@@ -594,7 +594,7 @@
           "runner": "vitest",
           "file": "packages/insurance-runtime/src/runtime.test.ts",
           "title": "insurance runtime > same_command_ids_and_entity_ids_are_independent_across_tenants",
-          "line": 532
+          "line": 575
         },
         {
           "ruleId": "TEN-001",
@@ -666,7 +666,7 @@
           "runner": "vitest",
           "file": "packages/insurance-runtime/src/runtime.test.ts",
           "title": "insurance runtime > replays_customer_and_property_intake_with_stable_command_identity",
-          "line": 450
+          "line": 493
         }
       ],
       "ruleLayers": [
@@ -1056,7 +1056,7 @@
           "runner": "vitest",
           "file": "packages/insurance-runtime/src/runtime.test.ts",
           "title": "insurance runtime > same_command_ids_and_entity_ids_are_independent_across_tenants",
-          "line": 532
+          "line": 575
         },
         {
           "ruleId": "TEN-001",
@@ -1220,7 +1220,7 @@
           "runner": "vitest",
           "file": "packages/insurance-runtime/src/runtime.test.ts",
           "title": "insurance runtime > same_command_ids_and_entity_ids_are_independent_across_tenants",
-          "line": 532
+          "line": 575
         },
         {
           "ruleId": "TEN-001",
@@ -1333,7 +1333,7 @@
           "runner": "vitest",
           "file": "packages/insurance-runtime/src/runtime.test.ts",
           "title": "insurance runtime > retries_pending_finance_delivery_without_duplicate_policy_or_commission_records",
-          "line": 681
+          "line": 724
         },
         {
           "ruleId": "BUS-004",
@@ -1397,7 +1397,7 @@
           "runner": "vitest",
           "file": "packages/insurance-runtime/src/runtime.test.ts",
           "title": "insurance runtime > same_command_ids_and_entity_ids_are_independent_across_tenants",
-          "line": 532
+          "line": 575
         },
         {
           "ruleId": "TEN-001",

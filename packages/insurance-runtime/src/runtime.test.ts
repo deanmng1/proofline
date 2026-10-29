@@ -163,6 +163,49 @@ describe("insurance runtime", () => {
     ).toThrow(/checkpoint.*seed|seed.*checkpoint/i);
   });
 
+  test("rejects_completed_consumer_receipts_without_their_durable_effects", () => {
+    const runtime = createInsuranceRuntime(runtimeSeed);
+    runtime.execute(quoteCommand);
+    runtime.execute(bindCommand);
+    const checkpoint = runtime.checkpoint();
+    const lifecycle = present(
+      checkpoint.messages.find((message) => message.event.type === "policy.lifecycle.changed"),
+    );
+    const projected = present(
+      checkpoint.messages.find((message) => message.event.type === "policy.state.changed"),
+    );
+
+    const missingProjection = structuredClone(checkpoint);
+    missingProjection.policyState.timelines = [];
+    missingProjection.finance.ledgers = [];
+    missingProjection.messages = missingProjection.messages.filter(
+      (message) => message.messageId !== projected.messageId,
+    );
+    missingProjection.bus.completedReceipts = missingProjection.bus.completedReceipts.filter(
+      (receipt) => receipt.messageId !== projected.messageId,
+    );
+    missingProjection.bus.deliveries = missingProjection.bus.deliveries.filter(
+      (delivery) => delivery.messageId !== projected.messageId,
+    );
+    expect(missingProjection.bus.completedReceipts).toContainEqual({
+      consumerId: "policy-state",
+      messageId: lifecycle.messageId,
+    });
+    expect(() => createInsuranceRuntime({}, { checkpoint: missingProjection })).toThrow(
+      /policy state.*receipt|receipt.*policy state|durable projection/i,
+    );
+
+    const missingFinanceEffect = structuredClone(checkpoint);
+    missingFinanceEffect.finance.ledgers = [];
+    expect(missingFinanceEffect.bus.completedReceipts).toContainEqual({
+      consumerId: "finance-policy-state",
+      messageId: projected.messageId,
+    });
+    expect(() => createInsuranceRuntime({}, { checkpoint: missingFinanceEffect })).toThrow(
+      /finance.*receipt|receipt.*finance|durable ledger/i,
+    );
+  });
+
   test("rejects_forged_runtime_receipt_queue_identity_and_lowered_sequence", () => {
     const intake = createInsuranceRuntime({ tenants: ["tenant-a", "tenant-b"] });
     const command = {

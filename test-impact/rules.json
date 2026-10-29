@@ -15,7 +15,7 @@
         {
           "file": "packages/insurance-runtime/src/runtime.test.ts",
           "title": "insurance runtime > bind_chain_is_idempotent_across_all_consumers",
-          "line": 557
+          "line": 600
         }
       ],
       "playwright": [
@@ -55,7 +55,7 @@
         {
           "file": "packages/insurance-runtime/src/runtime.test.ts",
           "title": "insurance runtime > cancellation_is_terminal_and_replay_does_not_restore_bound_state",
-          "line": 695
+          "line": 738
         }
       ],
       "playwright": []
@@ -264,7 +264,7 @@
         {
           "file": "packages/insurance-runtime/src/runtime.test.ts",
           "title": "insurance runtime > retries_pending_finance_delivery_without_duplicate_policy_or_commission_records",
-          "line": 681
+          "line": 724
         }
       ],
       "playwright": []
@@ -311,7 +311,7 @@
         {
           "file": "packages/insurance-runtime/src/runtime.test.ts",
           "title": "insurance runtime > same_command_ids_and_entity_ids_are_independent_across_tenants",
-          "line": 532
+          "line": 575
         },
         {
           "file": "packages/policy-state-service/src/policy-state-service.test.ts",
@@ -476,7 +476,7 @@
         {
           "file": "packages/insurance-runtime/src/runtime.test.ts",
           "title": "insurance runtime > replays_customer_and_property_intake_with_stable_command_identity",
-          "line": 450
+          "line": 493
         },
         {
           "file": "packages/api-contracts/src/test-api.test.ts",
