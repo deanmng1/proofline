@@ -1,0 +1,11 @@
+$ pnpm nx run crm-e2e:e2e
+
+ NX   2 tasks: 2 succeeded
+
+
+Re-run with --output-style=static to inline logs.
+
+  Run duration:      18.9s
+  Cache:             0/2 hit (0%)
+  Critical path:     18.8s (2 tasks)
+  Recoverable time:  <1ms
