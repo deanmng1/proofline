@@ -872,4 +872,17 @@ describe("Proofline egress guard", () => {
     const signalResult = await runNode(signal);
     expect(signalResult).toMatchObject({ code: null, signal: "SIGTERM" });
   });
+
+  test("rejects_unstructured_or_extensible_child_capabilities", () => {
+    expect(() => normalizeAllowedChildCapabilities([null] as never)).toThrow(/must be an object/i);
+    expect(() =>
+      normalizeAllowedChildCapabilities([
+        {
+          executable: executableOnPath("git"),
+          purpose: "git-local",
+          argv: ["status"],
+        },
+      ] as never),
+    ).toThrow(/only executable and purpose/i);
+  });
 });
