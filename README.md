@@ -23,7 +23,7 @@ regressions.
 
 Standing up an insurance CRM usually means weeks of plumbing before the first real feature: session handling, tenant scoping, data tables, finance transitions, commissions, audit history, accessibility, and a test pipeline. This reference app makes those decisions concrete — and proves the business rules with unit, contract, UI, and end-to-end tests.
 
-The CRM journeys use a fresh in-memory Test API per browser test. That makes quoting and finance flows deterministic, blocks unplanned `/api/*` calls, and avoids consuming provider credentials while regressions are diagnosed.
+The CRM journeys use a fresh in-memory Test API per browser test. A separate capability-gated test build listens only on loopback, blocks undeclared browser and runtime egress, and is audited out of production artifacts. This makes quoting and finance flows deterministic without provider credentials.
 
 ## Regression harness
 
@@ -39,8 +39,15 @@ pnpm test                        # every Vitest project
 pnpm e2e                         # complete Chromium regression suite
 ```
 
-See [the testing guide](docs/TESTING.md) for the required rule-to-regression
-workflow, artifact locations, and CI behavior.
+See [the testing guide](docs/TESTING.md) for the rule-to-regression workflow and [portable automation guide](docs/PORTABLE_TEST_AUTOMATION.md) for the adaptation sequence, exact manifest command contract, append-only evidence, and CI boundary.
+
+## Portable adaptation
+
+Proofline is the reusable harness; the insurance CRM is its reference proof. Adapt another React/Vite repository by inventorying routes, roles, tenants, APIs, providers, rules, transitions, and runners; declaring structured commands, ownership, coverage, lifecycle, and golden-workflow contracts; implementing an isolated scenario adapter; then writing deterministic rule tests and a small set of navigated workflows. Stateless targets set the lifecycle matrix to `null`; state-model generation is intentionally parked for targets whose transition matrix later outgrows hand-authored service tests.
+
+The selector retains exact ownership and dynamic-import edge reasons and falls back to canonical full commands on uncertainty. Coverage baselines rise monotonically, execution history is byte-exact append-only JSONL, and README/manifest/docs/CI changes require fresh scoped evidence. Normal CI runs deterministic Node/shell/JSON commands and never calls an agent or model. Future Codex or Cursor integrations consume the same checked-in contracts rather than becoming an execution dependency.
+
+Chromium runs the full visible matrix: authenticated deep-link restoration, sidebar customer/property/quote/bind/finance/logout, response-loss recovery, role denial, tenant isolation, and refund/correction. Firefox and WebKit are opt-in and run only the `@proofline-smoke` invariant. The fixture rotates access tokens; its `refreshToken` value is a refresh-capability marker, while an independent refresh-credential protocol remains outside this harness delivery.
 
 ## Key Features
 

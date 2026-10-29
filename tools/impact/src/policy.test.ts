@@ -3,7 +3,8 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { describe, expect, test } from "vitest";
 import { checkCoverage, coverageMain } from "./coverage-policy.ts";
-import { validateRecords } from "./record-check.ts";
+import { harnessManifestSchema } from "./harness-manifest.ts";
+import { validateCanonicalCommandDocumentation, validateRecords } from "./record-check.ts";
 
 const metrics = { lines: 90, branches: 80, functions: 100, statements: 90 };
 const baseline = {
@@ -91,6 +92,23 @@ const record = {
   exitCode: 0,
 };
 describe("portable execution record", () => {
+  test("requires_exact_manifest_command_parity_in_the_canonical_documentation_table", () => {
+    const repositoryRoot = path.resolve(import.meta.dirname, "../../..");
+    const manifest = harnessManifestSchema.parse(
+      JSON.parse(readFileSync(path.join(repositoryRoot, "proofline.harness.json"), "utf8")),
+    );
+    const documentation = readFileSync(
+      path.join(repositoryRoot, "docs/PORTABLE_TEST_AUTOMATION.md"),
+      "utf8",
+    );
+    expect(validateCanonicalCommandDocumentation(manifest, documentation).errors).toEqual([]);
+    expect(
+      validateCanonicalCommandDocumentation(
+        manifest,
+        documentation.replace('["pnpm","lint"]', '["pnpm","lint:fix"]'),
+      ).errors.join(" "),
+    ).toMatch(/lint.*argv/i);
+  });
   test("accepts_repository_relative_directory_artifacts_without_rewriting_history", () => {
     expect(
       validateRecords(

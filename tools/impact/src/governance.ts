@@ -356,6 +356,7 @@ const normalizePath = (value: string) => relativePath.parse(value.replace(/\/$/,
 const pathContains = (root: string, file: string) => file === root || file.startsWith(`${root}/`);
 
 const fixedGovernedPaths = [
+  "README.md",
   "proofline.harness.json",
   "test-impact/coverage-baseline.json",
   "package.json",

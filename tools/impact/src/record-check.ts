@@ -11,8 +11,85 @@ import {
   verifyChangedHarnessEvidence,
   verifyRecordPrefix,
 } from "./governance.ts";
+import type { HarnessManifest } from "./harness-manifest.ts";
 import { harnessManifestSchema, validateHarnessAuthority } from "./harness-manifest.ts";
 import { relativePath, renderRules, rulesSchema } from "./validate.ts";
+
+const commandTableStart = "<!-- proofline-canonical-commands:start -->";
+const commandTableEnd = "<!-- proofline-canonical-commands:end -->";
+
+export const renderCanonicalCommandTable = (manifest: HarnessManifest) =>
+  [
+    commandTableStart,
+    "| Command key | Working directory | Runner | Exact argv (JSON) |",
+    "| --- | --- | --- | --- |",
+    ...Object.entries(manifest.commands).map(
+      ([key, command]) =>
+        `| ${key} | ${command.cwd} | ${command.runner ?? ""} | ${JSON.stringify(command.argv)} |`,
+    ),
+    commandTableEnd,
+  ].join("\n");
+
+export const validateCanonicalCommandDocumentation = (
+  manifest: HarnessManifest,
+  documentation: string,
+) => {
+  const errors: string[] = [];
+  const starts = documentation.split(commandTableStart).length - 1;
+  const ends = documentation.split(commandTableEnd).length - 1;
+  if (starts !== 1 || ends !== 1) {
+    return {
+      errors: [
+        `Canonical command documentation must contain exactly one table (${starts} starts, ${ends} ends).`,
+      ],
+    };
+  }
+  const body = documentation.split(commandTableStart)[1]?.split(commandTableEnd)[0] ?? "";
+  const rows = body
+    .split("\n")
+    .map((line) => line.trim())
+    .filter((line) => line.startsWith("|") && !/^\|\s*(?:Command key|---)/.test(line));
+  const parsed = new Map<string, { cwd: string; runner?: string; argv: unknown; count: number }>();
+  for (const row of rows) {
+    const cells = row
+      .slice(1, -1)
+      .split("|")
+      .map((cell) => cell.trim());
+    if (cells.length !== 4) {
+      errors.push(`Malformed canonical command documentation row: ${row}`);
+      continue;
+    }
+    const [key, cwd, runner, argvText] = cells;
+    let argv: unknown;
+    try {
+      argv = JSON.parse(argvText);
+    } catch {
+      errors.push(`Canonical command ${key} argv is not valid JSON.`);
+      continue;
+    }
+    const previous = parsed.get(key);
+    parsed.set(key, { cwd, runner: runner || undefined, argv, count: (previous?.count ?? 0) + 1 });
+  }
+  for (const [key, command] of Object.entries(manifest.commands)) {
+    const documented = parsed.get(key);
+    if (!documented) {
+      errors.push(`Canonical command ${key} is missing from documentation.`);
+      continue;
+    }
+    if (documented.count !== 1)
+      errors.push(`Canonical command ${key} appears ${documented.count} times in documentation.`);
+    if (documented.cwd !== command.cwd)
+      errors.push(`Canonical command ${key} cwd does not match the manifest.`);
+    if (documented.runner !== command.runner)
+      errors.push(`Canonical command ${key} runner does not match the manifest.`);
+    if (JSON.stringify(documented.argv) !== JSON.stringify(command.argv))
+      errors.push(`Canonical command ${key} argv does not match the manifest.`);
+  }
+  for (const key of parsed.keys())
+    if (!Object.hasOwn(manifest.commands, key))
+      errors.push(`Stale canonical command documentation row: ${key}.`);
+  return { errors };
+};
 
 const recordPath = z
   .string()
@@ -125,6 +202,12 @@ export const recordMain = (
         JSON.parse(readFileSync(path.join(cwd, "proofline.harness.json"), "utf8")),
       );
       errors.push(...validateHarnessAuthority(manifest).errors);
+      errors.push(
+        ...validateCanonicalCommandDocumentation(
+          manifest,
+          readFileSync(path.join(cwd, "docs/PORTABLE_TEST_AUTOMATION.md"), "utf8"),
+        ).errors,
+      );
       let baseManifest: typeof manifest | undefined;
       if (revisions.mergeBase) {
         const baseManifestObject = gitShowBytes(cwd, revisions.mergeBase, "proofline.harness.json");

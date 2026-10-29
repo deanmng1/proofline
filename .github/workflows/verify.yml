@@ -4,6 +4,13 @@ on:
   pull_request:
   push:
     branches: [main, master]
+  workflow_dispatch:
+    inputs:
+      cross_browser:
+        description: Run the invariant smoke in Firefox and WebKit
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: read
@@ -64,6 +71,10 @@ jobs:
         if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
         run: pnpm exec playwright install --with-deps chromium
 
+      - name: Install optional smoke browsers
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' && github.event_name == 'workflow_dispatch' && inputs.cross_browser }}
+        run: pnpm exec playwright install --with-deps firefox webkit
+
       - name: Preview impact selection
         id: impact
         shell: bash
@@ -90,6 +101,15 @@ jobs:
           set -o pipefail
           pnpm e2e 2>&1 | tee artifacts/browser-output.txt
 
+      - name: Run optional Firefox and WebKit invariant smoke
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' && github.event_name == 'workflow_dispatch' && inputs.cross_browser }}
+        shell: bash
+        env:
+          PROOFLINE_CROSS_BROWSER: "1"
+        run: |
+          set -o pipefail
+          pnpm exec playwright test --config apps/crm-e2e/playwright.config.ts apps/crm-e2e/src/proofline/cross-browser-smoke.spec.ts --project=firefox --project=webkit 2>&1 | tee -a artifacts/browser-output.txt
+
       - name: Generate Vitest coverage baseline
         if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
         shell: bash
@@ -101,6 +121,10 @@ jobs:
       - name: Check scoped critical-file coverage ratchets
         if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
         run: pnpm coverage:check -- --base "$IMPACT_BASE" --head "$IMPACT_HEAD"
+
+      - name: Check patch whitespace
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
+        run: git diff --check
 
       - name: Upload coverage baseline
         if: ${{ always() }}

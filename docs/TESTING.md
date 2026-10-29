@@ -1,196 +1,75 @@
 # Testing the insurance CRM
 
-This project treats business rules as executable contracts. Start with a rule
-and its customer-visible outcome, then choose the smallest test layer that
-can prove it. The full suite remains the safety net; impact selection only
-chooses a fast, explainable first pass.
+Proofline treats business rules as executable contracts. Use the smallest deterministic layer that proves a behavior, then retain a few real browser workflows for navigation and cross-screen state. Impact selection is a diagnostic first pass; canonical full gates remain the correctness authority.
 
 ## Rule-to-regression workflow
 
-1. Write an acceptance example with a stable rule ID in
-   [`test-impact/rules.json`](../test-impact/rules.json), then run
-   `pnpm rules:generate` to update the checked-in Markdown catalog. State the input, the
-   expected ledger/policy/commission outcome, and the rule ID (for example,
-   `COM-002` for cash-first commission).
-2. Add a deterministic Vitest rule test in the owning service package, or
-   `packages/insurance-runtime/src` when the behavior crosses services. Reserve
-   `packages/domain/src` tests for value and arithmetic helpers. Use integer cents
-   and source-event IDs; test positive and compensating/refund cases.
-3. When a workflow crosses the HTTP contract, add an API-boundary test in
-   `packages/api-contracts/src`. It must use a fresh `createTestApi()` per
-   test, never a shared mutable server.
-4. Add a Playwright journey only when the value crosses screens or guards a
-   real browser regression. Reuse the Test API fixture; it aborts unexpected
-   CRM API calls instead of reaching a provider or live service.
-5. Update `test-impact/features.json` and the rule registry when ownership or
-   tests change. Each critical rule needs deterministic Vitest evidence with
-   its full discovered title, file, and line. Supplemental Playwright evidence
-   needs the exact spec, nested title, line, and tag. A tag elsewhere in the
-   same spec is not evidence. Run discovery to refresh moved locations.
-6. Run the selected tests and then the complete gate before merging.
-
-```bash
-# Show the changed files, selected tests, and rationale without executing them.
-pnpm test:impacted -- --dry-run
-
-# Run the conservative selection. Supply a base locally when comparing a branch.
-IMPACT_BASE=main IMPACT_HEAD=HEAD pnpm test:impacted
-
-# Required release-quality safety gate.
-pnpm lint && pnpm typecheck && pnpm test:impacted -- --dry-run && pnpm test && pnpm e2e
-
-# Generate evidence and compare it with an explicit verified merge base.
-pnpm coverage
-pnpm coverage:check -- --base <trusted-base-ref> --head HEAD
-pnpm record:check -- --base <trusted-base-ref> --head HEAD
-```
-
-`pnpm coverage` includes CRM web, domain, Test API, all five service/runtime
-packages, test-kit, and impact-tools targets. Reports live below
-`artifacts/coverage/`. Open a project's `index.html` for the local HTML
-report; `lcov.info` and `coverage-summary.json` support later CI dashboards or
-threshold discussions. `test-impact/coverage-baseline.json` ratchets each
-line, branch, function, and statement percentage for seven reviewed groups and
-eight sources: service bus, Policy, Policy State, Finance, runtime, Test API,
-the impact validator, and merge-base governance. Missing reports/files/metrics,
-unclassified production sources, incompatible provider/format/aggregation
-metadata, and lower coverage fail. The merge-base baseline and manifest remain
-the comparison authority. Every group declares its producer command source,
-adapter, implementation, and package version resolver. The ratchet records the
-exact resolved command and argv plus the resolved provider package version,
-including on failed checks. Compatible browser instrumentation can use a
-structured manifest command with the non-Vitest Istanbul-summary adapter.
-There is no global percentage gate; untested template code remains visible.
-Baseline reductions require a recorded review decision. Raise the checked-in
-metrics after reviewing improved reports; ordinary CI never rewrites them.
-Vitest preserves those reports when a covered suite fails; CI still reports
-the failure and uploads the available coverage evidence after dependency
-installation succeeds.
+1. Add or update a stable rule in `test-impact/rules.json` and its ownership in `proofline.harness.json`.
+2. Write a failing deterministic test before implementation. Domain tests own values; service/runtime tests own commands, delivery, persistence, and transitions; contract tests own HTTP/authority boundaries; UI tests own validation and recovery controls.
+3. Use Playwright only when the proof requires authentication, route restoration, visible navigation, cross-screen state, recovery controls, role/tenant guards, or logout.
+4. Bind the exact discovered file, full title, declaration line, optional tag, runner, command, rule, and layer. Run `pnpm rules:generate`; never edit `test-impact/rules.md` by hand.
+5. Append the RED, GREEN, review, repair, and verification outcomes to `test-impact/execution-record.jsonl`.
+6. Run selection diagnostics and the complete gate with an explicit trusted base/head.
 
 ## Test layers
 
-| Layer | Owns | Use it for |
-| --- | --- | --- |
-| Domain Vitest | `packages/domain` | Money, arithmetic, and shared value helpers. |
-| Service/runtime Vitest | Owning service and `packages/insurance-runtime` | Command idempotency, commission timing, refunds, delivery, and append-only events. |
-| Contract Vitest | `packages/api-contracts` | HTTP shape, Test API isolation, and audit/ledger transitions. |
-| UI Vitest | `apps/crm-web` | Form validation, values displayed to users, and recoverable error states. |
-| Playwright | `apps/crm-e2e` | Customer → quote → bind → finance journeys and cross-browser-context isolation. |
+| Layer | Owns |
+| --- | --- |
+| Domain Vitest | Money, arithmetic, and shared values. |
+| Service/runtime Vitest | Command identity, event delivery, checkpoints/restart, state transitions, finance, and commission. |
+| Contract Vitest | Request/response shape, role and tenant authority, and Test API behavior. |
+| UI Vitest | Forms, visible values, route guards, validation, and recoverable states. |
+| Playwright | A small set of true multi-screen user workflows. |
 
-## Impact selection and artifacts
+## Portable contracts
 
-`pnpm test:impacted` builds a manifest in `artifacts/impact/manifest.json`
-and selection in `artifacts/impact/selection.json`. The selection is a union
-of changed tests, static imports, reviewed feature metadata, and rule ownership.
-`discovery.json` records actual runner identities; `selection.json` retains
-both file-selection and rule reasons plus the exact selected identities.
-Vitest discovery runs `list --json --includeTaskLocation`, using the CRM Vite
-configuration for UI tests. Execution batches only selected anchored full
-titles in the same file. Playwright execution uses exact `file:line` locations.
-Feature tags and rule references select only matching Playwright identities;
-direct spec edits and static imports select every identity in the affected spec.
-Selected runs never substitute a whole Nx test project. The later full gates
-still run every test.
+`pnpm harness:validate` validates structured commands without executing them; workspace membership; capability-gated test entrypoint and adapters; browser matrix; coverage groups; exact ownership; rule registry; and lifecycle/golden matrices. Missing or ambiguous metadata fails closed and writes `artifacts/harness/validation.json`.
 
-The selector runs **all** tests if it cannot make a safe claim: Git history
-is missing, configuration changes, an executable path has no owner, or feature
-metadata has stale Playwright tags. Invalid or ambiguous evidence/discovery
-also fails the command and writes an `executionBlocked` fallback artifact.
-Missing/malformed registries, duplicate IDs, critical rules without Vitest,
-undiscovered references, and generated Markdown drift cannot pass a dry run.
-Do not suppress that fallback or its failure.
+A target adapts Proofline by inventorying its repository and boundaries, inventorying rules/providers/side effects, declaring the manifest and matrices, implementing deterministic scenarios and golden rows, authoring narrow tests plus true browser journeys, then appending evidence and running complete gates. See [Portable test automation](PORTABLE_TEST_AUTOMATION.md) for the ordered protocol and the machine-checked canonical command table.
 
-Playwright saves the HTML report in `playwright-report/` and failures in
-`test-results/` (trace, screenshot, and video where configured). These,
-along with harness, impact, record, coverage, full-Vitest, and browser logs,
-are uploaded by `verify.yml` under `always()`. Coverage is also uploaded as a
-separate artifact on every CI run.
+A lifecycle target declares rows with state, operation, role, tenant scope, expected result, next state, rule IDs, and deterministic owner layer. A stateless target declares `lifecycleMatrix: null`. State-model generation remains an optional parked extension for unusually large lifecycle matrices.
 
-## Portable execution record
+Every golden row declares adapter-only setup, user-performed actions, URL transitions, accessible visible assertions, and persisted invariants inspected only after visible success. The adapter may seed or inspect; it cannot perform an in-scope user operation.
 
-The append-only
-[`test-impact/execution-record.jsonl`](../test-impact/execution-record.jsonl)
-records design, review, implementation, verification, evidence, and durable
-decisions in a tool-neutral form. See
-[`PORTABLE_TEST_AUTOMATION.md`](PORTABLE_TEST_AUTOMATION.md) for the recording
-protocol and the adapter boundary for a future Codex or Cursor integration.
+## Test-only boundary and egress
 
-## CI order
+The test application is a separate build. Its loopback server accepts one fresh launcher-generated capability and rejects missing, incorrect, or replayed capabilities. `pnpm proofline:check-production` rejects Test API, fake-auth, provider-fake, test-entrypoint modules, and test markers in production output.
 
-Pull requests check out the explicit PR head with full Git history, install dependencies, lint and
-typecheck, preview impact selection, run selected tests, run all Vitest
-projects, then run the complete Chromium suite and generate/check coverage.
-CI validates the harness before selection and passes explicit base/head
-revisions to impact, record, and coverage governance. It validates the JSONL
-record and generated catalog. Playwright retries remain
-available for diagnostics, but CI sets `failOnFlakyTests`: passing on a retry
-still fails the gate. Local runs do not enable this setting.
-The workflow supplies the PR base and head
-explicitly to prevent selection from guessing at CI history.
+Deny-by-default egress covers runner fetch/HTTP(S)/WebSocket/children, guarded server/runtime requests and configured SDK clients, BrowserContext pages and workers, the service-worker block/cleanup policy, WebSockets, and deterministic provider fakes. No test uses live Epay, GhostDraft, Smarty, Sage, fonts, or provider credentials.
 
-No test path should use live Epay, GhostDraft, Smarty, Sage, or other provider
-credentials. Provider integration belongs behind a contract adapter and must
-be exercised with deterministic test doubles in this harness.
+The fixture refresh flow rotates the opaque access bearer. The `refreshToken` field is a client-side refresh-capability marker, not a separately authenticated refresh credential; that broader protocol remains explicitly deferred.
 
-## Portable manifest and workflow contracts
+## Impact, coverage, and immutable evidence
 
-Run `pnpm harness:validate` before selection or other harness gates. It reads
-`proofline.harness.json`, checks canonical command argv/package scripts,
-repository-contained paths, every Nx workspace, coverage group metadata,
-ownership bindings, and the referenced lifecycle and golden workflow matrices.
-It always writes `artifacts/harness/validation.json`, including on malformed
-JSON or missing files, and exits unsuccessfully if any errors remain. Validation
-never executes a manifest command or imports a test module.
+`pnpm test:impacted` writes `artifacts/impact/manifest.json`, `discovery.json`, and `selection.json`. Evidence names exact test identities and ownership. Dynamic-import evidence includes importer, literal specifier, resolved target, and target owner. Configuration/structural changes, incomplete Git history, missing ownership, stale discovery, ambiguous bindings, or unresolved dynamic imports trigger canonical-full fallback.
 
-The reusable schemas and types live in `tools/impact/src/harness-manifest.ts`.
-Commands contain an executable and arguments plus a repository-relative `cwd`;
-workspace command fields reference those keys. Canonical `unit` and `browser`
-commands have fixed Vitest and Playwright roles; other canonical gates cannot
-be used as test commands. Custom test commands must declare `runner: "vitest"`
-or `runner: "playwright"`, matching their workspace slots and test bindings.
-A browser-only workspace may
-set `unitCommand: null`; an empty `browserCommands` list requires an explicit
-`browserOptOutReason`. Chromium is mandatory; optional Firefox/WebKit smoke
-projects must also be enabled in `browser.projects`; every enabled Firefox or
-WebKit project must declare smoke scope. Other project names are unsupported
-until the manifest schema defines their browser and execution scope.
+`pnpm coverage` generates normalized repository-relative Istanbul summaries. `pnpm coverage:check -- --base <trusted-base> --head <head>` verifies a unique merge base, compatible manifest groups, provider provenance, complete classified sources, and monotonic line/function/branch/statement baselines. It writes `artifacts/coverage/ratchet.json` on success or failure.
 
-Ownership rows declare explicit `ruleLayers` pairs, each requiring exact evidence.
-Bindings name a globally unique stable `testId`, rule, layer, command key, runner,
-file, exact full title and declaration line; Playwright can additionally require
-an exact tag. A shared test may appear under several owners or rules, but
-each binding has a distinct ID. Binding runner/command/workspace membership must
-agree, and `ruleRegistry` supplies the catalog checked for exact evidence parity. Without supplied runner discovery,
-the static validator recognizes literal `describe`/`test.describe` and `test`/`it`
-declarations and literal Playwright tags. Dynamic/generated identities require
-explicit `discovered` runner output supplied to `validateHarness`; unsupported
-or ambiguous identities fail closed. Keep at least one literal binding per
-declared rule/layer pair for the standalone static gate.
+`pnpm record:check -- --base <trusted-base> --head <head>` verifies byte-exact append-only history, schema and path safety, new scope for every changed governed artifact (including README), generated rule parity, and manifest/documentation command parity. It writes `artifacts/record/check.json` even on failure.
 
-`test-impact/lifecycle-matrix.json` requires a next state for accepted operations.
-Rejected and no-op rows use `null` or the unchanged state. Each row declares its
-role, tenant scope, rule IDs and owning deterministic layer.
-`test-impact/workflows/crm-golden.json` declares adapter-only setup, UI actions,
-URL transitions, visible outcomes, and persisted invariants inspected after the
-visible outcome. The initial four browser journeys are explicitly `planned`;
-they are acceptance contracts, not claims of completed browser coverage.
-Cancellation, refunds, and commission payments are `excluded` until user-visible
-controls exist, with explicit service ownership and reasons. The initial manifest
-points at the existing development entrypoint and adapters; the subsequent
-isolation task replaces these with the capability-gated test entrypoint.
+## Implemented browser workflows
 
-The seven coverage groups correspond exactly to the critical ratchet reports,
-not every Nx coverage output. Each group uses a broad production-source
-classification glob. Every source not ratcheted is an exact, reasoned
-exclusion. A newly added production file fails until it receives a baseline;
-it cannot hide behind a same-change exclusion. New exclusions require
-merge-base tree proof, except exact `.test.ts`, `.test.tsx`, `.spec.ts`, and
-`.spec.tsx` paths with an explicit non-production test-source reason. Coverage groups must
-have unique report/source/exclusion identities, and no existing effective
-source file may belong to multiple groups. Exclusions can partition otherwise
-overlapping source globs into disjoint groups. Existing business-rule ownership
-is consolidated so no current file has multiple owners. Unmapped template and
-new runtime code remains unclassified and must force the full impact gate; a
-manifest validation pass alone does not claim complete behavioral coverage.
-Workspace metadata discovery currently reads explicit Nx `project.json` files
-without invoking Nx; canonical runner discovery remains a later consumer.
+Chromium owns the complete matrix:
+
+- protected customer deep link → password login → restored route → visible customer/property/quote/bind/policy/finance → logout → denied revisit;
+- accepted-but-response-lost bind → visible retry → exactly one policy/projection/ledger result;
+- Viewer navigation and all direct CRM routes denied before protected API work;
+- two independently authenticated tenant contexts sharing one scenario runtime, with foreign reads and mutations denied;
+- visible allocated-deposit and settled-premium refunds with eligible commission correction.
+
+Cancellation and commission payment have no reference UI controls and remain explicit browser exclusions with deterministic service evidence. The cross-browser invariant smoke is tagged `@proofline-smoke`. Default discovery contains the full Chromium suite only. `PROOFLINE_CROSS_BROWSER=1` adds Firefox/WebKit projects filtered to that one smoke identity; it never schedules recovery, tenant, refund, or other full golden tests on optional browsers.
+
+## Completion gate
+
+Use the Homebrew Node path in this repository and pin the review-clean comparison base for the entire command:
+
+```bash
+export PATH=/opt/homebrew/bin:$PATH
+export IMPACT_BASE=<trusted-review-clean-base>
+export IMPACT_HEAD=HEAD
+pnpm lint && pnpm typecheck && pnpm harness:validate && pnpm test:impacted -- --dry-run && pnpm test:impacted && pnpm test && pnpm e2e && pnpm coverage && pnpm coverage:check && pnpm record:check && pnpm proofline:check-production && git diff --check
+```
+
+CI checks out full history, supplies explicit base/head authority, runs the same deterministic Node/shell/JSON gates, and never invokes an agent or model. Chromium is mandatory. An opt-in workflow input installs Firefox/WebKit and runs only the smoke projects. Playwright retries aid diagnostics, but `failOnFlakyTests` makes a retry-pass fail CI.
+
+CI retains `artifacts/harness/`, `artifacts/impact/`, `artifacts/record/`, `artifacts/coverage/`, production output/module manifests, unit/browser logs, `playwright-report/`, and `test-results/` under `always()`. Failures retain trace, screenshot, video, and network/route diagnostics for review.

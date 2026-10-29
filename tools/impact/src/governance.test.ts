@@ -16,7 +16,7 @@ import {
   verifyRecordPrefix,
 } from "./governance.ts";
 import { harnessManifestSchema } from "./harness-manifest.ts";
-import { recordMain } from "./record-check.ts";
+import { recordMain, renderCanonicalCommandTable } from "./record-check.ts";
 import { renderRules } from "./validate.ts";
 
 const temporaryDirectories: string[] = [];
@@ -165,6 +165,7 @@ const writeFixture = (cwd: string) => {
   for (const directory of [
     "packages/example/src",
     "test-impact/workflows",
+    "docs",
     "artifacts/coverage/example",
     "node_modules/@vitest/coverage-v8",
   ])
@@ -188,6 +189,10 @@ const writeFixture = (cwd: string) => {
     `${JSON.stringify({ name: "@vitest/coverage-v8", version: "3.2.7" })}\n`,
   );
   writeFileSync(path.join(cwd, "proofline.harness.json"), `${JSON.stringify(manifest, null, 2)}\n`);
+  writeFileSync(
+    path.join(cwd, "docs/PORTABLE_TEST_AUTOMATION.md"),
+    `${renderCanonicalCommandTable(manifest)}\n`,
+  );
   writeFileSync(
     path.join(cwd, "test-impact/coverage-baseline.json"),
     `${JSON.stringify(baseline, null, 2)}\n`,
@@ -583,14 +588,14 @@ describe("changed harness evidence", () => {
     expect(result.excludedGeneratedPaths).toEqual(["artifacts/coverage/ratchet.json"]);
   });
 
-  test("allows no governed changes without inventing a record and rejects an unscoped governed change", () => {
+  test("governs README and rejects an unscoped governed change", () => {
     expect(
       verifyChangedHarnessEvidence({
         changedFiles: [{ path: "README.md", status: "modified" }],
         appendedRecords: [],
         manifest,
-      }).errors,
-    ).toEqual([]);
+      }).errors.join(" "),
+    ).toMatch(/README\.md/);
     expect(
       verifyChangedHarnessEvidence({
         changedFiles: [{ path: "package.json", status: "modified" }],
@@ -918,6 +923,16 @@ describe("coverage and record governance entrypoints", () => {
     expect(() => recordMain(cwd, { base, head: "HEAD" })).toThrow(/value\.ts/);
   });
 
+  test("an_old_or_unrelated_record_cannot_satisfy_a_new_governed_change", () => {
+    const { cwd, base } = initializedFixture();
+    writeFileSync(path.join(cwd, "README.md"), "changed\n");
+    writeFileSync(
+      path.join(cwd, "test-impact/execution-record.jsonl"),
+      `${recordLine("base")}${recordLine("unrelated", ["docs/TESTING.md"])}`,
+    );
+    expect(() => recordMain(cwd, { base, head: "HEAD" })).toThrow(/README\.md/);
+  });
+
   test("recordMain governs paths removed from the proposed manifest using base authority", () => {
     const { cwd, base } = initializedFixture();
     const proposed = structuredClone(manifest);
@@ -985,6 +1000,10 @@ describe("CI governance contract", () => {
     expect(step("Run full Vitest safety gate")).toContain("pnpm test");
     expect(step("Run full Chromium safety gate")).toMatch(mandatory);
     expect(step("Run full Chromium safety gate")).toContain("pnpm e2e");
+    expect(workflow).toContain("git diff --check");
+    expect(workflow).toContain("PROOFLINE_CROSS_BROWSER");
+    expect(workflow).toContain("playwright install --with-deps firefox webkit");
+    expect(workflow).toContain("--project=firefox --project=webkit");
     expect(step("Upload coverage baseline")).toMatch(/if: \$\{\{ always\(\) \}\}/);
     const diagnostics = step("Upload immutable verification diagnostics");
     expect(diagnostics).toMatch(/if: \$\{\{ always\(\) \}\}/);
