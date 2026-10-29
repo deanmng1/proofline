@@ -2253,7 +2253,7 @@
         "apps/crm-e2e/src/fixtures/test.ts"
       ],
       "ruleIds": ["AUTH-002", "SCN-001", "SCN-002", "SCN-003", "SAFE-001"],
-      "layers": ["playwright"],
+      "layers": ["playwright", "contract"],
       "testBindings": [
         {
           "ruleId": "SCN-001",
@@ -2529,6 +2529,36 @@
           "title": "matches_an_operation_fault_once_to_an_opaque_ui_created_bind",
           "line": 448,
           "tag": "@scenario"
+        },
+        {
+          "ruleId": "SCN-001",
+          "layer": "contract",
+          "testId": "binding-scn001-vitest-governance",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/product-e2e-boundary.test.ts",
+          "title": "Proofline product E2E boundary > scenario_fixture_declares_context_install_cleanup_and_retry_lifecycle",
+          "line": 82
+        },
+        {
+          "ruleId": "SCN-002",
+          "layer": "contract",
+          "testId": "binding-scn002-vitest-governance",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/product-e2e-boundary.test.ts",
+          "title": "Proofline product E2E boundary > scenario_fixture_declares_every_reviewed_browser_egress_plane",
+          "line": 91
+        },
+        {
+          "ruleId": "SCN-003",
+          "layer": "contract",
+          "testId": "binding-scn003-vitest-governance",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/product-e2e-boundary.test.ts",
+          "title": "Proofline product E2E boundary > scenario_commands_preserve_multi_worker_and_both_shard_isolation_gates",
+          "line": 99
         }
       ],
       "ruleLayers": [
@@ -2551,6 +2581,18 @@
         {
           "ruleId": "SAFE-001",
           "layer": "playwright"
+        },
+        {
+          "ruleId": "SCN-001",
+          "layer": "contract"
+        },
+        {
+          "ruleId": "SCN-002",
+          "layer": "contract"
+        },
+        {
+          "ruleId": "SCN-003",
+          "layer": "contract"
         }
       ]
     },
