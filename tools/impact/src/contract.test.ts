@@ -157,7 +157,7 @@ describe("machine-readable regression contract", () => {
           [
             {
               path: "apps/crm-e2e/src/auth.spec.ts",
-              title: "signs in through the mock auth flow",
+              title: "signs in through the routed auth flow",
               line: 4,
               tags: [],
             },
@@ -174,7 +174,7 @@ describe("machine-readable regression contract", () => {
     expect(parsePlaywrightIdentities(JSON.parse(run.stdout), "apps/crm-e2e/src")).toEqual([
       {
         path: "apps/crm-e2e/src/auth.spec.ts",
-        title: "signs in through the mock auth flow",
+        title: "signs in through the routed auth flow",
         line: 4,
         tags: [],
       },
