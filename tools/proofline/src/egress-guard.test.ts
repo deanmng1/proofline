@@ -4,12 +4,17 @@ import { createServer, type Server } from "node:http";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
-import { type GuardedRunResult, withProoflineGuard } from "../run-guarded.mjs";
+import {
+  type GuardedRunResult,
+  launchProoflineTestApp,
+  withProoflineGuard,
+} from "../run-guarded.mjs";
 
 let server: Server;
 let ipv6Server: Server;
 let allowedOrigin: string;
 let ipv6Origin: string;
+let ipv6Requests = 0;
 const repositoryRoot = path.resolve(import.meta.dirname, "../../..");
 const temporaryRoot = mkdtempSync(path.join(tmpdir(), "proofline-egress-"));
 
@@ -41,6 +46,16 @@ beforeAll(async () => {
       response.end();
       return;
     }
+    if (request.url === "/same-origin-redirect") {
+      response.writeHead(302, { location: "/same-origin-final" });
+      response.end();
+      return;
+    }
+    if (request.url === "/same-origin-final") {
+      response.writeHead(200, { "content-type": "text/plain" });
+      response.end("redirect-final");
+      return;
+    }
     if (request.url === "/request-semantics") {
       let body = "";
       request.setEncoding("utf8");
@@ -62,7 +77,10 @@ beforeAll(async () => {
   if (!address || typeof address === "string") throw new Error("Expected an IPv4 test server");
   allowedOrigin = `http://127.0.0.1:${address.port}`;
 
-  ipv6Server = createServer((_request, response) => response.end("ipv6-ok"));
+  ipv6Server = createServer((_request, response) => {
+    ipv6Requests += 1;
+    response.end("ipv6-ok");
+  });
   await new Promise<void>((resolve, reject) => {
     ipv6Server.once("error", reject);
     ipv6Server.listen(0, "::1", () => resolve());
@@ -260,6 +278,123 @@ describe("Proofline egress guard", () => {
     expect(JSON.stringify(errors)).not.toContain("token=secret");
   });
 
+  test("denies_direct_client_request_construction_in_root_and_inherited_children", async () => {
+    const inheritedChild = script(
+      "direct-client-request-child.mjs",
+      `
+        import { ClientRequest } from "node:http";
+        const outcome = await new Promise((resolve) => {
+          try {
+            const request = new ClientRequest(process.env.SECOND_ORIGIN + "/child", (response) => {
+              response.resume();
+              response.on("end", () => resolve({ dispatched: response.statusCode }));
+            });
+            request.on("error", (error) => resolve({ error: String(error.message) }));
+            request.end();
+          } catch (error) { resolve({ error: String(error.message) }); }
+        });
+        console.log(JSON.stringify(outcome));
+      `,
+    );
+    const root = script(
+      "direct-client-request-root.mjs",
+      `
+        import http, { ClientRequest } from "node:http";
+        import { spawnSync } from "node:child_process";
+        const attempt = (Constructor, path) => new Promise((resolve) => {
+          try {
+            const request = new Constructor(process.env.SECOND_ORIGIN + path, (response) => {
+              response.resume();
+              response.on("end", () => resolve({ dispatched: response.statusCode }));
+            });
+            request.on("error", (error) => resolve({ error: String(error.message) }));
+            request.end();
+          } catch (error) { resolve({ error: String(error.message) }); }
+        });
+        const defaultExport = await attempt(http.ClientRequest, "/default-export");
+        const namedExport = await attempt(ClientRequest, "/named-export");
+        const child = spawnSync(process.execPath, [${JSON.stringify(inheritedChild)}], {
+          encoding: "utf8",
+          env: { ...process.env, SECOND_ORIGIN: process.env.SECOND_ORIGIN },
+        });
+        console.log(JSON.stringify({ defaultExport, namedExport, child: JSON.parse(child.stdout), childStatus: child.status }));
+      `,
+    );
+    const requestsBefore = ipv6Requests;
+    const result = await runNode(root, { env: { SECOND_ORIGIN: ipv6Origin } });
+    expect(result.code, result.stderr).toBe(0);
+    const output = JSON.parse(result.stdout.trim()) as {
+      defaultExport: { error?: string; dispatched?: number };
+      namedExport: { error?: string; dispatched?: number };
+      child: { error?: string; dispatched?: number };
+      childStatus: number;
+    };
+    for (const [plane, outcome] of Object.entries({
+      defaultExport: output.defaultExport,
+      namedExport: output.namedExport,
+      child: output.child,
+    })) {
+      expect(outcome.dispatched, plane).toBeUndefined();
+      expect(outcome.error, plane).toContain("plane=http.ClientRequest");
+      expect(outcome.error, plane).toContain(`origin=${ipv6Origin}`);
+    }
+    expect(output.childStatus).toBe(0);
+    expect(ipv6Requests).toBe(requestsBefore);
+  });
+
+  test("preserves_allowed_fetch_redirect_modes_and_followed_response_metadata", async () => {
+    const file = script(
+      "redirect-semantics.mjs",
+      `
+        const start = process.env.TEST_ORIGIN + "/same-origin-redirect";
+        const followed = await fetch(start);
+        const followedValue = {
+          status: followed.status,
+          redirected: followed.redirected,
+          url: followed.url,
+          body: await followed.text(),
+        };
+        const manual = await fetch(start, { redirect: "manual" });
+        const manualValue = {
+          status: manual.status,
+          redirected: manual.redirected,
+          url: manual.url,
+          location: manual.headers.get("location"),
+        };
+        let error;
+        try { await fetch(start, { redirect: "error" }); }
+        catch (caught) { error = String(caught.message); }
+        console.log(JSON.stringify({ followed: followedValue, manual: manualValue, error }));
+      `,
+    );
+    const result = await runNode(file, { env: { TEST_ORIGIN: allowedOrigin } });
+    expect(result.code, result.stderr).toBe(0);
+    const output = JSON.parse(result.stdout.trim()) as {
+      followed: { status: number; redirected: boolean; url: string; body: string };
+      manual: {
+        status: number;
+        redirected: boolean;
+        url: string;
+        location: string | null;
+      };
+      error: string;
+    };
+    expect(output.followed).toEqual({
+      status: 200,
+      redirected: true,
+      url: `${allowedOrigin}/same-origin-final`,
+      body: "redirect-final",
+    });
+    expect(output.manual).toEqual({
+      status: 302,
+      redirected: false,
+      url: `${allowedOrigin}/same-origin-redirect`,
+      location: "/same-origin-final",
+    });
+    expect(output.error).toContain("plane=fetch method=GET");
+    expect(output.error).toContain("reason=redirect");
+  });
+
   test("denies_redirect_proxy_tunnel_and_child_override_bypasses", async () => {
     const overrideChild = script(
       "override-child.mjs",
@@ -427,6 +562,73 @@ describe("Proofline egress guard", () => {
       runNode(target, { allowedOrigins: ["http://user:password@127.0.0.1:4173"] }),
     ).toThrow(/credentials/i);
     expect(() => runNode(target, { allowedOrigins: ["http://127.0.0.1:*"] })).toThrow(/origin/i);
+  });
+
+  test("generates_private_distinct_capabilities_for_programmatic_test_app_launches", async () => {
+    const callerCapability = "Proofline_Caller_Selected_Capability_123456789";
+    const target = script(
+      "programmatic-test-app.mjs",
+      `
+        console.log(JSON.stringify({ origin: "http://127.0.0.1:4173" }));
+        console.log(process.env.PROOFLINE_TEST_CAPABILITY);
+        setInterval(() => {}, 1_000);
+      `,
+    );
+    const launchOnce = () => {
+      let observedBuffer = "";
+      let resolveObserved: (value: string) => void = () => undefined;
+      const observed = new Promise<string>((resolve) => {
+        resolveObserved = resolve;
+      });
+      const launch = launchProoflineTestApp([process.execPath, target], {
+        allowedOrigins: [allowedOrigin],
+        cwd: temporaryRoot,
+        env: { PROOFLINE_TEST_CAPABILITY: callerCapability },
+        onStdout: (chunk) => {
+          observedBuffer += chunk;
+          const newline = observedBuffer.indexOf("\n");
+          if (newline >= 0) resolveObserved(observedBuffer.slice(0, newline));
+        },
+      });
+      return { launch, observed };
+    };
+    const first = launchOnce();
+    const second = launchOnce();
+    try {
+      const [firstReady, secondReady, firstObserved, secondObserved] = await Promise.all([
+        first.launch.ready,
+        second.launch.ready,
+        first.observed,
+        second.observed,
+      ]);
+      expect(firstReady.capability).toMatch(/^[A-Za-z0-9_-]{32,128}$/);
+      expect(secondReady.capability).toMatch(/^[A-Za-z0-9_-]{32,128}$/);
+      expect(firstReady.capability).not.toBe(secondReady.capability);
+      expect(firstReady.capability).not.toBe(callerCapability);
+      expect(secondReady.capability).not.toBe(callerCapability);
+      expect(firstObserved).toBe(firstReady.capability);
+      expect(secondObserved).toBe(secondReady.capability);
+    } finally {
+      expect(first.launch.stop()).toBe(true);
+      expect(second.launch.stop()).toBe(true);
+      await Promise.all([first.launch.completion, second.launch.completion]);
+    }
+
+    const invalidReadiness = script("invalid-readiness.mjs", 'console.log("not-json");');
+    const invalid = launchProoflineTestApp([process.execPath, invalidReadiness], {
+      allowedOrigins: [allowedOrigin],
+      cwd: temporaryRoot,
+    });
+    await expect(invalid.ready).rejects.toThrow(/invalid readiness/i);
+    await invalid.completion;
+
+    const exitsBeforeReadiness = script("no-readiness.mjs", "process.exit(4);");
+    const earlyExit = launchProoflineTestApp([process.execPath, exitsBeforeReadiness], {
+      allowedOrigins: [allowedOrigin],
+      cwd: temporaryRoot,
+    });
+    await expect(earlyExit.ready).rejects.toThrow(/before readiness.*code=4/i);
+    await earlyExit.completion;
   });
 
   test("preserves_structured_argv_exit_signal_stdout_and_stderr", async () => {

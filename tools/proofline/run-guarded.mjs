@@ -1,4 +1,5 @@
 import { spawn } from "node:child_process";
+import { randomBytes } from "node:crypto";
 import { realpathSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -53,12 +54,87 @@ export const withProoflineGuard = (command, options = {}) => {
   });
 };
 
+export const launchProoflineTestApp = (command, options = {}) => {
+  const capability = randomBytes(32).toString("base64url");
+  let guardedChild;
+  let readinessBuffer = "";
+  let readinessSettled = false;
+  let resolveReady;
+  let rejectReady;
+  const ready = new Promise((resolve, reject) => {
+    resolveReady = resolve;
+    rejectReady = reject;
+  });
+  const completion = withProoflineGuard(command, {
+    ...options,
+    env: {
+      ...(options.env ?? {}),
+      PROOFLINE_TEST_CAPABILITY: capability,
+    },
+    onSpawn: (child) => {
+      guardedChild = child;
+      options.onSpawn?.(child);
+    },
+    onStdout: (chunk) => {
+      if (readinessSettled) {
+        options.onStdout?.(chunk);
+        return;
+      }
+      readinessBuffer += chunk;
+      const newline = readinessBuffer.indexOf("\n");
+      if (newline < 0) return;
+      try {
+        const parsed = JSON.parse(readinessBuffer.slice(0, newline));
+        if (!parsed || typeof parsed.origin !== "string") throw new Error();
+        const origin = new URL(parsed.origin);
+        if (origin.protocol !== "http:" || !["127.0.0.1", "[::1]"].includes(origin.hostname))
+          throw new Error();
+        readinessSettled = true;
+        resolveReady(Object.freeze({ capability, origin: origin.origin }));
+        const remainder = readinessBuffer.slice(newline + 1);
+        if (remainder) options.onStdout?.(remainder);
+      } catch {
+        readinessSettled = true;
+        guardedChild?.kill("SIGTERM");
+        rejectReady(new Error("Proofline test server emitted invalid readiness output."));
+      }
+    },
+  });
+  void completion.then(
+    (result) => {
+      if (readinessSettled) return;
+      readinessSettled = true;
+      rejectReady(
+        new Error(
+          `Proofline test server exited before readiness (code=${result.code ?? "null"}, signal=${result.signal ?? "none"}).`,
+        ),
+      );
+    },
+    (error) => {
+      if (readinessSettled) return;
+      readinessSettled = true;
+      rejectReady(error);
+    },
+  );
+  return {
+    ready,
+    completion,
+    stop: (signal = "SIGTERM") => guardedChild?.kill(signal) ?? false,
+  };
+};
+
 const runCli = async () => {
   const separator = process.argv.indexOf("--", 2);
   if (separator < 0) throw new Error("Usage: run-guarded.mjs --allow-origin <origin> -- <argv...>");
   const options = process.argv.slice(2, separator);
   const allowedOrigins = [];
+  let testApp = false;
   for (let index = 0; index < options.length; index += 1) {
+    if (options[index] === "--test-app") {
+      if (testApp) throw new Error("Duplicate guarded launcher option: --test-app");
+      testApp = true;
+      continue;
+    }
     if (options[index] !== "--allow-origin" || !options[index + 1])
       throw new Error(`Unknown guarded launcher option: ${options[index] ?? "<missing>"}`);
     allowedOrigins.push(options[index + 1]);
@@ -68,7 +144,7 @@ const runCli = async () => {
   const forwardSignal = (signal) => guardedChild?.kill(signal);
   process.once("SIGTERM", () => forwardSignal("SIGTERM"));
   process.once("SIGINT", () => forwardSignal("SIGINT"));
-  const result = await withProoflineGuard(process.argv.slice(separator + 1), {
+  const guardedOptions = {
     allowedOrigins,
     cwd: process.cwd(),
     onSpawn: (child) => {
@@ -76,7 +152,16 @@ const runCli = async () => {
     },
     onStdout: (chunk) => process.stdout.write(chunk),
     onStderr: (chunk) => process.stderr.write(chunk),
-  });
+  };
+  let result;
+  if (testApp) {
+    const launch = launchProoflineTestApp(process.argv.slice(separator + 1), guardedOptions);
+    const ready = await launch.ready;
+    process.stdout.write(`${JSON.stringify(ready)}\n`);
+    result = await launch.completion;
+  } else {
+    result = await withProoflineGuard(process.argv.slice(separator + 1), guardedOptions);
+  }
   if (result.signal) process.kill(process.pid, result.signal);
   else process.exitCode = result.code ?? 1;
 };

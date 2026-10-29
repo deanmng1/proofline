@@ -79,8 +79,14 @@ function installGuard() {
       for (let redirects = 0; ; redirects += 1) {
         const response = await originalFetch(currentRequest, { redirect: "manual" });
         const location = response.headers.get("location");
-        if (!location || response.status < 300 || response.status > 399 || redirect === "manual")
+        if (!location || response.status < 300 || response.status > 399 || redirect === "manual") {
+          if (redirects > 0)
+            Object.defineProperty(response, "redirected", {
+              configurable: true,
+              value: true,
+            });
           return response;
+        }
         const current = new URL(currentRequest.url);
         if (redirect === "error")
           throw denied({ plane: "fetch", method, url: current, reason: "redirect" });
@@ -183,6 +189,7 @@ function installGuard() {
     if (headers.host && headers.host.toLowerCase() !== base.host.toLowerCase())
       throw denied({ plane, method, url: base, reason: "host-header-override" });
     assertUrl({ plane, method, value: base });
+    return { method, url: base };
   };
 
   for (const [module, protocol, name] of [
@@ -199,6 +206,21 @@ function installGuard() {
       inspectHttp(`${name}.get`, protocol, args);
       return originalGet.apply(this, args);
     };
+    const OriginalClientRequest = module.ClientRequest;
+    if (typeof OriginalClientRequest === "function") {
+      function ProoflineGuardedClientRequest(...args) {
+        const { method, url } = inspectHttp(`${name}.ClientRequest`, protocol, args);
+        throw denied({
+          plane: `${name}.ClientRequest`,
+          method,
+          url,
+          reason: "direct-constructor",
+        });
+      }
+      Object.setPrototypeOf(ProoflineGuardedClientRequest, OriginalClientRequest);
+      ProoflineGuardedClientRequest.prototype = OriginalClientRequest.prototype;
+      module.ClientRequest = ProoflineGuardedClientRequest;
+    }
   }
 
   if (globalThis.WebSocket) {

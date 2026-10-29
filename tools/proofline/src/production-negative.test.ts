@@ -335,27 +335,38 @@ describe("Proofline production boundary", () => {
       }),
     ).toThrow(/fresh launcher capability/i);
 
-    const capability = "Proofline_Server_8pQ4sT7vW2xY6zA9bC3dE5fG";
+    const callerCapability = "Proofline_Caller_8pQ4sT7vW2xY6zA9bC3dE5fG";
     const canonical = harness.commands.testEntrypoint;
     const [binary, ...args] = canonical.argv;
-    const child = spawn(binary === "node" ? process.execPath : binary, args, {
-      cwd: path.resolve(repositoryRoot, canonical.cwd),
-      env: { ...process.env, PROOFLINE_TEST_CAPABILITY: capability },
-      stdio: ["ignore", "pipe", "pipe"],
-    });
-    child.stdout.setEncoding("utf8");
-    let buffered = "";
-    const origin = await new Promise<string>((resolve, reject) => {
-      const timeout = setTimeout(() => reject(new Error("Test server did not start")), 10_000);
-      child.once("error", reject);
-      child.stdout.on("data", (chunk) => {
-        buffered += chunk;
-        const newline = buffered.indexOf("\n");
-        if (newline < 0) return;
-        clearTimeout(timeout);
-        resolve((JSON.parse(buffered.slice(0, newline)) as { origin: string }).origin);
+    const launch = () => {
+      const child = spawn(binary === "node" ? process.execPath : binary, args, {
+        cwd: path.resolve(repositoryRoot, canonical.cwd),
+        env: { ...process.env, PROOFLINE_TEST_CAPABILITY: callerCapability },
+        stdio: ["ignore", "pipe", "pipe"],
       });
-    });
+      child.stdout.setEncoding("utf8");
+      let buffered = "";
+      const ready = new Promise<{ origin: string; capability: string }>((resolve, reject) => {
+        const timeout = setTimeout(() => reject(new Error("Test server did not start")), 10_000);
+        child.once("error", reject);
+        child.stdout.on("data", (chunk) => {
+          buffered += chunk;
+          const newline = buffered.indexOf("\n");
+          if (newline < 0) return;
+          clearTimeout(timeout);
+          resolve(JSON.parse(buffered.slice(0, newline)) as { origin: string; capability: string });
+        });
+      });
+      return { child, ready };
+    };
+    const first = launch();
+    const second = launch();
+    const [{ origin, capability }, secondReady] = await Promise.all([first.ready, second.ready]);
+    expect(capability).toMatch(/^[A-Za-z0-9_-]{32,128}$/);
+    expect(secondReady.capability).toMatch(/^[A-Za-z0-9_-]{32,128}$/);
+    expect(capability).not.toBe(secondReady.capability);
+    expect(capability).not.toBe(callerCapability);
+    expect(secondReady.capability).not.toBe(callerCapability);
     expect(new URL(origin).hostname).toBe("127.0.0.1");
     try {
       expect((await fetch(origin)).status).toBe(403);
@@ -380,8 +391,12 @@ describe("Proofline production boundary", () => {
         ).status,
       ).toBe(409);
     } finally {
-      child.kill("SIGTERM");
-      await new Promise<void>((resolve) => child.once("close", () => resolve()));
+      first.child.kill("SIGTERM");
+      second.child.kill("SIGTERM");
+      await Promise.all([
+        new Promise<void>((resolve) => first.child.once("close", () => resolve())),
+        new Promise<void>((resolve) => second.child.once("close", () => resolve())),
+      ]);
       await expect(fetch(origin)).rejects.toThrow();
     }
   }, 30_000);

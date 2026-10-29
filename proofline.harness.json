@@ -45,6 +45,7 @@
       "argv": [
         "node",
         "tools/proofline/run-guarded.mjs",
+        "--test-app",
         "--allow-origin",
         "http://127.0.0.1",
         "--",
@@ -488,7 +489,7 @@
           "runner": "vitest",
           "file": "tools/proofline/src/egress-guard.test.ts",
           "title": "Proofline egress guard > denies_fetch_http_https_websocket_and_inherited_child_egress",
-          "line": 208
+          "line": 226
         },
         {
           "ruleId": "SAFE-001",

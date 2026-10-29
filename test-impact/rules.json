@@ -512,7 +512,7 @@
         {
           "file": "tools/proofline/src/egress-guard.test.ts",
           "title": "Proofline egress guard > denies_fetch_http_https_websocket_and_inherited_child_egress",
-          "line": 208
+          "line": 226
         },
         {
           "file": "tools/proofline/src/production-negative.test.ts",

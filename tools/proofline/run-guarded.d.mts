@@ -19,3 +19,14 @@ export function withProoflineGuard(
   command: string[],
   options: GuardedRunOptions,
 ): Promise<GuardedRunResult>;
+
+export type ProoflineTestAppLaunch = {
+  ready: Promise<{ capability: string; origin: string }>;
+  completion: Promise<GuardedRunResult>;
+  stop: (signal?: NodeJS.Signals) => boolean;
+};
+
+export function launchProoflineTestApp(
+  command: string[],
+  options: GuardedRunOptions,
+): ProoflineTestAppLaunch;
