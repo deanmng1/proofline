@@ -49,6 +49,13 @@
       "branches": 95.91,
       "functions": 100,
       "statements": 98.57
+    },
+    "tools/impact/src/governance.ts": {
+      "report": "artifacts/coverage/impact-tools/coverage-summary.json",
+      "lines": 94.14,
+      "branches": 86.85,
+      "functions": 100,
+      "statements": 94.14
     }
   }
 }

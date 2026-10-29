@@ -1,7 +1,17 @@
-import { readFileSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { z } from "zod";
+import { type GovernanceRevisions, revisionArguments } from "./coverage-policy.ts";
+import {
+  type ExecutionRecord,
+  gitShowBytes,
+  readGovernedChanges,
+  readVerifiedMergeBase,
+  verifyChangedHarnessEvidence,
+  verifyRecordPrefix,
+} from "./governance.ts";
+import { harnessManifestSchema, validateHarnessAuthority } from "./harness-manifest.ts";
 import { relativePath, renderRules, rulesSchema } from "./validate.ts";
 
 const recordPath = z
@@ -11,7 +21,7 @@ const recordPath = z
     "Expected a repository-relative file or directory path",
   );
 
-const recordSchema = z
+export const recordSchema = z
   .object({
     schemaVersion: z.literal(1),
     eventId: z.string().regex(/^[a-z0-9][a-z0-9._-]*$/),
@@ -37,31 +47,110 @@ const recordSchema = z
 
 export const validateRecords = (text: string) => {
   const errors: string[] = [];
+  const records: ExecutionRecord[] = [];
   const ids = new Set<string>();
-  const lines = text.replace(/\r\n/g, "\n").replace(/\n$/, "").split("\n");
+  if (!text.endsWith("\n")) errors.push("Execution record must end with exactly one LF");
+  if (text.endsWith("\n\n")) errors.push("Execution record has an extra trailing LF");
+  if (text.includes("\r")) errors.push("Execution record must not contain CR or CRLF bytes");
+  const lines = text.endsWith("\n") ? text.slice(0, -1).split("\n") : text.split("\n");
   for (const [index, line] of lines.entries()) {
     try {
-      const record = recordSchema.parse(JSON.parse(line));
-      if (ids.has(record.eventId))
-        errors.push(`Line ${index + 1}: duplicate record ID ${record.eventId}`);
-      ids.add(record.eventId);
+      const parsed = recordSchema.parse(JSON.parse(line));
+      if (ids.has(parsed.eventId))
+        errors.push(`Line ${index + 1}: duplicate record ID ${parsed.eventId}`);
+      ids.add(parsed.eventId);
+      records.push(parsed);
     } catch (error) {
       errors.push(`Line ${index + 1}: malformed record: ${String(error)}`);
     }
   }
-  return { errors };
+  return { errors, records };
 };
 
-export const recordMain = (cwd = process.cwd()) => {
-  const result = validateRecords(
-    readFileSync(path.join(cwd, "test-impact/execution-record.jsonl"), "utf8"),
+export const recordMain = (
+  cwd = process.cwd(),
+  requested: GovernanceRevisions = revisionArguments(),
+) => {
+  const errors: string[] = [];
+  const revisions = readVerifiedMergeBase({ cwd, ...requested, requireCheckoutMatch: true });
+  errors.push(...revisions.errors);
+  const proposedRecord = readFileSync(path.join(cwd, "test-impact/execution-record.jsonl"));
+  let prefix = { errors: [] as string[], appendedRecords: [] as ExecutionRecord[] };
+  if (revisions.mergeBase) {
+    const base = gitShowBytes(cwd, revisions.mergeBase, "test-impact/execution-record.jsonl");
+    if (base.error || !base.bytes)
+      errors.push(base.error ?? "Unable to read base execution record");
+    else {
+      prefix = verifyRecordPrefix({
+        baseRecord: base.bytes,
+        proposedRecord,
+        validate: validateRecords,
+      });
+      errors.push(...prefix.errors);
+    }
+  }
+
+  let evidence = { errors: [] as string[], excludedGeneratedPaths: [] as string[] };
+  let changedFiles: ReturnType<typeof readGovernedChanges>["files"] = [];
+  try {
+    const manifest = harnessManifestSchema.parse(
+      JSON.parse(readFileSync(path.join(cwd, "proofline.harness.json"), "utf8")),
+    );
+    errors.push(...validateHarnessAuthority(manifest).errors);
+    let baseManifest: typeof manifest | undefined;
+    if (revisions.mergeBase) {
+      const baseManifestObject = gitShowBytes(cwd, revisions.mergeBase, "proofline.harness.json");
+      if (baseManifestObject.error || !baseManifestObject.bytes)
+        errors.push(baseManifestObject.error ?? "Unable to read base harness manifest");
+      else {
+        try {
+          baseManifest = harnessManifestSchema.parse(
+            JSON.parse(baseManifestObject.bytes.toString("utf8")),
+          );
+        } catch (error) {
+          errors.push(`Invalid base harness manifest: ${String(error)}`);
+        }
+      }
+    }
+    const changes = readGovernedChanges({ cwd, revisions });
+    changedFiles = changes.files;
+    errors.push(...changes.errors);
+    evidence = verifyChangedHarnessEvidence({
+      changedFiles,
+      appendedRecords: prefix.appendedRecords,
+      manifest,
+      baseManifest,
+    });
+    errors.push(...evidence.errors);
+  } catch (error) {
+    errors.push(`Unable to validate changed harness evidence: ${String(error)}`);
+  }
+
+  try {
+    const registry = rulesSchema.parse(
+      JSON.parse(readFileSync(path.join(cwd, "test-impact/rules.json"), "utf8")),
+    );
+    if (readFileSync(path.join(cwd, "test-impact/rules.md"), "utf8") !== renderRules(registry))
+      errors.push("rules.md drift: run pnpm rules:generate");
+  } catch (error) {
+    errors.push(`Invalid rule registry or generated catalog: ${String(error)}`);
+  }
+
+  const artifact = {
+    revisions,
+    appendedRecordIds: prefix.appendedRecords.map((record) => record.eventId),
+    changedFiles,
+    excludedGeneratedPaths: evidence.excludedGeneratedPaths,
+    errors: [...new Set(errors)],
+  };
+  mkdirSync(path.join(cwd, "artifacts/record"), { recursive: true });
+  writeFileSync(
+    path.join(cwd, "artifacts/record/check.json"),
+    `${JSON.stringify(artifact, null, 2)}\n`,
   );
-  if (result.errors.length) throw new Error(result.errors.join("\n"));
-  const registry = rulesSchema.parse(
-    JSON.parse(readFileSync(path.join(cwd, "test-impact/rules.json"), "utf8")),
-  );
-  if (readFileSync(path.join(cwd, "test-impact/rules.md"), "utf8") !== renderRules(registry))
-    throw new Error("rules.md drift: run pnpm rules:generate");
-  process.stdout.write("Execution record validation passed.\n");
+  if (artifact.errors.length) throw new Error(artifact.errors.join("\n"));
+  process.stdout.write("Execution record governance passed.\n");
+  return artifact;
 };
+
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) recordMain();

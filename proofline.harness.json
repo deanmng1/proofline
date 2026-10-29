@@ -117,8 +117,21 @@
       "workspace": "packages/service-bus",
       "provider": "v8",
       "providerVersion": "3.2.7",
-      "sourceGlobs": ["packages/service-bus/src/service-bus.ts"],
-      "exclusions": [],
+      "sourceGlobs": ["packages/service-bus/src/*.ts"],
+      "exclusions": [
+        {
+          "glob": "packages/service-bus/src/immutable-delivery.test.ts",
+          "reason": "Test sources are not instrumented production sources."
+        },
+        {
+          "glob": "packages/service-bus/src/service-bus.test.ts",
+          "reason": "Test sources are not instrumented production sources."
+        },
+        {
+          "glob": "packages/service-bus/src/index.ts",
+          "reason": "Barrel exports contain no service behavior."
+        }
+      ],
       "report": "artifacts/coverage/service-bus/coverage-summary.json",
       "reportFormat": "istanbul-json-summary",
       "metrics": ["lines", "functions", "branches", "statements"],
@@ -128,8 +141,17 @@
       "workspace": "packages/policy-service",
       "provider": "v8",
       "providerVersion": "3.2.7",
-      "sourceGlobs": ["packages/policy-service/src/policy-service.ts"],
-      "exclusions": [],
+      "sourceGlobs": ["packages/policy-service/src/*.ts"],
+      "exclusions": [
+        {
+          "glob": "packages/policy-service/src/policy-service.test.ts",
+          "reason": "Test sources are not instrumented production sources."
+        },
+        {
+          "glob": "packages/policy-service/src/index.ts",
+          "reason": "Barrel exports contain no policy behavior."
+        }
+      ],
       "report": "artifacts/coverage/policy-service/coverage-summary.json",
       "reportFormat": "istanbul-json-summary",
       "metrics": ["lines", "functions", "branches", "statements"],
@@ -139,8 +161,17 @@
       "workspace": "packages/policy-state-service",
       "provider": "v8",
       "providerVersion": "3.2.7",
-      "sourceGlobs": ["packages/policy-state-service/src/policy-state-service.ts"],
-      "exclusions": [],
+      "sourceGlobs": ["packages/policy-state-service/src/*.ts"],
+      "exclusions": [
+        {
+          "glob": "packages/policy-state-service/src/policy-state-service.test.ts",
+          "reason": "Test sources are not instrumented production sources."
+        },
+        {
+          "glob": "packages/policy-state-service/src/index.ts",
+          "reason": "Barrel exports contain no projection behavior."
+        }
+      ],
       "report": "artifacts/coverage/policy-state-service/coverage-summary.json",
       "reportFormat": "istanbul-json-summary",
       "metrics": ["lines", "functions", "branches", "statements"],
@@ -150,8 +181,17 @@
       "workspace": "packages/finance-service",
       "provider": "v8",
       "providerVersion": "3.2.7",
-      "sourceGlobs": ["packages/finance-service/src/finance-service.ts"],
-      "exclusions": [],
+      "sourceGlobs": ["packages/finance-service/src/*.ts"],
+      "exclusions": [
+        {
+          "glob": "packages/finance-service/src/finance-service.test.ts",
+          "reason": "Test sources are not instrumented production sources."
+        },
+        {
+          "glob": "packages/finance-service/src/index.ts",
+          "reason": "Barrel exports contain no finance behavior."
+        }
+      ],
       "report": "artifacts/coverage/finance-service/coverage-summary.json",
       "reportFormat": "istanbul-json-summary",
       "metrics": ["lines", "functions", "branches", "statements"],
@@ -161,8 +201,25 @@
       "workspace": "packages/insurance-runtime",
       "provider": "v8",
       "providerVersion": "3.2.7",
-      "sourceGlobs": ["packages/insurance-runtime/src/runtime.ts"],
-      "exclusions": [],
+      "sourceGlobs": ["packages/insurance-runtime/src/*.ts"],
+      "exclusions": [
+        {
+          "glob": "packages/insurance-runtime/src/runtime.test.ts",
+          "reason": "Test sources are not instrumented production sources."
+        },
+        {
+          "glob": "packages/insurance-runtime/src/timestamps.test.ts",
+          "reason": "Test sources are not instrumented production sources."
+        },
+        {
+          "glob": "packages/insurance-runtime/src/index.ts",
+          "reason": "Barrel exports contain no runtime behavior."
+        },
+        {
+          "glob": "packages/insurance-runtime/src/test-fixtures.ts",
+          "reason": "Deterministic test fixtures are validated by behavior tests rather than production coverage."
+        }
+      ],
       "report": "artifacts/coverage/insurance-runtime/coverage-summary.json",
       "reportFormat": "istanbul-json-summary",
       "metrics": ["lines", "functions", "branches", "statements"],
@@ -172,8 +229,25 @@
       "workspace": "packages/api-contracts",
       "provider": "v8",
       "providerVersion": "3.2.7",
-      "sourceGlobs": ["packages/api-contracts/src/test-api.ts"],
-      "exclusions": [],
+      "sourceGlobs": ["packages/api-contracts/src/*.ts"],
+      "exclusions": [
+        {
+          "glob": "packages/api-contracts/src/test-api.test.ts",
+          "reason": "Test sources are not instrumented production sources."
+        },
+        {
+          "glob": "packages/api-contracts/src/contracts.ts",
+          "reason": "Declarative contract types remain outside the critical Test API ratchet."
+        },
+        {
+          "glob": "packages/api-contracts/src/handlers.ts",
+          "reason": "HTTP handler wiring remains outside the critical Test API ratchet."
+        },
+        {
+          "glob": "packages/api-contracts/src/index.ts",
+          "reason": "Barrel exports contain no Test API behavior."
+        }
+      ],
       "report": "artifacts/coverage/api-contracts/coverage-summary.json",
       "reportFormat": "istanbul-json-summary",
       "metrics": ["lines", "functions", "branches", "statements"],
@@ -183,8 +257,77 @@
       "workspace": "tools/impact",
       "provider": "v8",
       "providerVersion": "3.2.7",
-      "sourceGlobs": ["tools/impact/src/validate.ts"],
-      "exclusions": [],
+      "sourceGlobs": ["tools/impact/src/*.ts"],
+      "exclusions": [
+        {
+          "glob": "tools/impact/src/contract.test.ts",
+          "reason": "Test sources are not instrumented production sources."
+        },
+        {
+          "glob": "tools/impact/src/governance.test.ts",
+          "reason": "Test sources are not instrumented production sources."
+        },
+        {
+          "glob": "tools/impact/src/harness-manifest.test.ts",
+          "reason": "Test sources are not instrumented production sources."
+        },
+        {
+          "glob": "tools/impact/src/main-selection.test.ts",
+          "reason": "Test sources are not instrumented production sources."
+        },
+        {
+          "glob": "tools/impact/src/playwright-discovery.test.ts",
+          "reason": "Test sources are not instrumented production sources."
+        },
+        {
+          "glob": "tools/impact/src/policy.test.ts",
+          "reason": "Test sources are not instrumented production sources."
+        },
+        {
+          "glob": "tools/impact/src/select.test.ts",
+          "reason": "Test sources are not instrumented production sources."
+        },
+        {
+          "glob": "tools/impact/src/validate.test.ts",
+          "reason": "Test sources are not instrumented production sources."
+        },
+        {
+          "glob": "tools/impact/src/changed-files.ts",
+          "reason": "Revision discovery is covered by focused governance tests outside the validator ratchet."
+        },
+        {
+          "glob": "tools/impact/src/coverage-policy.ts",
+          "reason": "Coverage governance is protected by adversarial policy tests outside the validator ratchet."
+        },
+        {
+          "glob": "tools/impact/src/harness-manifest.ts",
+          "reason": "Manifest validation has focused tests outside the legacy validator ratchet."
+        },
+        {
+          "glob": "tools/impact/src/main.ts",
+          "reason": "CLI orchestration is covered by integration tests outside the validator ratchet."
+        },
+        {
+          "glob": "tools/impact/src/playwright-discovery.ts",
+          "reason": "Playwright discovery has focused tests outside the validator ratchet."
+        },
+        {
+          "glob": "tools/impact/src/record-check.ts",
+          "reason": "Record governance is protected by adversarial tests outside the validator ratchet."
+        },
+        {
+          "glob": "tools/impact/src/select.ts",
+          "reason": "Impact selection has focused tests outside the validator ratchet."
+        },
+        {
+          "glob": "tools/impact/src/types.ts",
+          "reason": "Type-only declarations emit no runtime behavior."
+        },
+        {
+          "glob": "tools/impact/src/workspaces.ts",
+          "reason": "Workspace discovery has integration coverage outside the validator ratchet."
+        }
+      ],
       "report": "artifacts/coverage/impact-tools/coverage-summary.json",
       "reportFormat": "istanbul-json-summary",
       "metrics": ["lines", "functions", "branches", "statements"],

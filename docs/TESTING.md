@@ -39,8 +39,10 @@ IMPACT_BASE=main IMPACT_HEAD=HEAD pnpm test:impacted
 # Required release-quality safety gate.
 pnpm lint && pnpm typecheck && pnpm test:impacted -- --dry-run && pnpm test && pnpm e2e
 
-# Generate line, branch, function, and statement baselines for production code.
-pnpm coverage && pnpm coverage:check && pnpm record:check
+# Generate evidence and compare it with an explicit verified merge base.
+pnpm coverage
+pnpm coverage:check -- --base <trusted-base-ref> --head HEAD
+pnpm record:check -- --base <trusted-base-ref> --head HEAD
 ```
 
 `pnpm coverage` includes CRM web, domain, Test API, all five service/runtime
@@ -48,9 +50,12 @@ packages, test-kit, and impact-tools targets. Reports live below
 `artifacts/coverage/`. Open a project's `index.html` for the local HTML
 report; `lcov.info` and `coverage-summary.json` support later CI dashboards or
 threshold discussions. `test-impact/coverage-baseline.json` ratchets each
-line, branch, function, and statement percentage for seven reviewed critical
-files: service bus, Policy, Policy State, Finance, runtime, Test API, and the
-impact validator. Missing reports/files/metrics and lower coverage fail.
+line, branch, function, and statement percentage for seven reviewed groups and
+eight sources: service bus, Policy, Policy State, Finance, runtime, Test API,
+the impact validator, and merge-base governance. Missing reports/files/metrics,
+unclassified production sources, incompatible provider/format/aggregation
+metadata, and lower coverage fail. The merge-base baseline and manifest remain
+the comparison authority.
 There is no global percentage gate; untested template code remains visible.
 Baseline reductions require a recorded review decision. Raise the checked-in
 metrics after reviewing improved reports; ordinary CI never rewrites them.
@@ -93,9 +98,9 @@ Do not suppress that fallback or its failure.
 
 Playwright saves the HTML report in `playwright-report/` and failures in
 `test-results/` (trace, screenshot, and video where configured). These,
-along with impact manifests and the full-Vitest log, are uploaded by
-`verify.yml` on failure or when selection falls back to the complete suite.
-Coverage is uploaded as a separate artifact on every CI run.
+along with harness, impact, record, coverage, full-Vitest, and browser logs,
+are uploaded by `verify.yml` under `always()`. Coverage is also uploaded as a
+separate artifact on every CI run.
 
 ## Portable execution record
 
@@ -108,10 +113,12 @@ protocol and the adapter boundary for a future Codex or Cursor integration.
 
 ## CI order
 
-Pull requests check out full Git history, install dependencies, lint and
+Pull requests check out the explicit PR head with full Git history, install dependencies, lint and
 typecheck, preview impact selection, run selected tests, run all Vitest
 projects, then run the complete Chromium suite and generate/check coverage.
-CI validates the JSONL record and generated catalog. Playwright retries remain
+CI validates the harness before selection and passes explicit base/head
+revisions to impact, record, and coverage governance. It validates the JSONL
+record and generated catalog. Playwright retries remain
 available for diagnostics, but CI sets `failOnFlakyTests`: passing on a retry
 still fails the gate. Local runs do not enable this setting.
 The workflow supplies the PR base and head
@@ -168,11 +175,16 @@ controls exist, with explicit service ownership and reasons. The initial manifes
 points at the existing development entrypoint and adapters; the subsequent
 isolation task replaces these with the capability-gated test entrypoint.
 
-The initial seven coverage groups correspond exactly to the existing critical
-ratchet reports, not every Nx coverage output. Coverage groups must have unique
-workspace/source/exclusion identities, and no existing effective source file
-may belong to multiple groups. Exclusions can partition otherwise overlapping
-source globs into disjoint groups. Existing business-rule ownership
+The seven coverage groups correspond exactly to the critical ratchet reports,
+not every Nx coverage output. Each group uses a broad production-source
+classification glob. Every source not ratcheted is an exact, reasoned
+exclusion. A newly added production file fails until it receives a baseline;
+it cannot hide behind a same-change exclusion. New exclusions require
+merge-base tree proof, except exact `.test.ts`, `.test.tsx`, `.spec.ts`, and
+`.spec.tsx` paths with an explicit non-production test-source reason. Coverage groups must
+have unique report/source/exclusion identities, and no existing effective
+source file may belong to multiple groups. Exclusions can partition otherwise
+overlapping source globs into disjoint groups. Existing business-rule ownership
 is consolidated so no current file has multiple owners. Unmapped template and
 new runtime code remains unclassified and must force the full impact gate; a
 manifest validation pass alone does not claim complete behavioral coverage.

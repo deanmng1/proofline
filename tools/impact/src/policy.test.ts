@@ -1,4 +1,4 @@
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { describe, expect, test } from "vitest";
@@ -16,7 +16,7 @@ const baseline = {
   },
 };
 const report = (values = metrics) => ({
-  "/repo/packages/service-bus/src/service-bus.ts": Object.fromEntries(
+  "packages/service-bus/src/service-bus.ts": Object.fromEntries(
     Object.entries(values).map(([metric, pct]) => [metric, { pct }]),
   ),
 });
@@ -24,18 +24,34 @@ const reports = (values = metrics) => ({
   "artifacts/coverage/service-bus/coverage-summary.json": report(values),
 });
 describe("coverage ratchets", () => {
-  test("rejects_a_removed_critical_baseline_entry", () => {
+  test("requires explicit revisions and retains the failure in the ratchet artifact", () => {
     const cwd = mkdtempSync(path.join(tmpdir(), "coverage-policy-"));
     try {
       mkdirSync(path.join(cwd, "test-impact"));
       writeFileSync(path.join(cwd, "test-impact/coverage-baseline.json"), JSON.stringify(baseline));
-      expect(() => coverageMain(cwd)).toThrow(/Missing critical baseline/);
+      expect(() => coverageMain(cwd, { base: "", head: "" })).toThrow(/Missing base revision/);
+      expect(
+        JSON.parse(
+          readFileSync(path.join(cwd, "artifacts/coverage/ratchet.json"), "utf8"),
+        ).errors.join(" "),
+      ).toMatch(/Missing base revision/);
     } finally {
       rmSync(cwd, { recursive: true, force: true });
     }
   });
-  test("normalizes_absolute_report_paths_and_accepts_the_baseline", () => {
+  test("accepts_repository_relative_report_paths_and_the_baseline", () => {
     expect(checkCoverage(baseline, reports(), "/repo").errors).toEqual([]);
+  });
+  test("rejects_absolute_report_paths_even_when_they_point_inside_the_repository", () => {
+    const absoluteReports = {
+      "artifacts/coverage/service-bus/coverage-summary.json": {
+        "/repo/packages/service-bus/src/service-bus.ts":
+          report()["packages/service-bus/src/service-bus.ts"],
+      },
+    };
+    expect(checkCoverage(baseline, absoluteReports, "/repo").errors.join(" ")).toMatch(
+      /absolute coverage path/i,
+    );
   });
   test.each(["lines", "branches", "functions", "statements"])(
     "rejects_a_critical_file_below_its_%s_baseline",
@@ -77,8 +93,9 @@ const record = {
 describe("portable execution record", () => {
   test("accepts_repository_relative_directory_artifacts_without_rewriting_history", () => {
     expect(
-      validateRecords(JSON.stringify({ ...record, artifacts: ["artifacts/coverage/domain/"] }))
-        .errors,
+      validateRecords(
+        `${JSON.stringify({ ...record, artifacts: ["artifacts/coverage/domain/"] })}\n`,
+      ).errors,
     ).toEqual([]);
   });
   test("accepts_valid_records", () =>

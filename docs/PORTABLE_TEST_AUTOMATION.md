@@ -31,17 +31,27 @@ needed to reproduce them.
 
 Use `artifacts/coverage/<project>/coverage-summary.json` for measured line,
 branch, function, and statement coverage. The approved scoped policy is in
-`test-impact/coverage-baseline.json`: seven critical service, Test API, and
-validator files may not regress on any metric. `pnpm coverage:check` normalizes
-report paths to repository-relative names, fails for missing evidence, and
-writes `artifacts/coverage/ratchet.json`. There is no global coverage target.
-Record any reviewed baseline change with its reason and evidence.
+`test-impact/coverage-baseline.json`: seven manifest groups covering critical
+service, Test API, validator, and governance sources may not regress on any
+metric. `pnpm coverage:check -- --base <base> --head <head>` verifies a unique,
+full-history merge base; compares the merge-base manifest and baseline; and
+rejects lowered thresholds, deleted sources, incompatible measurement
+metadata, unclassified sources, or incomplete reports. Every report source is
+either governed by a source glob or named by a reasoned exclusion. The command
+writes requested/resolved revisions, complete group authority, measurements,
+and errors to `artifacts/coverage/ratchet.json`, including on failure. There is
+no global coverage target. `pnpm coverage` normalizes the absolute paths emitted
+by Vitest into repository-relative report keys before the summaries become
+governance evidence; the checker rejects absolute, escaping, backslash, or
+duplicate-normalized evidence.
 
-Run `pnpm record:check` to reject malformed/empty JSONL lines, invalid fields,
-absolute scope/artifact paths, duplicate event IDs, or `rules.md` drift. Only
-one trailing newline is allowed; blank interior lines are invalid. The
-machine-readable rule registry is authoritative; `pnpm rules:generate` writes
-its deterministic human-readable view. CI validates but never edits the record.
+Run `pnpm record:check -- --base <base> --head <head>` to prove that the current
+JSONL bytes are the exact merge-base prefix plus complete, schema-valid new
+rows. It rejects any historical rewrite, CRLF conversion, malformed/duplicate
+row, invalid scope, or missing single trailing LF. Each changed governed path
+must overlap a newly appended row's repository-relative scope; old records
+cannot satisfy a new change. `test-impact/rules.md` remains a separately
+verified deterministic artifact. CI validates but never edits the record.
 
 ## Future Codex/Cursor adapter boundary
 

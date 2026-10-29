@@ -23,6 +23,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -45,21 +46,25 @@ jobs:
       - name: Typecheck
         run: pnpm typecheck
 
+      - name: Validate portable harness manifest
+        run: pnpm harness:validate
+
       - name: Validate portable execution record and generated catalog
-        run: pnpm record:check
+        run: pnpm record:check -- --base "$IMPACT_BASE" --head "$IMPACT_HEAD"
 
       - name: Install Chromium
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
         run: pnpm exec playwright install --with-deps chromium
 
       - name: Preview impact selection
         id: impact
         shell: bash
         run: |
-          pnpm test:impacted -- --dry-run
+          pnpm test:impacted -- --dry-run --base "$IMPACT_BASE" --head "$IMPACT_HEAD"
           echo "fallback=$(node -p \"require('./artifacts/impact/selection.json').fallback\")" >> "$GITHUB_OUTPUT"
 
       - name: Run impact-selected tests
-        run: pnpm test:impacted
+        run: pnpm test:impacted -- --base "$IMPACT_BASE" --head "$IMPACT_HEAD"
 
       - name: Run full Vitest safety gate
         if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
@@ -71,7 +76,11 @@ jobs:
 
       - name: Run full Chromium safety gate
         if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
-        run: pnpm e2e
+        shell: bash
+        run: |
+          mkdir -p artifacts
+          set -o pipefail
+          pnpm e2e 2>&1 | tee artifacts/browser-output.txt
 
       - name: Generate Vitest coverage baseline
         if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
@@ -83,7 +92,7 @@ jobs:
 
       - name: Check scoped critical-file coverage ratchets
         if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
-        run: pnpm coverage:check
+        run: pnpm coverage:check -- --base "$IMPACT_BASE" --head "$IMPACT_HEAD"
 
       - name: Upload coverage baseline
         if: ${{ always() }}
@@ -96,16 +105,20 @@ jobs:
             artifacts/coverage/
             artifacts/coverage-output.txt
 
-      - name: Upload diagnostics
-        if: ${{ always() && (failure() || steps.impact.outputs.fallback == 'all-tests') }}
+      - name: Upload immutable verification diagnostics
+        if: ${{ always() }}
         uses: actions/upload-artifact@v4
         with:
           name: verification-diagnostics
-          if-no-files-found: ignore
+          if-no-files-found: warn
           retention-days: 14
           path: |
+            artifacts/harness/
             artifacts/impact/
+            artifacts/record/
+            artifacts/coverage/
             artifacts/vitest-output.txt
+            artifacts/browser-output.txt
             artifacts/coverage-output.txt
             playwright-report/
             test-results/

@@ -151,6 +151,53 @@ export type HarnessOwnership = z.infer<typeof ownershipSchema>;
 export type CoverageGroup = z.infer<typeof coverageSchema>;
 export type HarnessManifest = z.infer<typeof harnessManifestSchema>;
 
+export const validateHarnessAuthority = (input: unknown) => {
+  const parsed = harnessManifestSchema.safeParse(input);
+  if (!parsed.success) return { errors: [`Invalid harness manifest: ${parsed.error.message}`] };
+  const manifest = parsed.data;
+  const errors: string[] = [];
+  const unique = (values: string[], label: string) => {
+    if (new Set(values).size !== values.length) errors.push(`Duplicate ${label}`);
+  };
+  const workspaces = manifest.workspaces.map((workspace) => workspace.path);
+  unique(workspaces, "workspace path");
+  unique(
+    manifest.coverage.map((group) => group.report),
+    "coverage report",
+  );
+  unique(
+    manifest.coverage.map((group) =>
+      JSON.stringify([
+        group.workspace,
+        [...group.sourceGlobs].sort(),
+        group.exclusions.map((entry) => entry.glob).sort(),
+      ]),
+    ),
+    "coverage source group",
+  );
+  for (const group of manifest.coverage) {
+    if (!workspaces.includes(group.workspace))
+      errors.push(`Unknown coverage workspace: ${group.workspace}`);
+    unique(group.sourceGlobs, "coverage source glob");
+    unique(
+      group.exclusions.map((entry) => entry.glob),
+      "coverage exclusion glob",
+    );
+    for (const glob of [...group.sourceGlobs, ...group.exclusions.map((entry) => entry.glob)])
+      if (!glob.startsWith(`${group.workspace}/`))
+        errors.push(`Coverage glob outside workspace: ${glob}`);
+  }
+  unique(
+    manifest.ownership.map((owner) => owner.glob),
+    "ownership glob",
+  );
+  unique(
+    manifest.ownership.flatMap((owner) => owner.testBindings.map((binding) => binding.testId)),
+    "binding ID",
+  );
+  return { errors };
+};
+
 const lifecycleRow = z
   .object({
     state: text,
@@ -566,6 +613,10 @@ const validateHarnessUnchecked = ({
   }
   for (const group of manifest.coverage) {
     unique(group.sourceGlobs, "coverage source glob");
+    unique(
+      group.exclusions.map((exclusion) => exclusion.glob),
+      "coverage exclusion glob",
+    );
     for (const glob of group.sourceGlobs) inspectGlob(glob);
     if (!workspacePaths.includes(group.workspace))
       errors.push(`Unknown coverage workspace: ${group.workspace}`);

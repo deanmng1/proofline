@@ -4,7 +4,7 @@ import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { z } from "zod";
 import { readChangedFiles } from "./changed-files.ts";
-import { normalizeRepoPath } from "./coverage-policy.ts";
+import { normalizeInRepositoryPath } from "./coverage-policy.ts";
 import { harnessManifestSchema, validateHarness } from "./harness-manifest.ts";
 import { parsePlaywrightIdentities } from "./playwright-discovery.ts";
 import { canonicalCommandKeys, selectImpact } from "./select.ts";
@@ -133,7 +133,7 @@ export const discoverCandidates = (cwd: string, manifest: HarnessManifest) => {
       identities.vitest.push(
         ...tests
           .map((test) => ({
-            file: normalizeRepoPath(path.resolve(cwd, plan.cwd, test.file), cwd),
+            file: normalizeInRepositoryPath(path.resolve(cwd, plan.cwd, test.file), cwd),
             title: test.name,
             line: test.location.line,
           }))
@@ -150,7 +150,7 @@ export const discoverCandidates = (cwd: string, manifest: HarnessManifest) => {
         ...parsePlaywrightIdentities(report, path.resolve(cwd, plan.cwd, root))
           .map((test) => ({
             ...test,
-            path: normalizeRepoPath(test.path, cwd),
+            path: normalizeInRepositoryPath(test.path, cwd),
           }))
           .filter((test) => {
             const owner = resolveWorkspace(test.path, manifest.workspaces);
@@ -293,7 +293,20 @@ export const main = (cwd = process.cwd(), args = process.argv.slice(2)) => {
     if (errors.length) throw new Error(errors.join("\n"));
     return;
   }
-  const changes = readChangedFiles({ cwd });
+  const revisionArgument = (name: string) => {
+    let value: string | undefined;
+    for (let index = 0; index < args.length; index++)
+      if (args[index] === name) value = args[index + 1];
+    return value;
+  };
+  const changes = readChangedFiles({
+    cwd,
+    env: {
+      ...process.env,
+      ...(revisionArgument("--base") ? { IMPACT_BASE: revisionArgument("--base") } : {}),
+      ...(revisionArgument("--head") ? { IMPACT_HEAD: revisionArgument("--head") } : {}),
+    },
+  });
   writeArtifact(cwd, "manifest.json", changes);
   writeArtifact(cwd, "discovery.json", {
     vitest: [],
