@@ -10,7 +10,42 @@ import type {
 
 export type { Customer, PolicyLedger, PolicyLifecycle, Property };
 export type TestSeed = RuntimeSeed;
-export type TestApiOptions = RuntimeOptions;
+export type TestApiRole = "Owner" | "Admin" | "Manager" | "Viewer";
+export type TestApiAuthorityClaims = {
+  subject: string;
+  role: TestApiRole;
+  tenantIds: readonly string[];
+};
+export type TestApiOperation =
+  | "tenant.list"
+  | "state.read"
+  | "customer.read"
+  | "customer.create"
+  | "property.read"
+  | "property.create"
+  | "quote.read"
+  | "quote.create"
+  | "quote.bind"
+  | "policy.read"
+  | "policy.lifecycle"
+  | "policy.finance";
+export type TestApiAuthorityRequest = {
+  bearerToken: string | null;
+  tenantId: string;
+  method: string;
+  path: string;
+  operation: TestApiOperation;
+  mutation: boolean;
+};
+export type TestApiAuthorityDecision =
+  | { allowed: true; claims: TestApiAuthorityClaims }
+  | { allowed: false; code: "unauthenticated" | "cross_tenant" | "role_forbidden" };
+export type TestApiAuthorityPort = {
+  authorize(
+    request: TestApiAuthorityRequest,
+  ): TestApiAuthorityDecision | Promise<TestApiAuthorityDecision>;
+};
+export type TestApiOptions = RuntimeOptions & { authority: TestApiAuthorityPort };
 export type TestApiSnapshot = RuntimeSnapshot;
 export type TestApi = { handle(request: Request): Promise<Response> };
 export type CommandIdentity = { commandId: string; correlationId: string };

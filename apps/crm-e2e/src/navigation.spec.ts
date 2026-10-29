@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./fixtures/test";
 import { login } from "./helpers";
 
 test("navigates between module pages", async ({ page }) => {

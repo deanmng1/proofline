@@ -2,7 +2,8 @@ import { createTestCapabilityGate } from "@/test-capability";
 
 declare global {
   interface Window {
-    __PROOFLINE_TEST_BOOTSTRAP__?: { capability: string };
+    __PROOFLINE_TEST_BOOTSTRAP__?: { capability: string; adapter: "context" | "legacy" };
+    __CRM_TEST_API__?: boolean;
   }
 }
 
@@ -16,11 +17,13 @@ gate.consume({ supplied: injected?.capability, origin: address.origin });
 address.searchParams.delete("__proofline_capability");
 window.history.replaceState(window.history.state, "", address);
 
-void import("@/mocks/browser")
-  .then(async ({ worker }) => {
+const start = async () => {
+  if (injected?.adapter === "legacy" && window.__CRM_TEST_API__ !== true) {
+    const { worker } = await import("@/mocks/browser");
     await worker.start({ onUnhandledRequest: "error" });
-    return import("@/bootstrap");
-  })
-  .then(({ bootstrapApp }) => {
-    if (PROOFLINE_TEST_ENTRY_MARKER) bootstrapApp({ testMode: true });
-  });
+  }
+  const { bootstrapApp } = await import("@/bootstrap");
+  if (PROOFLINE_TEST_ENTRY_MARKER) bootstrapApp({ testMode: true });
+};
+
+void start();

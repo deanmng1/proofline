@@ -9,7 +9,7 @@
       "dependsOn": [
         {
           "projects": ["crm-web"],
-          "target": "build",
+          "target": "build-test",
           "params": "ignore"
         }
       ],

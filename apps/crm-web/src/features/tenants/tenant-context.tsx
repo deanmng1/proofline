@@ -1,6 +1,7 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { createContext, type ReactNode, useContext, useEffect, useMemo, useState } from "react";
 import { useLocation } from "react-router-dom";
+import { useAuth } from "@/features/auth/auth-context";
 import { listTenants } from "@/features/tenants/tenants-api";
 import { setActiveTenantId } from "@/lib/http";
 import type { Tenant } from "@/types";
@@ -22,6 +23,7 @@ const readStoredTenantId = (): string | null => {
 };
 
 export const TenantProvider = ({ children }: { children: ReactNode }) => {
+  const { isAuthenticated, session } = useAuth();
   const { pathname } = useLocation();
   const queryClient = useQueryClient();
   const [tenants, setTenants] = useState<Tenant[]>([]);
@@ -30,7 +32,17 @@ export const TenantProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     let cancelled = false;
-    listTenants()
+    if (!isAuthenticated) {
+      setTenants([]);
+      setCurrentTenantState(null);
+      setActiveTenantId(null);
+      setIsLoaded(true);
+      return () => {
+        cancelled = true;
+      };
+    }
+    setIsLoaded(false);
+    listTenants(session?.accessToken)
       .then((fetched) => {
         if (cancelled) {
           return;
@@ -41,6 +53,13 @@ export const TenantProvider = ({ children }: { children: ReactNode }) => {
         setCurrentTenantState(initial);
         setActiveTenantId(initial?.id ?? null);
       })
+      .catch(() => {
+        if (!cancelled) {
+          setTenants([]);
+          setCurrentTenantState(null);
+          setActiveTenantId(null);
+        }
+      })
       .finally(() => {
         if (!cancelled) {
           setIsLoaded(true);
@@ -49,7 +68,7 @@ export const TenantProvider = ({ children }: { children: ReactNode }) => {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [isAuthenticated, session?.accessToken]);
 
   const value = useMemo<TenantContextValue>(
     () => ({

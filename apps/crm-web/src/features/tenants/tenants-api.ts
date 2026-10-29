@@ -1,7 +1,10 @@
 import { http } from "@/lib/http";
 import type { Tenant } from "@/types";
 
-export const listTenants = () => http<Tenant[]>("/api/tenants");
+export const listTenants = (accessToken?: string) =>
+  http<Tenant[]>("/api/tenants", {
+    ...(accessToken ? { headers: { Authorization: `Bearer ${accessToken}` } } : {}),
+  });
 
 export const getTenant = (id: string) => http<Tenant>(`/api/tenants/${id}`);
 

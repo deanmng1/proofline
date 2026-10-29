@@ -44,7 +44,11 @@ export const startTestAppServer = async ({
       .map((part) => part.trim())
       .includes(`__proofline_session=${session}`);
     const supplied = requestUrl.searchParams.get("__proofline_capability");
-    const documentRequest = requestUrl.pathname === "/" || requestUrl.pathname === "/index.html";
+    const acceptsDocument = (request.headers.accept ?? "").includes("text/html");
+    const documentRequest =
+      requestUrl.pathname === "/" ||
+      requestUrl.pathname === "/index.html" ||
+      (acceptsDocument && !path.posix.extname(requestUrl.pathname));
 
     if (supplied !== null) {
       if (launchConsumed) {
@@ -69,7 +73,8 @@ export const startTestAppServer = async ({
     }
 
     if (documentRequest) {
-      const injection = `<script>window.__PROOFLINE_TEST_BOOTSTRAP__=Object.freeze({capability:${JSON.stringify(capability)}});</script>`;
+      const adapter = request.headers["x-proofline-adapter"] === "context" ? "context" : "legacy";
+      const injection = `<script>window.__PROOFLINE_TEST_BOOTSTRAP__=Object.freeze({capability:${JSON.stringify(capability)},adapter:${JSON.stringify(adapter)}});</script>`;
       response.writeHead(200, {
         "content-type": "text/html; charset=utf-8",
         "cache-control": "no-store",

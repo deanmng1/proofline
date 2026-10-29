@@ -7,9 +7,16 @@ import {
   quoteCommand,
   runtimeSeed,
 } from "../../insurance-runtime/src/test-fixtures";
-import type { PolicyLedger, TestApi, TestApiSnapshot } from "./contracts";
+import type {
+  PolicyLedger,
+  TestApi,
+  TestApiAuthorityClaims,
+  TestApiAuthorityPort,
+  TestApiOptions,
+  TestApiSnapshot,
+} from "./contracts";
 import { createMswHandlers } from "./handlers";
-import { createTestApi } from "./test-api";
+import { createBearerAuthority, createTestApi } from "./test-api";
 
 const seed = { ...runtimeSeed, commands: [quoteCommand, bindCommand] };
 const request = (path: string, body?: unknown, tenant: string | null = "tenant-a") =>
@@ -17,6 +24,7 @@ const request = (path: string, body?: unknown, tenant: string | null = "tenant-a
     method: body === undefined ? "GET" : "POST",
     headers: {
       "content-type": "application/json",
+      authorization: "Bearer test-authority",
       ...(tenant === null ? {} : { "X-Tenant-Id": tenant }),
     },
     ...(body === undefined ? {} : { body: JSON.stringify(body) }),
@@ -29,10 +37,129 @@ const finance = (commandId: string, type = "premium_payment_settled", amountCent
   type,
   amountCents,
 });
+const defaultAuthority = createBearerAuthority({
+  "test-authority": {
+    subject: "contract-test",
+    role: "Owner",
+    tenantIds: ["tenant-a", "tenant-b"],
+  },
+});
+const createAuthorizedTestApi = (
+  seed: Parameters<typeof createTestApi>[0] = {},
+  options: Omit<TestApiOptions, "authority"> & { authority?: TestApiAuthorityPort } = {},
+) => createTestApi(seed, { authority: defaultAuthority, ...options });
 
 describe("createTestApi", () => {
+  test("rejects_role_and_cross_tenant_mutations_through_the_test_api", async () => {
+    const tokens = new Map<string, TestApiAuthorityClaims>([
+      ["owner-a", { subject: "owner", role: "Owner", tenantIds: ["tenant-a"] }],
+      ["viewer-a", { subject: "viewer", role: "Viewer", tenantIds: ["tenant-a"] }],
+    ]);
+    const api = createAuthorizedTestApi(
+      { tenants: ["tenant-a", "tenant-b"] },
+      {
+        authority: {
+          authorize(input) {
+            const claims = input.bearerToken ? tokens.get(input.bearerToken) : undefined;
+            if (!claims) return { allowed: false, code: "unauthenticated" };
+            if (!claims.tenantIds.includes(input.tenantId))
+              return { allowed: false, code: "cross_tenant" };
+            if (input.mutation && claims.role === "Viewer")
+              return { allowed: false, code: "role_forbidden" };
+            return { allowed: true, claims };
+          },
+        },
+      },
+    );
+    const authorityRequest = (token: string, tenantId: string, commandId: string) =>
+      new Request("http://test.local/api/customers", {
+        method: "POST",
+        headers: {
+          authorization: `Bearer ${token}`,
+          "content-type": "application/json",
+          "X-Tenant-Id": tenantId,
+        },
+        body: JSON.stringify({
+          commandId,
+          correlationId: "authority-contract",
+          name: "Authorized",
+          email: "authorized@example.test",
+        }),
+      });
+    expect((await api.handle(authorityRequest("owner-a", "tenant-a", "authorized"))).status).toBe(
+      201,
+    );
+    const inspect = () =>
+      api.handle(
+        new Request("http://test.local/api/test/state", {
+          headers: { authorization: "Bearer owner-a", "X-Tenant-Id": "tenant-a" },
+        }),
+      );
+    const beforeDenials = await (await inspect()).text();
+    expect(
+      (await api.handle(authorityRequest("viewer-a", "tenant-a", "viewer-denied"))).status,
+    ).toBe(403);
+    expect(
+      (await api.handle(authorityRequest("owner-a", "tenant-b", "tenant-denied"))).status,
+    ).toBe(403);
+    expect(await (await inspect()).text()).toBe(beforeDenials);
+    expect(
+      (
+        await api.handle(
+          new Request("http://test.local/api/customers", {
+            headers: { authorization: "Bearer invalid", "X-Tenant-Id": "tenant-a" },
+          }),
+        )
+      ).status,
+    ).toBe(401);
+  });
+
+  test("authority_denial_does_not_drain_pending_recovery", async () => {
+    const api = createAuthorizedTestApi(
+      { ...runtimeSeed, commands: [quoteCommand] },
+      {
+        busFactory: failFinanceOnce,
+        authority: createBearerAuthority({
+          owner: { subject: "owner", role: "Owner", tenantIds: ["tenant-a"] },
+          viewer: { subject: "viewer", role: "Viewer", tenantIds: ["tenant-a"] },
+        }),
+      },
+    );
+    const bind = (token: string) =>
+      api.handle(
+        new Request("http://test.local/api/quotes/quote/bind", {
+          method: "POST",
+          headers: {
+            authorization: `Bearer ${token}`,
+            "content-type": "application/json",
+            "X-Tenant-Id": "tenant-a",
+          },
+          body: JSON.stringify({
+            commandId: "authority-bind",
+            correlationId: "authority-recovery",
+            policyId: "authority-policy",
+          }),
+        }),
+      );
+    const inspect = () =>
+      api.handle(
+        new Request("http://test.local/api/test/state", {
+          headers: { authorization: "Bearer owner", "X-Tenant-Id": "tenant-a" },
+        }),
+      );
+
+    expect((await bind("owner")).status).toBe(409);
+    const pending = await (await inspect()).text();
+    expect((await bind("viewer")).status).toBe(403);
+    expect(await (await inspect()).text()).toBe(pending);
+    expect((await bind("owner")).status).toBe(201);
+    const recovered: TestApiSnapshot = await (await inspect()).json();
+    expect(recovered.pendingMessages).toEqual([]);
+    expect(recovered.policy.policies).toHaveLength(1);
+    expect(recovered.finance.ledgers[0].commissionEntries).toHaveLength(1);
+  });
   test("replays_lost_customer_and_property_responses_without_duplicate_entities", async () => {
-    const api = createTestApi({ tenants: ["tenant-a"] });
+    const api = createAuthorizedTestApi({ tenants: ["tenant-a"] });
     const customerBody = {
       commandId: "customer-command",
       correlationId: "intake-workflow",
@@ -69,7 +196,7 @@ describe("createTestApi", () => {
   });
 
   test("requires_command_and_correlation_identity_for_customer_and_property_intake", async () => {
-    const api = createTestApi({ tenants: ["tenant-a"] });
+    const api = createAuthorizedTestApi({ tenants: ["tenant-a"] });
     const customer = await api.handle(
       request("customers", { name: "Alex", email: "alex@example.test" }),
     );
@@ -92,7 +219,7 @@ describe("createTestApi", () => {
   });
 
   test("rejects_foreign_quote_references_before_retrying_pending_finance_delivery", async () => {
-    const api = createTestApi(
+    const api = createAuthorizedTestApi(
       { ...runtimeSeed, commands: [quoteCommand] },
       { busFactory: failFinanceOnce },
     );
@@ -131,7 +258,7 @@ describe("createTestApi", () => {
     expect(recovered.finance.ledgers[0].commissionEntries).toHaveLength(1);
   });
   test("creates_generated_quote_and_policy_once_and_rejects_changed_replay", async () => {
-    const api = createTestApi(runtimeSeed);
+    const api = createAuthorizedTestApi(runtimeSeed);
     const body = {
       commandId: "new-quote",
       correlationId: "new-workflow",
@@ -164,7 +291,7 @@ describe("createTestApi", () => {
     expect(ledger.commissionEntries).toHaveLength(1);
   });
   test("rejects_invalid_quote_plan_and_foreign_property_without_publishing", async () => {
-    const api = createTestApi(runtimeSeed);
+    const api = createAuthorizedTestApi(runtimeSeed);
     const base = {
       commandId: "invalid-quote",
       correlationId: "workflow",
@@ -197,8 +324,8 @@ describe("createTestApi", () => {
     expect(state.messages).toEqual([]);
   });
   test("isolates state for API instances created from the same seed", async () => {
-    const first = createTestApi(seed);
-    const second = createTestApi(seed);
+    const first = createAuthorizedTestApi(seed);
+    const second = createAuthorizedTestApi(seed);
     expect((await post(first, finance("premium"))).status).toBe(201);
     const a: TestApiSnapshot = await (await first.handle(request("test/state"))).json();
     const b: TestApiSnapshot = await (await second.handle(request("test/state"))).json();
@@ -206,7 +333,7 @@ describe("createTestApi", () => {
     expect(b.finance.ledgers[0].financeEntries).toHaveLength(0);
   });
   test("rejects_missing_or_cross_tenant_request_context", async () => {
-    const api = createTestApi(seed);
+    const api = createAuthorizedTestApi(seed);
     expect(
       (
         await api.handle(
@@ -243,7 +370,7 @@ describe("createTestApi", () => {
     expect(state.messages).toHaveLength(3);
   });
   test("replays_http_mutation_with_the_same_command_id", async () => {
-    const api = createTestApi(seed);
+    const api = createAuthorizedTestApi(seed);
     expect((await post(api, finance("premium"))).status).toBe(201);
     expect((await post(api, finance("premium"))).status).toBe(201);
     expect((await post(api, finance("premium", "premium_payment_settled", 3000))).status).toBe(409);
@@ -251,7 +378,7 @@ describe("createTestApi", () => {
     expect(ledger.financeEntries).toHaveLength(1);
   });
   test("binds_over_http_and_exposes_finance_initialized_through_policy_state", async () => {
-    const api = createTestApi({ ...runtimeSeed, commands: [quoteCommand] });
+    const api = createAuthorizedTestApi({ ...runtimeSeed, commands: [quoteCommand] });
     const body = { commandId: "bind-command", correlationId: "workflow", policyId: "policy" };
     expect((await api.handle(request("quotes/quote/bind", body))).status).toBe(201);
     expect((await api.handle(request("quotes/quote/bind", body))).status).toBe(201);
@@ -265,7 +392,7 @@ describe("createTestApi", () => {
     ]);
   });
   test("exposes_cancelled_lifecycle_in_policy_list_detail_and_ledger", async () => {
-    const api = createTestApi(seed);
+    const api = createAuthorizedTestApi(seed);
     const cancelled = await api.handle(
       request("policies/policy/lifecycle", {
         commandId: "cancel",
@@ -296,7 +423,7 @@ describe("createTestApi", () => {
       policyId: "policy",
       lifecycle: "cancelled",
     });
-    const restored = createTestApi({}, { checkpoint: runtime.checkpoint() });
+    const restored = createAuthorizedTestApi({}, { checkpoint: runtime.checkpoint() });
     expect(await (await restored.handle(request("policies"))).json()).toEqual([
       expect.objectContaining({ id: "policy", status: "cancelled" }),
     ]);
@@ -306,7 +433,7 @@ describe("createTestApi", () => {
     });
   });
   test("http_replay_recovers_pending_finance_delivery", async () => {
-    const api = createTestApi(
+    const api = createAuthorizedTestApi(
       { ...runtimeSeed, commands: [quoteCommand] },
       { busFactory: failFinanceOnce },
     );
@@ -322,7 +449,7 @@ describe("createTestApi", () => {
     expect(state.pendingMessages).toEqual([]);
   });
   test("mixed_refund_allocations_reverse_only_settled_premium_commission", async () => {
-    const api = createTestApi(seed);
+    const api = createAuthorizedTestApi(seed);
     await post(api, finance("deposit", "deposit_recorded", 3000));
     const ledger: PolicyLedger = await (
       await post(api, finance("premium", "premium_payment_settled", 5000))
@@ -356,7 +483,7 @@ describe("createTestApi", () => {
     ).toEqual([-200]);
   });
   test("requires_independent_command_and_correlation_identities_before_mutation", async () => {
-    const api = createTestApi(seed);
+    const api = createAuthorizedTestApi(seed);
     expect((await post(api, { type: "deposit_recorded", amountCents: 100 })).status).toBe(400);
     expect(
       (await post(api, { commandId: "deposit", type: "deposit_recorded", amountCents: 100 }))
@@ -369,7 +496,7 @@ describe("createTestApi", () => {
     ).toBe(400);
   });
   test("uses the identical contract through MSW handlers", async () => {
-    const server = setupServer(...createMswHandlers(createTestApi(seed)));
+    const server = setupServer(...createMswHandlers(createAuthorizedTestApi(seed)));
     server.listen({ onUnhandledRequest: "error" });
     try {
       expect((await fetch(request("policies/policy/ledger"))).status).toBe(200);
@@ -378,7 +505,7 @@ describe("createTestApi", () => {
     }
   });
   test("returns a deliberate error for an unknown route", async () => {
-    const response = await createTestApi(seed).handle(request("not-a-route"));
+    const response = await createAuthorizedTestApi(seed).handle(request("not-a-route"));
     expect(response.status).toBe(404);
     expect(await response.json()).toMatchObject({ error: { code: "route_not_found" } });
   });

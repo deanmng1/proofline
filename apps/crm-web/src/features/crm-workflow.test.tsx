@@ -1,5 +1,10 @@
 import { onlineManager } from "@tanstack/react-query";
-import { createMswHandlers, createTestApi, type TestSeed } from "@testbed/api-contracts";
+import {
+  createBearerAuthority,
+  createMswHandlers,
+  createTestApi,
+  type TestSeed,
+} from "@testbed/api-contracts";
 import { ledgerSeed, renderWithProviders } from "@testbed/test-kit";
 import { act, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -8,13 +13,27 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 import { CustomerListPage } from "@/features/customers/customer-list-page";
 import { PolicyDetailPage } from "@/features/policies/policy-detail-page";
 import { QuoteForm } from "@/features/quotes/quote-form";
-import { setActiveTenantId } from "@/lib/http";
+import { setActiveTenantId, setHttpAuth } from "@/lib/http";
 import { server } from "@/test/server";
 import { createInMemoryServiceBus } from "../../../../packages/service-bus/src";
 
 function useTestApi(seed: TestSeed = ledgerSeed()) {
   setActiveTenantId("test-tenant");
-  const api = createTestApi(seed, { now: "2026-01-01T00:00:00.000Z" });
+  setHttpAuth({
+    getToken: () => "workflow-token",
+    refresh: async () => false,
+    unauthorized: () => undefined,
+  });
+  const api = createTestApi(seed, {
+    now: "2026-01-01T00:00:00.000Z",
+    authority: createBearerAuthority({
+      "workflow-token": {
+        subject: "workflow-owner",
+        role: "Owner",
+        tenantIds: ["test-tenant"],
+      },
+    }),
+  });
   server.use(...createMswHandlers(api));
   return api;
 }
@@ -113,7 +132,12 @@ describe("insurance CRM reference workflow", () => {
     }
     expect(new Set(commandIds).size).toBe(2);
     const response = await api.handle(
-      new Request("http://localhost/api/test/state", { headers: { "X-Tenant-Id": "test-tenant" } }),
+      new Request("http://localhost/api/test/state", {
+        headers: {
+          authorization: "Bearer workflow-token",
+          "X-Tenant-Id": "test-tenant",
+        },
+      }),
     );
     const snapshot = await response.json();
     expect(snapshot.policy.quotes).toHaveLength(1);
@@ -350,7 +374,7 @@ describe("insurance CRM reference workflow", () => {
     const state = await (
       await api.handle(
         new Request("http://localhost/api/test/state", {
-          headers: { "X-Tenant-Id": "test-tenant" },
+          headers: { authorization: "Bearer workflow-token", "X-Tenant-Id": "test-tenant" },
         }),
       )
     ).json();
@@ -390,7 +414,7 @@ describe("insurance CRM reference workflow", () => {
     const state = await (
       await api.handle(
         new Request("http://localhost/api/test/state", {
-          headers: { "X-Tenant-Id": "test-tenant" },
+          headers: { authorization: "Bearer workflow-token", "X-Tenant-Id": "test-tenant" },
         }),
       )
     ).json();
@@ -568,6 +592,13 @@ describe("insurance CRM reference workflow", () => {
       setActiveTenantId("test-tenant");
       const api = createTestApi(ledgerSeed({ commands: [] }), {
         now: "2026-01-01T00:00:00.000Z",
+        authority: createBearerAuthority({
+          "workflow-token": {
+            subject: "workflow-owner",
+            role: "Owner",
+            tenantIds: ["test-tenant"],
+          },
+        }),
         busFactory: () => {
           const bus = createInMemoryServiceBus();
           const subscribe = bus.subscribe.bind(bus);
@@ -622,7 +653,7 @@ describe("insurance CRM reference workflow", () => {
       expect(attempts[1]).toEqual(attempts[0]);
       const response = await api.handle(
         new Request("http://localhost/api/test/state", {
-          headers: { "X-Tenant-Id": "test-tenant" },
+          headers: { authorization: "Bearer workflow-token", "X-Tenant-Id": "test-tenant" },
         }),
       );
       const state = await response.json();

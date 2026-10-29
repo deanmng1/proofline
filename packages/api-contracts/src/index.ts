@@ -11,10 +11,16 @@ export type {
   Property,
   RecordFinanceEventInput,
   TestApi,
+  TestApiAuthorityClaims,
+  TestApiAuthorityDecision,
+  TestApiAuthorityPort,
+  TestApiAuthorityRequest,
+  TestApiOperation,
   TestApiOptions,
+  TestApiRole,
   TestApiSnapshot,
   TestSeed,
   TransitionPolicyInput,
 } from "./contracts";
 export { createMswHandlers } from "./handlers";
-export { createTestApi } from "./test-api";
+export { createBearerAuthority, createTestApi } from "./test-api";

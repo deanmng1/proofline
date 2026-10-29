@@ -1,4 +1,4 @@
-import { createMswHandlers, createTestApi } from "@testbed/api-contracts";
+import { createBearerAuthority, createMswHandlers, createTestApi } from "@testbed/api-contracts";
 import { setupWorker } from "msw/browser";
 import { tenantsPayload } from "@/mocks/data";
 import { handlers } from "@/mocks/handlers";
@@ -6,5 +6,18 @@ import { handlers } from "@/mocks/handlers";
 /** A browser session gets its own CRM Test API; template handlers still own non-CRM routes. */
 export const worker = setupWorker(
   ...handlers,
-  ...createMswHandlers(createTestApi({ tenants: tenantsPayload.map((tenant) => tenant.id) })),
+  ...createMswHandlers(
+    createTestApi(
+      { tenants: tenantsPayload.map((tenant) => tenant.id) },
+      {
+        authority: createBearerAuthority({
+          "mock-access-token": {
+            subject: "mock-owner",
+            role: "Owner",
+            tenantIds: tenantsPayload.map((tenant) => tenant.id),
+          },
+        }),
+      },
+    ),
+  ),
 );

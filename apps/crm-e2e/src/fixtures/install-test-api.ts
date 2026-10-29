@@ -15,25 +15,15 @@ const session = {
   expiresAt: 4_102_444_800_000,
 };
 
-const tenants = [
-  {
-    id: "test-tenant",
-    name: "Testbed",
-    slug: "testbed",
-    plan: "scale",
-    status: "active",
-  },
-];
-
 async function fulfillTestApiRequest(route: Route, testApi: TestApi): Promise<void> {
   const request = route.request();
   const url = new URL(request.url());
-  if (request.method() === "GET" && url.pathname === "/api/tenants") {
-    await route.fulfill({ json: tenants });
-    return;
-  }
-  if (request.method() === "GET" && url.pathname === "/api/notifications") {
-    await route.fulfill({ json: [] });
+  if (
+    !/^\/api\/(?:customers|properties|quotes|policies|tenants|test\/state)(?:\/|$)/.test(
+      url.pathname,
+    )
+  ) {
+    await route.continue();
     return;
   }
 
@@ -45,7 +35,19 @@ async function fulfillTestApiRequest(route: Route, testApi: TestApi): Promise<vo
       body: method === "GET" || method === "HEAD" ? undefined : (request.postData() ?? undefined),
     }),
   );
-  const body = await response.text();
+  let body = await response.text();
+  if (response.ok && url.pathname === "/api/tenants") {
+    const names: Record<string, string> = {
+      tn_northstar: "Northstar",
+      tn_aurora: "Aurora Labs",
+    };
+    body = JSON.stringify(
+      (JSON.parse(body) as Array<Record<string, unknown>>).map((tenant) => ({
+        ...tenant,
+        name: names[String(tenant.id)] ?? tenant.name,
+      })),
+    );
+  }
   if (response.status === 404) {
     let code: string | undefined;
     try {

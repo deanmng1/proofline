@@ -8,6 +8,9 @@ import type {
   CreateQuoteInput,
   RecordFinanceEventInput,
   TestApi,
+  TestApiAuthorityClaims,
+  TestApiAuthorityPort,
+  TestApiOperation,
   TestApiOptions,
   TestSeed,
 } from "./contracts";
@@ -33,17 +36,102 @@ async function requestBody(request: Request): Promise<JsonRecord | Response> {
     return error(400, "invalid_json", "Request body must be valid JSON.");
   }
 }
-export function createTestApi(seed: TestSeed = {}, options: TestApiOptions = {}): TestApi {
-  const runtime = createInsuranceRuntime(seed, options);
+const operationFor = (
+  method: string,
+  path: string,
+): { operation: TestApiOperation; mutation: boolean } | undefined => {
+  if (method === "GET") {
+    if (path === "/api/tenants") return { operation: "tenant.list", mutation: false };
+    if (path === "/api/test/state") return { operation: "state.read", mutation: false };
+    if (path === "/api/customers") return { operation: "customer.read", mutation: false };
+    if (path === "/api/properties") return { operation: "property.read", mutation: false };
+    if (path === "/api/quotes") return { operation: "quote.read", mutation: false };
+    if (path === "/api/policies" || /^\/api\/policies\/[^/]+(?:\/ledger)?$/.test(path))
+      return { operation: "policy.read", mutation: false };
+  }
+  if (method === "POST") {
+    if (path === "/api/customers") return { operation: "customer.create", mutation: true };
+    if (path === "/api/properties") return { operation: "property.create", mutation: true };
+    if (path === "/api/quotes") return { operation: "quote.create", mutation: true };
+    if (/^\/api\/quotes\/[^/]+\/bind$/.test(path))
+      return { operation: "quote.bind", mutation: true };
+    if (/^\/api\/policies\/[^/]+\/lifecycle$/.test(path))
+      return { operation: "policy.lifecycle", mutation: true };
+    if (/^\/api\/policies\/[^/]+\/finance-events$/.test(path))
+      return { operation: "policy.finance", mutation: true };
+  }
+  return undefined;
+};
+export const createBearerAuthority = (
+  entries: Readonly<Record<string, TestApiAuthorityClaims>>,
+): TestApiAuthorityPort => {
+  const principals = new Map(
+    Object.entries(entries).map(([token, claims]) => [
+      token,
+      Object.freeze({ ...claims, tenantIds: Object.freeze([...claims.tenantIds]) }),
+    ]),
+  );
+  return {
+    authorize(input) {
+      const claims = input.bearerToken ? principals.get(input.bearerToken) : undefined;
+      if (!claims) return { allowed: false, code: "unauthenticated" };
+      if (input.operation !== "tenant.list" && !claims.tenantIds.includes(input.tenantId))
+        return { allowed: false, code: "cross_tenant" };
+      if (input.mutation && !["Owner", "Admin", "Manager"].includes(claims.role))
+        return { allowed: false, code: "role_forbidden" };
+      return { allowed: true, claims };
+    },
+  };
+};
+
+export function createTestApi(seed: TestSeed = {}, options: TestApiOptions): TestApi {
+  const { authority, ...runtimeOptions } = options;
+  const runtime = createInsuranceRuntime(seed, runtimeOptions);
   return {
     async handle(request) {
+      const path = new URL(request.url).pathname;
+      const method = request.method.toUpperCase();
       const tenantId = request.headers.get("X-Tenant-Id")?.trim();
-      if (!tenantId) return error(400, "tenant_required", "X-Tenant-Id is required.");
+      if (!tenantId && !(method === "GET" && path === "/api/tenants"))
+        return error(400, "tenant_required", "X-Tenant-Id is required.");
       try {
+        const requested = operationFor(method, path);
+        if (requested) {
+          const authorization = request.headers.get("authorization")?.trim() ?? "";
+          const bearerToken = /^Bearer\s+(.+)$/i.exec(authorization)?.[1]?.trim() ?? null;
+          const decision = await authority.authorize({
+            bearerToken,
+            tenantId: tenantId ?? "",
+            method,
+            path,
+            ...requested,
+          });
+          if (!decision.allowed) {
+            if (decision.code === "unauthenticated")
+              return error(401, "unauthenticated", "A valid bearer token is required.");
+            return error(
+              403,
+              decision.code,
+              decision.code === "cross_tenant"
+                ? "The authenticated identity is not a member of this tenant."
+                : "The authenticated role may not perform this operation.",
+            );
+          }
+          if (requested.operation === "tenant.list")
+            return json(
+              decision.claims.tenantIds.map((id) => ({
+                id,
+                name: id,
+                slug: id,
+                plan: "scale",
+                status: "active",
+              })),
+            );
+        }
+        if (!tenantId) return error(401, "unauthenticated", "A valid bearer token is required.");
         runtime.requireTenant(tenantId);
-        const path = new URL(request.url).pathname;
-        const method = request.method.toUpperCase();
         if (method === "GET") {
+          if (path === "/api/tenants") return json([]);
           if (path === "/api/test/state") return json(runtime.snapshot(tenantId));
           if (path === "/api/customers") return json(runtime.snapshot(tenantId).customers);
           if (path === "/api/properties") return json(runtime.snapshot(tenantId).properties);

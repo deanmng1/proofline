@@ -57,18 +57,76 @@
         "0"
       ],
       "cwd": "."
+    },
+    "browserScenario": {
+      "argv": [
+        "pnpm",
+        "exec",
+        "playwright",
+        "test",
+        "--config",
+        "apps/crm-e2e/playwright.config.ts",
+        "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+        "--project",
+        "chromium",
+        "--workers=2"
+      ],
+      "cwd": ".",
+      "runner": "playwright"
+    },
+    "browserScenarioShard1": {
+      "argv": [
+        "pnpm",
+        "exec",
+        "playwright",
+        "test",
+        "--config",
+        "apps/crm-e2e/playwright.config.ts",
+        "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+        "--project",
+        "chromium",
+        "--shard=1/2"
+      ],
+      "cwd": ".",
+      "runner": "playwright"
+    },
+    "browserScenarioShard2": {
+      "argv": [
+        "pnpm",
+        "exec",
+        "playwright",
+        "test",
+        "--config",
+        "apps/crm-e2e/playwright.config.ts",
+        "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+        "--project",
+        "chromium",
+        "--shard=2/2"
+      ],
+      "cwd": ".",
+      "runner": "playwright"
     }
   },
   "workspaces": [
     {
       "path": "apps/crm-e2e",
       "unitCommand": null,
-      "browserCommands": ["browser"]
+      "browserCommands": [
+        "browser",
+        "browserScenario",
+        "browserScenarioShard1",
+        "browserScenarioShard2"
+      ]
     },
     {
       "path": "apps/crm-web",
       "unitCommand": "unit",
-      "browserCommands": ["browser"]
+      "browserCommands": [
+        "browser",
+        "browserScenario",
+        "browserScenarioShard1",
+        "browserScenarioShard2"
+      ]
     },
     {
       "path": "packages/api-contracts",
@@ -138,10 +196,13 @@
     "testEntrypoint": "testEntrypoint"
   },
   "adapters": {
-    "testModeEnvironment": "apps/crm-web/src/mocks/browser.ts",
-    "auth": "apps/crm-web/src/mocks/handlers.ts",
+    "testModeEnvironment": "apps/crm-e2e/src/fixtures/scenario.ts",
+    "auth": "apps/crm-e2e/src/fixtures/scenario.ts",
     "api": "packages/api-contracts/src/test-api.ts",
-    "providers": ["packages/insurance-runtime/src/test-fixtures.ts"]
+    "providers": [
+      "packages/insurance-runtime/src/test-fixtures.ts",
+      "apps/crm-e2e/src/fixtures/scenario-server.ts"
+    ]
   },
   "coverage": [
     {
@@ -168,11 +229,17 @@
       "metrics": ["lines", "functions", "branches", "statements"],
       "aggregation": "per-file",
       "producer": {
-        "command": { "kind": "nx-target", "target": "coverage" },
+        "command": {
+          "kind": "nx-target",
+          "target": "coverage"
+        },
         "adapter": {
           "kind": "vitest",
           "implementation": "vitest-v8",
-          "version": { "kind": "package-json", "package": "@vitest/coverage-v8" }
+          "version": {
+            "kind": "package-json",
+            "package": "@vitest/coverage-v8"
+          }
         }
       }
     },
@@ -196,11 +263,17 @@
       "metrics": ["lines", "functions", "branches", "statements"],
       "aggregation": "per-file",
       "producer": {
-        "command": { "kind": "nx-target", "target": "coverage" },
+        "command": {
+          "kind": "nx-target",
+          "target": "coverage"
+        },
         "adapter": {
           "kind": "vitest",
           "implementation": "vitest-v8",
-          "version": { "kind": "package-json", "package": "@vitest/coverage-v8" }
+          "version": {
+            "kind": "package-json",
+            "package": "@vitest/coverage-v8"
+          }
         }
       }
     },
@@ -224,11 +297,17 @@
       "metrics": ["lines", "functions", "branches", "statements"],
       "aggregation": "per-file",
       "producer": {
-        "command": { "kind": "nx-target", "target": "coverage" },
+        "command": {
+          "kind": "nx-target",
+          "target": "coverage"
+        },
         "adapter": {
           "kind": "vitest",
           "implementation": "vitest-v8",
-          "version": { "kind": "package-json", "package": "@vitest/coverage-v8" }
+          "version": {
+            "kind": "package-json",
+            "package": "@vitest/coverage-v8"
+          }
         }
       }
     },
@@ -252,11 +331,17 @@
       "metrics": ["lines", "functions", "branches", "statements"],
       "aggregation": "per-file",
       "producer": {
-        "command": { "kind": "nx-target", "target": "coverage" },
+        "command": {
+          "kind": "nx-target",
+          "target": "coverage"
+        },
         "adapter": {
           "kind": "vitest",
           "implementation": "vitest-v8",
-          "version": { "kind": "package-json", "package": "@vitest/coverage-v8" }
+          "version": {
+            "kind": "package-json",
+            "package": "@vitest/coverage-v8"
+          }
         }
       }
     },
@@ -288,11 +373,17 @@
       "metrics": ["lines", "functions", "branches", "statements"],
       "aggregation": "per-file",
       "producer": {
-        "command": { "kind": "nx-target", "target": "coverage" },
+        "command": {
+          "kind": "nx-target",
+          "target": "coverage"
+        },
         "adapter": {
           "kind": "vitest",
           "implementation": "vitest-v8",
-          "version": { "kind": "package-json", "package": "@vitest/coverage-v8" }
+          "version": {
+            "kind": "package-json",
+            "package": "@vitest/coverage-v8"
+          }
         }
       }
     },
@@ -324,11 +415,17 @@
       "metrics": ["lines", "functions", "branches", "statements"],
       "aggregation": "per-file",
       "producer": {
-        "command": { "kind": "nx-target", "target": "coverage" },
+        "command": {
+          "kind": "nx-target",
+          "target": "coverage"
+        },
         "adapter": {
           "kind": "vitest",
           "implementation": "vitest-v8",
-          "version": { "kind": "package-json", "package": "@vitest/coverage-v8" }
+          "version": {
+            "kind": "package-json",
+            "package": "@vitest/coverage-v8"
+          }
         }
       }
     },
@@ -412,11 +509,17 @@
       "metrics": ["lines", "functions", "branches", "statements"],
       "aggregation": "per-file",
       "producer": {
-        "command": { "kind": "nx-target", "target": "coverage" },
+        "command": {
+          "kind": "nx-target",
+          "target": "coverage"
+        },
         "adapter": {
           "kind": "vitest",
           "implementation": "vitest-v8",
-          "version": { "kind": "package-json", "package": "@vitest/coverage-v8" }
+          "version": {
+            "kind": "package-json",
+            "package": "@vitest/coverage-v8"
+          }
         }
       }
     },
@@ -460,11 +563,17 @@
       "metrics": ["lines", "functions", "branches", "statements"],
       "aggregation": "per-file",
       "producer": {
-        "command": { "kind": "nx-target", "target": "coverage" },
+        "command": {
+          "kind": "nx-target",
+          "target": "coverage"
+        },
         "adapter": {
           "kind": "vitest",
           "implementation": "vitest-v8",
-          "version": { "kind": "package-json", "package": "@vitest/coverage-v8" }
+          "version": {
+            "kind": "package-json",
+            "package": "@vitest/coverage-v8"
+          }
         }
       }
     }
@@ -479,7 +588,7 @@
         "tools/proofline/src/production-negative.ts"
       ],
       "ruleIds": ["SAFE-001"],
-      "layers": ["contract"],
+      "layers": ["contract", "playwright"],
       "testBindings": [
         {
           "ruleId": "SAFE-001",
@@ -500,9 +609,29 @@
           "file": "tools/proofline/src/production-negative.test.ts",
           "title": "Proofline production boundary > rejects_test_markers_in_a_production_bundle",
           "line": 76
+        },
+        {
+          "ruleId": "SAFE-001",
+          "layer": "playwright",
+          "testId": "binding-99b2b380362925bc1913",
+          "commandKey": "browserScenario",
+          "runner": "playwright",
+          "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+          "title": "starts_unauthenticated_and_logs_in_through_routed_auth",
+          "line": 51,
+          "tag": "@scenario"
         }
       ],
-      "ruleLayers": [{ "ruleId": "SAFE-001", "layer": "contract" }]
+      "ruleLayers": [
+        {
+          "ruleId": "SAFE-001",
+          "layer": "contract"
+        },
+        {
+          "ruleId": "SAFE-001",
+          "layer": "playwright"
+        }
+      ]
     },
     {
       "glob": "apps/crm-web/src/{bootstrap.tsx,main.tsx,test-capability.ts,test-entry.tsx}",
@@ -532,8 +661,14 @@
         }
       ],
       "ruleLayers": [
-        { "ruleId": "SAFE-001", "layer": "ui" },
-        { "ruleId": "SAFE-001", "layer": "contract" }
+        {
+          "ruleId": "SAFE-001",
+          "layer": "ui"
+        },
+        {
+          "ruleId": "SAFE-001",
+          "layer": "contract"
+        }
       ]
     },
     {
@@ -553,7 +688,12 @@
           "line": 76
         }
       ],
-      "ruleLayers": [{ "ruleId": "SAFE-001", "layer": "contract" }]
+      "ruleLayers": [
+        {
+          "ruleId": "SAFE-001",
+          "layer": "contract"
+        }
+      ]
     },
     {
       "glob": "packages/policy-service/src/**",
@@ -789,7 +929,7 @@
           "runner": "vitest",
           "file": "packages/api-contracts/src/test-api.test.ts",
           "title": "createTestApi > requires_independent_command_and_correlation_identities_before_mutation",
-          "line": 358
+          "line": 485
         },
         {
           "ruleId": "API-002",
@@ -799,7 +939,7 @@
           "runner": "vitest",
           "file": "packages/api-contracts/src/test-api.test.ts",
           "title": "createTestApi > binds_over_http_and_exposes_finance_initialized_through_policy_state",
-          "line": 253
+          "line": 380
         },
         {
           "ruleId": "API-002",
@@ -1550,7 +1690,7 @@
     {
       "glob": "packages/api-contracts/src/**",
       "entrypoints": ["packages/api-contracts/src/index.ts"],
-      "ruleIds": ["TEN-001", "API-001", "API-002", "INT-001"],
+      "ruleIds": ["TEN-001", "API-001", "API-002", "INT-001", "AUTH-002"],
       "layers": ["runtime", "service", "playwright", "contract"],
       "testBindings": [
         {
@@ -1592,7 +1732,7 @@
           "runner": "vitest",
           "file": "packages/api-contracts/src/test-api.test.ts",
           "title": "createTestApi > requires_independent_command_and_correlation_identities_before_mutation",
-          "line": 358
+          "line": 485
         },
         {
           "ruleId": "API-002",
@@ -1602,7 +1742,7 @@
           "runner": "vitest",
           "file": "packages/api-contracts/src/test-api.test.ts",
           "title": "createTestApi > binds_over_http_and_exposes_finance_initialized_through_policy_state",
-          "line": 253
+          "line": 380
         },
         {
           "ruleId": "API-002",
@@ -1623,7 +1763,38 @@
           "runner": "vitest",
           "file": "packages/api-contracts/src/test-api.test.ts",
           "title": "createTestApi > replays_lost_customer_and_property_responses_without_duplicate_entities",
-          "line": 34
+          "line": 161
+        },
+        {
+          "ruleId": "AUTH-002",
+          "layer": "contract",
+          "testId": "binding-bf3bba5caada97011303",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "packages/api-contracts/src/test-api.test.ts",
+          "title": "createTestApi > rejects_role_and_cross_tenant_mutations_through_the_test_api",
+          "line": 53
+        },
+        {
+          "ruleId": "AUTH-002",
+          "layer": "playwright",
+          "testId": "binding-4f503d2c33aeee198f2a",
+          "commandKey": "browserScenario",
+          "runner": "playwright",
+          "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+          "title": "rejects_role_and_cross_tenant_mutations_through_the_test_api",
+          "line": 275,
+          "tag": "@authority"
+        },
+        {
+          "ruleId": "AUTH-002",
+          "layer": "contract",
+          "testId": "binding-98d454ee8b5110919cee",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "packages/api-contracts/src/test-api.test.ts",
+          "title": "createTestApi > authority_denial_does_not_drain_pending_recovery",
+          "line": 117
         }
       ],
       "ruleLayers": [
@@ -1654,6 +1825,14 @@
         {
           "ruleId": "INT-001",
           "layer": "contract"
+        },
+        {
+          "ruleId": "AUTH-002",
+          "layer": "contract"
+        },
+        {
+          "ruleId": "AUTH-002",
+          "layer": "playwright"
         }
       ]
     },
@@ -1781,7 +1960,7 @@
           "runner": "vitest",
           "file": "apps/crm-web/src/features/crm-workflow.test.tsx",
           "title": "insurance CRM reference workflow > retries_lost_customer_and_property_responses_with_one_stable_identity",
-          "line": 307
+          "line": 331
         },
         {
           "ruleId": "INT-001",
@@ -1791,7 +1970,7 @@
           "runner": "vitest",
           "file": "apps/crm-web/src/features/crm-workflow.test.tsx",
           "title": "insurance CRM reference workflow > rotates_intake_identity_only_after_a_terminal_rejection",
-          "line": 361
+          "line": 385
         }
       ],
       "ruleLayers": [
@@ -1815,7 +1994,7 @@
           "runner": "vitest",
           "file": "apps/crm-web/src/features/crm-workflow.test.tsx",
           "title": "insurance CRM reference workflow > retries_lost_customer_and_property_responses_with_one_stable_identity",
-          "line": 307
+          "line": 331
         },
         {
           "ruleId": "INT-001",
@@ -1825,7 +2004,7 @@
           "runner": "vitest",
           "file": "apps/crm-web/src/features/crm-workflow.test.tsx",
           "title": "insurance CRM reference workflow > rotates_intake_identity_only_after_a_terminal_rejection",
-          "line": 361
+          "line": 385
         }
       ],
       "ruleLayers": [
@@ -1855,6 +2034,225 @@
       "ruleLayers": [
         {
           "ruleId": "AUTH-001",
+          "layer": "ui"
+        }
+      ]
+    },
+    {
+      "glob": "apps/crm-e2e/src/fixtures/**",
+      "entrypoints": [
+        "apps/crm-e2e/src/fixtures/scenario.ts",
+        "apps/crm-e2e/src/fixtures/scenario-server.ts",
+        "apps/crm-e2e/src/fixtures/test.ts"
+      ],
+      "ruleIds": ["AUTH-002", "SCN-001", "SCN-002", "SCN-003"],
+      "layers": ["playwright"],
+      "testBindings": [
+        {
+          "ruleId": "SCN-001",
+          "layer": "playwright",
+          "testId": "binding-bc27728f94f290826d32",
+          "commandKey": "browserScenario",
+          "runner": "playwright",
+          "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+          "title": "starts_unauthenticated_and_logs_in_through_routed_auth",
+          "line": 51,
+          "tag": "@scenario"
+        },
+        {
+          "ruleId": "SCN-001",
+          "layer": "playwright",
+          "testId": "binding-386702a9a903b23343d3",
+          "commandKey": "browserScenario",
+          "runner": "playwright",
+          "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+          "title": "cleans_up_after_a_failed_scenario_assertion",
+          "line": 232,
+          "tag": "@scenario"
+        },
+        {
+          "ruleId": "AUTH-002",
+          "layer": "playwright",
+          "testId": "binding-28d297fc9ca1fbbb5ad7",
+          "commandKey": "browserScenario",
+          "runner": "playwright",
+          "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+          "title": "rotates_refresh_tokens_and_revokes_the_context_on_logout",
+          "line": 65,
+          "tag": "@authority"
+        },
+        {
+          "ruleId": "AUTH-002",
+          "layer": "playwright",
+          "testId": "binding-4f503d2c33aeee198f2aa",
+          "commandKey": "browserScenario",
+          "runner": "playwright",
+          "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+          "title": "rejects_role_and_cross_tenant_mutations_through_the_test_api",
+          "line": 275,
+          "tag": "@authority"
+        },
+        {
+          "ruleId": "SCN-002",
+          "layer": "playwright",
+          "testId": "binding-dc6e3811844fb23f284b",
+          "commandKey": "browserScenario",
+          "runner": "playwright",
+          "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+          "title": "fails_an_undeclared_browser_request_with_scenario_context",
+          "line": 117,
+          "tag": "@egress"
+        },
+        {
+          "ruleId": "SCN-002",
+          "layer": "playwright",
+          "testId": "binding-c16c2df025dd6c2b2e05",
+          "commandKey": "browserScenario",
+          "runner": "playwright",
+          "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+          "title": "denies_an_undeclared_worker_request_with_scenario_context",
+          "line": 137,
+          "tag": "@egress"
+        },
+        {
+          "ruleId": "SCN-002",
+          "layer": "playwright",
+          "testId": "binding-74ce473b2dfd9dab6ceb",
+          "commandKey": "browserScenario",
+          "runner": "playwright",
+          "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+          "title": "blocks_service_worker_registration_and_cleans_registrations",
+          "line": 162,
+          "tag": "@egress"
+        },
+        {
+          "ruleId": "SCN-002",
+          "layer": "playwright",
+          "testId": "binding-5c5956373c937fe3fa7f",
+          "commandKey": "browserScenario",
+          "runner": "playwright",
+          "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+          "title": "denies_browser_websockets_with_deterministic_context",
+          "line": 179,
+          "tag": "@egress"
+        },
+        {
+          "ruleId": "SCN-003",
+          "layer": "playwright",
+          "testId": "binding-d95c8973ab7080d5ed66",
+          "commandKey": "browserScenario",
+          "runner": "playwright",
+          "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+          "title": "shares_one_runtime_only_across_explicit_contexts",
+          "line": 212,
+          "tag": "@isolation"
+        },
+        {
+          "ruleId": "SCN-003",
+          "layer": "playwright",
+          "testId": "binding-41061623c869ec496cee",
+          "commandKey": "browserScenario",
+          "runner": "playwright",
+          "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+          "title": "separate_scenarios_receive_distinct_runtime_ids_and_state",
+          "line": 198,
+          "tag": "@isolation"
+        },
+        {
+          "ruleId": "SCN-003",
+          "layer": "playwright",
+          "testId": "binding-94dc5f0ee80de152433f",
+          "commandKey": "browserScenario",
+          "runner": "playwright",
+          "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+          "title": "shard_a_isolates_runtime_and_storage",
+          "line": 347,
+          "tag": "@isolation"
+        },
+        {
+          "ruleId": "SCN-003",
+          "layer": "playwright",
+          "testId": "binding-bbc6617837ae92b91bb0",
+          "commandKey": "browserScenario",
+          "runner": "playwright",
+          "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+          "title": "shard_b_isolates_runtime_and_storage",
+          "line": 355,
+          "tag": "@isolation"
+        },
+        {
+          "ruleId": "SCN-003",
+          "layer": "playwright",
+          "testId": "binding-357883ef25d09bcb360e",
+          "commandKey": "browserScenario",
+          "runner": "playwright",
+          "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+          "title": "shard_a_uses_an_os_assigned_worker_port",
+          "line": 363,
+          "tag": "@isolation"
+        },
+        {
+          "ruleId": "SCN-003",
+          "layer": "playwright",
+          "testId": "binding-911c6e25edc022447ec3",
+          "commandKey": "browserScenario",
+          "runner": "playwright",
+          "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+          "title": "shard_b_uses_an_os_assigned_worker_port",
+          "line": 371,
+          "tag": "@isolation"
+        },
+        {
+          "ruleId": "SCN-001",
+          "layer": "playwright",
+          "testId": "binding-6fc494b197d557b6fd1e",
+          "commandKey": "browserScenario",
+          "runner": "playwright",
+          "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+          "title": "honors_declared_roles_and_one_shot_route_faults",
+          "line": 248,
+          "tag": "@scenario"
+        }
+      ],
+      "ruleLayers": [
+        {
+          "ruleId": "AUTH-002",
+          "layer": "playwright"
+        },
+        {
+          "ruleId": "SCN-001",
+          "layer": "playwright"
+        },
+        {
+          "ruleId": "SCN-002",
+          "layer": "playwright"
+        },
+        {
+          "ruleId": "SCN-003",
+          "layer": "playwright"
+        }
+      ]
+    },
+    {
+      "glob": "apps/crm-web/src/features/tenants/tenant-context.tsx",
+      "entrypoints": ["apps/crm-web/src/features/tenants/tenant-context.tsx"],
+      "ruleIds": ["AUTH-002"],
+      "layers": ["ui"],
+      "testBindings": [
+        {
+          "ruleId": "AUTH-002",
+          "layer": "ui",
+          "testId": "binding-217b452924bda36b5bf9",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "apps/crm-web/src/test/tenancy.test.tsx",
+          "title": "multi-tenancy > loads tenant memberships only after authenticated login",
+          "line": 28
+        }
+      ],
+      "ruleLayers": [
+        {
+          "ruleId": "AUTH-002",
           "layer": "ui"
         }
       ]
