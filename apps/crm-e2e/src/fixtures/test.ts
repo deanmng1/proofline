@@ -11,6 +11,7 @@ type CrmFixtures = {
   testApi: TestApi;
   scenarioOptions: Omit<Partial<ScenarioOptions>, "browser" | "workerServer">;
   scenario: ProoflineScenario;
+  compatibilityScenario: ProoflineScenario;
   scenarioFactory: (
     options?: Omit<Partial<ScenarioOptions>, "browser" | "workerServer">,
   ) => ProoflineScenario;
@@ -52,28 +53,14 @@ export const test = base.extend<CrmFixtures, CrmWorkerFixtures>({
       ),
     );
   },
-  context: async ({ browser, workerServer }, use) => {
-    const context = await browser.newContext({
-      baseURL: workerServer.origin,
-      storageState: workerServer.storageState,
-    });
-    try {
-      await use(context);
-    } finally {
-      await context.close();
-    }
+  compatibilityScenario: async ({ scenarioFactory }, use) => {
+    await use(scenarioFactory());
   },
-  unauthenticatedPage: async ({ browser, workerServer }, use) => {
-    const context = await browser.newContext({
-      baseURL: workerServer.origin,
-      storageState: workerServer.storageState,
-    });
-    const page = await context.newPage();
-    try {
-      await use(page);
-    } finally {
-      await context.close();
-    }
+  context: async ({ compatibilityScenario }, use) => {
+    await use(await compatibilityScenario.createContext());
+  },
+  unauthenticatedPage: async ({ scenarioFactory }, use) => {
+    await use(await scenarioFactory().newPage());
   },
   page: async ({ context, testApi }, use) => {
     const page = await context.newPage();
@@ -112,7 +99,15 @@ export const test = base.extend<CrmFixtures, CrmWorkerFixtures>({
     } catch (error) {
       bodyError = error;
     }
-    const cleanup = await Promise.allSettled([...created].map((scenario) => scenario.reset()));
+    const cleanup = await Promise.allSettled(
+      [...created].map(async (scenario) => {
+        const errors: unknown[] = [];
+        await scenario.assertNoUnexpectedRequests().catch((error) => errors.push(error));
+        await scenario.reset().catch((error) => errors.push(error));
+        if (errors.length)
+          throw new AggregateError(errors, `Scenario ${scenario.id} egress or cleanup failed.`);
+      }),
+    );
     const cleanupErrors = cleanup
       .filter((result) => result.status === "rejected")
       .map((result) => (result as PromiseRejectedResult).reason);

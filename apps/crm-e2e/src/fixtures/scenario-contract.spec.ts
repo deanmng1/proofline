@@ -1,23 +1,73 @@
 import { readdir, readFile } from "node:fs/promises";
 import type { ProoflineScenario, ScenarioOptions } from "./scenario";
-import type { WorkerScenarioServer } from "./scenario-server";
+import { startWorkerScenarioServer, type WorkerScenarioServer } from "./scenario-server";
 import { expect, test } from "./test";
 
-async function distinctWorkerPorts(directory: string): Promise<Set<number>> {
+type IsolationEvidence = {
+  type: "worker" | "scenario";
+  runId: string;
+  workerIndex: number;
+  port: number;
+  scenarioId?: string;
+  runtimeId?: string;
+  marker?: string;
+};
+
+async function distinctWorkerProof(directory: string, runId: string): Promise<IsolationEvidence[]> {
   const deadline = Date.now() + 5000;
   do {
     const files = await readdir(directory).catch(() => []);
     const evidence = await Promise.all(
       files.map(
         async (file) =>
-          JSON.parse(await readFile(`${directory}/${file}`, "utf8")) as { port: number },
+          JSON.parse(await readFile(`${directory}/${file}`, "utf8")) as IsolationEvidence,
       ),
     );
-    const ports = new Set(evidence.map((entry) => entry.port));
-    if (ports.size >= 2) return ports;
+    if (evidence.some((entry) => entry.runId !== runId))
+      throw new Error("Proofline scenario evidence contains a stale run id.");
+    const workers = new Set(evidence.map((entry) => entry.workerIndex));
+    const ports = new Set(
+      evidence.filter((entry) => entry.type === "worker").map((entry) => entry.port),
+    );
+    const scenarios = evidence.filter((entry) => entry.type === "scenario");
+    if (
+      workers.size >= 2 &&
+      ports.size >= 2 &&
+      new Set(scenarios.map((entry) => entry.workerIndex)).size >= 2 &&
+      new Set(scenarios.map((entry) => entry.scenarioId)).size >= 2 &&
+      new Set(scenarios.map((entry) => entry.runtimeId)).size >= 2 &&
+      new Set(scenarios.map((entry) => entry.marker)).size >= 2
+    )
+      return evidence;
     await new Promise((resolve) => setTimeout(resolve, 50));
   } while (Date.now() < deadline);
-  throw new Error("Expected at least two Playwright workers with distinct OS-assigned ports.");
+  throw new Error(
+    "Expected distinct runtime state and OS-assigned ports from two Playwright workers.",
+  );
+}
+
+async function createRuntimeMarker(page: import("@playwright/test").Page, marker: string) {
+  await page.goto("/login");
+  const status = await page.evaluate(async (value) => {
+    const session = await fetch("/api/auth/login", { method: "POST", body: "{}" }).then(
+      (response) => response.json() as Promise<{ accessToken: string }>,
+    );
+    return fetch("/api/customers", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${session.accessToken}`,
+        "Content-Type": "application/json",
+        "X-Tenant-Id": "test-tenant",
+      },
+      body: JSON.stringify({
+        commandId: `${value}-command`,
+        correlationId: value,
+        name: value,
+        email: `${value}@example.test`,
+      }),
+    }).then((response) => response.status);
+  }, marker);
+  expect(status).toBe(201);
 }
 
 async function assertScenarioIsolation(
@@ -32,6 +82,7 @@ async function assertScenarioIsolation(
   await page.goto("/login");
   expect(await page.evaluate(() => localStorage.getItem("proofline-isolation"))).toBeNull();
   expect((await scenario.inspect()).state.customers).toEqual([]);
+  await createRuntimeMarker(page, marker);
   await page.evaluate((value) => localStorage.setItem("proofline-isolation", value), marker);
   expect(await page.evaluate(() => localStorage.getItem("proofline-isolation"))).toBe(marker);
   expect(new URL(workerServer.origin).port).toMatch(/^\d+$/);
@@ -43,9 +94,20 @@ async function assertScenarioIsolation(
   expect(isolated.runtimeId).not.toBe(scenario.runtimeId);
   expect(isolated.id).not.toBe(scenario.id);
   expect((await isolated.inspect()).state.customers).toEqual([]);
-  expect((await distinctWorkerPorts(workerServer.evidenceDirectory)).has(workerServer.port)).toBe(
-    true,
-  );
+  await createRuntimeMarker(isolatedPage, `${marker}-isolated`);
+  expect((await scenario.inspect()).state.customers.map((customer) => customer.name)).toEqual([
+    marker,
+  ]);
+  expect((await isolated.inspect()).state.customers.map((customer) => customer.name)).toEqual([
+    `${marker}-isolated`,
+  ]);
+  await workerServer.recordScenario({
+    scenarioId: scenario.id,
+    runtimeId: scenario.runtimeId,
+    marker,
+  });
+  const evidence = await distinctWorkerProof(workerServer.evidenceDirectory, workerServer.runId);
+  expect(evidence.some((entry) => entry.port === workerServer.port)).toBe(true);
 }
 
 test("starts_unauthenticated_and_logs_in_through_routed_auth", { tag: "@scenario" }, async ({
@@ -197,20 +259,36 @@ test("denies_browser_websockets_with_deterministic_context", { tag: "@egress" },
 
 test("separate_scenarios_receive_distinct_runtime_ids_and_state", { tag: "@isolation" }, async ({
   scenarioFactory,
+  workerServer,
 }) => {
   const first = scenarioFactory({ idPrefix: "first" });
   const second = scenarioFactory({ idPrefix: "second" });
   const [firstPage, secondPage] = await Promise.all([first.newPage(), second.newPage()]);
   await Promise.all([firstPage.goto("/login"), secondPage.goto("/login")]);
   await firstPage.evaluate(() => localStorage.setItem("proofline-isolation", "first"));
+  await Promise.all([
+    createRuntimeMarker(firstPage, "separate-first"),
+    createRuntimeMarker(secondPage, "separate-second"),
+  ]);
   expect(await secondPage.evaluate(() => localStorage.getItem("proofline-isolation"))).toBeNull();
   expect(first.runtimeId).not.toBe(second.runtimeId);
-  expect((await first.inspect()).state.customers).toEqual([]);
-  expect((await second.inspect()).state.customers).toEqual([]);
+  expect((await first.inspect()).state.customers.map((customer) => customer.name)).toEqual([
+    "separate-first",
+  ]);
+  expect((await second.inspect()).state.customers.map((customer) => customer.name)).toEqual([
+    "separate-second",
+  ]);
+  await workerServer.recordScenario({
+    scenarioId: first.id,
+    runtimeId: first.runtimeId,
+    marker: "separate-first",
+  });
+  await distinctWorkerProof(workerServer.evidenceDirectory, workerServer.runId);
 });
 
 test("shares_one_runtime_only_across_explicit_contexts", { tag: "@isolation" }, async ({
   scenario,
+  workerServer,
 }) => {
   const first = await scenario.createContext();
   const second = await scenario.createContext();
@@ -227,6 +305,19 @@ test("shares_one_runtime_only_across_explicit_contexts", { tag: "@isolation" }, 
     new Set([scenario.runtimeId]),
   );
   expect(firstCommandId).not.toBe(secondCommandId);
+  await Promise.all([
+    createRuntimeMarker(firstPage, "shared-first"),
+    createRuntimeMarker(secondPage, "shared-second"),
+  ]);
+  expect(
+    (await scenario.inspect()).state.customers.map((customer) => customer.name).sort(),
+  ).toEqual(["shared-first", "shared-second"]);
+  await workerServer.recordScenario({
+    scenarioId: scenario.id,
+    runtimeId: scenario.runtimeId,
+    marker: "shared-first+shared-second",
+  });
+  await distinctWorkerProof(workerServer.evidenceDirectory, workerServer.runId);
 });
 
 test("cleans_up_after_a_failed_scenario_assertion", { tag: "@scenario" }, async ({
@@ -342,6 +433,118 @@ test("rejects_role_and_cross_tenant_mutations_through_the_test_api", { tag: "@au
   expect(authorized).toEqual({ mutation: 201, read: 200 });
   expect((await scenario.inspect()).state.customers).toHaveLength(1);
   await scenario.reset();
+});
+
+test("copies_identity_claims_and_rejects_conflicting_redefinitions", { tag: "@authority" }, async ({
+  scenarioFactory,
+}) => {
+  const identity = {
+    id: "immutable-viewer",
+    role: "Viewer" as const,
+    tenantIds: ["tenant-a"],
+    email: "viewer@example.test",
+  };
+  const scenario = scenarioFactory({ tenants: ["tenant-a", "tenant-b"], identity });
+  const context = await scenario.createContext(identity);
+  await expect(
+    scenario.createContext({ id: "recoverable-owner", role: "Owner", tenantIds: ["outside"] }),
+  ).rejects.toThrow(/outside the scenario membership/);
+  await expect(
+    scenario.createContext({ id: "recoverable-owner", role: "Owner", tenantIds: ["tenant-a"] }),
+  ).resolves.toBeDefined();
+  (identity as { role: string }).role = "Owner";
+  identity.tenantIds.push("tenant-b");
+  await expect(
+    scenario.createContext({ id: identity.id, role: "Owner", tenantIds: ["tenant-a", "tenant-b"] }),
+  ).rejects.toThrow(/redefined with different claims/);
+  const page = await context.newPage();
+  await page.goto("/login");
+  const result = await page.evaluate(async () => {
+    const session = await fetch("/api/auth/login", { method: "POST", body: "{}" }).then(
+      (response) => response.json() as Promise<{ accessToken: string }>,
+    );
+    const mutate = await fetch("/api/customers", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${session.accessToken}`,
+        "Content-Type": "application/json",
+        "X-Tenant-Id": "tenant-a",
+      },
+      body: JSON.stringify({
+        commandId: "immutable-viewer-command",
+        correlationId: "immutable-viewer",
+        name: "Must stay denied",
+        email: "denied@example.test",
+      }),
+    });
+    const crossTenant = await fetch("/api/customers", {
+      headers: {
+        Authorization: `Bearer ${session.accessToken}`,
+        "X-Tenant-Id": "tenant-b",
+      },
+    });
+    return [mutate.status, crossTenant.status];
+  });
+  expect(result).toEqual([403, 403]);
+  expect((await scenario.inspect()).state.customers).toEqual([]);
+});
+
+test("scenario_reset_retains_failed_contexts_for_a_deterministic_retry", {
+  tag: "@scenario",
+}, async ({ scenarioFactory }) => {
+  const scenario = scenarioFactory({ id: "cleanup-retry" });
+  const context = await scenario.createContext();
+  const originalClose = context.close.bind(context);
+  let closeAttempts = 0;
+  Object.defineProperty(context, "close", {
+    configurable: true,
+    value: async () => {
+      closeAttempts += 1;
+      if (closeAttempts === 1) throw new Error("injected close failure");
+      await originalClose();
+    },
+  });
+  await expect(scenario.reset()).rejects.toThrow(/cleanup attempt 1 failed/);
+  expect((await scenario.inspect()).contexts).toHaveLength(1);
+  await expect(scenario.reset()).resolves.toBeUndefined();
+  expect(closeAttempts).toBe(2);
+});
+
+test("worker_setup_stops_the_server_when_bootstrap_close_fails", { tag: "@scenario" }, async ({
+  browser,
+}) => {
+  let origin = "";
+  await expect(
+    startWorkerScenarioServer(browser, 999, {
+      onReady(value) {
+        origin = value;
+      },
+      async createBootstrapContext() {
+        const context = await browser.newContext();
+        const originalClose = context.close.bind(context);
+        Object.defineProperty(context, "close", {
+          configurable: true,
+          value: async () => {
+            await originalClose();
+            throw new Error("injected bootstrap close failure");
+          },
+        });
+        return context;
+      },
+    }),
+  ).rejects.toThrow(/setup failed and was shut down/);
+  expect(origin).toMatch(/^http:\/\/127\.0\.0\.1:\d+$/);
+  await expect(fetch(origin, { signal: AbortSignal.timeout(1000) })).rejects.toThrow();
+});
+
+test("factory_teardown_rejects_an_unacknowledged_caught_denial", { tag: "@egress" }, async ({
+  scenarioFactory,
+}) => {
+  test.fail();
+  const scenario = scenarioFactory({ id: "unacknowledged-denial" });
+  const page = await scenario.newPage();
+  await page.goto("/login");
+  await page.evaluate(() => fetch("https://unacknowledged.invalid/caught").catch(() => undefined));
 });
 
 test("shard_a_isolates_runtime_and_storage", { tag: "@isolation" }, async ({

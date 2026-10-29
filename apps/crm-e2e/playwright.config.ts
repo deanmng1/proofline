@@ -1,7 +1,11 @@
+import { randomUUID } from "node:crypto";
 import { defineConfig, devices } from "@playwright/test";
+
+process.env.PROOFLINE_SCENARIO_RUN_ID ??= randomUUID();
 
 export default defineConfig({
   testDir: "./src",
+  globalSetup: "./src/fixtures/scenario-global-setup.ts",
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   failOnFlakyTests: !!process.env.CI,

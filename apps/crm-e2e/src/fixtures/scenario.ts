@@ -13,10 +13,40 @@ import type { WorkerScenarioServer } from "./scenario-server";
 export type ScenarioIdentity = {
   id: string;
   role: TestApiRole;
-  tenantIds: string[];
+  tenantIds: readonly string[];
   name?: string;
   email?: string;
 };
+
+const ROLES = new Set<TestApiRole>(["Owner", "Admin", "Manager", "Viewer"]);
+
+function immutableIdentity(input: ScenarioIdentity): ScenarioIdentity {
+  if (!input || typeof input !== "object") throw new Error("Scenario identity must be an object.");
+  if (typeof input.id !== "string" || input.id.trim() === "")
+    throw new Error("Scenario identity requires a non-empty id.");
+  if (!ROLES.has(input.role))
+    throw new Error(`Scenario identity role ${String(input.role)} is invalid.`);
+  if (
+    !Array.isArray(input.tenantIds) ||
+    input.tenantIds.length === 0 ||
+    input.tenantIds.some((tenant) => typeof tenant !== "string" || tenant.trim() === "") ||
+    new Set(input.tenantIds).size !== input.tenantIds.length
+  )
+    throw new Error("Scenario identity requires unique, non-empty tenant memberships.");
+  if (input.name !== undefined && typeof input.name !== "string")
+    throw new Error("Scenario identity name must be a string.");
+  if (input.email !== undefined && typeof input.email !== "string")
+    throw new Error("Scenario identity email must be a string.");
+  return Object.freeze({
+    id: input.id,
+    role: input.role,
+    tenantIds: Object.freeze([...input.tenantIds]),
+    ...(input.name === undefined ? {} : { name: input.name }),
+    ...(input.email === undefined ? {} : { email: input.email }),
+  });
+}
+
+const identityDefinition = (identity: ScenarioIdentity) => JSON.stringify(identity);
 
 export type ScenarioOptions = {
   browser: Browser;
@@ -107,15 +137,16 @@ export function createScenario(options: ScenarioOptions): ProoflineScenario {
   const scenarioId = options.id ?? `scenario-${randomUUID()}`;
   const runtimeId = `${options.idPrefix ?? scenarioId}-runtime`;
   const tenants = options.tenants ?? options.seed?.tenants ?? ["test-tenant"];
-  const defaultIdentity =
+  const defaultIdentity = immutableIdentity(
     options.identity ??
-    ({
-      id: "proofline-owner",
-      role: "Owner",
-      tenantIds: [tenants[0]],
-      name: "Avery Stone",
-      email: "avery@northstar.app",
-    } satisfies ScenarioIdentity);
+      ({
+        id: "proofline-owner",
+        role: "Owner",
+        tenantIds: [tenants[0]],
+        name: "Avery Stone",
+        email: "avery@northstar.app",
+      } satisfies ScenarioIdentity),
+  );
   const allowedRoles = options.roles ?? ["Owner", "Admin", "Manager", "Viewer"];
   if (!allowedRoles.includes(defaultIdentity.role))
     throw new Error(`Scenario identity role ${defaultIdentity.role} is not declared in roles.`);
@@ -141,10 +172,12 @@ export function createScenario(options: ScenarioOptions): ProoflineScenario {
     }),
   );
   const principals = new Map<string, TestApiAuthorityClaims>();
+  const identityDefinitions = new Map([[defaultIdentity.id, identityDefinition(defaultIdentity)]]);
   const contexts: ContextRecord[] = [];
   const unexpectedRequests: UnexpectedRequest[] = [];
   let contextSequence = 0;
-  let reset = false;
+  let lifecycle: "active" | "cleaning" | "cleanup-failed" | "closed" = "active";
+  let cleanupAttempt = 0;
 
   const api = createTestApi(
     { ...options.seed, tenants },
@@ -168,11 +201,14 @@ export function createScenario(options: ScenarioOptions): ProoflineScenario {
   const issueSession = (record: ContextRecord) => {
     const accessToken = `${scenarioId}.${record.contextId}.access.${randomUUID()}`;
     const refreshToken = `${scenarioId}.${record.contextId}.refresh.${randomUUID()}`;
-    principals.set(accessToken, {
-      subject: record.identity.id,
-      role: record.identity.role,
-      tenantIds: Object.freeze([...record.identity.tenantIds]),
-    });
+    principals.set(
+      accessToken,
+      Object.freeze({
+        subject: record.identity.id,
+        role: record.identity.role,
+        tenantIds: Object.freeze([...record.identity.tenantIds]),
+      }),
+    );
     record.accessTokens.add(accessToken);
     record.authenticated = true;
     return sessionFor(record.identity, accessToken, refreshToken);
@@ -370,15 +406,25 @@ export function createScenario(options: ScenarioOptions): ProoflineScenario {
     runtimeId,
     api,
     async createContext(identity = defaultIdentity) {
-      if (reset) throw new Error(`Scenario ${scenarioId} has already been reset.`);
+      if (lifecycle !== "active")
+        throw new Error(`Scenario ${scenarioId} cannot create a context while ${lifecycle}.`);
+      const normalizedIdentity = immutableIdentity(identity);
+      const existingDefinition = identityDefinitions.get(normalizedIdentity.id);
+      if (existingDefinition && existingDefinition !== identityDefinition(normalizedIdentity))
+        throw new Error(
+          `Scenario identity ${normalizedIdentity.id} was redefined with different claims.`,
+        );
       const identities = new Set(contexts.map((record) => record.identity.id));
-      identities.add(identity.id);
+      identities.add(normalizedIdentity.id);
       if (identities.size > 2)
         throw new Error("A Proofline scenario supports at most two explicitly shared identities.");
-      if (identity.tenantIds.some((tenant) => !tenants.includes(tenant)))
+      if (normalizedIdentity.tenantIds.some((tenant) => !tenants.includes(tenant)))
         throw new Error("Scenario identity names a tenant outside the scenario membership set.");
-      if (!allowedRoles.includes(identity.role))
-        throw new Error(`Scenario identity role ${identity.role} is not declared in roles.`);
+      if (!allowedRoles.includes(normalizedIdentity.role))
+        throw new Error(
+          `Scenario identity role ${normalizedIdentity.role} is not declared in roles.`,
+        );
+      identityDefinitions.set(normalizedIdentity.id, identityDefinition(normalizedIdentity));
       const sequence = ++contextSequence;
       const contextId = `${scenarioId}-context-${sequence}`;
       const context = await options.browser.newContext({
@@ -388,7 +434,7 @@ export function createScenario(options: ScenarioOptions): ProoflineScenario {
       });
       const record: ContextRecord = {
         context,
-        identity,
+        identity: normalizedIdentity,
         contextId,
         commandNamespace: sequence.toString(16).padStart(8, "0"),
         authenticated: false,
@@ -419,9 +465,9 @@ export function createScenario(options: ScenarioOptions): ProoflineScenario {
         }
         return context;
       } catch (error) {
-        contexts.splice(contexts.indexOf(record), 1);
         try {
           await context.close();
+          contexts.splice(contexts.indexOf(record), 1);
         } catch (cleanupError) {
           throw new AggregateError(
             [error, cleanupError],
@@ -486,29 +532,36 @@ export function createScenario(options: ScenarioOptions): ProoflineScenario {
       );
     },
     async reset() {
-      if (reset) return;
-      reset = true;
+      if (lifecycle === "closed") return;
+      if (lifecycle === "cleaning")
+        throw new Error(`Scenario ${scenarioId} cleanup is already in progress.`);
+      lifecycle = "cleaning";
+      cleanupAttempt += 1;
+      const records = [...contexts];
       const cleanup = await Promise.allSettled(
-        contexts.map(async (record) => {
+        records.map(async (record) => {
           const recordErrors: unknown[] = [];
-          for (const page of record.context.pages())
-            await page
-              .evaluate(async () =>
-                "serviceWorker" in navigator
-                  ? Promise.all(
-                      (await navigator.serviceWorker.getRegistrations()).map((registration) =>
-                        registration.unregister(),
-                      ),
-                    )
-                  : [],
-              )
-              .catch(() => []);
-          if (record.context.serviceWorkers().length > 0)
-            recordErrors.push(
-              new Error(`Scenario ${scenarioId} retained a service worker during cleanup.`),
-            );
-          await record.context.clearCookies().catch((error) => recordErrors.push(error));
-          await record.context.close().catch((error) => recordErrors.push(error));
+          try {
+            for (const page of record.context.pages())
+              await page
+                .evaluate(async () =>
+                  "serviceWorker" in navigator
+                    ? Promise.all(
+                        (await navigator.serviceWorker.getRegistrations()).map((registration) =>
+                          registration.unregister(),
+                        ),
+                      )
+                    : [],
+                )
+                .catch((error) => recordErrors.push(error));
+            if (record.context.serviceWorkers().length > 0)
+              recordErrors.push(
+                new Error(`Scenario ${scenarioId} retained a service worker during cleanup.`),
+              );
+            await record.context.clearCookies().catch((error) => recordErrors.push(error));
+          } finally {
+            await record.context.close().catch((error) => recordErrors.push(error));
+          }
           if (recordErrors.length)
             throw new AggregateError(
               recordErrors,
@@ -517,13 +570,17 @@ export function createScenario(options: ScenarioOptions): ProoflineScenario {
         }),
       );
       principals.clear();
-      contexts.length = 0;
+      const failedRecords = records.filter((_, index) => cleanup[index]?.status === "rejected");
+      contexts.splice(0, contexts.length, ...failedRecords);
       const failures = cleanup.filter((result) => result.status === "rejected");
-      if (failures.length)
+      if (failures.length) {
+        lifecycle = "cleanup-failed";
         throw new AggregateError(
           failures.map((result) => (result as PromiseRejectedResult).reason),
-          `Scenario ${scenarioId} cleanup failed.`,
+          `Scenario ${scenarioId} cleanup attempt ${cleanupAttempt} failed; retained contexts may be retried.`,
         );
+      }
+      lifecycle = "closed";
     },
   };
   return scenario;

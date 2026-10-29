@@ -91,43 +91,42 @@ export function createTestApi(seed: TestSeed = {}, options: TestApiOptions): Tes
     async handle(request) {
       const path = new URL(request.url).pathname;
       const method = request.method.toUpperCase();
+      const requested = operationFor(method, path);
+      if (!requested) return error(404, "route_not_found", "Unknown Test API route.");
       const tenantId = request.headers.get("X-Tenant-Id")?.trim();
       if (!tenantId && !(method === "GET" && path === "/api/tenants"))
         return error(400, "tenant_required", "X-Tenant-Id is required.");
       try {
-        const requested = operationFor(method, path);
-        if (requested) {
-          const authorization = request.headers.get("authorization")?.trim() ?? "";
-          const bearerToken = /^Bearer\s+(.+)$/i.exec(authorization)?.[1]?.trim() ?? null;
-          const decision = await authority.authorize({
-            bearerToken,
-            tenantId: tenantId ?? "",
-            method,
-            path,
-            ...requested,
-          });
-          if (!decision.allowed) {
-            if (decision.code === "unauthenticated")
-              return error(401, "unauthenticated", "A valid bearer token is required.");
-            return error(
-              403,
-              decision.code,
-              decision.code === "cross_tenant"
-                ? "The authenticated identity is not a member of this tenant."
-                : "The authenticated role may not perform this operation.",
-            );
-          }
-          if (requested.operation === "tenant.list")
-            return json(
-              decision.claims.tenantIds.map((id) => ({
-                id,
-                name: id,
-                slug: id,
-                plan: "scale",
-                status: "active",
-              })),
-            );
+        const authorization = request.headers.get("authorization")?.trim() ?? "";
+        const bearerToken = /^Bearer\s+(.+)$/i.exec(authorization)?.[1]?.trim() ?? null;
+        const decision = await authority.authorize({
+          bearerToken,
+          tenantId: tenantId ?? "",
+          method,
+          path,
+          ...requested,
+        });
+        if (!decision.allowed) {
+          if (decision.code === "unauthenticated")
+            return error(401, "unauthenticated", "A valid bearer token is required.");
+          return error(
+            403,
+            decision.code,
+            decision.code === "cross_tenant"
+              ? "The authenticated identity is not a member of this tenant."
+              : "The authenticated role may not perform this operation.",
+          );
         }
+        if (requested.operation === "tenant.list")
+          return json(
+            decision.claims.tenantIds.map((id) => ({
+              id,
+              name: id,
+              slug: id,
+              plan: "scale",
+              status: "active",
+            })),
+          );
         if (!tenantId) return error(401, "unauthenticated", "A valid bearer token is required.");
         runtime.requireTenant(tenantId);
         if (method === "GET") {

@@ -158,6 +158,51 @@ describe("createTestApi", () => {
     expect(recovered.policy.policies).toHaveLength(1);
     expect(recovered.finance.ledgers[0].commissionEntries).toHaveLength(1);
   });
+  test("unclassified_operations_fail_before_authority_or_runtime_access", async () => {
+    let authorityCalls = 0;
+    const api = createAuthorizedTestApi(
+      { ...runtimeSeed, commands: [quoteCommand] },
+      {
+        busFactory: failFinanceOnce,
+        authority: {
+          authorize(input) {
+            authorityCalls += 1;
+            return {
+              allowed: true,
+              claims: { subject: "owner", role: "Owner", tenantIds: [input.tenantId] },
+            };
+          },
+        },
+      },
+    );
+    const bind = () =>
+      api.handle(
+        request("quotes/quote/bind", {
+          commandId: "future-operation-bind",
+          correlationId: "future-operation-recovery",
+          policyId: "future-operation-policy",
+        }),
+      );
+    const inspect = () => api.handle(request("test/state"));
+
+    expect((await bind()).status).toBe(409);
+    const pending = await (await inspect()).text();
+    const beforeFutureRequests = authorityCalls;
+    for (const tenant of ["tenant-a", "unknown-tenant"]) {
+      const response = await api.handle(
+        request(
+          "future/drain",
+          { commandId: "future", correlationId: "future-operation-recovery" },
+          tenant,
+        ),
+      );
+      expect(response.status).toBe(404);
+      expect(await response.json()).toMatchObject({ error: { code: "route_not_found" } });
+    }
+    expect(authorityCalls).toBe(beforeFutureRequests);
+    expect(await (await inspect()).text()).toBe(pending);
+    expect((await bind()).status).toBe(201);
+  });
   test("replays_lost_customer_and_property_responses_without_duplicate_entities", async () => {
     const api = createAuthorizedTestApi({ tenants: ["tenant-a"] });
     const customerBody = {
