@@ -25,13 +25,20 @@ export async function createQuote(
   await navigateInsurance(page, "Quotes and policies");
   const policyholder = page.getByLabel("Policyholder");
   const property = page.getByLabel("Insured property");
-  for (let attempt = 0; attempt < 2; attempt += 1) {
-    await policyholder.selectOption({ label: input.customer });
-    await expect(policyholder).not.toHaveValue("");
-    await property.selectOption({ label: `${input.address}, Austin` });
-    await expect(property).not.toHaveValue("");
-    if ((await policyholder.inputValue()) !== "") break;
-  }
+  await expect
+    .poll(
+      async () => {
+        try {
+          await policyholder.selectOption({ label: input.customer }, { timeout: 1000 });
+          await property.selectOption({ label: `${input.address}, Austin` }, { timeout: 1000 });
+          return (await policyholder.inputValue()) !== "" && (await property.inputValue()) !== "";
+        } catch {
+          return false;
+        }
+      },
+      { timeout: 10_000 },
+    )
+    .toBe(true);
   await expect(policyholder).not.toHaveValue("");
   await page.getByLabel("Product").selectOption(input.product ?? "risk_secure");
   await page.getByLabel("Premium in cents").fill("10000");

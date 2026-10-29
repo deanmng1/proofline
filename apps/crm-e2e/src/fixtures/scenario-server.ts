@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import type { Browser, BrowserContext } from "@playwright/test";
@@ -23,6 +23,12 @@ export type WorkerScenarioServer = {
 export type WorkerScenarioServerDependencies = {
   createBootstrapContext?: () => Promise<BrowserContext>;
   onReady?: (origin: string) => void;
+};
+
+const writeEvidence = async (file: string, value: unknown) => {
+  const temporary = `${file}.${process.pid}.${randomUUID()}.tmp`;
+  await writeFile(temporary, `${JSON.stringify(value)}\n`);
+  await rename(temporary, file);
 };
 
 export async function startWorkerScenarioServer(
@@ -91,10 +97,14 @@ export async function startWorkerScenarioServer(
       runId,
     );
     await mkdir(evidenceDirectory, { recursive: true });
-    await writeFile(
-      path.join(evidenceDirectory, `worker-${workerIndex}-${process.pid}.json`),
-      `${JSON.stringify({ type: "worker", runId, workerIndex, pid: process.pid, origin: ready.origin, port })}\n`,
-    );
+    await writeEvidence(path.join(evidenceDirectory, `worker-${workerIndex}-${process.pid}.json`), {
+      type: "worker",
+      runId,
+      workerIndex,
+      pid: process.pid,
+      origin: ready.origin,
+      port,
+    });
     prepared = { ready, state, port, evidenceDirectory, runId };
   } catch (error) {
     setupError = error;
@@ -142,9 +152,15 @@ export async function startWorkerScenarioServer(
     evidenceDirectory: prepared.evidenceDirectory,
     storageState: { cookies: prepared.state.cookies, origins: [] },
     async recordScenario(evidence) {
-      await writeFile(
+      await writeEvidence(
         path.join(prepared.evidenceDirectory, `scenario-${workerIndex}-${randomUUID()}.json`),
-        `${JSON.stringify({ type: "scenario", runId: prepared.runId, workerIndex, port: prepared.port, ...evidence })}\n`,
+        {
+          type: "scenario",
+          runId: prepared.runId,
+          workerIndex,
+          port: prepared.port,
+          ...evidence,
+        },
       );
     },
     async stop() {
