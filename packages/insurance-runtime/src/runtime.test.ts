@@ -206,6 +206,59 @@ describe("insurance runtime", () => {
     );
   });
 
+  test("rejects_non_contiguous_finance_policy_state_receipts", () => {
+    const runtime = createInsuranceRuntime({
+      ...runtimeSeed,
+      commands: [quoteCommand, bindCommand],
+    });
+    runtime.execute({
+      type: "transition_policy",
+      schemaVersion: 1,
+      tenantId: "tenant-a",
+      commandId: "cancel-command",
+      correlationId: "cancel-workflow",
+      policyId: "policy",
+      lifecycle: "cancelled",
+    });
+    const checkpoint = runtime.checkpoint();
+    const bound = present(
+      checkpoint.messages.find(
+        (message) =>
+          message.event.type === "policy.state.changed" && message.event.state.revision === 1,
+      ),
+    );
+    const cancelled = present(
+      checkpoint.messages.find(
+        (message) =>
+          message.event.type === "policy.state.changed" && message.event.state.revision === 2,
+      ),
+    );
+    checkpoint.bus.completedReceipts = checkpoint.bus.completedReceipts.filter(
+      (receipt) =>
+        receipt.consumerId !== "finance-policy-state" || receipt.messageId !== bound.messageId,
+    );
+    checkpoint.bus.deliveries = checkpoint.bus.deliveries.filter(
+      (delivery) =>
+        delivery.consumerId !== "finance-policy-state" || delivery.messageId !== bound.messageId,
+    );
+    checkpoint.bus.queue.push(bound);
+    const ledger = checkpoint.finance.ledgers[0].value;
+    ledger.auditEntries = ledger.auditEntries.filter(
+      (entry) => entry.sourceEventId !== bound.messageId,
+    );
+    ledger.commissionEntries = ledger.commissionEntries.filter(
+      (entry) => entry.sourceEventId !== bound.messageId,
+    );
+    expect(checkpoint.bus.completedReceipts).toContainEqual({
+      consumerId: "finance-policy-state",
+      messageId: cancelled.messageId,
+    });
+
+    expect(() => createInsuranceRuntime({}, { checkpoint })).toThrow(
+      /contiguous|ordered|revision prefix/i,
+    );
+  });
+
   test("rejects_forged_runtime_receipt_queue_identity_and_lowered_sequence", () => {
     const intake = createInsuranceRuntime({ tenants: ["tenant-a", "tenant-b"] });
     const command = {

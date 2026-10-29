@@ -143,6 +143,9 @@ type QuoteCreatedEnvelope = EventEnvelope<
 type LifecycleChangedEnvelope = EventEnvelope<
   Extract<EventEnvelope["event"], { type: "policy.lifecycle.changed" }>
 >;
+type StateChangedEnvelope = EventEnvelope<
+  Extract<EventEnvelope["event"], { type: "policy.state.changed" }>
+>;
 const clone = <T>(value: T): T => structuredClone(value);
 function canonical(value: unknown): string {
   if (Array.isArray(value)) return `[${value.map(canonical).join(",")}]`;
@@ -758,94 +761,112 @@ function validateCheckpoint(
     }
   }
 
-  for (const message of checkpoint.messages) {
-    if (message.event.type !== "policy.state.changed") continue;
-    const ledger = financeLedgers.get(recordKey(message.tenantId, message.event.state.policyId));
-    const matchingAudits =
-      ledger?.auditEntries.filter(
+  for (const [key, timeline] of stateTimelines) {
+    const [tenantId, policyId] = parseRecordKey(key, "Finance Policy State sequence");
+    const projected = timeline.map((state) => {
+      const message = messagesById.get(`policy-state:${state.sourcePolicyMessageId}`);
+      if (
+        !message ||
+        message.tenantId !== tenantId ||
+        message.event.type !== "policy.state.changed" ||
+        message.event.state.policyId !== policyId ||
+        !exact(message.event.state, state)
+      )
+        return invalidCheckpoint(
+          "Finance Policy State sequence is missing its exact published envelope.",
+        );
+      return message as StateChangedEnvelope;
+    });
+    const completed = projected.map((message) =>
+      consumerCompleted("finance-policy-state", message.messageId),
+    );
+    const completedPrefixLength = completed.findIndex((value) => !value);
+    const prefixLength = completedPrefixLength === -1 ? completed.length : completedPrefixLength;
+    if (completed.slice(prefixLength).some(Boolean))
+      invalidCheckpoint("Finance Policy State completed receipts must form a contiguous prefix.");
+
+    let previousQueueIndex = -1;
+    for (const message of projected.slice(prefixLength)) {
+      const queueIndex = checkpoint.bus.queue.findIndex(
+        (queued) => queued.messageId === message.messageId,
+      );
+      if (queueIndex <= previousQueueIndex)
+        invalidCheckpoint("Pending Finance Policy State revisions must remain queued in order.");
+      previousQueueIndex = queueIndex;
+    }
+    if (projected.slice(0, prefixLength).some((message) => queuedMessageIds.has(message.messageId)))
+      invalidCheckpoint("Completed Finance Policy State revisions cannot remain queued.");
+
+    const ledger = financeLedgers.get(key);
+    if (prefixLength === 0) {
+      if (ledger)
+        invalidCheckpoint(
+          "Finance ledger cannot exist before the first Policy State revision completes.",
+        );
+      continue;
+    }
+    const durableLedger =
+      ledger ??
+      invalidCheckpoint("Finance completed Policy State prefix is missing its durable ledger.");
+    if (!exact(durableLedger.policyState, timeline[prefixLength - 1]))
+      invalidCheckpoint(
+        "Finance ledger Policy State must equal the highest completed revision prefix.",
+      );
+
+    const stateAudits = durableLedger.auditEntries.filter(
+      (entry) => entry.type === "policy.state.changed",
+    );
+    if (stateAudits.length !== prefixLength)
+      invalidCheckpoint(
+        "Finance Policy State audits must exactly represent the completed revision prefix.",
+      );
+    for (let index = 0; index < projected.length; index += 1) {
+      const message = projected[index];
+      const matchingAudits = stateAudits.filter(
         (entry) =>
           entry.sourceEventId === message.messageId &&
-          entry.tenantId === message.tenantId &&
-          entry.type === message.event.type &&
+          entry.tenantId === tenantId &&
           entry.correlationId === message.correlationId &&
           entry.causationId === message.causationId &&
           entry.occurredAt === message.occurredAt,
-      ) ?? [];
-    const matchingCommissions =
-      ledger?.commissionEntries.filter((entry) => entry.sourceEventId === message.messageId) ?? [];
-    const expectedCommission =
-      message.event.state.lifecycle === "bound" &&
-      message.event.state.commissionPlan.timing === "on_bind"
-        ? createAccrualEntry(
-            {
-              id: message.event.state.policyId,
-              commissionPlan: message.event.state.commissionPlan,
-            },
-            message.messageId,
-            message.event.state.premiumCents,
-            message.occurredAt,
-          )
-        : undefined;
-    if (consumerCompleted("finance-policy-state", message.messageId)) {
-      if (
-        !ledger ||
-        ledger.policyState.revision < message.event.state.revision ||
-        matchingAudits.length !== 1 ||
-        (expectedCommission
-          ? matchingCommissions.length !== 1 || !exact(matchingCommissions[0], expectedCommission)
-          : matchingCommissions.length !== 0)
-      )
-        invalidCheckpoint(
-          "Completed Finance Policy State receipt is missing its durable ledger effect.",
-        );
-    } else if (
-      !queuedMessageIds.has(message.messageId) ||
-      matchingAudits.length !== 0 ||
-      matchingCommissions.length !== 0 ||
-      (ledger !== undefined && exact(ledger.policyState, message.event.state))
-    ) {
-      invalidCheckpoint(
-        "Uncompleted Finance Policy State delivery must remain queued without durable ledger effects.",
       );
+      const matchingCommissions = durableLedger.commissionEntries.filter(
+        (entry) => entry.sourceEventId === message.messageId,
+      );
+      const expectedCommission =
+        message.event.state.lifecycle === "bound" &&
+        message.event.state.commissionPlan.timing === "on_bind"
+          ? createAccrualEntry(
+              {
+                id: policyId,
+                commissionPlan: message.event.state.commissionPlan,
+              },
+              message.messageId,
+              message.event.state.premiumCents,
+              message.occurredAt,
+            )
+          : undefined;
+      if (index < prefixLength) {
+        if (
+          matchingAudits.length !== 1 ||
+          (expectedCommission
+            ? matchingCommissions.length !== 1 || !exact(matchingCommissions[0], expectedCommission)
+            : matchingCommissions.length !== 0)
+        )
+          invalidCheckpoint(
+            "Completed Finance Policy State revision is missing its exact durable effects.",
+          );
+      } else if (matchingAudits.length !== 0 || matchingCommissions.length !== 0) {
+        invalidCheckpoint(
+          "Queued Finance Policy State revision cannot already have durable effects.",
+        );
+      }
     }
   }
 
-  for (const [key, ledger] of financeLedgers) {
-    const [tenantId, policyId] = parseRecordKey(key, "Finance durable Policy State");
-    const timeline = stateTimelines.get(key) ?? [];
-    const state = timeline.find((candidate) => exact(candidate, ledger.policyState));
-    const projected = state
-      ? checkpoint.messages.filter(
-          (message) =>
-            message.tenantId === tenantId &&
-            message.event.type === "policy.state.changed" &&
-            message.event.state.policyId === policyId &&
-            exact(message.event.state, state),
-        )
-      : [];
-    if (
-      !state ||
-      projected.length !== 1 ||
-      !consumerCompleted("finance-policy-state", projected[0].messageId)
-    )
-      invalidCheckpoint(
-        "Finance durable Policy State is missing its published message or completed receipt.",
-      );
-    for (const audit of ledger.auditEntries.filter(
-      (entry) => entry.type === "policy.state.changed",
-    )) {
-      const source = messagesById.get(audit.sourceEventId);
-      if (
-        !source ||
-        source.tenantId !== tenantId ||
-        source.event.type !== "policy.state.changed" ||
-        source.event.state.policyId !== policyId ||
-        !consumerCompleted("finance-policy-state", source.messageId)
-      )
-        invalidCheckpoint(
-          "Finance Policy State audit is missing its published message or completed receipt.",
-        );
-    }
+  for (const key of financeLedgers.keys()) {
+    if (!stateTimelines.has(key))
+      invalidCheckpoint("Finance durable Policy State has no matching projection timeline.");
   }
 
   for (const [key, command] of receiptCommands) {
