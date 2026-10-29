@@ -4,7 +4,7 @@ import type {
   PolicyStateChangedMessage,
   PolicyStateProjection,
 } from "@testbed/domain";
-import { assertUtcTimestamp } from "@testbed/domain";
+import { assertCommissionPlan, assertUtcTimestamp } from "@testbed/domain";
 import type { ServiceBus } from "@testbed/service-bus";
 
 export type PolicyStateService = {
@@ -14,6 +14,17 @@ export type PolicyStateService = {
 
 type PolicyStateServiceOptions = {
   bus: ServiceBus;
+  registerPersistence?: (port: PolicyStatePersistencePort) => void;
+};
+
+export type PolicyStateCheckpoint = {
+  version: 1;
+  timelines: { tenantId: string; policyId: string; states: PolicyStateProjection[] }[];
+};
+
+export type PolicyStatePersistencePort = {
+  checkpoint(): PolicyStateCheckpoint;
+  hydrate(checkpoint: PolicyStateCheckpoint): void;
 };
 
 const copyState = (state: PolicyStateProjection): PolicyStateProjection => ({
@@ -45,7 +56,10 @@ const projectState = (
   sourcePolicyMessageId: message.messageId,
 });
 
-export function createPolicyStateService({ bus }: PolicyStateServiceOptions): PolicyStateService {
+export function createPolicyStateService({
+  bus,
+  registerPersistence,
+}: PolicyStateServiceOptions): PolicyStateService {
   const timelinesByTenant = new Map<string, Map<string, PolicyStateProjection[]>>();
 
   const getTimeline = (tenantId: string, policyId: string) =>
@@ -119,6 +133,72 @@ export function createPolicyStateService({ bus }: PolicyStateServiceOptions): Po
 
     appendAndPublish(message, incoming);
   });
+
+  const persistence: PolicyStatePersistencePort = {
+    checkpoint: () => ({
+      version: 1,
+      timelines: [...timelinesByTenant.entries()]
+        .flatMap(([tenantId, timelines]) =>
+          [...timelines.entries()].map(([policyId, states]) => ({
+            tenantId,
+            policyId,
+            states: states.map(copyState),
+          })),
+        )
+        .sort((left, right) =>
+          JSON.stringify([left.tenantId, left.policyId]).localeCompare(
+            JSON.stringify([right.tenantId, right.policyId]),
+          ),
+        ),
+    }),
+    hydrate(checkpoint) {
+      const restored = structuredClone(checkpoint);
+      if (restored?.version !== 1 || !Array.isArray(restored.timelines))
+        throw new Error("Invalid Policy State checkpoint.");
+      const next = new Map<string, Map<string, PolicyStateProjection[]>>();
+      for (const row of restored.timelines) {
+        if (
+          !row ||
+          typeof row.tenantId !== "string" ||
+          !row.tenantId.trim() ||
+          typeof row.policyId !== "string" ||
+          !row.policyId.trim() ||
+          !Array.isArray(row.states) ||
+          row.states.length === 0 ||
+          row.states.length > 2
+        )
+          throw new Error("Invalid Policy State checkpoint timeline identity or terminal history.");
+        const tenant = next.get(row.tenantId) ?? new Map<string, PolicyStateProjection[]>();
+        if (tenant.has(row.policyId))
+          throw new Error("Duplicate Policy State checkpoint timeline.");
+        const sourceMessageIds = new Set<string>();
+        row.states.forEach((state, index) => {
+          if (
+            state.policyId !== row.policyId ||
+            state.revision !== index + 1 ||
+            (index === 0 && state.lifecycle !== "bound") ||
+            (index > 0 && state.lifecycle !== "cancelled") ||
+            (state.product !== "risk_secure" && state.product !== "risk_secure_plus") ||
+            !Number.isSafeInteger(state.premiumCents) ||
+            state.premiumCents <= 0 ||
+            typeof state.sourcePolicyMessageId !== "string" ||
+            !state.sourcePolicyMessageId.trim() ||
+            sourceMessageIds.has(state.sourcePolicyMessageId)
+          )
+            throw new Error("Invalid Policy State checkpoint revision or source history.");
+          assertCommissionPlan(state.commissionPlan);
+          sourceMessageIds.add(state.sourcePolicyMessageId);
+          if (index > 0 && !samePolicySnapshot(row.states[0], state))
+            throw new Error("Invalid Policy State checkpoint immutable snapshot history.");
+        });
+        tenant.set(row.policyId, row.states.map(copyState));
+        next.set(row.tenantId, tenant);
+      }
+      timelinesByTenant.clear();
+      for (const [tenantId, timelines] of next) timelinesByTenant.set(tenantId, timelines);
+    },
+  };
+  registerPersistence?.(persistence);
 
   return {
     getPolicyState(tenantId, policyId) {

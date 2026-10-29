@@ -21,6 +21,13 @@ export type DeliveryRecord = {
   error?: string;
 };
 
+export type ServiceBusCheckpoint = {
+  version: 1;
+  queue: EventEnvelope[];
+  completedReceipts: { consumerId: string; messageId: string }[];
+  deliveries: DeliveryRecord[];
+};
+
 export type ServiceBus = {
   subscribe<TEventType extends EventType>(
     consumerId: string,
@@ -31,16 +38,100 @@ export type ServiceBus = {
   drain(): void;
   deliveryLog(): DeliveryRecord[];
   pendingMessages(): EventEnvelope[];
+  checkpoint(): ServiceBusCheckpoint;
 };
 
 const receiptKey = (consumerId: string, messageId: string) =>
   JSON.stringify([consumerId, messageId]);
 
-export function createInMemoryServiceBus(): ServiceBus {
+const clone = <T>(value: T): T => structuredClone(value);
+
+const requireString = (value: unknown, label: string): string => {
+  if (typeof value !== "string" || !value.trim()) {
+    throw new Error(`Invalid service bus checkpoint: ${label} is required.`);
+  }
+  return value;
+};
+
+const restoreCheckpoint = (input: ServiceBusCheckpoint | undefined): ServiceBusCheckpoint => {
+  if (input === undefined) {
+    return { version: 1, queue: [], completedReceipts: [], deliveries: [] };
+  }
+  const checkpoint = clone(input) as ServiceBusCheckpoint;
+  if (!checkpoint || typeof checkpoint !== "object" || checkpoint.version !== 1) {
+    throw new Error("Invalid service bus checkpoint version.");
+  }
+  if (
+    !Array.isArray(checkpoint.queue) ||
+    !Array.isArray(checkpoint.completedReceipts) ||
+    !Array.isArray(checkpoint.deliveries)
+  ) {
+    throw new Error("Invalid service bus checkpoint collections.");
+  }
+  const messageIds = new Set<string>();
+  for (const envelope of checkpoint.queue) {
+    if (!envelope || typeof envelope !== "object" || !envelope.event) {
+      throw new Error("Invalid service bus checkpoint envelope.");
+    }
+    requireString(envelope.messageId, "message ID");
+    requireString(envelope.correlationId, "correlation ID");
+    requireString(envelope.tenantId, "tenant ID");
+    assertUtcTimestamp(envelope.occurredAt);
+    if (messageIds.has(envelope.messageId)) {
+      throw new Error(
+        `Invalid service bus checkpoint: duplicate queued message ${envelope.messageId}.`,
+      );
+    }
+    messageIds.add(envelope.messageId);
+  }
+  const receiptKeys = new Set<string>();
+  for (const receipt of checkpoint.completedReceipts) {
+    const key = receiptKey(
+      requireString(receipt?.consumerId, "consumer ID"),
+      requireString(receipt?.messageId, "receipt message ID"),
+    );
+    if (receiptKeys.has(key)) {
+      throw new Error("Invalid service bus checkpoint: duplicate completed receipt.");
+    }
+    receiptKeys.add(key);
+  }
+  const completedDeliveryKeys = new Set<string>();
+  for (const delivery of checkpoint.deliveries) {
+    requireString(delivery?.consumerId, "delivery consumer ID");
+    requireString(delivery?.messageId, "delivery message ID");
+    requireString(delivery?.eventType, "delivery event type");
+    if (delivery.status !== "completed" && delivery.status !== "failed") {
+      throw new Error("Invalid service bus checkpoint delivery status.");
+    }
+    const queued = checkpoint.queue.find((message) => message.messageId === delivery.messageId);
+    if (queued && delivery.eventType !== queued.event.type) {
+      throw new Error("Invalid service bus checkpoint delivery event type.");
+    }
+    if (delivery.status === "completed") {
+      completedDeliveryKeys.add(receiptKey(delivery.consumerId, delivery.messageId));
+    }
+  }
+  if (
+    receiptKeys.size !== completedDeliveryKeys.size ||
+    [...receiptKeys].some((key) => !completedDeliveryKeys.has(key))
+  ) {
+    throw new Error("Invalid service bus checkpoint: completed receipt and delivery log disagree.");
+  }
+  return checkpoint;
+};
+
+export function createInMemoryServiceBus(input?: ServiceBusCheckpoint): ServiceBus {
+  const checkpoint = restoreCheckpoint(input);
   const subscriptions: Subscription[] = [];
-  const queue: EventEnvelope[] = [];
-  const receipts = new Set<string>();
-  const deliveries: DeliveryRecord[] = [];
+  const queue: EventEnvelope[] = checkpoint.queue.map((envelope) => immutableSnapshot(envelope));
+  const receipts = new Set(
+    checkpoint.completedReceipts.map(({ consumerId, messageId }) =>
+      receiptKey(consumerId, messageId),
+    ),
+  );
+  const deliveries: DeliveryRecord[] = checkpoint.deliveries.map((delivery) => ({
+    ...delivery,
+  }));
 
   return {
     subscribe(consumerId, eventType, handler) {
@@ -57,9 +148,6 @@ export function createInMemoryServiceBus(): ServiceBus {
     drain() {
       while (queue.length > 0) {
         const envelope = queue[0];
-        if (!envelope) {
-          return;
-        }
 
         const matchingSubscriptions = subscriptions.filter(
           (subscription) => subscription.eventType === envelope.event.type,
@@ -100,6 +188,23 @@ export function createInMemoryServiceBus(): ServiceBus {
     },
     pendingMessages() {
       return queue.map((envelope) => immutableSnapshot(envelope));
+    },
+    checkpoint() {
+      return clone({
+        version: 1,
+        queue,
+        completedReceipts: [...receipts]
+          .map((value) => {
+            const parsed = JSON.parse(value) as [string, string];
+            return { consumerId: parsed[0], messageId: parsed[1] };
+          })
+          .sort((a, b) =>
+            receiptKey(a.consumerId, a.messageId).localeCompare(
+              receiptKey(b.consumerId, b.messageId),
+            ),
+          ),
+        deliveries,
+      });
     },
   };
 }

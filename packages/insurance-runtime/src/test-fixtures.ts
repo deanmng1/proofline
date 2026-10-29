@@ -1,4 +1,4 @@
-import { createInMemoryServiceBus } from "@testbed/service-bus";
+import { createInMemoryServiceBus, type ServiceBusCheckpoint } from "@testbed/service-bus";
 import type { RuntimeCommand, RuntimeSeed } from "./runtime";
 export const runtimeSeed = {
   tenants: ["tenant-a", "tenant-b"],
@@ -42,8 +42,8 @@ export const bindCommand = {
   quoteId: "quote",
   policyId: "policy",
 } satisfies RuntimeCommand;
-export function failFinanceOnce() {
-  const bus = createInMemoryServiceBus();
+export function failFinanceOnce(checkpoint?: ServiceBusCheckpoint) {
+  const bus = createInMemoryServiceBus(checkpoint);
   const subscribe = bus.subscribe.bind(bus);
   let failed = false;
   bus.subscribe = (consumerId, eventType, handler) =>

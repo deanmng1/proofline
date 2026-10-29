@@ -1,5 +1,6 @@
 import { setupServer } from "msw/node";
 import { describe, expect, test } from "vitest";
+import { createInsuranceRuntime } from "../../insurance-runtime/src/runtime";
 import {
   bindCommand,
   failFinanceOnce,
@@ -30,6 +31,66 @@ const finance = (commandId: string, type = "premium_payment_settled", amountCent
 });
 
 describe("createTestApi", () => {
+  test("replays_lost_customer_and_property_responses_without_duplicate_entities", async () => {
+    const api = createTestApi({ tenants: ["tenant-a"] });
+    const customerBody = {
+      commandId: "customer-command",
+      correlationId: "intake-workflow",
+      name: "Alex",
+      email: "alex@example.test",
+    };
+    const firstCustomer = await (await api.handle(request("customers", customerBody))).json();
+    expect(await (await api.handle(request("customers", customerBody))).json()).toEqual(
+      firstCustomer,
+    );
+    expect(
+      (await api.handle(request("customers", { ...customerBody, email: "changed@example.test" })))
+        .status,
+    ).toBe(409);
+    const propertyBody = {
+      commandId: "property-command",
+      correlationId: "intake-workflow",
+      customerId: firstCustomer.id,
+      addressLine1: "1 Main",
+      city: "Austin",
+      state: "TX",
+      postalCode: "78701",
+    };
+    const firstProperty = await (await api.handle(request("properties", propertyBody))).json();
+    expect(await (await api.handle(request("properties", propertyBody))).json()).toEqual(
+      firstProperty,
+    );
+    expect(
+      (await api.handle(request("properties", { ...propertyBody, postalCode: "99999" }))).status,
+    ).toBe(409);
+    const state: TestApiSnapshot = await (await api.handle(request("test/state"))).json();
+    expect(state.customers).toEqual([firstCustomer]);
+    expect(state.properties).toEqual([firstProperty]);
+  });
+
+  test("requires_command_and_correlation_identity_for_customer_and_property_intake", async () => {
+    const api = createTestApi({ tenants: ["tenant-a"] });
+    const customer = await api.handle(
+      request("customers", { name: "Alex", email: "alex@example.test" }),
+    );
+    expect(customer.status).toBe(400);
+    expect(await customer.json()).toMatchObject({ error: { code: "invalid_request" } });
+    const property = await api.handle(
+      request("properties", {
+        customerId: "customer",
+        addressLine1: "1 Main",
+        city: "Austin",
+        state: "TX",
+        postalCode: "78701",
+      }),
+    );
+    expect(property.status).toBe(400);
+    expect(await property.json()).toMatchObject({ error: { code: "invalid_request" } });
+    const state: TestApiSnapshot = await (await api.handle(request("test/state"))).json();
+    expect(state.customers).toEqual([]);
+    expect(state.properties).toEqual([]);
+  });
+
   test("rejects_foreign_quote_references_before_retrying_pending_finance_delivery", async () => {
     const api = createTestApi(
       { ...runtimeSeed, commands: [quoteCommand] },
@@ -202,6 +263,47 @@ describe("createTestApi", () => {
       "policy.lifecycle.changed",
       "policy.state.changed",
     ]);
+  });
+  test("exposes_cancelled_lifecycle_in_policy_list_detail_and_ledger", async () => {
+    const api = createTestApi(seed);
+    const cancelled = await api.handle(
+      request("policies/policy/lifecycle", {
+        commandId: "cancel",
+        correlationId: "cancellation-workflow",
+        lifecycle: "cancelled",
+      }),
+    );
+    expect(cancelled.status).toBe(201);
+    expect(await cancelled.json()).toMatchObject({
+      policy: { id: "policy", status: "cancelled" },
+      policyState: { lifecycle: "cancelled", revision: 2 },
+    });
+    expect(await (await api.handle(request("policies"))).json()).toEqual([
+      expect.objectContaining({ id: "policy", status: "cancelled" }),
+    ]);
+    expect(await (await api.handle(request("policies/policy"))).json()).toMatchObject({
+      id: "policy",
+      status: "cancelled",
+    });
+
+    const runtime = createInsuranceRuntime(seed);
+    runtime.execute({
+      type: "transition_policy",
+      schemaVersion: 1,
+      tenantId: "tenant-a",
+      commandId: "restore-cancel",
+      correlationId: "restore-workflow",
+      policyId: "policy",
+      lifecycle: "cancelled",
+    });
+    const restored = createTestApi({}, { checkpoint: runtime.checkpoint() });
+    expect(await (await restored.handle(request("policies"))).json()).toEqual([
+      expect.objectContaining({ id: "policy", status: "cancelled" }),
+    ]);
+    expect(await (await restored.handle(request("policies/policy"))).json()).toMatchObject({
+      id: "policy",
+      status: "cancelled",
+    });
   });
   test("http_replay_recovers_pending_finance_delivery", async () => {
     const api = createTestApi(

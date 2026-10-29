@@ -304,6 +304,99 @@ describe("insurance CRM reference workflow", () => {
     expect(await screen.findByRole("alert")).toHaveTextContent("Customer could not be created");
   });
 
+  test("retries_lost_customer_and_property_responses_with_one_stable_identity", async () => {
+    const api = useTestApi({ tenants: ["test-tenant"] });
+    const attempts = new Map<string, Record<string, unknown>[]>();
+    server.use(
+      http.post(/\/api\/(customers|properties)$/, async ({ request }) => {
+        const path = new URL(request.url).pathname;
+        const pathAttempts = attempts.get(path) ?? [];
+        pathAttempts.push((await request.clone().json()) as Record<string, unknown>);
+        attempts.set(path, pathAttempts);
+        const response = await api.handle(request);
+        return pathAttempts.length === 1 ? new HttpResponse(null, { status: 503 }) : response;
+      }),
+    );
+    const user = userEvent.setup();
+    renderWithProviders(<CustomerListPage />);
+
+    await screen.findByLabelText("Customer name");
+    await user.type(screen.getByLabelText("Customer name"), "Alex");
+    await user.type(screen.getByLabelText("Customer email"), "alex@example.test");
+    await user.click(screen.getByRole("button", { name: "Add customer" }));
+    expect(await screen.findByRole("alert")).toHaveTextContent("Customer could not be created");
+    expect(screen.getByLabelText("Customer name")).toBeDisabled();
+    expect(screen.getByLabelText("Customer email")).toBeDisabled();
+    await user.click(screen.getByRole("button", { name: "Retry customer" }));
+    expect(await screen.findByText("alex@example.test")).toBeVisible();
+    expect(screen.getAllByText("alex@example.test")).toHaveLength(1);
+
+    await user.selectOptions(screen.getByLabelText("Policyholder"), "test-customer-1");
+    await user.type(screen.getByLabelText("Street address"), "1 Main");
+    await user.type(screen.getByLabelText("City"), "Austin");
+    await user.type(screen.getByLabelText("State"), "TX");
+    await user.type(screen.getByLabelText("Postal code"), "78701");
+    await user.click(screen.getByRole("button", { name: "Add property" }));
+    expect(await screen.findByRole("alert")).toHaveTextContent("Property could not be created");
+    await user.click(screen.getByRole("button", { name: "Retry property" }));
+    expect(await screen.findByText("1 Main")).toBeVisible();
+    expect(screen.getAllByText("1 Main")).toHaveLength(1);
+
+    for (const pathAttempts of attempts.values()) {
+      expect(pathAttempts).toHaveLength(2);
+      expect(pathAttempts[1]).toEqual(pathAttempts[0]);
+      expect(pathAttempts[0].commandId).not.toEqual(pathAttempts[0].correlationId);
+    }
+    const state = await (
+      await api.handle(
+        new Request("http://localhost/api/test/state", {
+          headers: { "X-Tenant-Id": "test-tenant" },
+        }),
+      )
+    ).json();
+    expect(state.customers).toHaveLength(1);
+    expect(state.properties).toHaveLength(1);
+  });
+
+  test("rotates_intake_identity_only_after_a_terminal_rejection", async () => {
+    const api = useTestApi({ tenants: ["test-tenant"] });
+    const attempts: Record<string, unknown>[] = [];
+    server.use(
+      http.post("/api/customers", async ({ request }) => {
+        attempts.push((await request.clone().json()) as Record<string, unknown>);
+        if (attempts.length === 1) {
+          return HttpResponse.json(
+            { error: { code: "invalid_request", message: "terminal rejection" } },
+            { status: 400 },
+          );
+        }
+        return api.handle(request);
+      }),
+    );
+    const user = userEvent.setup();
+    renderWithProviders(<CustomerListPage />);
+    await screen.findByLabelText("Customer name");
+    await user.type(screen.getByLabelText("Customer name"), "Alex");
+    await user.type(screen.getByLabelText("Customer email"), "alex@example.test");
+    await user.click(screen.getByRole("button", { name: "Add customer" }));
+    await screen.findByRole("alert");
+    expect(screen.queryByRole("button", { name: "Retry customer" })).not.toBeInTheDocument();
+    expect(screen.getByLabelText("Customer name")).toBeEnabled();
+    await user.click(screen.getByRole("button", { name: "Add customer" }));
+    expect(await screen.findByText("alex@example.test")).toBeVisible();
+    expect(attempts).toHaveLength(2);
+    expect(attempts[0].commandId).not.toEqual(attempts[1].commandId);
+    expect(attempts[0].correlationId).not.toEqual(attempts[1].correlationId);
+    const state = await (
+      await api.handle(
+        new Request("http://localhost/api/test/state", {
+          headers: { "X-Tenant-Id": "test-tenant" },
+        }),
+      )
+    ).json();
+    expect(state.customers).toHaveLength(1);
+  });
+
   test("shows accessible quote and bind failures", async () => {
     useTestApi();
     const user = userEvent.setup();

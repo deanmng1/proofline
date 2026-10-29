@@ -1,4 +1,4 @@
-import type { CommissionPlan, Product, RefundAllocation } from "@testbed/domain";
+import type { CommissionPlan, PolicyLifecycle, Product, RefundAllocation } from "@testbed/domain";
 import type {
   Customer,
   PolicyLedger,
@@ -8,14 +8,16 @@ import type {
   RuntimeSnapshot,
 } from "@testbed/insurance-runtime";
 
-export type { Customer, PolicyLedger, Property };
+export type { Customer, PolicyLedger, PolicyLifecycle, Property };
 export type TestSeed = RuntimeSeed;
 export type TestApiOptions = RuntimeOptions;
 export type TestApiSnapshot = RuntimeSnapshot;
 export type TestApi = { handle(request: Request): Promise<Response> };
-export type CreateCustomerInput = Omit<Customer, "id" | "tenantId"> & { id?: string };
-export type CreatePropertyInput = Omit<Property, "id" | "tenantId"> & { id?: string };
 export type CommandIdentity = { commandId: string; correlationId: string };
+export type CreateCustomerInput = CommandIdentity &
+  Omit<Customer, "id" | "tenantId"> & { id?: string };
+export type CreatePropertyInput = CommandIdentity &
+  Omit<Property, "id" | "tenantId"> & { id?: string };
 export type CreateQuoteInput = CommandIdentity & {
   id?: string;
   customerId: string;

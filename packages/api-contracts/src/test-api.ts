@@ -70,15 +70,40 @@ export function createTestApi(seed: TestSeed = {}, options: TestApiOptions = {})
           for (const key of ["id", "policyId"] as const)
             if (key in body && !string(body, key))
               return error(400, "invalid_request", `${key} must be a nonempty string.`);
-          if (path === "/api/customers")
-            return json(runtime.createCustomer(tenantId, body as CreateCustomerInput), 201);
-          if (path === "/api/properties")
-            return json(runtime.createProperty(tenantId, body as CreatePropertyInput), 201);
           const commandId = string(body, "commandId");
           const correlationId = string(body, "correlationId");
           if (!commandId || !correlationId)
             return error(400, "invalid_request", "commandId and correlationId are required.");
           const metadata = { schemaVersion: 1 as const, commandId, correlationId, tenantId };
+          if (path === "/api/customers") {
+            const input = body as CreateCustomerInput;
+            return json(
+              runtime.execute({
+                ...metadata,
+                type: "create_customer",
+                customerId: input.id,
+                name: input.name,
+                email: input.email,
+              }),
+              201,
+            );
+          }
+          if (path === "/api/properties") {
+            const input = body as CreatePropertyInput;
+            return json(
+              runtime.execute({
+                ...metadata,
+                type: "create_property",
+                propertyId: input.id,
+                customerId: input.customerId,
+                addressLine1: input.addressLine1,
+                city: input.city,
+                state: input.state,
+                postalCode: input.postalCode,
+              }),
+              201,
+            );
+          }
           if (path === "/api/quotes") {
             if (
               !string(body, "customerId") ||

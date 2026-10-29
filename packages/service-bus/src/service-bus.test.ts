@@ -59,6 +59,149 @@ const lifecycleEnvelope = (messageId: string): EventEnvelope<PolicyLifecycleChan
 });
 
 describe("in-memory service bus", () => {
+  test("restores_completed_receipts_and_pending_delivery_without_repeating_consumers", () => {
+    const bus = createInMemoryServiceBus();
+    const first: string[] = [];
+    bus.subscribe("first", "policy.quote.created", (message) => {
+      first.push(message.messageId);
+    });
+    bus.subscribe("second", "policy.quote.created", () => {
+      throw new Error("crash after first consumer");
+    });
+    bus.publish(quoteEnvelope("message-1"));
+    expect(() => bus.drain()).toThrow("crash after first consumer");
+
+    const checkpoint = JSON.parse(JSON.stringify(bus.checkpoint()));
+    const restored = createInMemoryServiceBus(checkpoint);
+    const replayedFirst: string[] = [];
+    const replayedSecond: string[] = [];
+    restored.subscribe("first", "policy.quote.created", (message) => {
+      replayedFirst.push(message.messageId);
+    });
+    restored.subscribe("second", "policy.quote.created", (message) => {
+      replayedSecond.push(message.messageId);
+    });
+    restored.drain();
+
+    expect(first).toEqual(["message-1"]);
+    expect(replayedFirst).toEqual([]);
+    expect(replayedSecond).toEqual(["message-1"]);
+    expect(restored.pendingMessages()).toEqual([]);
+    expect(
+      restored.deliveryLog().map(({ consumerId, status }) => ({ consumerId, status })),
+    ).toEqual([
+      { consumerId: "first", status: "completed" },
+      { consumerId: "second", status: "failed" },
+      { consumerId: "second", status: "completed" },
+    ]);
+  });
+
+  test("returns_detached_checkpoints_and_detaches_hydrated_input", () => {
+    const bus = createInMemoryServiceBus();
+    bus.publish(quoteEnvelope("message-1"));
+    const checkpoint = bus.checkpoint();
+    Reflect.set(checkpoint.queue[0].event, "quote", { ...quote, premiumCents: 1 });
+    expect(bus.pendingMessages()[0].event).toMatchObject({ quote: { premiumCents: 10_000 } });
+
+    const restored = createInMemoryServiceBus(checkpoint);
+    Reflect.set(checkpoint.queue[0].event, "quote", { ...quote, premiumCents: 2 });
+    expect(restored.pendingMessages()[0].event).toMatchObject({ quote: { premiumCents: 1 } });
+  });
+
+  test("rejects_forged_or_contradictory_completed_receipts", () => {
+    const bus = createInMemoryServiceBus();
+    bus.subscribe("first", "policy.quote.created", () => undefined);
+    bus.subscribe("second", "policy.quote.created", () => {
+      throw new Error("pending second consumer");
+    });
+    bus.publish(quoteEnvelope("message-1"));
+    expect(() => bus.drain()).toThrow("pending second consumer");
+    const checkpoint = bus.checkpoint();
+
+    expect(() =>
+      createInMemoryServiceBus({
+        ...checkpoint,
+        deliveries: checkpoint.deliveries.filter((delivery) => delivery.status !== "completed"),
+      }),
+    ).toThrow(/receipt.*delivery|delivery.*receipt/i);
+    expect(() => createInMemoryServiceBus({ ...checkpoint, completedReceipts: [] })).toThrow(
+      /receipt.*delivery|delivery.*receipt/i,
+    );
+    expect(() =>
+      createInMemoryServiceBus({
+        ...checkpoint,
+        deliveries: checkpoint.deliveries.map((delivery) =>
+          delivery.status === "completed"
+            ? { ...delivery, eventType: "policy.lifecycle.changed" }
+            : delivery,
+        ),
+      }),
+    ).toThrow(/event type/i);
+  });
+
+  test("rejects_malformed_checkpoint_collections_and_identities", () => {
+    const envelope = quoteEnvelope("message-1");
+    expect(() => createInMemoryServiceBus({ version: 2 } as never)).toThrow(/version/i);
+    expect(() =>
+      createInMemoryServiceBus({
+        version: 1,
+        queue: null,
+        completedReceipts: [],
+        deliveries: [],
+      } as never),
+    ).toThrow(/collections/i);
+    expect(() =>
+      createInMemoryServiceBus({
+        version: 1,
+        queue: [{}],
+        completedReceipts: [],
+        deliveries: [],
+      } as never),
+    ).toThrow(/envelope/i);
+    expect(() =>
+      createInMemoryServiceBus({
+        version: 1,
+        queue: [envelope, envelope],
+        completedReceipts: [],
+        deliveries: [],
+      }),
+    ).toThrow(/duplicate queued message/i);
+    expect(() =>
+      createInMemoryServiceBus({
+        version: 1,
+        queue: [],
+        completedReceipts: [{ consumerId: "consumer", messageId: "" }],
+        deliveries: [],
+      }),
+    ).toThrow(/receipt message ID/i);
+    expect(() =>
+      createInMemoryServiceBus({
+        version: 1,
+        queue: [],
+        completedReceipts: [
+          { consumerId: "consumer", messageId: "message-1" },
+          { consumerId: "consumer", messageId: "message-1" },
+        ],
+        deliveries: [],
+      }),
+    ).toThrow(/duplicate completed receipt/i);
+    expect(() =>
+      createInMemoryServiceBus({
+        version: 1,
+        queue: [envelope],
+        completedReceipts: [],
+        deliveries: [
+          {
+            consumerId: "consumer",
+            messageId: "message-1",
+            eventType: "policy.quote.created",
+            status: "unknown",
+          },
+        ],
+      } as never),
+    ).toThrow(/delivery status/i);
+  });
+
   test("delivers_once_per_consumer_and_preserves_delivery_log", () => {
     const bus = createInMemoryServiceBus();
     const receivedByPolicyState: string[] = [];
@@ -105,6 +248,10 @@ describe("in-memory service bus", () => {
     bus.drain();
 
     expect(received).toEqual(["message-1", "message-2"]);
+    expect(bus.checkpoint().completedReceipts).toEqual([
+      { consumerId: "audit", messageId: "message-1" },
+      { consumerId: "audit", messageId: "message-2" },
+    ]);
   });
 
   test("appends_nested_publications_to_the_queue_tail", () => {

@@ -7,6 +7,7 @@ export type {
   CreateQuoteInput,
   Customer,
   PolicyLedger,
+  PolicyLifecycle,
   Property,
   RecordFinanceEventInput,
   TestApi,

@@ -63,6 +63,7 @@ type PolicyServiceOptions = {
   clock: Clock;
   ids: IdFactory;
   referenceData: PolicyReferenceData;
+  registerPersistence?: (port: PolicyServicePersistencePort) => void;
 };
 
 type QuoteRecord = {
@@ -82,6 +83,18 @@ type PolicyRecord = {
 type CommandReceipt = {
   fingerprint: string;
   result: unknown;
+};
+
+export type PolicyServiceCheckpoint = {
+  version: 1;
+  quotes: { key: string; value: QuoteRecord }[];
+  policies: { key: string; value: PolicyRecord }[];
+  commandReceipts: { key: string; value: CommandReceipt }[];
+};
+
+export type PolicyServicePersistencePort = {
+  checkpoint(): PolicyServiceCheckpoint;
+  hydrate(checkpoint: PolicyServiceCheckpoint): void;
 };
 
 const recordKey = (tenantId: string, id: string) => JSON.stringify([tenantId, id]);
@@ -105,6 +118,7 @@ export function createPolicyService({
   clock,
   ids,
   referenceData,
+  registerPersistence,
 }: PolicyServiceOptions): PolicyService {
   const quotes = new Map<string, QuoteRecord>();
   const policies = new Map<string, PolicyRecord>();
@@ -137,6 +151,162 @@ export function createPolicyService({
   ) => {
     bus.publish(envelope);
   };
+
+  const mapRows = <T>(map: Map<string, T>) =>
+    [...map.entries()]
+      .sort(([left], [right]) => left.localeCompare(right))
+      .map(([key, value]) => ({ key, value: structuredClone(value) }));
+  const hydrateRows = <T>(
+    label: string,
+    rows: { key: string; value: T }[],
+    validate: (key: string, value: T) => void,
+  ): Map<string, T> => {
+    if (!Array.isArray(rows)) throw new Error(`Invalid Policy checkpoint ${label}.`);
+    const next = new Map<string, T>();
+    for (const row of rows) {
+      if (!row || typeof row.key !== "string" || !row.value)
+        throw new Error(`Invalid Policy checkpoint ${label} row.`);
+      if (next.has(row.key)) throw new Error(`Duplicate Policy checkpoint ${label} key.`);
+      validate(row.key, row.value);
+      next.set(row.key, immutableSnapshot(row.value) as T);
+    }
+    return next;
+  };
+  const parseKey = (value: string, label: string): [string, string] => {
+    let parsed: unknown;
+    try {
+      parsed = JSON.parse(value);
+    } catch {
+      throw new Error(`Invalid Policy checkpoint ${label} key.`);
+    }
+    if (
+      !Array.isArray(parsed) ||
+      parsed.length !== 2 ||
+      typeof parsed[0] !== "string" ||
+      !parsed[0].trim() ||
+      typeof parsed[1] !== "string" ||
+      !parsed[1].trim()
+    )
+      throw new Error(`Invalid Policy checkpoint ${label} identity.`);
+    return [parsed[0], parsed[1]];
+  };
+  const persistence: PolicyServicePersistencePort = {
+    checkpoint: () => ({
+      version: 1,
+      quotes: mapRows(quotes),
+      policies: mapRows(policies),
+      commandReceipts: mapRows(commandReceipts),
+    }),
+    hydrate(checkpoint) {
+      const restored = structuredClone(checkpoint);
+      if (restored?.version !== 1) throw new Error("Invalid Policy checkpoint version.");
+      const nextQuotes = hydrateRows("quote", restored.quotes, (key, record) => {
+        const [, id] = parseKey(key, "quote");
+        if (
+          id !== record.quote.id ||
+          !record.createdMessageId ||
+          !record.correlationId ||
+          (record.quote.product !== "risk_secure" && record.quote.product !== "risk_secure_plus") ||
+          (record.quote.status !== "quoted" && record.quote.status !== "bound")
+        )
+          throw new Error("Invalid Policy checkpoint quote identity.");
+        assertPositiveCents(record.quote.premiumCents);
+        assertCommissionPlan(record.quote.commissionPlan);
+        assertUtcTimestamp(record.quote.createdAt);
+      });
+      const nextPolicies = hydrateRows("policy", restored.policies, (key, record) => {
+        const [tenantId, id] = parseKey(key, "policy");
+        if (
+          id !== record.policy.id ||
+          record.policy.status !== record.lifecycle ||
+          (record.policy.product !== "risk_secure" &&
+            record.policy.product !== "risk_secure_plus") ||
+          (record.lifecycle !== "bound" && record.lifecycle !== "cancelled") ||
+          !Number.isSafeInteger(record.revision) ||
+          record.revision !== (record.lifecycle === "bound" ? 1 : 2) ||
+          !record.lifecycleMessageId ||
+          !record.correlationId ||
+          !nextQuotes.has(recordKey(tenantId, record.policy.quoteId))
+        )
+          throw new Error("Invalid Policy checkpoint policy identity.");
+        assertPositiveCents(record.policy.premiumCents);
+        assertCommissionPlan(record.policy.commissionPlan);
+        assertUtcTimestamp(record.policy.boundAt);
+      });
+      const nextReceipts = hydrateRows(
+        "command receipt",
+        restored.commandReceipts,
+        (key, receipt) => {
+          const [tenantId, commandId] = parseKey(key, "command receipt");
+          if (typeof receipt.fingerprint !== "string")
+            throw new Error("Invalid Policy checkpoint command receipt fingerprint.");
+          let input: Record<string, unknown>;
+          try {
+            input = JSON.parse(receipt.fingerprint) as Record<string, unknown>;
+          } catch {
+            throw new Error("Invalid Policy checkpoint command receipt fingerprint.");
+          }
+          if (
+            !input ||
+            typeof input !== "object" ||
+            input.tenantId !== tenantId ||
+            input.commandId !== commandId ||
+            commandFingerprint(input) !== receipt.fingerprint
+          )
+            throw new Error("Invalid Policy checkpoint command receipt fingerprint identity.");
+          if (typeof input.customerId === "string" && typeof input.product === "string") {
+            const result = receipt.result as Quote | undefined;
+            const restoredQuote = result && nextQuotes.get(recordKey(tenantId, result.id))?.quote;
+            if (!result || !restoredQuote) {
+              throw new Error("Invalid Policy checkpoint quote command result.");
+            }
+            const { status: resultStatus, ...resultFacts } = result;
+            const { status: restoredStatus, ...restoredFacts } = restoredQuote;
+            if (
+              resultStatus !== "quoted" ||
+              (restoredStatus !== "quoted" && restoredStatus !== "bound") ||
+              JSON.stringify(resultFacts) !== JSON.stringify(restoredFacts)
+            )
+              throw new Error("Invalid Policy checkpoint quote command result.");
+            return;
+          }
+          if (typeof input.quoteId === "string") {
+            const result = receipt.result as Policy | undefined;
+            const restoredPolicy =
+              result && nextPolicies.get(recordKey(tenantId, result.id))?.policy;
+            if (!result || !restoredPolicy) {
+              throw new Error("Invalid Policy checkpoint bind command result.");
+            }
+            const { status: resultStatus, ...resultFacts } = result;
+            const { status: restoredStatus, ...restoredFacts } = restoredPolicy;
+            if (
+              resultStatus !== "bound" ||
+              (restoredStatus !== "bound" && restoredStatus !== "cancelled") ||
+              JSON.stringify(resultFacts) !== JSON.stringify(restoredFacts)
+            )
+              throw new Error("Invalid Policy checkpoint bind command result.");
+            return;
+          }
+          if (input.lifecycle === "cancelled" && typeof input.policyId === "string") {
+            if (receipt.result !== undefined)
+              throw new Error("Invalid Policy checkpoint transition command result.");
+            const restoredPolicy = nextPolicies.get(recordKey(tenantId, input.policyId));
+            if (restoredPolicy?.lifecycle !== "cancelled")
+              throw new Error("Invalid Policy checkpoint transition result identity.");
+            return;
+          }
+          throw new Error("Invalid Policy checkpoint command receipt input.");
+        },
+      );
+      quotes.clear();
+      policies.clear();
+      commandReceipts.clear();
+      for (const [key, value] of nextQuotes) quotes.set(key, value);
+      for (const [key, value] of nextPolicies) policies.set(key, value);
+      for (const [key, value] of nextReceipts) commandReceipts.set(key, value);
+    },
+  };
+  registerPersistence?.(persistence);
 
   return {
     createQuote(command) {
@@ -263,8 +433,14 @@ export function createPolicyService({
         const revision = policyRecord.revision + 1;
         const messageId = ids.next("message");
         const occurredAt = assertUtcTimestamp(clock());
+        const transitionedPolicy = immutableSnapshot<Policy>({
+          ...policyRecord.policy,
+          status: command.lifecycle,
+        });
         policies.set(key, {
           ...policyRecord,
+          policy: transitionedPolicy,
+          correlationId: command.correlationId,
           lifecycle: command.lifecycle,
           revision,
           lifecycleMessageId: messageId,
@@ -278,7 +454,7 @@ export function createPolicyService({
           occurredAt,
           event: {
             type: "policy.lifecycle.changed",
-            policy: policyRecord.policy,
+            policy: transitionedPolicy,
             lifecycle: command.lifecycle,
             revision,
           },

@@ -405,7 +405,7 @@
           "runner": "vitest",
           "file": "packages/policy-service/src/policy-service.test.ts",
           "title": "Policy service > binds_a_quote_once_and_publishes_policy_lifecycle_changed",
-          "line": 91
+          "line": 201
         },
         {
           "ruleId": "POL-001",
@@ -415,7 +415,7 @@
           "runner": "vitest",
           "file": "packages/insurance-runtime/src/runtime.test.ts",
           "title": "insurance runtime > bind_chain_is_idempotent_across_all_consumers",
-          "line": 54
+          "line": 557
         },
         {
           "ruleId": "POL-001",
@@ -436,7 +436,7 @@
           "runner": "vitest",
           "file": "packages/policy-service/src/policy-service.test.ts",
           "title": "Policy service > rejects_same_command_id_with_different_payload",
-          "line": 159
+          "line": 294
         },
         {
           "ruleId": "POL-003",
@@ -446,7 +446,7 @@
           "runner": "vitest",
           "file": "packages/policy-service/src/policy-service.test.ts",
           "title": "Policy service > transitions_bound_policy_to_cancelled_at_next_revision",
-          "line": 116
+          "line": 226
         },
         {
           "ruleId": "POL-003",
@@ -456,7 +456,7 @@
           "runner": "vitest",
           "file": "packages/insurance-runtime/src/runtime.test.ts",
           "title": "insurance runtime > cancellation_is_terminal_and_replay_does_not_restore_bound_state",
-          "line": 121
+          "line": 695
         },
         {
           "ruleId": "TIME-001",
@@ -503,7 +503,16 @@
     {
       "glob": "packages/insurance-runtime/src/**",
       "entrypoints": ["packages/insurance-runtime/src/index.ts"],
-      "ruleIds": ["POL-001", "POL-003", "BUS-003", "TEN-001", "API-001", "API-002", "TIME-001"],
+      "ruleIds": [
+        "POL-001",
+        "POL-003",
+        "BUS-003",
+        "TEN-001",
+        "API-001",
+        "API-002",
+        "TIME-001",
+        "INT-001"
+      ],
       "layers": ["service", "runtime", "playwright", "contract"],
       "testBindings": [
         {
@@ -514,7 +523,7 @@
           "runner": "vitest",
           "file": "packages/policy-service/src/policy-service.test.ts",
           "title": "Policy service > binds_a_quote_once_and_publishes_policy_lifecycle_changed",
-          "line": 91
+          "line": 201
         },
         {
           "ruleId": "POL-001",
@@ -524,7 +533,7 @@
           "runner": "vitest",
           "file": "packages/insurance-runtime/src/runtime.test.ts",
           "title": "insurance runtime > bind_chain_is_idempotent_across_all_consumers",
-          "line": 54
+          "line": 557
         },
         {
           "ruleId": "POL-001",
@@ -545,7 +554,7 @@
           "runner": "vitest",
           "file": "packages/policy-service/src/policy-service.test.ts",
           "title": "Policy service > transitions_bound_policy_to_cancelled_at_next_revision",
-          "line": 116
+          "line": 226
         },
         {
           "ruleId": "POL-003",
@@ -555,7 +564,7 @@
           "runner": "vitest",
           "file": "packages/insurance-runtime/src/runtime.test.ts",
           "title": "insurance runtime > cancellation_is_terminal_and_replay_does_not_restore_bound_state",
-          "line": 121
+          "line": 695
         },
         {
           "ruleId": "BUS-003",
@@ -565,7 +574,7 @@
           "runner": "vitest",
           "file": "packages/service-bus/src/service-bus.test.ts",
           "title": "in-memory service bus > leaves_failed_delivery_pending_for_a_deterministic_retry",
-          "line": 128
+          "line": 275
         },
         {
           "ruleId": "BUS-003",
@@ -575,7 +584,7 @@
           "runner": "vitest",
           "file": "packages/insurance-runtime/src/runtime.test.ts",
           "title": "insurance runtime > retries_pending_finance_delivery_without_duplicate_policy_or_commission_records",
-          "line": 107
+          "line": 681
         },
         {
           "ruleId": "TEN-001",
@@ -585,7 +594,7 @@
           "runner": "vitest",
           "file": "packages/insurance-runtime/src/runtime.test.ts",
           "title": "insurance runtime > same_command_ids_and_entity_ids_are_independent_across_tenants",
-          "line": 29
+          "line": 532
         },
         {
           "ruleId": "TEN-001",
@@ -595,7 +604,7 @@
           "runner": "vitest",
           "file": "packages/policy-state-service/src/policy-state-service.test.ts",
           "title": "Policy State service > isolates_tenant_and_policy_ids_that_contain_key_delimiters",
-          "line": 171
+          "line": 209
         },
         {
           "ruleId": "TEN-001",
@@ -616,7 +625,7 @@
           "runner": "vitest",
           "file": "packages/api-contracts/src/test-api.test.ts",
           "title": "createTestApi > requires_independent_command_and_correlation_identities_before_mutation",
-          "line": 256
+          "line": 358
         },
         {
           "ruleId": "API-002",
@@ -626,7 +635,7 @@
           "runner": "vitest",
           "file": "packages/api-contracts/src/test-api.test.ts",
           "title": "createTestApi > binds_over_http_and_exposes_finance_initialized_through_policy_state",
-          "line": 192
+          "line": 253
         },
         {
           "ruleId": "API-002",
@@ -648,6 +657,16 @@
           "file": "packages/insurance-runtime/src/timestamps.test.ts",
           "title": "UTC timestamp boundaries > policy_clock_rejection_leaves_each_command_retryable_without_partial_state",
           "line": 44
+        },
+        {
+          "ruleId": "INT-001",
+          "layer": "runtime",
+          "testId": "binding-7dda513372c89602a727",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "packages/insurance-runtime/src/runtime.test.ts",
+          "title": "insurance runtime > replays_customer_and_property_intake_with_stable_command_identity",
+          "line": 450
         }
       ],
       "ruleLayers": [
@@ -706,6 +725,10 @@
         {
           "ruleId": "TIME-001",
           "layer": "runtime"
+        },
+        {
+          "ruleId": "INT-001",
+          "layer": "runtime"
         }
       ]
     },
@@ -738,7 +761,7 @@
           "runner": "vitest",
           "file": "packages/finance-service/src/finance-service.test.ts",
           "title": "Finance service > written_accrues_on_bound_state",
-          "line": 101
+          "line": 258
         },
         {
           "ruleId": "COM-002",
@@ -758,7 +781,7 @@
           "runner": "vitest",
           "file": "packages/finance-service/src/finance-service.test.ts",
           "title": "Finance service > cash_first_accrues_only_settled_premium",
-          "line": 86
+          "line": 243
         },
         {
           "ruleId": "COM-002",
@@ -799,7 +822,7 @@
           "runner": "vitest",
           "file": "packages/finance-service/src/finance-service.test.ts",
           "title": "Finance service > appends_commission_payment_without_rewriting_accrual",
-          "line": 204
+          "line": 361
         },
         {
           "ruleId": "BUS-004",
@@ -900,7 +923,7 @@
           "runner": "vitest",
           "file": "packages/finance-service/src/finance-service.test.ts",
           "title": "Finance service > written_accrues_on_bound_state",
-          "line": 101
+          "line": 258
         },
         {
           "ruleId": "COM-002",
@@ -920,7 +943,7 @@
           "runner": "vitest",
           "file": "packages/finance-service/src/finance-service.test.ts",
           "title": "Finance service > cash_first_accrues_only_settled_premium",
-          "line": 86
+          "line": 243
         },
         {
           "ruleId": "COM-002",
@@ -941,7 +964,7 @@
           "runner": "vitest",
           "file": "packages/finance-service/src/finance-service.test.ts",
           "title": "Finance service > reverses_only_allocated_settled_premium_in_a_mixed_refund",
-          "line": 141
+          "line": 298
         },
         {
           "ruleId": "COM-003",
@@ -972,7 +995,7 @@
           "runner": "vitest",
           "file": "packages/finance-service/src/finance-service.test.ts",
           "title": "Finance service > appends_commission_payment_without_rewriting_accrual",
-          "line": 204
+          "line": 361
         },
         {
           "ruleId": "FIN-001",
@@ -982,7 +1005,7 @@
           "runner": "vitest",
           "file": "packages/finance-service/src/finance-service.test.ts",
           "title": "Finance service > replays_commands_once_and_rejects_conflicting_input",
-          "line": 229
+          "line": 386
         },
         {
           "ruleId": "FIN-002",
@@ -992,7 +1015,7 @@
           "runner": "vitest",
           "file": "packages/finance-service/src/finance-service.test.ts",
           "title": "Finance service > cash_first_accrues_only_settled_premium",
-          "line": 86
+          "line": 243
         },
         {
           "ruleId": "FIN-003",
@@ -1002,7 +1025,7 @@
           "runner": "vitest",
           "file": "packages/finance-service/src/finance-service.test.ts",
           "title": "Finance service > initializes_ledger_from_policy_state",
-          "line": 58
+          "line": 215
         },
         {
           "ruleId": "FIN-003",
@@ -1023,7 +1046,7 @@
           "runner": "vitest",
           "file": "packages/finance-service/src/finance-service.test.ts",
           "title": "Finance service > rejects_over_refund_or_cross_tenant_allocation",
-          "line": 174
+          "line": 331
         },
         {
           "ruleId": "TEN-001",
@@ -1033,7 +1056,7 @@
           "runner": "vitest",
           "file": "packages/insurance-runtime/src/runtime.test.ts",
           "title": "insurance runtime > same_command_ids_and_entity_ids_are_independent_across_tenants",
-          "line": 29
+          "line": 532
         },
         {
           "ruleId": "TEN-001",
@@ -1043,7 +1066,7 @@
           "runner": "vitest",
           "file": "packages/policy-state-service/src/policy-state-service.test.ts",
           "title": "Policy State service > isolates_tenant_and_policy_ids_that_contain_key_delimiters",
-          "line": 171
+          "line": 209
         },
         {
           "ruleId": "TEN-001",
@@ -1156,7 +1179,7 @@
           "runner": "vitest",
           "file": "packages/finance-service/src/finance-service.test.ts",
           "title": "Finance service > initializes_ledger_from_policy_state",
-          "line": 58
+          "line": 215
         },
         {
           "ruleId": "FIN-003",
@@ -1177,7 +1200,7 @@
           "runner": "vitest",
           "file": "packages/policy-state-service/src/policy-state-service.test.ts",
           "title": "Policy State service > projects_bound_policy_and_publishes_state_change",
-          "line": 52
+          "line": 90
         },
         {
           "ruleId": "PST-002",
@@ -1187,7 +1210,7 @@
           "runner": "vitest",
           "file": "packages/policy-state-service/src/policy-state-service.test.ts",
           "title": "Policy State service > ignores_duplicate_policy_lifecycle_delivery",
-          "line": 133
+          "line": 171
         },
         {
           "ruleId": "TEN-001",
@@ -1197,7 +1220,7 @@
           "runner": "vitest",
           "file": "packages/insurance-runtime/src/runtime.test.ts",
           "title": "insurance runtime > same_command_ids_and_entity_ids_are_independent_across_tenants",
-          "line": 29
+          "line": 532
         },
         {
           "ruleId": "TEN-001",
@@ -1207,7 +1230,7 @@
           "runner": "vitest",
           "file": "packages/policy-state-service/src/policy-state-service.test.ts",
           "title": "Policy State service > isolates_tenant_and_policy_ids_that_contain_key_delimiters",
-          "line": 171
+          "line": 209
         },
         {
           "ruleId": "TEN-001",
@@ -1280,7 +1303,7 @@
           "runner": "vitest",
           "file": "packages/service-bus/src/service-bus.test.ts",
           "title": "in-memory service bus > delivers_once_per_consumer_and_preserves_delivery_log",
-          "line": 62
+          "line": 205
         },
         {
           "ruleId": "BUS-002",
@@ -1290,7 +1313,7 @@
           "runner": "vitest",
           "file": "packages/service-bus/src/service-bus.test.ts",
           "title": "in-memory service bus > drains_messages_in_publish_order",
-          "line": 95
+          "line": 238
         },
         {
           "ruleId": "BUS-003",
@@ -1300,7 +1323,7 @@
           "runner": "vitest",
           "file": "packages/service-bus/src/service-bus.test.ts",
           "title": "in-memory service bus > leaves_failed_delivery_pending_for_a_deterministic_retry",
-          "line": 128
+          "line": 275
         },
         {
           "ruleId": "BUS-003",
@@ -1310,7 +1333,7 @@
           "runner": "vitest",
           "file": "packages/insurance-runtime/src/runtime.test.ts",
           "title": "insurance runtime > retries_pending_finance_delivery_without_duplicate_policy_or_commission_records",
-          "line": 107
+          "line": 681
         },
         {
           "ruleId": "BUS-004",
@@ -1363,7 +1386,7 @@
     {
       "glob": "packages/api-contracts/src/**",
       "entrypoints": ["packages/api-contracts/src/index.ts"],
-      "ruleIds": ["TEN-001", "API-001", "API-002"],
+      "ruleIds": ["TEN-001", "API-001", "API-002", "INT-001"],
       "layers": ["runtime", "service", "playwright", "contract"],
       "testBindings": [
         {
@@ -1374,7 +1397,7 @@
           "runner": "vitest",
           "file": "packages/insurance-runtime/src/runtime.test.ts",
           "title": "insurance runtime > same_command_ids_and_entity_ids_are_independent_across_tenants",
-          "line": 29
+          "line": 532
         },
         {
           "ruleId": "TEN-001",
@@ -1384,7 +1407,7 @@
           "runner": "vitest",
           "file": "packages/policy-state-service/src/policy-state-service.test.ts",
           "title": "Policy State service > isolates_tenant_and_policy_ids_that_contain_key_delimiters",
-          "line": 171
+          "line": 209
         },
         {
           "ruleId": "TEN-001",
@@ -1405,7 +1428,7 @@
           "runner": "vitest",
           "file": "packages/api-contracts/src/test-api.test.ts",
           "title": "createTestApi > requires_independent_command_and_correlation_identities_before_mutation",
-          "line": 256
+          "line": 358
         },
         {
           "ruleId": "API-002",
@@ -1415,7 +1438,7 @@
           "runner": "vitest",
           "file": "packages/api-contracts/src/test-api.test.ts",
           "title": "createTestApi > binds_over_http_and_exposes_finance_initialized_through_policy_state",
-          "line": 192
+          "line": 253
         },
         {
           "ruleId": "API-002",
@@ -1427,6 +1450,16 @@
           "title": "@crm-worker starts the CRM with browser Test API handlers",
           "line": 3,
           "tag": "@crm-worker"
+        },
+        {
+          "ruleId": "INT-001",
+          "layer": "contract",
+          "testId": "binding-643c50f50bf3f5193bbb",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "packages/api-contracts/src/test-api.test.ts",
+          "title": "createTestApi > replays_lost_customer_and_property_responses_without_duplicate_entities",
+          "line": 34
         }
       ],
       "ruleLayers": [
@@ -1453,6 +1486,10 @@
         {
           "ruleId": "API-002",
           "layer": "playwright"
+        },
+        {
+          "ruleId": "INT-001",
+          "layer": "contract"
         }
       ]
     },
@@ -1562,6 +1599,74 @@
       "ruleLayers": [
         {
           "ruleId": "UI-001",
+          "layer": "ui"
+        }
+      ]
+    },
+    {
+      "glob": "apps/crm-web/src/features/customers/customer-list-page.tsx",
+      "entrypoints": ["apps/crm-web/src/features/customers/customer-list-page.tsx"],
+      "ruleIds": ["INT-001"],
+      "layers": ["ui"],
+      "testBindings": [
+        {
+          "ruleId": "INT-001",
+          "layer": "ui",
+          "testId": "binding-f1c485184d66a972751e",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "apps/crm-web/src/features/crm-workflow.test.tsx",
+          "title": "insurance CRM reference workflow > retries_lost_customer_and_property_responses_with_one_stable_identity",
+          "line": 307
+        },
+        {
+          "ruleId": "INT-001",
+          "layer": "ui",
+          "testId": "binding-f66852326fa652481101",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "apps/crm-web/src/features/crm-workflow.test.tsx",
+          "title": "insurance CRM reference workflow > rotates_intake_identity_only_after_a_terminal_rejection",
+          "line": 361
+        }
+      ],
+      "ruleLayers": [
+        {
+          "ruleId": "INT-001",
+          "layer": "ui"
+        }
+      ]
+    },
+    {
+      "glob": "apps/crm-web/src/features/crm/crm-api.ts",
+      "entrypoints": ["apps/crm-web/src/features/crm/crm-api.ts"],
+      "ruleIds": ["INT-001"],
+      "layers": ["ui"],
+      "testBindings": [
+        {
+          "ruleId": "INT-001",
+          "layer": "ui",
+          "testId": "binding-34c348d4d1fdd978e565",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "apps/crm-web/src/features/crm-workflow.test.tsx",
+          "title": "insurance CRM reference workflow > retries_lost_customer_and_property_responses_with_one_stable_identity",
+          "line": 307
+        },
+        {
+          "ruleId": "INT-001",
+          "layer": "ui",
+          "testId": "binding-48dc2a8940fa9f12637b",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "apps/crm-web/src/features/crm-workflow.test.tsx",
+          "title": "insurance CRM reference workflow > rotates_intake_identity_only_after_a_terminal_rejection",
+          "line": 361
+        }
+      ],
+      "ruleLayers": [
+        {
+          "ruleId": "INT-001",
           "layer": "ui"
         }
       ]

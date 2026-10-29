@@ -11,14 +11,25 @@ import {
   getCustomers,
   getProperties,
 } from "@/features/crm/crm-api";
+import { useCommand } from "@/features/crm/use-command";
+import { HttpError } from "@/lib/http";
 
 const initialCustomer = { name: "", email: "" };
 const initialProperty = { customerId: "", addressLine1: "", city: "", state: "", postalCode: "" };
+const isTerminal = (error: unknown) =>
+  error instanceof HttpError &&
+  error.status >= 400 &&
+  error.status < 500 &&
+  error.status !== 408 &&
+  error.status !== 429 &&
+  !error.recoverable;
 
 export const CustomerListPage = () => {
   const queryClient = useQueryClient();
   const [customer, setCustomer] = useState(initialCustomer);
   const [property, setProperty] = useState(initialProperty);
+  const customerCommand = useCommand();
+  const propertyCommand = useCommand();
   const customersQuery = useQuery({ queryKey: ["crm", "customers"], queryFn: getCustomers });
   const propertiesQuery = useQuery({ queryKey: ["crm", "properties"], queryFn: getProperties });
   const refreshCustomers = () => queryClient.invalidateQueries({ queryKey: ["crm", "customers"] });
@@ -27,17 +38,27 @@ export const CustomerListPage = () => {
   const customerMutation = useMutation({
     mutationFn: createCustomer,
     onSuccess: () => {
+      customerCommand.complete();
       setCustomer(initialCustomer);
       void refreshCustomers();
+    },
+    onError: (error) => {
+      if (isTerminal(error)) customerCommand.complete();
     },
   });
   const propertyMutation = useMutation({
     mutationFn: createProperty,
     onSuccess: () => {
+      propertyCommand.complete();
       setProperty(initialProperty);
       void refreshProperties();
     },
+    onError: (error) => {
+      if (isTerminal(error)) propertyCommand.complete();
+    },
   });
+  const uncertainCustomer = customerMutation.isError && !isTerminal(customerMutation.error);
+  const uncertainProperty = propertyMutation.isError && !isTerminal(propertyMutation.error);
 
   if (customersQuery.isError || propertiesQuery.isError) {
     return (
@@ -67,36 +88,48 @@ export const CustomerListPage = () => {
             className="mt-4 grid gap-4"
             onSubmit={(event) => {
               event.preventDefault();
-              customerMutation.mutate(customer);
+              customerMutation.mutate(customerCommand.prepare(customer));
             }}
           >
-            <div className="grid gap-2">
-              <Label htmlFor="customer-name">Customer name</Label>
-              <Input
-                id="customer-name"
-                required
-                value={customer.name}
-                onChange={(event) => setCustomer({ ...customer, name: event.target.value })}
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="customer-email">Customer email</Label>
-              <Input
-                id="customer-email"
-                type="email"
-                required
-                value={customer.email}
-                onChange={(event) => setCustomer({ ...customer, email: event.target.value })}
-              />
-            </div>
-            <Button type="submit" disabled={customerMutation.isPending}>
-              Add customer
-            </Button>
+            <fieldset
+              className="grid gap-4"
+              disabled={customerMutation.isPending || uncertainCustomer}
+            >
+              <div className="grid gap-2">
+                <Label htmlFor="customer-name">Customer name</Label>
+                <Input
+                  id="customer-name"
+                  required
+                  value={customer.name}
+                  onChange={(event) => setCustomer({ ...customer, name: event.target.value })}
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="customer-email">Customer email</Label>
+                <Input
+                  id="customer-email"
+                  type="email"
+                  required
+                  value={customer.email}
+                  onChange={(event) => setCustomer({ ...customer, email: event.target.value })}
+                />
+              </div>
+              <Button type="submit">Add customer</Button>
+            </fieldset>
           </form>
           {customerMutation.isError ? (
             <p className="mt-3 text-sm text-rose-600" role="alert">
               Customer could not be created. Check the policyholder details and try again.
             </p>
+          ) : null}
+          {uncertainCustomer && customerMutation.variables ? (
+            <Button
+              className="mt-3"
+              type="button"
+              onClick={() => customerMutation.mutate(customerMutation.variables)}
+            >
+              Retry customer
+            </Button>
           ) : null}
           <ul className="mt-5 divide-y divide-[var(--border)]" aria-label="Customers">
             {(customersQuery.data ?? []).map((entry) => (
@@ -113,65 +146,80 @@ export const CustomerListPage = () => {
             className="mt-4 grid gap-4"
             onSubmit={(event) => {
               event.preventDefault();
-              propertyMutation.mutate(property);
+              propertyMutation.mutate(propertyCommand.prepare(property));
             }}
           >
-            <div className="grid gap-2">
-              <Label htmlFor="property-customer">Policyholder</Label>
-              <select
-                id="property-customer"
-                required
-                value={property.customerId}
-                onChange={(event) => setProperty({ ...property, customerId: event.target.value })}
-                className="h-10 rounded-md border border-[var(--border)] bg-[var(--surface)] px-3 text-sm"
-              >
-                <option value="">Select a policyholder</option>
-                {(customersQuery.data ?? []).map((entry) => (
-                  <option key={entry.id} value={entry.id}>
-                    {entry.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="property-address">Street address</Label>
-              <Input
-                id="property-address"
-                required
-                value={property.addressLine1}
-                onChange={(event) => setProperty({ ...property, addressLine1: event.target.value })}
-              />
-            </div>
-            <div className="grid grid-cols-3 gap-3">
-              {(
-                [
-                  ["city", "City"],
-                  ["state", "State"],
-                  ["postalCode", "Postal code"],
-                ] as const
-              ).map(([field, label]) => (
-                <div key={field} className="grid gap-2">
-                  <Label htmlFor={`property-${field}`}>{label}</Label>
-                  <Input
-                    id={`property-${field}`}
-                    required
-                    value={property[field]}
-                    onChange={(event) => setProperty({ ...property, [field]: event.target.value })}
-                  />
-                </div>
-              ))}
-            </div>
-            <Button
-              type="submit"
-              disabled={propertyMutation.isPending || !customersQuery.data?.length}
+            <fieldset
+              className="grid gap-4"
+              disabled={propertyMutation.isPending || uncertainProperty}
             >
-              Add property
-            </Button>
+              <div className="grid gap-2">
+                <Label htmlFor="property-customer">Policyholder</Label>
+                <select
+                  id="property-customer"
+                  required
+                  value={property.customerId}
+                  onChange={(event) => setProperty({ ...property, customerId: event.target.value })}
+                  className="h-10 rounded-md border border-[var(--border)] bg-[var(--surface)] px-3 text-sm"
+                >
+                  <option value="">Select a policyholder</option>
+                  {(customersQuery.data ?? []).map((entry) => (
+                    <option key={entry.id} value={entry.id}>
+                      {entry.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="property-address">Street address</Label>
+                <Input
+                  id="property-address"
+                  required
+                  value={property.addressLine1}
+                  onChange={(event) =>
+                    setProperty({ ...property, addressLine1: event.target.value })
+                  }
+                />
+              </div>
+              <div className="grid grid-cols-3 gap-3">
+                {(
+                  [
+                    ["city", "City"],
+                    ["state", "State"],
+                    ["postalCode", "Postal code"],
+                  ] as const
+                ).map(([field, label]) => (
+                  <div key={field} className="grid gap-2">
+                    <Label htmlFor={`property-${field}`}>{label}</Label>
+                    <Input
+                      id={`property-${field}`}
+                      required
+                      value={property[field]}
+                      onChange={(event) =>
+                        setProperty({ ...property, [field]: event.target.value })
+                      }
+                    />
+                  </div>
+                ))}
+              </div>
+              <Button type="submit" disabled={!customersQuery.data?.length}>
+                Add property
+              </Button>
+            </fieldset>
           </form>
           {propertyMutation.isError ? (
             <p className="mt-3 text-sm text-rose-600" role="alert">
               Property could not be created. Check the insured address and try again.
             </p>
+          ) : null}
+          {uncertainProperty && propertyMutation.variables ? (
+            <Button
+              className="mt-3"
+              type="button"
+              onClick={() => propertyMutation.mutate(propertyMutation.variables)}
+            >
+              Retry property
+            </Button>
           ) : null}
           <ul className="mt-5 divide-y divide-[var(--border)]" aria-label="Insured properties">
             {(propertiesQuery.data ?? []).map((entry) => (

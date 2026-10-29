@@ -490,6 +490,18 @@ describe("byte-exact execution record prefix", () => {
         proposedRecord.toString(),
       ).toBeGreaterThan(0);
   });
+
+  test("rejects invalid UTF-8 and records without event identities", () => {
+    const invalidUtf8 = Buffer.concat([baseRecord, Buffer.from([0xff, 0x0a])]);
+    expect(
+      verifyRecordPrefix({ baseRecord, proposedRecord: invalidUtf8 }).errors.join(" "),
+    ).toMatch(/valid UTF-8/i);
+
+    const missingEventId = Buffer.concat([baseRecord, Buffer.from("{}\n")]);
+    expect(
+      verifyRecordPrefix({ baseRecord, proposedRecord: missingEventId }).errors.join(" "),
+    ).toMatch(/missing eventId/i);
+  });
 });
 
 describe("changed harness evidence", () => {

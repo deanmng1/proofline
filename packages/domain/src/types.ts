@@ -25,7 +25,7 @@ export type Quote = {
 export type Policy = Omit<Quote, "createdAt" | "status"> & {
   quoteId: string;
   boundAt: string;
-  status: "bound";
+  status: PolicyLifecycle;
 };
 
 export type FinanceEntryKind = "deposit" | "premium_payment" | "refund" | "claim_payment";

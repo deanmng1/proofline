@@ -69,6 +69,23 @@ export type FinanceService = {
   getCommissionEntries(tenantId: string, policyId: string): CommissionEntry[];
 };
 
+type FinanceCommandReceipt = {
+  fingerprint: string;
+  envelope: EventEnvelope<FinanceEvent>;
+  applied: boolean;
+};
+
+export type FinanceServiceCheckpoint = {
+  version: 1;
+  ledgers: { key: string; value: FinanceLedger }[];
+  commandReceipts: { key: string; value: FinanceCommandReceipt }[];
+};
+
+export type FinancePersistencePort = {
+  checkpoint(): FinanceServiceCheckpoint;
+  hydrate(checkpoint: FinanceServiceCheckpoint): void;
+};
+
 const key = (...parts: string[]) => JSON.stringify(parts);
 const commandFingerprint = (event: DeepReadonly<FinanceEvent>, correlationId: string) =>
   JSON.stringify({ event, correlationId });
@@ -99,15 +116,14 @@ const audit = (message: EventEnvelope): FinanceAuditEntry => ({
 export function createFinanceService({
   bus,
   now,
+  registerPersistence,
 }: {
   bus: ServiceBus;
   now: () => string;
+  registerPersistence?: (port: FinancePersistencePort) => void;
 }): FinanceService {
   const ledgers = new Map<string, FinanceLedger>();
-  const commandReceipts = new Map<
-    string,
-    { fingerprint: string; envelope: EventEnvelope<FinanceEvent>; applied: boolean }
-  >();
+  const commandReceipts = new Map<string, FinanceCommandReceipt>();
   const requireLedger = (tenantId: string, policyId: string) => {
     const ledger = ledgers.get(key(tenantId, policyId));
     if (!ledger)
@@ -337,6 +353,190 @@ export function createFinanceService({
     commandReceipts.set(receiptKey, { fingerprint, envelope: message, applied: false });
     return message;
   };
+
+  const persistence: FinancePersistencePort = {
+    checkpoint: () => ({
+      version: 1,
+      ledgers: [...ledgers.entries()]
+        .sort(([left], [right]) => left.localeCompare(right))
+        .map(([entryKey, value]) => ({ entryKey, value: structuredClone(value) }))
+        .map(({ entryKey, value }) => ({ key: entryKey, value })),
+      commandReceipts: [...commandReceipts.entries()]
+        .sort(([left], [right]) => left.localeCompare(right))
+        .map(([entryKey, value]) => ({ key: entryKey, value: structuredClone(value) })),
+    }),
+    hydrate(checkpoint) {
+      const restored = structuredClone(checkpoint);
+      if (
+        restored?.version !== 1 ||
+        !Array.isArray(restored.ledgers) ||
+        !Array.isArray(restored.commandReceipts)
+      )
+        throw new Error("Invalid Finance checkpoint.");
+      const nextLedgers = new Map<string, FinanceLedger>();
+      for (const row of restored.ledgers) {
+        let parsed: unknown;
+        try {
+          parsed = typeof row?.key === "string" ? JSON.parse(row.key) : undefined;
+        } catch {
+          throw new Error("Invalid Finance checkpoint ledger key.");
+        }
+        if (
+          !Array.isArray(parsed) ||
+          parsed.length !== 2 ||
+          typeof parsed[0] !== "string" ||
+          typeof parsed[1] !== "string" ||
+          !row.value ||
+          row.value.policyState.policyId !== parsed[1] ||
+          !Array.isArray(row.value.financeEntries) ||
+          !Array.isArray(row.value.commissionEntries) ||
+          !Array.isArray(row.value.auditEntries)
+        )
+          throw new Error("Invalid Finance checkpoint ledger identity.");
+        if (nextLedgers.has(row.key)) throw new Error("Duplicate Finance checkpoint ledger.");
+        const tenantId = parsed[0];
+        const policyId = parsed[1];
+        const state = row.value.policyState;
+        if (
+          (state.lifecycle !== "bound" && state.lifecycle !== "cancelled") ||
+          !Number.isSafeInteger(state.revision) ||
+          state.revision < 1 ||
+          (state.product !== "risk_secure" && state.product !== "risk_secure_plus") ||
+          !Number.isSafeInteger(state.premiumCents) ||
+          state.premiumCents <= 0 ||
+          typeof state.sourcePolicyMessageId !== "string" ||
+          !state.sourcePolicyMessageId.trim()
+        )
+          throw new Error("Invalid Finance checkpoint Policy State.");
+        assertCommissionPlan(state.commissionPlan);
+        if (
+          row.value.financeEntries.some(
+            (entry) =>
+              entry.tenantId !== tenantId ||
+              entry.policyId !== policyId ||
+              typeof entry.id !== "string" ||
+              !entry.id.trim() ||
+              typeof entry.sourceEventId !== "string" ||
+              !entry.sourceEventId.trim() ||
+              !["deposit", "premium_payment", "refund", "claim_payment"].includes(entry.kind) ||
+              !Number.isSafeInteger(entry.amountCents) ||
+              entry.amountCents === 0 ||
+              ((entry.kind === "deposit" || entry.kind === "premium_payment") &&
+                entry.amountCents < 0) ||
+              ((entry.kind === "refund" || entry.kind === "claim_payment") &&
+                entry.amountCents > 0) ||
+              (() => {
+                try {
+                  assertUtcTimestamp(entry.occurredAt);
+                  return false;
+                } catch {
+                  return true;
+                }
+              })(),
+          )
+        )
+          throw new Error("Invalid or cross-tenant Finance checkpoint ledger entry.");
+        if (
+          new Set(row.value.financeEntries.map((entry) => entry.id)).size !==
+          row.value.financeEntries.length
+        )
+          throw new Error("Duplicate Finance checkpoint ledger entry.");
+        if (
+          row.value.commissionEntries.some((entry) => {
+            try {
+              assertUtcTimestamp(entry.earnedAt);
+              assertUtcTimestamp(entry.payableAt);
+              if (entry.paidAt) assertUtcTimestamp(entry.paidAt);
+            } catch {
+              return true;
+            }
+            return (
+              entry.policyId !== policyId ||
+              typeof entry.id !== "string" ||
+              !entry.id.trim() ||
+              typeof entry.sourceEventId !== "string" ||
+              !entry.sourceEventId.trim() ||
+              !["accrual", "refund_adjustment", "payment"].includes(entry.kind) ||
+              !["earned", "payable", "paid"].includes(entry.status) ||
+              !Number.isSafeInteger(entry.amountCents) ||
+              entry.amountCents === 0
+            );
+          })
+        )
+          throw new Error("Invalid Finance checkpoint commission entry.");
+        if (
+          new Set(row.value.commissionEntries.map((entry) => entry.id)).size !==
+          row.value.commissionEntries.length
+        )
+          throw new Error("Duplicate Finance checkpoint commission entry.");
+        const auditIds = new Set<string>();
+        const allowedAuditTypes = new Set<ServiceEvent["type"]>([
+          "policy.state.changed",
+          "finance.deposit.recorded",
+          "finance.premium.payment.settled",
+          "finance.refund.recorded",
+          "finance.claim.payment.recorded",
+          "finance.commission.paid",
+        ]);
+        for (const entry of row.value.auditEntries) {
+          if (
+            entry.tenantId !== tenantId ||
+            typeof entry.sourceEventId !== "string" ||
+            !entry.sourceEventId.trim() ||
+            typeof entry.correlationId !== "string" ||
+            !entry.correlationId.trim() ||
+            !allowedAuditTypes.has(entry.type) ||
+            auditIds.has(entry.sourceEventId)
+          )
+            throw new Error("Invalid or cross-tenant Finance checkpoint audit entry.");
+          assertUtcTimestamp(entry.occurredAt);
+          auditIds.add(entry.sourceEventId);
+        }
+        if (!row.value.auditEntries.some((entry) => entry.type === "policy.state.changed"))
+          throw new Error("Finance checkpoint is missing its Policy State audit entry.");
+        nextLedgers.set(row.key, snapshot(row.value));
+      }
+      const nextReceipts = new Map<string, FinanceCommandReceipt>();
+      for (const row of restored.commandReceipts) {
+        let parsed: unknown;
+        try {
+          parsed = typeof row?.key === "string" ? JSON.parse(row.key) : undefined;
+        } catch {
+          throw new Error("Invalid Finance checkpoint command receipt key.");
+        }
+        if (
+          !Array.isArray(parsed) ||
+          parsed.length !== 2 ||
+          typeof parsed[0] !== "string" ||
+          typeof parsed[1] !== "string" ||
+          !row.value ||
+          typeof row.value.fingerprint !== "string" ||
+          typeof row.value.applied !== "boolean" ||
+          row.value.envelope.tenantId !== parsed[0] ||
+          row.value.envelope.event.commandId !== parsed[1] ||
+          row.value.envelope.messageId !== `finance:${key(parsed[0], parsed[1])}` ||
+          row.value.fingerprint !==
+            commandFingerprint(row.value.envelope.event, row.value.envelope.correlationId)
+        )
+          throw new Error("Invalid Finance checkpoint command receipt fingerprint or identity.");
+        if (nextReceipts.has(row.key)) throw new Error("Duplicate Finance checkpoint receipt.");
+        assertUtcTimestamp(row.value.envelope.occurredAt);
+        const ledger = nextLedgers.get(key(parsed[0], row.value.envelope.event.policyId));
+        if (!ledger) throw new Error("Finance checkpoint receipt references a missing ledger.");
+        const wasApplied = ledger.auditEntries.some(
+          (entry) => entry.sourceEventId === row.value.envelope.messageId,
+        );
+        if (wasApplied !== row.value.applied)
+          throw new Error("Finance checkpoint receipt applied state contradicts its ledger.");
+        nextReceipts.set(row.key, snapshot(row.value));
+      }
+      ledgers.clear();
+      commandReceipts.clear();
+      for (const [entryKey, value] of nextLedgers) ledgers.set(entryKey, value);
+      for (const [entryKey, value] of nextReceipts) commandReceipts.set(entryKey, value);
+    },
+  };
+  registerPersistence?.(persistence);
 
   return {
     recordDeposit: (command) =>

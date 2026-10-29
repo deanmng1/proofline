@@ -1,2 +1,2 @@
-export type { DeliveryRecord, ServiceBus } from "./service-bus";
+export type { DeliveryRecord, ServiceBus, ServiceBusCheckpoint } from "./service-bus";
 export { createInMemoryServiceBus } from "./service-bus";

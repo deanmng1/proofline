@@ -10,12 +10,12 @@
         {
           "file": "packages/policy-service/src/policy-service.test.ts",
           "title": "Policy service > binds_a_quote_once_and_publishes_policy_lifecycle_changed",
-          "line": 91
+          "line": 201
         },
         {
           "file": "packages/insurance-runtime/src/runtime.test.ts",
           "title": "insurance runtime > bind_chain_is_idempotent_across_all_consumers",
-          "line": 54
+          "line": 557
         }
       ],
       "playwright": [
@@ -36,7 +36,7 @@
         {
           "file": "packages/policy-service/src/policy-service.test.ts",
           "title": "Policy service > rejects_same_command_id_with_different_payload",
-          "line": 159
+          "line": 294
         }
       ],
       "playwright": []
@@ -50,12 +50,12 @@
         {
           "file": "packages/policy-service/src/policy-service.test.ts",
           "title": "Policy service > transitions_bound_policy_to_cancelled_at_next_revision",
-          "line": 116
+          "line": 226
         },
         {
           "file": "packages/insurance-runtime/src/runtime.test.ts",
           "title": "insurance runtime > cancellation_is_terminal_and_replay_does_not_restore_bound_state",
-          "line": 121
+          "line": 695
         }
       ],
       "playwright": []
@@ -74,7 +74,7 @@
         {
           "file": "packages/finance-service/src/finance-service.test.ts",
           "title": "Finance service > written_accrues_on_bound_state",
-          "line": 101
+          "line": 258
         }
       ],
       "playwright": []
@@ -93,7 +93,7 @@
         {
           "file": "packages/finance-service/src/finance-service.test.ts",
           "title": "Finance service > cash_first_accrues_only_settled_premium",
-          "line": 86
+          "line": 243
         }
       ],
       "playwright": [
@@ -114,7 +114,7 @@
         {
           "file": "packages/finance-service/src/finance-service.test.ts",
           "title": "Finance service > reverses_only_allocated_settled_premium_in_a_mixed_refund",
-          "line": 141
+          "line": 298
         }
       ],
       "playwright": [
@@ -154,7 +154,7 @@
         {
           "file": "packages/finance-service/src/finance-service.test.ts",
           "title": "Finance service > appends_commission_payment_without_rewriting_accrual",
-          "line": 204
+          "line": 361
         }
       ],
       "playwright": []
@@ -168,7 +168,7 @@
         {
           "file": "packages/finance-service/src/finance-service.test.ts",
           "title": "Finance service > replays_commands_once_and_rejects_conflicting_input",
-          "line": 229
+          "line": 386
         }
       ],
       "playwright": []
@@ -182,7 +182,7 @@
         {
           "file": "packages/finance-service/src/finance-service.test.ts",
           "title": "Finance service > cash_first_accrues_only_settled_premium",
-          "line": 86
+          "line": 243
         }
       ],
       "playwright": []
@@ -196,7 +196,7 @@
         {
           "file": "packages/finance-service/src/finance-service.test.ts",
           "title": "Finance service > initializes_ledger_from_policy_state",
-          "line": 58
+          "line": 215
         }
       ],
       "playwright": [
@@ -217,7 +217,7 @@
         {
           "file": "packages/finance-service/src/finance-service.test.ts",
           "title": "Finance service > rejects_over_refund_or_cross_tenant_allocation",
-          "line": 174
+          "line": 331
         }
       ],
       "playwright": []
@@ -231,7 +231,7 @@
         {
           "file": "packages/service-bus/src/service-bus.test.ts",
           "title": "in-memory service bus > delivers_once_per_consumer_and_preserves_delivery_log",
-          "line": 62
+          "line": 205
         }
       ],
       "playwright": []
@@ -245,7 +245,7 @@
         {
           "file": "packages/service-bus/src/service-bus.test.ts",
           "title": "in-memory service bus > drains_messages_in_publish_order",
-          "line": 95
+          "line": 238
         }
       ],
       "playwright": []
@@ -259,12 +259,12 @@
         {
           "file": "packages/service-bus/src/service-bus.test.ts",
           "title": "in-memory service bus > leaves_failed_delivery_pending_for_a_deterministic_retry",
-          "line": 128
+          "line": 275
         },
         {
           "file": "packages/insurance-runtime/src/runtime.test.ts",
           "title": "insurance runtime > retries_pending_finance_delivery_without_duplicate_policy_or_commission_records",
-          "line": 107
+          "line": 681
         }
       ],
       "playwright": []
@@ -278,7 +278,7 @@
         {
           "file": "packages/policy-state-service/src/policy-state-service.test.ts",
           "title": "Policy State service > projects_bound_policy_and_publishes_state_change",
-          "line": 52
+          "line": 90
         }
       ],
       "playwright": []
@@ -292,7 +292,7 @@
         {
           "file": "packages/policy-state-service/src/policy-state-service.test.ts",
           "title": "Policy State service > ignores_duplicate_policy_lifecycle_delivery",
-          "line": 133
+          "line": 171
         }
       ],
       "playwright": []
@@ -311,12 +311,12 @@
         {
           "file": "packages/insurance-runtime/src/runtime.test.ts",
           "title": "insurance runtime > same_command_ids_and_entity_ids_are_independent_across_tenants",
-          "line": 29
+          "line": 532
         },
         {
           "file": "packages/policy-state-service/src/policy-state-service.test.ts",
           "title": "Policy State service > isolates_tenant_and_policy_ids_that_contain_key_delimiters",
-          "line": 171
+          "line": 209
         }
       ],
       "playwright": [
@@ -337,7 +337,7 @@
         {
           "file": "packages/api-contracts/src/test-api.test.ts",
           "title": "createTestApi > requires_independent_command_and_correlation_identities_before_mutation",
-          "line": 256
+          "line": 358
         }
       ],
       "playwright": []
@@ -351,7 +351,7 @@
         {
           "file": "packages/api-contracts/src/test-api.test.ts",
           "title": "createTestApi > binds_over_http_and_exposes_finance_initialized_through_policy_state",
-          "line": 192
+          "line": 253
         }
       ],
       "playwright": [
@@ -458,6 +458,40 @@
           "file": "apps/crm-web/src/test/rbac.test.tsx",
           "title": "role-based access control > redirects a Manager away from a restricted route",
           "line": 52
+        }
+      ],
+      "playwright": []
+    },
+    {
+      "id": "INT-001",
+      "description": "Customer and property intake retains one command and correlation identity through an uncertain accepted response, replays the original result without duplicates, and rotates only after a terminal rejection.",
+      "criticality": "critical",
+      "paths": [
+        "packages/insurance-runtime/src/**",
+        "packages/api-contracts/src/**",
+        "apps/crm-web/src/features/customers/customer-list-page.tsx",
+        "apps/crm-web/src/features/crm/crm-api.ts"
+      ],
+      "vitest": [
+        {
+          "file": "packages/insurance-runtime/src/runtime.test.ts",
+          "title": "insurance runtime > replays_customer_and_property_intake_with_stable_command_identity",
+          "line": 450
+        },
+        {
+          "file": "packages/api-contracts/src/test-api.test.ts",
+          "title": "createTestApi > replays_lost_customer_and_property_responses_without_duplicate_entities",
+          "line": 34
+        },
+        {
+          "file": "apps/crm-web/src/features/crm-workflow.test.tsx",
+          "title": "insurance CRM reference workflow > retries_lost_customer_and_property_responses_with_one_stable_identity",
+          "line": 307
+        },
+        {
+          "file": "apps/crm-web/src/features/crm-workflow.test.tsx",
+          "title": "insurance CRM reference workflow > rotates_intake_identity_only_after_a_terminal_rejection",
+          "line": 361
         }
       ],
       "playwright": []

@@ -1,7 +1,11 @@
 import type { EventEnvelope, PolicyStateChangedMessage } from "@testbed/domain";
 import { createInMemoryServiceBus } from "@testbed/service-bus";
 import { describe, expect, test } from "vitest";
-import { createFinanceService } from "./finance-service";
+import {
+  createFinanceService,
+  type FinancePersistencePort,
+  type FinanceServiceCheckpoint,
+} from "./finance-service";
 
 const at = "2026-01-01T00:00:00.000Z";
 const base = { tenantId: "tenant-1", policyId: "policy-1", correlationId: "workflow-1" };
@@ -12,7 +16,14 @@ function required<T>(value: T | undefined): T {
 function setup(timing: "on_bind" | "as_earned" = "as_earned", holdPeriodDays = 0) {
   const bus = createInMemoryServiceBus();
   let time = at;
-  const finance = createFinanceService({ bus, now: () => time });
+  let persistence!: FinancePersistencePort;
+  const finance = createFinanceService({
+    bus,
+    now: () => time,
+    registerPersistence: (port) => {
+      persistence = port;
+    },
+  });
   const state = {
     messageId: "state-1",
     correlationId: "bind-1",
@@ -45,6 +56,7 @@ function setup(timing: "on_bind" | "as_earned" = "as_earned", holdPeriodDays = 0
   return {
     bus,
     finance,
+    persistence,
     state,
     initialize,
     ledger,
@@ -55,6 +67,151 @@ function setup(timing: "on_bind" | "as_earned" = "as_earned", holdPeriodDays = 0
 }
 
 describe("Finance service", () => {
+  test("hydrates_a_detached_complete_finance_checkpoint", () => {
+    const source = setup("on_bind");
+    source.initialize();
+    source.finance.recordDeposit({ ...base, commandId: "deposit", amountCents: 100 });
+    source.bus.drain();
+    const checkpoint = JSON.parse(JSON.stringify(source.persistence.checkpoint()));
+    const restored = setup("on_bind");
+    restored.persistence.hydrate(checkpoint);
+    checkpoint.ledgers[0].value.policyState.premiumCents = 1;
+    expect(restored.ledger()).toMatchObject({
+      policyState: { premiumCents: 10_000 },
+      financeEntries: [expect.objectContaining({ amountCents: 100 })],
+      commissionEntries: [expect.objectContaining({ kind: "accrual" })],
+    });
+    expect(
+      restored.finance.recordDeposit({ ...base, commandId: "deposit", amountCents: 100 }),
+    ).toEqual(expect.objectContaining({ event: expect.objectContaining({ amountCents: 100 }) }));
+  });
+
+  test("rejects_forged_checkpoint_receipts_and_cross_tenant_ledger_history", () => {
+    const source = setup("on_bind");
+    source.initialize();
+    source.finance.recordDeposit({ ...base, commandId: "deposit", amountCents: 100 });
+    source.bus.drain();
+    const checkpoint = source.persistence.checkpoint();
+
+    const fingerprint = structuredClone(checkpoint);
+    fingerprint.commandReceipts[0].value.fingerprint = "{}";
+    expect(() => setup().persistence.hydrate(fingerprint)).toThrow(/fingerprint/i);
+
+    const applied = structuredClone(checkpoint);
+    applied.commandReceipts[0].value.applied = false;
+    expect(() => setup().persistence.hydrate(applied)).toThrow(/applied|receipt/i);
+
+    const foreignAudit = structuredClone(checkpoint);
+    foreignAudit.ledgers[0].value.auditEntries[0].tenantId = "other-tenant";
+    expect(() => setup().persistence.hydrate(foreignAudit)).toThrow(/tenant|ledger/i);
+
+    const malformedEntry = structuredClone(checkpoint);
+    malformedEntry.ledgers[0].value.financeEntries[0].amountCents = Number.NaN;
+    expect(() => setup().persistence.hydrate(malformedEntry)).toThrow(/entry|amount/i);
+
+    const malformedLedgerKey = structuredClone(checkpoint);
+    malformedLedgerKey.ledgers[0].key = "not-json";
+    expect(() => setup().persistence.hydrate(malformedLedgerKey)).toThrow(/ledger key/i);
+
+    const malformedReceiptKey = structuredClone(checkpoint);
+    malformedReceiptKey.commandReceipts[0].key = "not-json";
+    expect(() => setup().persistence.hydrate(malformedReceiptKey)).toThrow(/receipt key/i);
+
+    const duplicateReceipt = structuredClone(checkpoint);
+    duplicateReceipt.commandReceipts.push(structuredClone(duplicateReceipt.commandReceipts[0]));
+    expect(() => setup().persistence.hydrate(duplicateReceipt)).toThrow(/Duplicate.*receipt/i);
+
+    const missingReceiptLedger = structuredClone(checkpoint);
+    const missingEnvelope = missingReceiptLedger.commandReceipts[0].value.envelope;
+    Reflect.set(missingEnvelope.event, "policyId", "missing-policy");
+    missingReceiptLedger.commandReceipts[0].value.fingerprint = JSON.stringify({
+      event: missingEnvelope.event,
+      correlationId: missingEnvelope.correlationId,
+    });
+    expect(() => setup().persistence.hydrate(missingReceiptLedger)).toThrow(/missing ledger/i);
+
+    const invalidCommissionDate = structuredClone(checkpoint);
+    invalidCommissionDate.ledgers[0].value.commissionEntries[0].earnedAt = "invalid";
+    expect(() => setup().persistence.hydrate(invalidCommissionDate)).toThrow(/commission/i);
+
+    const invalidCommissionShape = structuredClone(checkpoint);
+    const commission = invalidCommissionShape.ledgers[0].value.commissionEntries[0];
+    commission.id = "";
+    commission.amountCents = 0;
+    expect(() => setup().persistence.hydrate(invalidCommissionShape)).toThrow(/commission/i);
+
+    const rejectLedger = (mutate: (value: FinanceServiceCheckpoint) => void) => {
+      const value = structuredClone(checkpoint);
+      mutate(value);
+      expect(() => setup().persistence.hydrate(value)).toThrow(/Finance checkpoint|ISO-UTC/i);
+    };
+    rejectLedger((value) => Reflect.set(value.ledgers[0].value.policyState, "lifecycle", "bogus"));
+    rejectLedger((value) => Reflect.set(value.ledgers[0].value.policyState, "revision", 0));
+    rejectLedger((value) => Reflect.set(value.ledgers[0].value.policyState, "product", "bogus"));
+    rejectLedger((value) => Reflect.set(value.ledgers[0].value.policyState, "premiumCents", 0));
+    rejectLedger((value) =>
+      Reflect.set(value.ledgers[0].value.policyState, "sourcePolicyMessageId", ""),
+    );
+    rejectLedger((value) =>
+      Reflect.set(value.ledgers[0].value.financeEntries[0], "tenantId", "other"),
+    );
+    rejectLedger((value) =>
+      Reflect.set(value.ledgers[0].value.financeEntries[0], "policyId", "other"),
+    );
+    rejectLedger((value) => Reflect.set(value.ledgers[0].value.financeEntries[0], "id", ""));
+    rejectLedger((value) =>
+      Reflect.set(value.ledgers[0].value.financeEntries[0], "sourceEventId", ""),
+    );
+    rejectLedger((value) => Reflect.set(value.ledgers[0].value.financeEntries[0], "kind", "bogus"));
+    rejectLedger((value) =>
+      Reflect.set(value.ledgers[0].value.financeEntries[0], "amountCents", 0),
+    );
+    rejectLedger((value) =>
+      Reflect.set(value.ledgers[0].value.financeEntries[0], "amountCents", -1),
+    );
+    rejectLedger((value) => {
+      Reflect.set(value.ledgers[0].value.financeEntries[0], "kind", "refund");
+      Reflect.set(value.ledgers[0].value.financeEntries[0], "amountCents", 1);
+    });
+    rejectLedger((value) =>
+      Reflect.set(value.ledgers[0].value.financeEntries[0], "occurredAt", "invalid"),
+    );
+    rejectLedger((value) => {
+      value.ledgers[0].value.financeEntries.push(
+        structuredClone(value.ledgers[0].value.financeEntries[0]),
+      );
+    });
+    rejectLedger((value) =>
+      Reflect.set(value.ledgers[0].value.commissionEntries[0], "sourceEventId", ""),
+    );
+    rejectLedger((value) =>
+      Reflect.set(value.ledgers[0].value.commissionEntries[0], "kind", "bogus"),
+    );
+    rejectLedger((value) =>
+      Reflect.set(value.ledgers[0].value.commissionEntries[0], "status", "bogus"),
+    );
+    rejectLedger((value) => {
+      value.ledgers[0].value.commissionEntries.push(
+        structuredClone(value.ledgers[0].value.commissionEntries[0]),
+      );
+    });
+    rejectLedger((value) =>
+      Reflect.set(value.ledgers[0].value.auditEntries[0], "sourceEventId", ""),
+    );
+    rejectLedger((value) =>
+      Reflect.set(value.ledgers[0].value.auditEntries[0], "correlationId", ""),
+    );
+    rejectLedger((value) => Reflect.set(value.ledgers[0].value.auditEntries[0], "type", "bogus"));
+    rejectLedger((value) =>
+      Reflect.set(value.ledgers[0].value.auditEntries[0], "occurredAt", "invalid"),
+    );
+    rejectLedger((value) => {
+      value.ledgers[0].value.auditEntries = value.ledgers[0].value.auditEntries.filter(
+        (entry) => entry.type !== "policy.state.changed",
+      );
+    });
+  });
+
   test("initializes_ledger_from_policy_state", () => {
     const s = setup();
     expect(s.finance.getLedger(base.tenantId, base.policyId)).toBeUndefined();

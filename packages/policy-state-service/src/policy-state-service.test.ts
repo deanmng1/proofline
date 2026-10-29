@@ -2,7 +2,7 @@ import type { EventEnvelope, Policy, PolicyLifecycleChangedMessage } from "@test
 import { createInMemoryServiceBus } from "@testbed/service-bus";
 import { describe, expect, test } from "vitest";
 
-import { createPolicyStateService } from "./policy-state-service";
+import { createPolicyStateService, type PolicyStatePersistencePort } from "./policy-state-service";
 
 const policy: Policy = {
   id: "policy-1",
@@ -49,6 +49,44 @@ const lifecycleMessage = ({
 });
 
 describe("Policy State service", () => {
+  test("rejects_impossible_or_mutated_checkpoint_histories", () => {
+    const bus = createInMemoryServiceBus();
+    let persistence!: PolicyStatePersistencePort;
+    createPolicyStateService({
+      bus,
+      registerPersistence: (port) => {
+        persistence = port;
+      },
+    });
+    bus.publish(lifecycleMessage());
+    bus.publish(
+      lifecycleMessage({ lifecycle: "cancelled", messageId: "policy-message-2", revision: 2 }),
+    );
+    bus.drain();
+    const checkpoint = persistence.checkpoint();
+
+    const repeatedCancellation = structuredClone(checkpoint);
+    repeatedCancellation.timelines[0].states.push({
+      ...repeatedCancellation.timelines[0].states[1],
+      revision: 3,
+      sourcePolicyMessageId: "policy-message-3",
+    });
+    expect(() => persistence.hydrate(repeatedCancellation)).toThrow(/history|terminal/i);
+
+    const changedSnapshot = structuredClone(checkpoint);
+    changedSnapshot.timelines[0].states[1].premiumCents = 20_000;
+    expect(() => persistence.hydrate(changedSnapshot)).toThrow(/snapshot|history/i);
+
+    const duplicateSource = structuredClone(checkpoint);
+    duplicateSource.timelines[0].states[1].sourcePolicyMessageId =
+      duplicateSource.timelines[0].states[0].sourcePolicyMessageId;
+    expect(() => persistence.hydrate(duplicateSource)).toThrow(/source/i);
+
+    const invalidPlan = structuredClone(checkpoint);
+    invalidPlan.timelines[0].states[0].commissionPlan.rateBasisPoints = -1;
+    expect(() => persistence.hydrate(invalidPlan)).toThrow(/commission|history/i);
+  });
+
   test("projects_bound_policy_and_publishes_state_change", () => {
     const bus = createInMemoryServiceBus();
     const service = createPolicyStateService({ bus });

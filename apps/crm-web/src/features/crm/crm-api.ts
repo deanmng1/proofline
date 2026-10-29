@@ -5,6 +5,7 @@ import type {
   CreateQuoteInput,
   Customer,
   PolicyLedger,
+  PolicyLifecycle,
   Property,
   RecordFinanceEventInput,
 } from "@testbed/api-contracts";
@@ -47,8 +48,8 @@ export type QuoteSummary = {
   status: "quoted" | "bound";
 };
 
-export type PolicySummary = QuoteSummary & {
+export type PolicySummary = Omit<QuoteSummary, "status"> & {
   quoteId: string;
   boundAt: string;
-  status: "bound";
+  status: PolicyLifecycle;
 };
