@@ -18,10 +18,12 @@ async function distinctWorkerProof(directory: string, runId: string): Promise<Is
   do {
     const files = await readdir(directory).catch(() => []);
     const evidence = await Promise.all(
-      files.map(
-        async (file) =>
-          JSON.parse(await readFile(`${directory}/${file}`, "utf8")) as IsolationEvidence,
-      ),
+      files
+        .filter((file) => file.endsWith(".json"))
+        .map(
+          async (file) =>
+            JSON.parse(await readFile(`${directory}/${file}`, "utf8")) as IsolationEvidence,
+        ),
     );
     if (evidence.some((entry) => entry.runId !== runId))
       throw new Error("Proofline scenario evidence contains a stale run id.");

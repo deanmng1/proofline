@@ -633,7 +633,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "starts_unauthenticated_and_logs_in_through_routed_auth",
-          "line": 113,
+          "line": 115,
           "tag": "@scenario"
         },
         {
@@ -1871,7 +1871,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "rejects_role_and_cross_tenant_mutations_through_the_test_api",
-          "line": 526,
+          "line": 528,
           "tag": "@authority"
         },
         {
@@ -1902,7 +1902,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "keeps_context_contract_authority_faults_and_tenant_inspection_inside_the_adapter",
-          "line": 366,
+          "line": 368,
           "tag": "@authority"
         },
         {
@@ -1913,7 +1913,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "binds_contract_requests_to_context_tokens_and_revokes_them_after_logout",
-          "line": 384,
+          "line": 386,
           "tag": "@authority"
         }
       ],
@@ -2263,7 +2263,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "starts_unauthenticated_and_logs_in_through_routed_auth",
-          "line": 113,
+          "line": 115,
           "tag": "@scenario"
         },
         {
@@ -2274,7 +2274,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "cleans_up_after_a_failed_scenario_assertion",
-          "line": 323,
+          "line": 325,
           "tag": "@scenario"
         },
         {
@@ -2285,7 +2285,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "rotates_access_tokens_and_revokes_the_context_on_logout",
-          "line": 127,
+          "line": 129,
           "tag": "@authority"
         },
         {
@@ -2296,7 +2296,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "rejects_role_and_cross_tenant_mutations_through_the_test_api",
-          "line": 526,
+          "line": 528,
           "tag": "@authority"
         },
         {
@@ -2307,7 +2307,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "fails_an_undeclared_browser_request_with_scenario_context",
-          "line": 179,
+          "line": 181,
           "tag": "@egress"
         },
         {
@@ -2318,7 +2318,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "denies_an_undeclared_worker_request_with_scenario_context",
-          "line": 199,
+          "line": 201,
           "tag": "@egress"
         },
         {
@@ -2329,7 +2329,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "blocks_service_worker_registration_and_cleans_registrations",
-          "line": 224,
+          "line": 226,
           "tag": "@egress"
         },
         {
@@ -2340,7 +2340,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "denies_browser_websockets_with_deterministic_context",
-          "line": 241,
+          "line": 243,
           "tag": "@egress"
         },
         {
@@ -2351,7 +2351,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "shares_one_runtime_only_across_explicit_contexts",
-          "line": 289,
+          "line": 291,
           "tag": "@isolation"
         },
         {
@@ -2362,7 +2362,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "separate_scenarios_receive_distinct_runtime_ids_and_state",
-          "line": 260,
+          "line": 262,
           "tag": "@isolation"
         },
         {
@@ -2373,7 +2373,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "shard_a_isolates_runtime_and_storage",
-          "line": 793,
+          "line": 795,
           "tag": "@isolation"
         },
         {
@@ -2384,7 +2384,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "shard_b_isolates_runtime_and_storage",
-          "line": 801,
+          "line": 803,
           "tag": "@isolation"
         },
         {
@@ -2395,7 +2395,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "shard_a_uses_an_os_assigned_worker_port",
-          "line": 809,
+          "line": 811,
           "tag": "@isolation"
         },
         {
@@ -2406,7 +2406,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "shard_b_uses_an_os_assigned_worker_port",
-          "line": 817,
+          "line": 819,
           "tag": "@isolation"
         },
         {
@@ -2417,7 +2417,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "honors_declared_roles_and_one_shot_route_faults",
-          "line": 339,
+          "line": 341,
           "tag": "@scenario"
         },
         {
@@ -2428,7 +2428,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "copies_identity_claims_and_rejects_conflicting_redefinitions",
-          "line": 598,
+          "line": 600,
           "tag": "@authority"
         },
         {
@@ -2439,7 +2439,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "scenario_reset_retains_failed_contexts_for_a_deterministic_retry",
-          "line": 735,
+          "line": 737,
           "tag": "@scenario"
         },
         {
@@ -2450,7 +2450,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "worker_setup_stops_the_server_when_bootstrap_close_fails",
-          "line": 756,
+          "line": 758,
           "tag": "@scenario"
         },
         {
@@ -2461,7 +2461,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "factory_teardown_rejects_an_unacknowledged_caught_denial",
-          "line": 783,
+          "line": 785,
           "tag": "@egress"
         },
         {
@@ -2483,7 +2483,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "factory_teardown_rejects_an_unacknowledged_caught_denial",
-          "line": 783,
+          "line": 785,
           "tag": "@egress"
         },
         {
@@ -2527,7 +2527,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "matches_an_operation_fault_once_to_an_opaque_ui_created_bind",
-          "line": 448,
+          "line": 450,
           "tag": "@scenario"
         },
         {
