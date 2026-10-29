@@ -8,7 +8,7 @@ import {
   assertSafeNodeArgv,
   guardImportOption,
   mergeGuardNodeOptions,
-  parseAllowedChildExecutablesEnvironment,
+  parseAllowedChildCapabilitiesEnvironment,
   parseAllowedOriginsEnvironment,
   prooflineDelegatedPolicy,
 } from "./guard-policy.mjs";
@@ -24,10 +24,10 @@ function installGuard() {
     parseAllowedOriginsEnvironment(process.env.PROOFLINE_ALLOWED_ORIGINS),
   );
   const immutableAllowedOrigins = JSON.stringify([...allowedOrigins]);
-  const allowedChildExecutables = new Set(
-    parseAllowedChildExecutablesEnvironment(process.env.PROOFLINE_ALLOWED_CHILD_EXECUTABLES),
+  const allowedChildCapabilities = parseAllowedChildCapabilitiesEnvironment(
+    process.env.PROOFLINE_ALLOWED_CHILD_CAPABILITIES,
   );
-  const immutableAllowedChildExecutables = JSON.stringify([...allowedChildExecutables]);
+  const immutableAllowedChildCapabilities = JSON.stringify(allowedChildCapabilities);
   const immutablePreload = process.env.PROOFLINE_GUARD_PRELOAD;
   const immutableNodeOptions = mergeGuardNodeOptions(process.env.NODE_OPTIONS ?? guardImportOption);
 
@@ -245,13 +245,16 @@ function installGuard() {
     PROOFLINE_ALLOWED_ORIGINS: delegated
       ? JSON.stringify(parseAllowedOriginsEnvironment(provided.PROOFLINE_ALLOWED_ORIGINS))
       : immutableAllowedOrigins,
-    PROOFLINE_ALLOWED_CHILD_EXECUTABLES: delegated
+    PROOFLINE_ALLOWED_CHILD_CAPABILITIES: delegated
       ? JSON.stringify(
-          parseAllowedChildExecutablesEnvironment(provided.PROOFLINE_ALLOWED_CHILD_EXECUTABLES),
+          parseAllowedChildCapabilitiesEnvironment(provided.PROOFLINE_ALLOWED_CHILD_CAPABILITIES),
         )
-      : immutableAllowedChildExecutables,
+      : immutableAllowedChildCapabilities,
     PROOFLINE_GUARD_PRELOAD: immutablePreload,
     NODE_OPTIONS: mergeGuardNodeOptions(provided.NODE_OPTIONS ?? immutableNodeOptions),
+    GIT_CONFIG_COUNT: "1",
+    GIT_CONFIG_KEY_0: "core.hooksPath",
+    GIT_CONFIG_VALUE_0: "/dev/null",
   });
   const resolveExecutable = (command, environment = process.env) => {
     const value = String(command);
@@ -276,7 +279,7 @@ function installGuard() {
     let index = 0;
     while (argv[index] === "-c") {
       const setting = argv[index + 1] ?? "";
-      if (!/^(?:user\.name|user\.email|core\.hooksPath)=/.test(setting))
+      if (!/^(?:user\.name|user\.email)=/.test(setting) && setting !== "core.hooksPath=/dev/null")
         throw new Error("Proofline unsupported-child-plane: unsafe git configuration is denied.");
       index += 2;
     }
@@ -304,6 +307,227 @@ function installGuard() {
         "Proofline unsupported-child-plane: network-capable git arguments are denied.",
       );
   };
+  const assertSafePnpmArgv = (argv) => {
+    const runner = argv.slice(0, 3).join(" ");
+    if (runner === "exec vitest run") return assertRunnerArgv(argv.slice(2), "Vitest", "run");
+    if (runner === "exec playwright test")
+      return assertRunnerArgv(argv.slice(2), "Playwright", "test");
+    if (
+      argv.length === 4 &&
+      argv[0] === "nx" &&
+      argv[1] === "run" &&
+      ["crm-web:build", "crm-web:build-test"].includes(argv[2]) &&
+      argv[3] === "--skip-nx-cache"
+    )
+      return;
+    throw new Error(
+      "Proofline unsupported-child-plane: pnpm is limited to reviewed Vitest, Playwright, and CRM build argv.",
+    );
+  };
+  const assertSafeNxArgv = (argv) => {
+    if (
+      argv.length === 3 &&
+      argv[0] === "run" &&
+      ["crm-web:build", "crm-web:build-test"].includes(argv[1]) &&
+      argv[2] === "--skip-nx-cache"
+    )
+      return;
+    throw new Error(
+      "Proofline unsupported-child-plane: Nx is limited to reviewed CRM build targets.",
+    );
+  };
+  const assertRunnerArgv = (argv, runner, verb) => {
+    if (argv[0] !== verb)
+      throw new Error(
+        `Proofline unsupported-child-plane: ${runner} is limited to its reviewed ${verb} mode.`,
+      );
+    if (
+      argv.some((argument) =>
+        /^(?:--inspect|--inspect-brk|--loader|--experimental-loader|--import|--require|-r)(?:=|$)/.test(
+          argument,
+        ),
+      )
+    )
+      throw new Error(
+        `Proofline unsupported-child-plane: ${runner} cannot add a loader, preload, or inspector.`,
+      );
+  };
+  const chromiumFlags = new Set([
+    "--allow-pre-commit-input",
+    "--blink-settings",
+    "--disable-back-forward-cache",
+    "--disable-background-networking",
+    "--disable-background-timer-throttling",
+    "--disable-backgrounding-occluded-windows",
+    "--disable-breakpad",
+    "--disable-client-side-phishing-detection",
+    "--disable-component-extensions-with-background-pages",
+    "--disable-component-update",
+    "--disable-default-apps",
+    "--disable-dev-shm-usage",
+    "--disable-edgeupdater",
+    "--disable-extensions",
+    "--disable-features",
+    "--disable-field-trial-config",
+    "--disable-hang-monitor",
+    "--disable-infobars",
+    "--disable-ipc-flooding-protection",
+    "--disable-popup-blocking",
+    "--disable-prompt-on-repost",
+    "--disable-renderer-backgrounding",
+    "--disable-search-engine-choice-screen",
+    "--disable-sync",
+    "--disable-updater-scheduler",
+    "--edge-skip-compat-layer-relaunch",
+    "--enable-features",
+    "--enable-unsafe-swiftshader",
+    "--export-tagged-pdf",
+    "--force-color-profile",
+    "--headless",
+    "--hide-scrollbars",
+    "--metrics-recording-only",
+    "--mute-audio",
+    "--no-default-browser-check",
+    "--no-first-run",
+    "--no-sandbox",
+    "--no-service-autorun",
+    "--no-startup-window",
+    "--password-store",
+    "--remote-debugging-pipe",
+    "--unsafely-disable-devtools-self-xss-warnings",
+    "--use-mock-keychain",
+    "--user-data-dir",
+  ]);
+  const assertSafeBrowserArgv = (executable, argv) => {
+    const name = executable.toLowerCase();
+    if (name.includes("chromium") || name.includes("chrome-headless-shell")) {
+      for (const argument of argv) {
+        if (!argument.startsWith("--"))
+          throw new Error(
+            "Proofline unsupported-child-plane: Chromium positional launch arguments are denied.",
+          );
+        const flag = argument.split("=", 1)[0];
+        if (!chromiumFlags.has(flag))
+          throw new Error(
+            `Proofline unsupported-child-plane: unsupported Chromium launch flag ${flag}.`,
+          );
+        if (
+          flag === "--user-data-dir" &&
+          (!argument.includes("=") ||
+            !path
+              .basename(argument.slice(argument.indexOf("=") + 1))
+              .startsWith("playwright_chromiumdev_profile-"))
+        )
+          throw new Error(
+            "Proofline unsupported-child-plane: Chromium requires a Playwright-owned profile.",
+          );
+      }
+      if (
+        !argv.includes("--remote-debugging-pipe") ||
+        !argv.some((arg) => arg.startsWith("--user-data-dir="))
+      )
+        throw new Error(
+          "Proofline unsupported-child-plane: Chromium requires the reviewed pipe/profile launch contract.",
+        );
+      return;
+    }
+    if (name.includes("firefox")) {
+      const allowed = new Set(["-no-remote", "-headless", "-juggler-pipe", "-silent", "-profile"]);
+      for (let index = 0; index < argv.length; index += 1) {
+        const argument = argv[index];
+        if (argument === "-profile") {
+          const profile = argv[++index];
+          if (!profile || !path.basename(profile).startsWith("playwright_firefoxdev_profile-"))
+            throw new Error(
+              "Proofline unsupported-child-plane: Firefox requires a Playwright-owned profile.",
+            );
+        } else if (!allowed.has(argument))
+          throw new Error(
+            `Proofline unsupported-child-plane: unsupported Firefox launch argument ${argument}.`,
+          );
+      }
+      if (!argv.includes("-juggler-pipe"))
+        throw new Error("Proofline unsupported-child-plane: Firefox requires the juggler pipe.");
+      return;
+    }
+    if (name.includes("webkit")) {
+      const allowed = new Set(["--headless", "--inspector-pipe"]);
+      if (!argv.includes("--inspector-pipe") || argv.some((argument) => !allowed.has(argument)))
+        throw new Error(
+          "Proofline unsupported-child-plane: WebKit requires the reviewed inspector-pipe launch contract.",
+        );
+      return;
+    }
+    throw new Error("Proofline unsupported-child-plane: unknown Playwright browser executable.");
+  };
+  const assertSafeEsbuildArgv = (argv) => {
+    if (argv.length === 2 && /^--service=\d+\.\d+\.\d+$/.test(argv[0]) && argv[1] === "--ping")
+      return;
+    throw new Error(
+      "Proofline unsupported-child-plane: esbuild is limited to its reviewed service argv.",
+    );
+  };
+  const assertSafeFfmpegArgv = (argv) => {
+    const expected = [
+      "-loglevel",
+      "error",
+      "-f",
+      "matroska",
+      "-fpsprobesize",
+      "0",
+      "-probesize",
+      "32",
+      "-analyzeduration",
+      "0",
+      "-i",
+      "pipe:0",
+      "-y",
+      "-an",
+      "-r",
+      "25",
+      "-c:v",
+      "vp8",
+      "-qmin",
+      "0",
+      "-qmax",
+      "50",
+      "-crf",
+      "8",
+      "-deadline",
+      "realtime",
+      "-speed",
+      "8",
+      "-b:v",
+      "1M",
+      "-threads",
+      "1",
+      "-vf",
+    ];
+    if (
+      argv.length === expected.length + 2 &&
+      expected.every((value, index) => argv[index] === value) &&
+      /^[\w=,:.-]+$/.test(argv[expected.length]) &&
+      path.isAbsolute(argv[expected.length + 1]) &&
+      argv[expected.length + 1].endsWith(".webm")
+    )
+      return;
+    throw new Error(
+      "Proofline unsupported-child-plane: ffmpeg is limited to Playwright's reviewed WebM recording argv.",
+    );
+  };
+  const assertCapabilityArgv = (capability, argv) => {
+    if (capability.purpose === "git-local") return assertSafeGitArgv(argv);
+    if (capability.purpose === "pnpm-runner") return assertSafePnpmArgv(argv);
+    if (capability.purpose === "nx-build") return assertSafeNxArgv(argv);
+    if (capability.purpose === "vitest-cli") return assertRunnerArgv(argv, "Vitest", "run");
+    if (capability.purpose === "playwright-cli")
+      return assertRunnerArgv(argv, "Playwright", "test");
+    if (capability.purpose === "playwright-browser")
+      return assertSafeBrowserArgv(capability.executable, argv);
+    if (capability.purpose === "esbuild-service") return assertSafeEsbuildArgv(argv);
+    if (capability.purpose === "playwright-ffmpeg") return assertSafeFfmpegArgv(argv);
+    throw new Error("Proofline unsupported-child-plane: unknown child capability purpose.");
+  };
   const supportedChild = (command, options = {}, argv = []) => {
     if (options.shell)
       throw new Error("Proofline unsupported-child-plane: shell child execution is denied.");
@@ -317,12 +541,22 @@ function installGuard() {
     }
     if (executable === realpathSync(process.execPath)) {
       assertSafeNodeArgv(argv);
-      return true;
+      return { executable, purpose: "guarded-node" };
     }
-    if (allowedChildExecutables.has(executable)) {
-      if (path.basename(executable) === "git") assertSafeGitArgv(argv);
-      return false;
+    const capabilities = allowedChildCapabilities.filter(
+      (capability) => capability.executable === executable,
+    );
+    let capabilityError;
+    for (const capability of capabilities) {
+      try {
+        assertCapabilityArgv(capability, argv);
+        return capability;
+      } catch (error) {
+        capabilityError ??= error;
+        // Another purpose for the same exact executable may match.
+      }
     }
+    if (capabilityError) throw capabilityError;
     throw new Error(
       `Proofline unsupported-child-plane: executable ${path.basename(executable)} is not an exact reviewed child.`,
     );
@@ -333,11 +567,11 @@ function installGuard() {
       const hasArgs = Array.isArray(argsOrOptions);
       const args = hasArgs ? argsOrOptions : undefined;
       const options = (hasArgs ? maybeOptions : argsOrOptions) ?? {};
-      const isNode = supportedChild(command, options, args ?? []);
+      supportedChild(command, options, args ?? []);
       const delegated = options[prooflineDelegatedPolicy] === true;
       const guardedOptions = {
         ...options,
-        ...(isNode ? { env: forcedChildEnvironment(options.env, delegated) } : {}),
+        env: forcedChildEnvironment(options.env, delegated),
       };
       return args
         ? original.call(this, command, args, guardedOptions)
@@ -368,11 +602,11 @@ function installGuard() {
           : typeof argsOrOptions === "function"
             ? argsOrOptions
             : undefined;
-    const isNode = supportedChild(file, options, args);
+    supportedChild(file, options, args);
     const delegated = options[prooflineDelegatedPolicy] === true;
     const guardedOptions = {
       ...options,
-      ...(isNode ? { env: forcedChildEnvironment(options.env, delegated) } : {}),
+      env: forcedChildEnvironment(options.env, delegated),
     };
     return done
       ? originalExecFile.call(this, file, args, guardedOptions, done)
@@ -383,11 +617,11 @@ function installGuard() {
     const hasArgs = Array.isArray(argsOrOptions);
     const args = hasArgs ? argsOrOptions : [];
     const options = (hasArgs ? maybeOptions : argsOrOptions) ?? {};
-    const isNode = supportedChild(file, options, args);
+    supportedChild(file, options, args);
     const delegated = options[prooflineDelegatedPolicy] === true;
     return originalExecFileSync.call(this, file, args, {
       ...options,
-      ...(isNode ? { env: forcedChildEnvironment(options.env, delegated) } : {}),
+      env: forcedChildEnvironment(options.env, delegated),
     });
   };
   const originalFork = childProcess.fork;

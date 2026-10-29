@@ -47,34 +47,55 @@ export const parseAllowedOriginsEnvironment = (value) => {
   return normalizeAllowedOrigins(parsed);
 };
 
-export const normalizeAllowedChildExecutables = (executables = []) => {
-  if (!Array.isArray(executables))
-    throw new Error("Proofline child executable allowlist must be an array.");
-  const normalized = executables.map((value, index) => {
-    if (typeof value !== "string" || !path.isAbsolute(value))
-      throw new Error(`Proofline child executable ${index} must be an absolute path.`);
+const childPurposes = new Set([
+  "esbuild-service",
+  "git-local",
+  "nx-build",
+  "playwright-browser",
+  "playwright-cli",
+  "playwright-ffmpeg",
+  "pnpm-runner",
+  "vitest-cli",
+]);
+
+export const normalizeAllowedChildCapabilities = (capabilities = []) => {
+  if (!Array.isArray(capabilities))
+    throw new Error("Proofline child capabilities must be an array.");
+  const normalized = capabilities.map((value, index) => {
+    if (!value || typeof value !== "object" || Array.isArray(value))
+      throw new Error(`Proofline child capability ${index} must be an object.`);
+    const keys = Object.keys(value).sort();
+    if (keys.join(",") !== "executable,purpose")
+      throw new Error(
+        `Proofline child capability ${index} must contain only executable and purpose.`,
+      );
+    if (typeof value.executable !== "string" || !path.isAbsolute(value.executable))
+      throw new Error(`Proofline child capability ${index} must use an absolute executable path.`);
+    if (typeof value.purpose !== "string" || !childPurposes.has(value.purpose))
+      throw new Error(`Proofline child capability ${index} has an unsupported purpose.`);
     let executable;
     try {
-      executable = realpathSync(value);
+      executable = realpathSync(value.executable);
       if (!statSync(executable).isFile()) throw new Error();
     } catch {
-      throw new Error(`Proofline child executable ${index} must resolve to a file.`);
+      throw new Error(`Proofline child capability ${index} must resolve to a file.`);
     }
-    return executable;
+    return { executable, purpose: value.purpose };
   });
-  if (new Set(normalized).size !== normalized.length)
-    throw new Error("Proofline child executable allowlist contains duplicates.");
+  const identities = normalized.map((value) => `${value.executable}\0${value.purpose}`);
+  if (new Set(identities).size !== identities.length)
+    throw new Error("Proofline child capabilities contain duplicates.");
   return normalized;
 };
 
-export const parseAllowedChildExecutablesEnvironment = (value) => {
+export const parseAllowedChildCapabilitiesEnvironment = (value) => {
   let parsed;
   try {
     parsed = JSON.parse(value ?? "[]");
   } catch {
-    throw new Error("PROOFLINE_ALLOWED_CHILD_EXECUTABLES must be a JSON array.");
+    throw new Error("PROOFLINE_ALLOWED_CHILD_CAPABILITIES must be a JSON array.");
   }
-  return normalizeAllowedChildExecutables(parsed);
+  return normalizeAllowedChildCapabilities(parsed);
 };
 
 export const guardPreloadUrl = pathToFileURL(
@@ -97,14 +118,14 @@ export const mergeGuardNodeOptions = (value = "") => {
   return [withoutGuard, guardImportOption].filter(Boolean).join(" ");
 };
 
-export const guardedEnvironment = ({ env = {}, allowedOrigins, allowedChildExecutables = [] }) => {
+export const guardedEnvironment = ({ env = {}, allowedOrigins, allowedChildCapabilities = [] }) => {
   const normalized = normalizeAllowedOrigins(allowedOrigins);
-  const childExecutables = normalizeAllowedChildExecutables(allowedChildExecutables);
+  const childCapabilities = normalizeAllowedChildCapabilities(allowedChildCapabilities);
   return {
     ...process.env,
     ...env,
     PROOFLINE_ALLOWED_ORIGINS: JSON.stringify(normalized),
-    PROOFLINE_ALLOWED_CHILD_EXECUTABLES: JSON.stringify(childExecutables),
+    PROOFLINE_ALLOWED_CHILD_CAPABILITIES: JSON.stringify(childCapabilities),
     PROOFLINE_GUARD_PRELOAD: guardPreloadUrl,
     NODE_OPTIONS: mergeGuardNodeOptions(env.NODE_OPTIONS ?? process.env.NODE_OPTIONS ?? ""),
   };

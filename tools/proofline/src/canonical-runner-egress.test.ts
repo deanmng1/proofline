@@ -82,3 +82,62 @@ test("canonical_unit_runner_denies_fetch_http_https_websocket_and_inherited_chil
   expect(outcomes.child.stderr).toContain("Proofline egress denied plane=fetch");
   expect(hits).toBe(0);
 });
+
+test("canonical_unit_runner_rejects_package_manager_wrapper_escape_with_stripped_env", async () => {
+  const child = path.join(temporary, "wrapper-child.mjs");
+  writeFileSync(child, "await fetch(process.env.PROOFLINE_PROBE_ORIGIN + '/wrapper');\n");
+  const runAttempt = (command: string, args: string[]) =>
+    new Promise<{ status: number | null; output: string }>((resolve) => {
+      let wrapper: ReturnType<typeof spawn>;
+      try {
+        wrapper = spawn(command, args, {
+          env: {
+            PATH: process.env.PATH,
+            PROOFLINE_PROBE_ORIGIN: origin,
+          },
+          stdio: ["ignore", "pipe", "pipe"],
+        });
+      } catch (error) {
+        resolve({ status: null, output: String(error) });
+        return;
+      }
+      if (!wrapper.stdout || !wrapper.stderr) {
+        resolve({ status: null, output: "Proofline probe child did not expose piped output." });
+        return;
+      }
+      let output = "";
+      wrapper.stdout.setEncoding("utf8");
+      wrapper.stderr.setEncoding("utf8");
+      wrapper.stdout.on("data", (chunk) => (output += chunk));
+      wrapper.stderr.on("data", (chunk) => (output += chunk));
+      wrapper.on("close", (status) => resolve({ status, output }));
+    });
+  const rejected = await Promise.all([
+    runAttempt("pnpm", ["exec", "node", child]),
+    runAttempt("pnpm", ["exec", "pnpm", "exec", "node", child]),
+    runAttempt(path.resolve("node_modules/.bin/nx"), ["exec", "--", "node", child]),
+    runAttempt(path.resolve("node_modules/.bin/playwright"), ["codegen", origin]),
+    runAttempt(path.resolve("node_modules/.bin/vitest"), ["--inspect", child]),
+  ]);
+  for (const attempt of rejected) {
+    expect(attempt.status, attempt.output).not.toBe(0);
+    expect(attempt.output).toContain("Proofline unsupported-child-plane");
+  }
+  const guardedTest = path.resolve("tools/proofline/src/canonical-wrapper-egress-probe.test.mjs");
+  writeFileSync(guardedTest, "await fetch(process.env.PROOFLINE_PROBE_ORIGIN + '/vitest');\n");
+  let guardedWrapper: { status: number | null; output: string };
+  try {
+    guardedWrapper = await runAttempt("pnpm", [
+      "exec",
+      "vitest",
+      "run",
+      guardedTest,
+      "--reporter=dot",
+    ]);
+  } finally {
+    rmSync(guardedTest, { force: true });
+  }
+  expect(hits).toBe(0);
+  expect(guardedWrapper.status, guardedWrapper.output).not.toBe(0);
+  expect(guardedWrapper.output).toContain("Proofline egress denied");
+});

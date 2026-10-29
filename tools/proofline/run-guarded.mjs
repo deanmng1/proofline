@@ -31,7 +31,7 @@ export const withProoflineGuard = (command, options = {}) => {
   const env = guardedEnvironment({
     env: options.env,
     allowedOrigins: options.allowedOrigins,
-    allowedChildExecutables: options.allowedChildExecutables,
+    allowedChildCapabilities: options.allowedChildCapabilities,
   });
 
   return new Promise((resolve, reject) => {
@@ -134,7 +134,7 @@ const runCli = async () => {
   if (separator < 0) throw new Error("Usage: run-guarded.mjs --allow-origin <origin> -- <argv...>");
   const options = process.argv.slice(2, separator);
   const allowedOrigins = [];
-  const allowedChildExecutables = [];
+  const allowedChildCapabilities = [];
   let testApp = false;
   for (let index = 0; index < options.length; index += 1) {
     if (options[index] === "--test-app") {
@@ -142,8 +142,8 @@ const runCli = async () => {
       testApp = true;
       continue;
     }
-    if (options[index] === "--allow-child-executable" && options[index + 1]) {
-      allowedChildExecutables.push(options[index + 1]);
+    if (options[index] === "--allow-child-capability" && options[index + 1]) {
+      allowedChildCapabilities.push(JSON.parse(options[index + 1]));
       index += 1;
       continue;
     }
@@ -158,7 +158,7 @@ const runCli = async () => {
   process.once("SIGINT", () => forwardSignal("SIGINT"));
   const guardedOptions = {
     allowedOrigins,
-    allowedChildExecutables,
+    allowedChildCapabilities,
     cwd: process.cwd(),
     onSpawn: (child) => {
       guardedChild = child;

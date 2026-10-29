@@ -2,6 +2,7 @@ import { execFileSync } from "node:child_process";
 import {
   chmodSync,
   existsSync,
+  mkdirSync,
   mkdtempSync,
   readFileSync,
   realpathSync,
@@ -14,8 +15,8 @@ import path from "node:path";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 import {
   assertSafeNodeArgv,
-  normalizeAllowedChildExecutables,
-  parseAllowedChildExecutablesEnvironment,
+  normalizeAllowedChildCapabilities,
+  parseAllowedChildCapabilitiesEnvironment,
   // @ts-expect-error The preload policy stays runtime-native JavaScript; this test exercises it directly.
 } from "../guard-policy.mjs";
 import {
@@ -124,16 +125,30 @@ afterAll(async () => {
 describe("Proofline egress guard", () => {
   test("validates_exact_child_executable_policy_and_node_preload_argv", () => {
     const node = realpathSync(process.execPath);
-    expect(normalizeAllowedChildExecutables([node])).toEqual([node]);
-    expect(parseAllowedChildExecutablesEnvironment(JSON.stringify([node]))).toEqual([node]);
-    expect(() => normalizeAllowedChildExecutables("node" as never)).toThrow(/must be an array/i);
-    expect(() => normalizeAllowedChildExecutables(["node"])).toThrow(/absolute path/i);
-    expect(() => normalizeAllowedChildExecutables([path.join(temporaryRoot, "missing")])).toThrow(
-      /resolve to a file/i,
+    const capability = { executable: node, purpose: "git-local" as const };
+    expect(normalizeAllowedChildCapabilities([capability])).toEqual([capability]);
+    expect(parseAllowedChildCapabilitiesEnvironment(JSON.stringify([capability]))).toEqual([
+      capability,
+    ]);
+    expect(() => normalizeAllowedChildCapabilities("node" as never)).toThrow(/must be an array/i);
+    expect(() =>
+      normalizeAllowedChildCapabilities([{ executable: "node", purpose: "git-local" }]),
+    ).toThrow(/absolute executable path/i);
+    expect(() =>
+      normalizeAllowedChildCapabilities([
+        { executable: path.join(temporaryRoot, "missing"), purpose: "git-local" },
+      ]),
+    ).toThrow(/resolve to a file/i);
+    expect(() =>
+      normalizeAllowedChildCapabilities([{ executable: temporaryRoot, purpose: "git-local" }]),
+    ).toThrow(/resolve to a file/i);
+    expect(() => normalizeAllowedChildCapabilities([capability, capability])).toThrow(
+      /duplicates/i,
     );
-    expect(() => normalizeAllowedChildExecutables([temporaryRoot])).toThrow(/resolve to a file/i);
-    expect(() => normalizeAllowedChildExecutables([node, node])).toThrow(/duplicates/i);
-    expect(() => parseAllowedChildExecutablesEnvironment("{")).toThrow(/JSON array/i);
+    expect(() =>
+      normalizeAllowedChildCapabilities([{ ...capability, purpose: "arbitrary" }]),
+    ).toThrow(/unsupported purpose/i);
+    expect(() => parseAllowedChildCapabilitiesEnvironment("{")).toThrow(/JSON array/i);
     expect(() => assertSafeNodeArgv(["--loader=replace", "target.mjs"])).toThrow(
       /cannot replace preload execution/i,
     );
@@ -162,7 +177,7 @@ describe("Proofline egress guard", () => {
     );
     const result = await withProoflineGuard([process.execPath, file], {
       allowedOrigins: [allowedOrigin],
-      allowedChildExecutables: [executableOnPath("git")],
+      allowedChildCapabilities: [{ executable: executableOnPath("git"), purpose: "git-local" }],
       cwd: temporaryRoot,
     });
     expect(result.code, result.stderr).toBe(0);
@@ -170,6 +185,55 @@ describe("Proofline egress guard", () => {
       local: 0,
       remote: expect.stringContaining("network-capable git arguments are denied"),
     });
+  });
+
+  test("disables_repository_git_hooks_and_rejects_hook_path_overrides", async () => {
+    const hooks = path.join(temporaryRoot, "hostile-hooks");
+    const marker = path.join(temporaryRoot, "git-hook-ran");
+    const file = script(
+      "safe-git-hooks.mjs",
+      `
+        import { spawnSync } from "node:child_process";
+        import { mkdirSync, writeFileSync } from "node:fs";
+        import { mkdtempSync } from "node:fs";
+        import { tmpdir } from "node:os";
+        import path from "node:path";
+        const cwd = mkdtempSync(path.join(tmpdir(), "proofline-safe-git-hooks-"));
+        spawnSync("git", ["init", "-q"], { cwd });
+        writeFileSync(path.join(cwd, ".git", "config"), [
+          "[core]",
+          "  hooksPath = " + process.env.TEST_HOOKS,
+          "[user]",
+          "  name = Proofline",
+          "  email = proofline@example.invalid",
+          "",
+        ].join("\\n"), "utf8");
+        writeFileSync(path.join(cwd, "tracked.txt"), "tracked\\n", "utf8");
+        spawnSync("git", ["add", "tracked.txt"], { cwd });
+        const commit = spawnSync("git", ["commit", "-m", "guarded"], { cwd, encoding: "utf8" });
+        let override;
+        try {
+          spawnSync("git", ["-c", "core.hooksPath=" + process.env.TEST_HOOKS, "status"], { cwd });
+        } catch (error) { override = String(error.message); }
+        console.log(JSON.stringify({ commit: commit.status, override }));
+      `,
+    );
+    const hook = path.join(hooks, "pre-commit");
+    mkdirSync(hooks);
+    writeFileSync(hook, `#!/bin/sh\nprintf ran > ${JSON.stringify(marker)}\n`, "utf8");
+    chmodSync(hook, 0o755);
+    const result = await withProoflineGuard([process.execPath, file], {
+      allowedOrigins: [allowedOrigin],
+      allowedChildCapabilities: [{ executable: executableOnPath("git"), purpose: "git-local" }],
+      cwd: temporaryRoot,
+      env: { TEST_HOOKS: hooks },
+    });
+    expect(result.code, result.stderr).toBe(0);
+    expect(JSON.parse(result.stdout.trim())).toEqual({
+      commit: 0,
+      override: expect.stringContaining("unsafe git configuration is denied"),
+    });
+    expect(existsSync(marker)).toBe(false);
   });
 
   test("allows_only_declared_loopback_runner_requests", async () => {

@@ -95,7 +95,12 @@ const playwrightChildren = () => {
         walk(path.join(cacheRoot, entry.name));
       }
     }
-  return [...new Set(candidates.filter(existsSync))];
+  return [...new Set(candidates.filter(existsSync))].map((executable) => ({
+    executable,
+    purpose: path.basename(executable).startsWith("ffmpeg")
+      ? "playwright-ffmpeg"
+      : "playwright-browser",
+  }));
 };
 
 const transformChildren = () => {
@@ -117,7 +122,7 @@ const transformChildren = () => {
       (entry.name.startsWith("esbuild@") || entry.name.startsWith("@esbuild+"))
     )
       walk(path.join(store, entry.name), 0);
-  return files;
+  return files.map((executable) => ({ executable, purpose: "esbuild-service" }));
 };
 
 const guarded = async (runner, args) => {
@@ -128,12 +133,21 @@ const guarded = async (runner, args) => {
   const result = await withProoflineGuard(command, {
     cwd: repositoryRoot,
     allowedOrigins: [deniedRunnerOrigin],
-    allowedChildExecutables: [
-      executableOnPath("git"),
-      executableOnPath("pnpm"),
-      path.join(repositoryRoot, "node_modules/.bin/nx"),
-      path.join(repositoryRoot, "node_modules/.bin/playwright"),
-      path.join(repositoryRoot, "node_modules/.bin/vitest"),
+    allowedChildCapabilities: [
+      { executable: executableOnPath("git"), purpose: "git-local" },
+      { executable: executableOnPath("pnpm"), purpose: "pnpm-runner" },
+      {
+        executable: path.join(repositoryRoot, "node_modules/.bin/nx"),
+        purpose: "nx-build",
+      },
+      {
+        executable: path.join(repositoryRoot, "node_modules/.bin/playwright"),
+        purpose: "playwright-cli",
+      },
+      {
+        executable: path.join(repositoryRoot, "node_modules/.bin/vitest"),
+        purpose: "vitest-cli",
+      },
       ...transformChildren(),
       ...(runner === "playwright" ? playwrightChildren() : []),
     ],

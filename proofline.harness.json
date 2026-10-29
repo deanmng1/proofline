@@ -613,7 +613,17 @@
           "runner": "vitest",
           "file": "tools/proofline/src/egress-guard.test.ts",
           "title": "Proofline egress guard > denies_fetch_http_https_websocket_and_inherited_child_egress",
-          "line": 297
+          "line": 361
+        },
+        {
+          "ruleId": "SAFE-001",
+          "layer": "contract",
+          "testId": "binding-d8cf68f6b1ea3041cba7",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/canonical-runner-egress.test.ts",
+          "title": "canonical_unit_runner_rejects_package_manager_wrapper_escape_with_stripped_env",
+          "line": 86
         },
         {
           "ruleId": "SAFE-001",
@@ -924,6 +934,16 @@
           "file": "packages/insurance-runtime/src/runtime.test.ts",
           "title": "insurance runtime > same_command_ids_and_entity_ids_are_independent_across_tenants",
           "line": 628
+        },
+        {
+          "ruleId": "TEN-001",
+          "layer": "runtime",
+          "testId": "binding-c062994b90dc2cd117c6",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "packages/insurance-runtime/src/runtime.test.ts",
+          "title": "insurance runtime > rejects_foreign_quote_references_without_draining_another_tenants_pending_delivery",
+          "line": 606
         },
         {
           "ruleId": "TEN-001",
@@ -1433,6 +1453,16 @@
         },
         {
           "ruleId": "TEN-001",
+          "layer": "runtime",
+          "testId": "binding-4930099e222d0953b9ee",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "packages/insurance-runtime/src/runtime.test.ts",
+          "title": "insurance runtime > rejects_foreign_quote_references_without_draining_another_tenants_pending_delivery",
+          "line": 606
+        },
+        {
+          "ruleId": "TEN-001",
           "layer": "service",
           "testId": "binding-89807146f85051f94aea",
           "commandKey": "unit",
@@ -1627,6 +1657,16 @@
         },
         {
           "ruleId": "TEN-001",
+          "layer": "runtime",
+          "testId": "binding-cc101a2ef0c05de4fa03",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "packages/insurance-runtime/src/runtime.test.ts",
+          "title": "insurance runtime > rejects_foreign_quote_references_without_draining_another_tenants_pending_delivery",
+          "line": 606
+        },
+        {
+          "ruleId": "TEN-001",
           "layer": "service",
           "testId": "binding-9ac91834153f29479cfe",
           "commandKey": "unit",
@@ -1801,6 +1841,16 @@
           "file": "packages/insurance-runtime/src/runtime.test.ts",
           "title": "insurance runtime > same_command_ids_and_entity_ids_are_independent_across_tenants",
           "line": 628
+        },
+        {
+          "ruleId": "TEN-001",
+          "layer": "runtime",
+          "testId": "binding-220a8d920b0a311621a1",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "packages/insurance-runtime/src/runtime.test.ts",
+          "title": "insurance runtime > rejects_foreign_quote_references_without_draining_another_tenants_pending_delivery",
+          "line": 606
         },
         {
           "ruleId": "TEN-001",
@@ -2538,7 +2588,7 @@
           "runner": "vitest",
           "file": "tools/proofline/src/product-e2e-boundary.test.ts",
           "title": "Proofline product E2E boundary > scenario_fixture_declares_context_install_cleanup_and_retry_lifecycle",
-          "line": 82
+          "line": 104
         },
         {
           "ruleId": "SCN-002",
@@ -2548,7 +2598,7 @@
           "runner": "vitest",
           "file": "tools/proofline/src/product-e2e-boundary.test.ts",
           "title": "Proofline product E2E boundary > scenario_fixture_declares_every_reviewed_browser_egress_plane",
-          "line": 91
+          "line": 113
         },
         {
           "ruleId": "SCN-003",
@@ -2558,7 +2608,7 @@
           "runner": "vitest",
           "file": "tools/proofline/src/product-e2e-boundary.test.ts",
           "title": "Proofline product E2E boundary > scenario_commands_preserve_multi_worker_and_both_shard_isolation_gates",
-          "line": 99
+          "line": 121
         }
       ],
       "ruleLayers": [

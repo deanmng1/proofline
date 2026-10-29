@@ -79,6 +79,28 @@ await revisitProtectedPath(page, policyPath);`,
     );
   });
 
+  test("canonical_runner_child_authority_is_structured_and_forces_guard_policy_on_every_child", async () => {
+    const runner = await readFile("tools/proofline/canonical-runner.mjs", "utf8");
+    const guard = await readFile("tools/proofline/egress-guard.mjs", "utf8");
+    const policy = await readFile("tools/proofline/guard-policy.mjs", "utf8");
+    expect(runner).toContain("allowedChildCapabilities");
+    expect(runner).not.toContain("allowedChildExecutables");
+    for (const purpose of [
+      "git-local",
+      "pnpm-runner",
+      "nx-build",
+      "vitest-cli",
+      "playwright-cli",
+      "playwright-browser",
+      "playwright-ffmpeg",
+      "esbuild-service",
+    ])
+      expect(`${runner}\n${policy}`).toContain(`"${purpose}"`);
+    expect(guard.match(/env: forcedChildEnvironment\(options\.env, delegated\)/g)).toHaveLength(3);
+    expect(guard).toContain("pnpm is limited to reviewed Vitest, Playwright, and CRM build argv");
+    expect(policy).toContain("must contain only executable and purpose");
+  });
+
   test("scenario_fixture_declares_context_install_cleanup_and_retry_lifecycle", async () => {
     const source = await readFile("apps/crm-e2e/src/fixtures/scenario.ts", "utf8");
     expect(source).toContain('let lifecycle: "active" | "cleaning" | "cleanup-failed" | "closed"');

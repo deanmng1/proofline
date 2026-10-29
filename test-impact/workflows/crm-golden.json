@@ -119,7 +119,8 @@
         "Foreign resources display denial without tenant data."
       ],
       "persistedInvariants": [
-        "After visible outcomes, contract reads and mutation attempts deny cross-tenant customer, quote, policy and ledger access."
+        "After visible outcomes, contract reads and mutation attempts deny cross-tenant customer, quote, policy and ledger access.",
+        "TEN-001 deterministic runtime evidence separately proves that foreign work cannot observe or drain another tenant's pending retry delivery."
       ],
       "ruleIds": ["TEN-001", "API-001"],
       "exclusions": [],

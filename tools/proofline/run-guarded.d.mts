@@ -7,7 +7,18 @@ export type GuardedRunResult = {
 
 export type GuardedRunOptions = {
   allowedOrigins: string[];
-  allowedChildExecutables?: string[];
+  allowedChildCapabilities?: {
+    executable: string;
+    purpose:
+      | "esbuild-service"
+      | "git-local"
+      | "nx-build"
+      | "playwright-browser"
+      | "playwright-cli"
+      | "playwright-ffmpeg"
+      | "pnpm-runner"
+      | "vitest-cli";
+  }[];
   cwd?: string;
   env?: NodeJS.ProcessEnv;
   shell?: false;
