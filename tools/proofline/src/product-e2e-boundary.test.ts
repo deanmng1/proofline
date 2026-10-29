@@ -78,6 +78,36 @@ await revisitProtectedPath(page, policyPath);`,
       "Test command browser bypasses the runner egress adapter",
     );
   });
+
+  test("scenario_fixture_declares_context_install_cleanup_and_retry_lifecycle", async () => {
+    const source = await readFile("apps/crm-e2e/src/fixtures/scenario.ts", "utf8");
+    expect(source).toContain('let lifecycle: "active" | "cleaning" | "cleanup-failed" | "closed"');
+    expect(source).toContain("context = await options.browser.newContext");
+    expect(source).toContain("await install(record)");
+    expect(source).toContain('lifecycle = "cleanup-failed"');
+    expect(source).toContain('lifecycle = "closed"');
+  });
+
+  test("scenario_fixture_declares_every_reviewed_browser_egress_plane", async () => {
+    const source = await readFile("apps/crm-e2e/src/fixtures/scenario.ts", "utf8");
+    expect(source).toContain('plane: "page" | "worker" | "service-worker" | "websocket"');
+    expect(source).toContain('await context.route("**/*", httpHandler)');
+    expect(source).toContain('await context.routeWebSocket("**/*"');
+    expect(source).toContain('serviceWorkers: "block"');
+  });
+
+  test("scenario_commands_preserve_multi_worker_and_both_shard_isolation_gates", async () => {
+    const manifest = JSON.parse(await readFile("proofline.harness.json", "utf8"));
+    expect(manifest.commands.browserScenario.argv).toContain("--workers=2");
+    expect(manifest.commands.browserScenarioShard1.argv).toContain("--shard=1/2");
+    expect(manifest.commands.browserScenarioShard2.argv).toContain("--shard=2/2");
+    for (const key of ["browserScenario", "browserScenarioShard1", "browserScenarioShard2"])
+      expect(manifest.commands[key].argv.slice(0, 3)).toEqual([
+        "node",
+        "tools/proofline/canonical-runner.mjs",
+        "playwright",
+      ]);
+  });
 });
 
 const forbidden = [
