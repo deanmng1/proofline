@@ -12,6 +12,7 @@ import ts from "typescript";
 import { z } from "zod";
 import type { DiscoveredTests } from "./types.ts";
 import { relativePath, rulesSchema } from "./validate.ts";
+import { resolveWorkspace } from "./workspaces.ts";
 
 const text = z.string().refine((value) => value.trim().length > 0, "Expected non-empty text");
 const strings = z.array(text).min(1);
@@ -357,8 +358,13 @@ const validateHarnessUnchecked = ({
   const unique = (values: string[], label: string) => {
     if (new Set(values).size !== values.length) errors.push(`Duplicate ${label}`);
   };
+  const commandErrors: string[] = [];
+  const commandError = (message: string) => {
+    errors.push(message);
+    commandErrors.push(message);
+  };
   const commandKey = (key: string) => {
-    if (!manifest.commands[key]) errors.push(`Unknown command key: ${key}`);
+    if (!manifest.commands[key]) commandError(`Unknown command key: ${key}`);
   };
   const canonicalRunners: Record<string, "vitest" | "playwright" | null> = {
     lint: null,
@@ -373,7 +379,7 @@ const validateHarnessUnchecked = ({
     const actual = Object.hasOwn(canonicalRunners, key)
       ? canonicalRunners[key]
       : manifest.commands[key]?.runner;
-    if (actual !== runner) errors.push(`Command ${key} has no ${runner} test role`);
+    if (actual !== runner) commandError(`Command ${key} has no ${runner} test role`);
   };
   const executable = (name: string) => {
     if (name.includes("/") || name.includes("\\")) return false;
@@ -438,7 +444,7 @@ const validateHarnessUnchecked = ({
         errors.push(`${key}: missing repository Node entrypoint`);
     }
   }
-  const commandErrors = [...errors];
+  commandErrors.push(...errors);
   const workspacePaths = manifest.workspaces.map((workspace) => workspace.path);
   unique(workspacePaths, "workspace");
   for (const workspace of manifest.workspaces) {
@@ -447,7 +453,7 @@ const validateHarnessUnchecked = ({
       commandKey(workspace.unitCommand);
       commandRole(workspace.unitCommand, "vitest");
     } else if (!workspace.browserCommands.length)
-      errors.push(`${workspace.path}: workspace has no test command`);
+      commandError(`${workspace.path}: workspace has no test command`);
     for (const key of workspace.browserCommands) {
       commandKey(key);
       commandRole(key, "playwright");
@@ -625,23 +631,21 @@ const validateHarnessUnchecked = ({
       if (!owner.ruleIds.includes(binding.ruleId) || !owner.layers.includes(binding.layer))
         errors.push(`Unowned binding ${binding.testId}`);
       if ((binding.layer === "playwright") !== (binding.runner === "playwright"))
-        errors.push(`Runner/layer mismatch ${binding.testId}`);
+        commandError(`Runner/layer mismatch ${binding.testId}`);
       if (
         !owner.ruleLayers.some(
           (pair) => pair.ruleId === binding.ruleId && pair.layer === binding.layer,
         )
       )
         errors.push(`Undeclared rule/layer ${binding.testId}`);
-      const workspace = manifest.workspaces
-        .filter((item) => binding.file.startsWith(`${item.path}/`))
-        .sort((a, b) => b.path.length - a.path.length)[0];
+      const workspace = resolveWorkspace(binding.file, manifest.workspaces);
       if (
         !workspace ||
         (binding.runner === "vitest"
           ? workspace.unitCommand !== binding.commandKey
           : !workspace.browserCommands.includes(binding.commandKey))
       )
-        errors.push(`Binding command does not apply to runner/workspace: ${binding.testId}`);
+        commandError(`Binding command does not apply to runner/workspace: ${binding.testId}`);
       if (inspectPath(binding.file)) readableBindings.push(binding);
     }
   }

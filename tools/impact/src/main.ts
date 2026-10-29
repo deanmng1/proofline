@@ -10,6 +10,7 @@ import { parsePlaywrightIdentities } from "./playwright-discovery.ts";
 import { canonicalCommandKeys, selectImpact } from "./select.ts";
 import type { DiscoveredTests, HarnessCommand, HarnessManifest, ImpactSelection } from "./types.ts";
 import { renderRules, rulesSchema, validateRules } from "./validate.ts";
+import { resolveWorkspace } from "./workspaces.ts";
 
 const walkFiles = (cwd: string, directory: string): string[] => {
   if (!existsSync(path.join(cwd, directory))) return [];
@@ -130,20 +131,32 @@ export const discoverCandidates = (cwd: string, manifest: HarnessManifest) => {
         )
         .parse(report);
       identities.vitest.push(
-        ...tests.map((test) => ({
-          file: normalizeRepoPath(test.file, cwd),
-          title: test.name,
-          line: test.location.line,
-        })),
+        ...tests
+          .map((test) => ({
+            file: normalizeRepoPath(path.resolve(cwd, plan.cwd, test.file), cwd),
+            title: test.name,
+            line: test.location.line,
+          }))
+          .filter((test) => {
+            const owner = resolveWorkspace(test.file, manifest.workspaces);
+            if (!owner) throw new Error(`Unmapped discovered Vitest identity:${test.file}`);
+            return owner.path === plan.workspace;
+          }),
       );
     } else {
       const root = report.config?.rootDir;
       if (typeof root !== "string") throw new Error("Missing Playwright discovery rootDir");
       identities.playwright.push(
-        ...parsePlaywrightIdentities(report, root).map((test) => ({
-          ...test,
-          path: normalizeRepoPath(test.path, cwd),
-        })),
+        ...parsePlaywrightIdentities(report, path.resolve(cwd, plan.cwd, root))
+          .map((test) => ({
+            ...test,
+            path: normalizeRepoPath(test.path, cwd),
+          }))
+          .filter((test) => {
+            const owner = resolveWorkspace(test.path, manifest.workspaces);
+            if (!owner) throw new Error(`Unmapped discovered Playwright identity:${test.path}`);
+            return owner.path === plan.workspace;
+          }),
       );
     }
   }
@@ -187,11 +200,14 @@ export const runSelection = (cwd: string, selection: DiscoveredTests, plans: Run
   for (const runner of ["vitest", "playwright"] as const) {
     for (const test of selection[runner]) {
       const file = "file" in test ? test.file : test.path;
-      const matches = plans.filter(
-        (plan) => plan.runner === runner && file.startsWith(`${plan.workspace}/`),
+      const match = resolveWorkspace(
+        file,
+        plans
+          .filter((plan) => plan.runner === runner)
+          .map((plan) => ({ path: plan.workspace, plan })),
       );
-      if (matches.length !== 1) throw new Error(`Ambiguous exact runner:${file}`);
-      const plan = matches[0];
+      if (!match) throw new Error(`Missing exact runner:${file}`);
+      const plan = match.plan;
       for (const dependency of plan.dependencies)
         if (!built.has(dependency)) {
           invoke(cwd, {

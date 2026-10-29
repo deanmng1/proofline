@@ -535,3 +535,41 @@ test("requires_explicit_smoke_scope_for_every_supported_non_chromium_browser", (
     }).errors.join(" "),
   ).toMatch(/projects/);
 });
+
+test("uses_the_most_specific_workspace_for_binding_command_validation", () => {
+  const { cwd, manifest, registry, write } = fixture();
+  const nestedTest = "app/src/nested/value.test.ts";
+  write("app/src/nested/project.json", {
+    name: "nested",
+    root: "app/src/nested",
+    targets: { test: {} },
+  });
+  write(
+    nestedTest,
+    'import { describe, test } from "vitest";\ndescribe("values", () => {\n  test("works", () => {});\n});\n',
+  );
+  manifest.ownership[0].testBindings[0].file = nestedTest;
+  manifest.ownership[0].testBindings[0].commandKey = "nested";
+  registry.rules[0].vitest[0].file = nestedTest;
+  write("rules.json", registry);
+  const configured = {
+    ...manifest,
+    commands: { ...manifest.commands, nested: { ...manifest.commands.unit, runner: "vitest" } },
+    workspaces: [
+      ...manifest.workspaces,
+      {
+        path: "app/src/nested",
+        unitCommand: "nested",
+        browserCommands: [],
+        browserOptOutReason: "unit only",
+      },
+    ],
+  };
+  expect(validateHarness({ cwd, manifest: configured }).errors).toEqual([]);
+  configured.workspaces.reverse();
+  expect(validateHarness({ cwd, manifest: configured }).errors).toEqual([]);
+  configured.workspaces.push(configured.workspaces[0]);
+  expect(validateHarness({ cwd, manifest: configured }).errors.join(" ")).toMatch(
+    /Ambiguous workspace/,
+  );
+});

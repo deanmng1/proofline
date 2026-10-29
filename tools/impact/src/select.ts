@@ -11,6 +11,7 @@ import type {
   VitestIdentity,
 } from "./types.ts";
 import { validateRules } from "./validate.ts";
+import { resolveWorkspace } from "./workspaces.ts";
 
 const unique = (values: string[]) => [...new Set(values)].sort();
 const configuration = (file: string) =>
@@ -203,16 +204,13 @@ export const selectImpact = ({
       rationale[file] = [];
       if (configuration(file)) errors.push(`configuration:${file}`);
       const owners = manifest.ownership.filter((owner) => path.matchesGlob(file, owner.glob));
-      const workspace = manifest.workspaces.find((workspace) =>
-        file.startsWith(`${workspace.path}/`),
-      );
+      const workspace = resolveWorkspace(file, manifest.workspaces);
       if (!owners.length && !executable(file) && (!workspace || /\.(?:md|txt)$/.test(file)))
         continue;
       if (/\.(?:test|spec)\.[cm]?[jt]sx?$/.test(file))
         errors.push(`direct test change requires full validation:${file}`);
       if (changed.status !== "modified") errors.push(`structural change:${changed.status}:${file}`);
-      if (!manifest.workspaces.some((workspace) => file.startsWith(`${workspace.path}/`)))
-        errors.push(`unmapped workspace:${file}`);
+      if (!workspace) errors.push(`unmapped workspace:${file}`);
       if (owners.length !== 1) {
         errors.push(`missing or ambiguous ownership:${file}`);
         continue;
@@ -300,9 +298,7 @@ export const selectImpact = ({
             (identities[runner] as (VitestIdentity | PlaywrightIdentity)[]).includes(identity)
           )
             continue;
-          const testWorkspace = manifest.workspaces.find((workspace) =>
-            testFile.startsWith(`${workspace.path}/`),
-          );
+          const testWorkspace = resolveWorkspace(testFile, manifest.workspaces);
           const key =
             runner === "vitest"
               ? testWorkspace?.unitCommand
@@ -327,6 +323,21 @@ export const selectImpact = ({
         }
       }
     }
+  }
+  // File filters are substring matches in Vitest. Validate the complete selected union,
+  // including diagnostic import evidence, before any test body can be executed.
+  for (const identity of identities.vitest) {
+    const exact = discovered.vitest.filter(
+      (test) =>
+        test.file === identity.file && test.title === identity.title && test.line === identity.line,
+    );
+    const runnable = discovered.vitest.filter(
+      (test) =>
+        test.file.toLowerCase().includes(identity.file.toLowerCase()) &&
+        test.title.replaceAll(" > ", " ") === identity.title.replaceAll(" > ", " "),
+    );
+    if (exact.length !== 1 || runnable.length !== 1)
+      errors.push(`ambiguous selected Vitest identity:${identity.file}:${identity.title}`);
   }
   const pathReasons = Object.fromEntries(
     Object.keys(rationale).map((file) => [file, errors.filter((error) => error.includes(file))]),

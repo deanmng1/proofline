@@ -1281,7 +1281,7 @@
           "runner": "vitest",
           "file": "tools/impact/src/main-selection.test.ts",
           "title": "runs_only_one_declared_vitest_and_playwright_identity",
-          "line": 17
+          "line": 21
         }
       ],
       "ruleLayers": [

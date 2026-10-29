@@ -1,5 +1,7 @@
+import * as childProcess from "node:child_process";
 import { execFileSync } from "node:child_process";
 import {
+  existsSync,
   mkdirSync,
   mkdtempSync,
   readFileSync,
@@ -13,6 +15,8 @@ import path from "node:path";
 import { expect, test, vi } from "vitest";
 import { discoverCandidates, main, runCanonicalFull, runSelection } from "./main.ts";
 import { renderRules } from "./validate.ts";
+
+vi.mock("node:child_process", { spy: true });
 
 test("runs_only_one_declared_vitest_and_playwright_identity", () => {
   const cwd = realpathSync(mkdtempSync(path.join(tmpdir(), "impact-main-selection-")));
@@ -231,6 +235,40 @@ test("runs_only_one_declared_vitest_and_playwright_identity", () => {
       execFileSync("git", args, { cwd });
     vi.stubEnv("IMPACT_BASE", "HEAD");
     vi.stubEnv("IMPACT_HEAD", "HEAD");
+    const validManifestText = readFileSync(path.join(cwd, "proofline.harness.json"), "utf8");
+    for (const mutation of [
+      "workspace-key",
+      "binding-key",
+      "wrong-runner",
+      "wrong-workspace-runner",
+      "binding-workspace",
+    ]) {
+      const invalid = JSON.parse(validManifestText);
+      if (mutation === "workspace-key") invalid.workspaces[0].browserCommands = ["missing-browser"];
+      if (mutation === "binding-key")
+        invalid.ownership[0].testBindings[0].commandKey = "missing-unit";
+      if (mutation === "wrong-runner") invalid.ownership[0].testBindings[0].commandKey = "browser";
+      if (mutation === "wrong-workspace-runner") invalid.workspaces[0].unitCommand = "browser";
+      if (mutation === "binding-workspace") {
+        invalid.commands.alternative = { ...invalid.commands.unit, runner: "vitest" };
+        invalid.ownership[0].testBindings[0].commandKey = "alternative";
+      }
+      write("proofline.harness.json", JSON.stringify(invalid));
+      const spawn = vi.mocked(childProcess.spawnSync).mockImplementation(() => {
+        throw new Error("Unexpected runner spawn");
+      });
+      try {
+        expect(() => main(cwd, [])).toThrow(/Unknown command key|test role|Binding command/);
+        expect(spawn).not.toHaveBeenCalled();
+        expect(
+          JSON.parse(readFileSync(path.join(cwd, "artifacts/impact/selection.json"), "utf8"))
+            .executionBlocked,
+        ).toBe(true);
+      } finally {
+        spawn.mockRestore();
+      }
+    }
+    write("proofline.harness.json", validManifestText);
     main(cwd, ["--dry-run"]);
     const unchanged = JSON.parse(
       readFileSync(path.join(cwd, "artifacts/impact/selection.json"), "utf8"),
@@ -276,6 +314,38 @@ test("runs_only_one_declared_vitest_and_playwright_identity", () => {
     fullManifest.commands.unit = { argv: ["node", "canonical.cjs", "unit"], cwd: "." };
     fullManifest.commands.browser = { argv: ["node", "canonical.cjs", "browser"], cwd: "." };
     write("proofline.harness.json", JSON.stringify(fullManifest));
+    write(
+      "libraries/value/src/foo.test.ts",
+      'import { test } from "vitest"; import fs from "node:fs"; import "../../../modules/orders/src/feature";\ntest("unbound importing identity", () => { fs.writeFileSync("unexpected-targeted", "bad"); });',
+    );
+    write(
+      "libraries/value/src/foo.test.ts.backup.test.ts",
+      'import { test } from "vitest"; import fs from "node:fs";\ntest("unbound importing identity", () => { fs.writeFileSync("unexpected-targeted", "bad"); });',
+    );
+    execFileSync("git", ["add", "."], { cwd });
+    execFileSync(
+      "git",
+      [
+        "-c",
+        "user.name=Fixture",
+        "-c",
+        "user.email=fixture@example.test",
+        "commit",
+        "-qm",
+        "collision fixture",
+      ],
+      { cwd },
+    );
+    write(source, "export const version = 3;\n");
+    main(cwd, []);
+    const collision = JSON.parse(
+      readFileSync(path.join(cwd, "artifacts/impact/selection.json"), "utf8"),
+    );
+    expect(collision.fallback).toBe("canonical-full");
+    expect(collision.errors.join(" ")).toMatch(/ambiguous.*selected.*Vitest/i);
+    expect(existsSync(path.join(cwd, "unexpected-targeted"))).toBe(false);
+    expect(readFileSync(path.join(cwd, "canonical.log"), "utf8")).toBe("unit\nbrowser\n");
+    rmSync(path.join(cwd, "canonical.log"));
     write(
       "libraries/value/project.json",
       JSON.stringify({ name: "example", targets: { test: { command: "unsupported discovery" } } }),
@@ -372,3 +442,70 @@ test("uses_structured_runner_and_canonical_commands_with_their_declared_cwd", ()
     rmSync(cwd, { recursive: true, force: true });
   }
 });
+
+test("discovers_nested_workspace_once_and_executes_its_own_cwd", () => {
+  const cwd = realpathSync(mkdtempSync(path.join(tmpdir(), "impact-nested-")));
+  try {
+    symlinkSync(path.join(process.cwd(), "node_modules"), path.join(cwd, "node_modules"), "dir");
+    writeFileSync(path.join(cwd, "package.json"), '{"type":"module"}');
+    for (const workspace of ["modules/orders", "modules/orders/nested"]) {
+      mkdirSync(path.join(cwd, workspace, "tests"), { recursive: true });
+      writeFileSync(
+        path.join(cwd, workspace, "tests.config.ts"),
+        'export default { test: { include: ["**/tests/*.test.ts"] } };',
+      );
+      writeFileSync(
+        path.join(cwd, workspace, "tests/value.test.ts"),
+        `import { test } from "vitest"; import fs from "node:fs";\ntest("${workspace}", () => { fs.writeFileSync("executed", process.cwd()); });`,
+      );
+      // Exercise real Vitest with one absolute-reporting and one relative-reporting adapter.
+      writeFileSync(
+        path.join(cwd, workspace, "runner.cjs"),
+        `const { spawnSync } = require("node:child_process"); const path = require("node:path");
+const args = process.argv.slice(2); const result = spawnSync("pnpm", ["exec", ...args], { encoding: "utf8" });
+if (result.status !== 0) { process.stderr.write(result.stderr); process.exit(result.status ?? 1); }
+if (args[1] === "list" && ${workspace.endsWith("nested")}) { const tests = JSON.parse(result.stdout); for (const test of tests) test.file = path.relative(process.cwd(), test.file); process.stdout.write(JSON.stringify(tests)); } else process.stdout.write(result.stdout);`,
+      );
+    }
+    const manifest = JSON.parse(
+      readFileSync(path.join(process.cwd(), "proofline.harness.json"), "utf8"),
+    );
+    manifest.workspaces = [
+      {
+        path: "modules/orders",
+        unitCommand: "parent",
+        browserCommands: [],
+        browserOptOutReason: "unit",
+      },
+      {
+        path: "modules/orders/nested",
+        unitCommand: "nested",
+        browserCommands: [],
+        browserOptOutReason: "unit",
+      },
+    ];
+    for (const workspace of manifest.workspaces)
+      manifest.commands[workspace.unitCommand] = {
+        argv: ["node", "runner.cjs", "vitest", "run", "--config", "tests.config.ts"],
+        cwd: workspace.path,
+        runner: "vitest",
+      };
+    const discovery = discoverCandidates(cwd, manifest);
+    expect(discovery.identities.vitest.map((test) => test.file)).toEqual([
+      "modules/orders/tests/value.test.ts",
+      "modules/orders/nested/tests/value.test.ts",
+    ]);
+    const nested = discovery.identities.vitest.find(
+      (test) => test.title === "modules/orders/nested",
+    );
+    expect(nested).toBeDefined();
+    if (!nested) throw new Error("Missing nested identity");
+    runSelection(cwd, { vitest: [nested], playwright: [] }, discovery.plans);
+    expect(readFileSync(path.join(cwd, "modules/orders/nested/executed"), "utf8")).toBe(
+      path.join(cwd, "modules/orders/nested"),
+    );
+    expect(existsSync(path.join(cwd, "modules/orders/executed"))).toBe(false);
+  } finally {
+    rmSync(cwd, { recursive: true, force: true });
+  }
+}, 30000);

@@ -333,3 +333,41 @@ test("fails_closed_when_vitest_file_filter_could_match_another_identity", () => 
   });
   expect(result.fallback).toBe("canonical-full");
 });
+
+test("rejects_filename_collisions_for_unbound_static_import_additions", () => {
+  const extra = { file: "modules/orders/src/foo.test.ts", title: "extra", line: 2 };
+  const result = choose({
+    discovered: {
+      ...discovered,
+      vitest: [...discovered.vitest, extra, { ...extra, file: `${extra.file}.backup.test.ts` }],
+    },
+    sourceFiles: { [source]: "export {};", [extra.file]: 'import "./value";' },
+  });
+  expect(result.fallback).toBe("canonical-full");
+  expect(result.identities.vitest).toEqual([]);
+  expect(result.errors.join(" ")).toMatch(/ambiguous.*selected.*Vitest/i);
+});
+
+test("attributes_additive_identities_to_the_most_specific_workspace", () => {
+  const configured = manifest();
+  configured.commands.nested = {
+    argv: ["pnpm", "test:nested"],
+    cwd: "modules/orders/nested",
+    runner: "vitest",
+  };
+  configured.workspaces.push({
+    path: "modules/orders/nested",
+    unitCommand: "nested",
+    browserCommands: [],
+    browserOptOutReason: "unit",
+  });
+  const extra = { file: "modules/orders/nested/foo.test.ts", title: "nested", line: 2 };
+  const result = choose({
+    manifest: configured,
+    discovered: { ...discovered, vitest: [...discovered.vitest, extra] },
+    sourceFiles: { [source]: "export {};", [extra.file]: 'import "../src/value";' },
+  });
+  expect(result.rationale[source].find((row) => row.identity.title === "nested")?.commandKey).toBe(
+    "nested",
+  );
+});
