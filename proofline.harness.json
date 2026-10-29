@@ -190,8 +190,8 @@
     }
   ],
   "browser": {
-    "projects": ["chromium"],
-    "crossBrowserSmokeProjects": [],
+    "projects": ["chromium", "firefox", "webkit"],
+    "crossBrowserSmokeProjects": ["firefox", "webkit"],
     "localOrigins": ["http://127.0.0.1"],
     "testEntrypoint": "testEntrypoint"
   },
@@ -736,17 +736,6 @@
           "line": 653
         },
         {
-          "ruleId": "POL-001",
-          "layer": "playwright",
-          "testId": "binding-c46c59d1b0e4d807cf40",
-          "commandKey": "browser",
-          "runner": "playwright",
-          "file": "apps/crm-e2e/src/features/quote-bind-finance.spec.ts",
-          "title": "@quote @policy @finance creates, binds, and funds a Risk Secure Plus policy",
-          "line": 3,
-          "tag": "@quote"
-        },
-        {
           "ruleId": "POL-002",
           "layer": "service",
           "testId": "binding-059e41be6fcbd4796345",
@@ -785,6 +774,28 @@
           "file": "packages/insurance-runtime/src/timestamps.test.ts",
           "title": "UTC timestamp boundaries > policy_clock_rejection_leaves_each_command_retryable_without_partial_state",
           "line": 44
+        },
+        {
+          "ruleId": "POL-001",
+          "layer": "playwright",
+          "testId": "binding-fb655780cb924c62ec25",
+          "commandKey": "browser",
+          "runner": "playwright",
+          "file": "apps/crm-e2e/src/proofline/golden-workflow.spec.ts",
+          "title": "completes_the_unauthenticated_deep_link_to_policy_finance_logout_journey",
+          "line": 5,
+          "tag": "@proofline-golden"
+        },
+        {
+          "ruleId": "POL-001",
+          "layer": "playwright",
+          "testId": "binding-0e92ba64bdec47dbdfdf",
+          "commandKey": "browser",
+          "runner": "playwright",
+          "file": "apps/crm-e2e/src/proofline/recovery-and-authority.spec.ts",
+          "title": "recovers_an_accepted_bind_without_duplicate_policy_or_ledger",
+          "line": 11,
+          "tag": "@proofline-recovery"
         }
       ],
       "ruleLayers": [
@@ -854,17 +865,6 @@
           "line": 653
         },
         {
-          "ruleId": "POL-001",
-          "layer": "playwright",
-          "testId": "binding-78c692675a8d308719cf",
-          "commandKey": "browser",
-          "runner": "playwright",
-          "file": "apps/crm-e2e/src/features/quote-bind-finance.spec.ts",
-          "title": "@quote @policy @finance creates, binds, and funds a Risk Secure Plus policy",
-          "line": 3,
-          "tag": "@quote"
-        },
-        {
           "ruleId": "POL-003",
           "layer": "service",
           "testId": "binding-3b7c7412b25c9c9c7864",
@@ -932,7 +932,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/features/isolation.spec.ts",
           "title": "@policy isolates concurrent guarded browser journeys",
-          "line": 21,
+          "line": 22,
           "tag": "@policy"
         },
         {
@@ -956,17 +956,6 @@
           "line": 425
         },
         {
-          "ruleId": "API-002",
-          "layer": "playwright",
-          "testId": "binding-76d42255445f9aa18a75",
-          "commandKey": "browser",
-          "runner": "playwright",
-          "file": "apps/crm-e2e/src/features/browser-worker-crm.spec.ts",
-          "title": "@crm-worker starts the CRM with browser Test API handlers",
-          "line": 3,
-          "tag": "@crm-worker"
-        },
-        {
           "ruleId": "TIME-001",
           "layer": "runtime",
           "testId": "binding-c2ae3b191108723c448f",
@@ -985,6 +974,61 @@
           "file": "packages/insurance-runtime/src/runtime.test.ts",
           "title": "insurance runtime > replays_customer_and_property_intake_with_stable_command_identity",
           "line": 546
+        },
+        {
+          "ruleId": "TEN-001",
+          "layer": "playwright",
+          "testId": "binding-a9e8fd76c52f815609f2",
+          "commandKey": "browser",
+          "runner": "playwright",
+          "file": "apps/crm-e2e/src/proofline/recovery-and-authority.spec.ts",
+          "title": "denies_cross_tenant_read_and_mutation_in_a_shared_runtime",
+          "line": 51,
+          "tag": "@proofline-authority"
+        },
+        {
+          "ruleId": "API-001",
+          "layer": "playwright",
+          "testId": "binding-cd799656116a2e5f625c",
+          "commandKey": "browser",
+          "runner": "playwright",
+          "file": "apps/crm-e2e/src/proofline/recovery-and-authority.spec.ts",
+          "title": "denies_crm_navigation_and_direct_routes_for_viewer",
+          "line": 131,
+          "tag": "@proofline-authority"
+        },
+        {
+          "ruleId": "API-001",
+          "layer": "playwright",
+          "testId": "binding-9c322d8276d559fe6e6d",
+          "commandKey": "browser",
+          "runner": "playwright",
+          "file": "apps/crm-e2e/src/proofline/recovery-and-authority.spec.ts",
+          "title": "denies_cross_tenant_read_and_mutation_in_a_shared_runtime",
+          "line": 51,
+          "tag": "@proofline-authority"
+        },
+        {
+          "ruleId": "API-002",
+          "layer": "playwright",
+          "testId": "binding-f2e91c041f7b0b564863",
+          "commandKey": "browser",
+          "runner": "playwright",
+          "file": "apps/crm-e2e/src/proofline/golden-workflow.spec.ts",
+          "title": "completes_the_unauthenticated_deep_link_to_policy_finance_logout_journey",
+          "line": 5,
+          "tag": "@proofline-golden"
+        },
+        {
+          "ruleId": "API-002",
+          "layer": "playwright",
+          "testId": "binding-956987d5baed69556e4e",
+          "commandKey": "browser",
+          "runner": "playwright",
+          "file": "apps/crm-e2e/src/proofline/recovery-and-authority.spec.ts",
+          "title": "recovers_an_accepted_bind_without_duplicate_policy_or_ledger",
+          "line": 11,
+          "tag": "@proofline-recovery"
         }
       ],
       "ruleLayers": [
@@ -995,10 +1039,6 @@
         {
           "ruleId": "POL-001",
           "layer": "runtime"
-        },
-        {
-          "ruleId": "POL-001",
-          "layer": "playwright"
         },
         {
           "ruleId": "POL-003",
@@ -1047,6 +1087,10 @@
         {
           "ruleId": "INT-001",
           "layer": "runtime"
+        },
+        {
+          "ruleId": "API-001",
+          "layer": "playwright"
         }
       ]
     },
@@ -1109,7 +1153,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/features/commission-refund.spec.ts",
           "title": "commission corrections > @commission @finance @refund allocations reverse only selected settled premium commission",
-          "line": 36,
+          "line": 37,
           "tag": "@finance"
         },
         {
@@ -1271,7 +1315,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/features/commission-refund.spec.ts",
           "title": "commission corrections > @commission @finance @refund allocations reverse only selected settled premium commission",
-          "line": 36,
+          "line": 37,
           "tag": "@finance"
         },
         {
@@ -1292,7 +1336,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/features/commission-refund.spec.ts",
           "title": "commission corrections > @commission @finance @refund allocations reverse only selected settled premium commission",
-          "line": 36,
+          "line": 37,
           "tag": "@refund"
         },
         {
@@ -1353,7 +1397,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/features/commission-refund.spec.ts",
           "title": "commission corrections > @commission @finance @refund allocations reverse only selected settled premium commission",
-          "line": 36,
+          "line": 37,
           "tag": "@finance"
         },
         {
@@ -1394,7 +1438,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/features/isolation.spec.ts",
           "title": "@policy isolates concurrent guarded browser journeys",
-          "line": 21,
+          "line": 22,
           "tag": "@policy"
         },
         {
@@ -1406,6 +1450,28 @@
           "file": "packages/insurance-runtime/src/timestamps.test.ts",
           "title": "UTC timestamp boundaries > policy_clock_rejection_leaves_each_command_retryable_without_partial_state",
           "line": 44
+        },
+        {
+          "ruleId": "FIN-001",
+          "layer": "playwright",
+          "testId": "binding-9950a58994b9451c759f",
+          "commandKey": "browser",
+          "runner": "playwright",
+          "file": "apps/crm-e2e/src/proofline/golden-workflow.spec.ts",
+          "title": "completes_the_unauthenticated_deep_link_to_policy_finance_logout_journey",
+          "line": 5,
+          "tag": "@proofline-golden"
+        },
+        {
+          "ruleId": "FIN-004",
+          "layer": "playwright",
+          "testId": "binding-e33dac0c6580c32c91a9",
+          "commandKey": "browser",
+          "runner": "playwright",
+          "file": "apps/crm-e2e/src/features/commission-refund.spec.ts",
+          "title": "commission corrections > @commission @finance @refund allocations reverse only selected settled premium commission",
+          "line": 37,
+          "tag": "@refund"
         }
       ],
       "ruleLayers": [
@@ -1480,6 +1546,14 @@
         {
           "ruleId": "TIME-001",
           "layer": "runtime"
+        },
+        {
+          "ruleId": "FIN-001",
+          "layer": "playwright"
+        },
+        {
+          "ruleId": "FIN-004",
+          "layer": "playwright"
         }
       ]
     },
@@ -1507,7 +1581,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/features/commission-refund.spec.ts",
           "title": "commission corrections > @commission @finance @refund allocations reverse only selected settled premium commission",
-          "line": 36,
+          "line": 37,
           "tag": "@finance"
         },
         {
@@ -1558,7 +1632,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/features/isolation.spec.ts",
           "title": "@policy isolates concurrent guarded browser journeys",
-          "line": 21,
+          "line": 22,
           "tag": "@policy"
         },
         {
@@ -1735,7 +1809,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/features/isolation.spec.ts",
           "title": "@policy isolates concurrent guarded browser journeys",
-          "line": 21,
+          "line": 22,
           "tag": "@policy"
         },
         {
@@ -1757,17 +1831,6 @@
           "file": "packages/api-contracts/src/test-api.test.ts",
           "title": "createTestApi > binds_over_http_and_exposes_finance_initialized_through_policy_state",
           "line": 425
-        },
-        {
-          "ruleId": "API-002",
-          "layer": "playwright",
-          "testId": "binding-01911b2ced6b6181c499",
-          "commandKey": "browser",
-          "runner": "playwright",
-          "file": "apps/crm-e2e/src/features/browser-worker-crm.spec.ts",
-          "title": "@crm-worker starts the CRM with browser Test API handlers",
-          "line": 3,
-          "tag": "@crm-worker"
         },
         {
           "ruleId": "INT-001",
@@ -1797,7 +1860,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "rejects_role_and_cross_tenant_mutations_through_the_test_api",
-          "line": 366,
+          "line": 526,
           "tag": "@authority"
         },
         {
@@ -1819,6 +1882,28 @@
           "file": "packages/api-contracts/src/test-api.test.ts",
           "title": "createTestApi > unclassified_operations_fail_before_authority_or_runtime_access",
           "line": 161
+        },
+        {
+          "ruleId": "AUTH-002",
+          "layer": "playwright",
+          "testId": "binding-abd5834fc0beeb49e9a3",
+          "commandKey": "browser",
+          "runner": "playwright",
+          "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+          "title": "keeps_context_contract_authority_faults_and_tenant_inspection_inside_the_adapter",
+          "line": 366,
+          "tag": "@authority"
+        },
+        {
+          "ruleId": "AUTH-002",
+          "layer": "playwright",
+          "testId": "binding-e0a534ac908028a656a5",
+          "commandKey": "browser",
+          "runner": "playwright",
+          "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+          "title": "binds_contract_requests_to_context_tokens_and_revokes_them_after_logout",
+          "line": 384,
+          "tag": "@authority"
         }
       ],
       "ruleLayers": [
@@ -1841,10 +1926,6 @@
         {
           "ruleId": "API-002",
           "layer": "contract"
-        },
-        {
-          "ruleId": "API-002",
-          "layer": "playwright"
         },
         {
           "ruleId": "INT-001",
@@ -1902,7 +1983,7 @@
       "glob": "apps/crm-web/src/features/quotes/**",
       "entrypoints": ["apps/crm-web/src/features/quotes/quote-form.tsx"],
       "ruleIds": ["UI-001"],
-      "layers": ["ui"],
+      "layers": ["ui", "playwright"],
       "testBindings": [
         {
           "ruleId": "UI-001",
@@ -1913,12 +1994,27 @@
           "file": "apps/crm-web/src/test/api.test.ts",
           "title": "api layer (http wrapper) > preserves the API recoverability contract on non-2xx responses",
           "line": 28
+        },
+        {
+          "ruleId": "UI-001",
+          "layer": "playwright",
+          "testId": "binding-defb7aff210d36441293",
+          "commandKey": "browser",
+          "runner": "playwright",
+          "file": "apps/crm-e2e/src/proofline/recovery-and-authority.spec.ts",
+          "title": "recovers_an_accepted_bind_without_duplicate_policy_or_ledger",
+          "line": 11,
+          "tag": "@proofline-recovery"
         }
       ],
       "ruleLayers": [
         {
           "ruleId": "UI-001",
           "layer": "ui"
+        },
+        {
+          "ruleId": "UI-001",
+          "layer": "playwright"
         }
       ]
     },
@@ -2042,7 +2138,7 @@
       "glob": "apps/crm-web/src/features/auth/**",
       "entrypoints": ["apps/crm-web/src/features/auth/auth-context.tsx"],
       "ruleIds": ["AUTH-001"],
-      "layers": ["ui"],
+      "layers": ["ui", "playwright"],
       "testBindings": [
         {
           "ruleId": "AUTH-001",
@@ -2053,12 +2149,49 @@
           "file": "apps/crm-web/src/test/rbac.test.tsx",
           "title": "role-based access control > redirects a Manager away from a restricted route",
           "line": 52
+        },
+        {
+          "ruleId": "AUTH-001",
+          "layer": "playwright",
+          "testId": "binding-0878cfaa6039a263fe60",
+          "commandKey": "browser",
+          "runner": "playwright",
+          "file": "apps/crm-e2e/src/proofline/golden-workflow.spec.ts",
+          "title": "completes_the_unauthenticated_deep_link_to_policy_finance_logout_journey",
+          "line": 5,
+          "tag": "@proofline-golden"
+        },
+        {
+          "ruleId": "AUTH-001",
+          "layer": "playwright",
+          "testId": "binding-dd2e9f541114e5dc4679",
+          "commandKey": "browser",
+          "runner": "playwright",
+          "file": "apps/crm-e2e/src/proofline/recovery-and-authority.spec.ts",
+          "title": "denies_crm_navigation_and_direct_routes_for_viewer",
+          "line": 131,
+          "tag": "@proofline-authority"
+        },
+        {
+          "ruleId": "AUTH-001",
+          "layer": "playwright",
+          "testId": "binding-74356c4ee8e2440524e4",
+          "commandKey": "browser",
+          "runner": "playwright",
+          "file": "apps/crm-e2e/src/proofline/cross-browser-smoke.spec.ts",
+          "title": "runs_the_cross_browser_invariant_smoke @proofline-smoke",
+          "line": 4,
+          "tag": "@proofline-smoke"
         }
       ],
       "ruleLayers": [
         {
           "ruleId": "AUTH-001",
           "layer": "ui"
+        },
+        {
+          "ruleId": "AUTH-001",
+          "layer": "playwright"
         }
       ]
     },
@@ -2113,7 +2246,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "rejects_role_and_cross_tenant_mutations_through_the_test_api",
-          "line": 366,
+          "line": 526,
           "tag": "@authority"
         },
         {
@@ -2190,7 +2323,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "shard_a_isolates_runtime_and_storage",
-          "line": 550,
+          "line": 710,
           "tag": "@isolation"
         },
         {
@@ -2201,7 +2334,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "shard_b_isolates_runtime_and_storage",
-          "line": 558,
+          "line": 718,
           "tag": "@isolation"
         },
         {
@@ -2212,7 +2345,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "shard_a_uses_an_os_assigned_worker_port",
-          "line": 566,
+          "line": 726,
           "tag": "@isolation"
         },
         {
@@ -2223,7 +2356,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "shard_b_uses_an_os_assigned_worker_port",
-          "line": 574,
+          "line": 734,
           "tag": "@isolation"
         },
         {
@@ -2245,7 +2378,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "copies_identity_claims_and_rejects_conflicting_redefinitions",
-          "line": 438,
+          "line": 598,
           "tag": "@authority"
         },
         {
@@ -2256,7 +2389,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "scenario_reset_retains_failed_contexts_for_a_deterministic_retry",
-          "line": 492,
+          "line": 652,
           "tag": "@scenario"
         },
         {
@@ -2267,7 +2400,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "worker_setup_stops_the_server_when_bootstrap_close_fails",
-          "line": 513,
+          "line": 673,
           "tag": "@scenario"
         },
         {
@@ -2278,7 +2411,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "factory_teardown_rejects_an_unacknowledged_caught_denial",
-          "line": 540,
+          "line": 700,
           "tag": "@egress"
         },
         {
@@ -2300,7 +2433,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "factory_teardown_rejects_an_unacknowledged_caught_denial",
-          "line": 540,
+          "line": 700,
           "tag": "@egress"
         },
         {
@@ -2322,7 +2455,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/features/isolation.spec.ts",
           "title": "@policy isolates concurrent guarded browser journeys",
-          "line": 21,
+          "line": 22,
           "tag": "@policy"
         },
         {
@@ -2333,8 +2466,19 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/features/isolation.spec.ts",
           "title": "@policy isolates concurrent guarded browser journeys",
-          "line": 21,
+          "line": 22,
           "tag": "@policy"
+        },
+        {
+          "ruleId": "SCN-001",
+          "layer": "playwright",
+          "testId": "binding-c52adc8a3f07d19ea496",
+          "commandKey": "browser",
+          "runner": "playwright",
+          "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+          "title": "matches_an_operation_fault_once_to_an_opaque_ui_created_bind",
+          "line": 448,
+          "tag": "@scenario"
         }
       ],
       "ruleLayers": [

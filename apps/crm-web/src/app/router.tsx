@@ -165,9 +165,30 @@ export const AppRouter = () => (
           />
           <Route path="/app/settings" element={<SettingsPage />} />
           <Route path="/app/settings/user" element={<UserSettingsPage />} />
-          <Route path="/app/crm/customers" element={<CustomerListPage />} />
-          <Route path="/app/crm/quotes" element={<QuoteForm />} />
-          <Route path="/app/crm/policies/:policyId" element={<PolicyRoute />} />
+          <Route
+            path="/app/crm/customers"
+            element={
+              <RoleRoute roles={["Owner", "Admin", "Manager"]}>
+                <CustomerListPage />
+              </RoleRoute>
+            }
+          />
+          <Route
+            path="/app/crm/quotes"
+            element={
+              <RoleRoute roles={["Owner", "Admin", "Manager"]}>
+                <QuoteForm />
+              </RoleRoute>
+            }
+          />
+          <Route
+            path="/app/crm/policies/:policyId"
+            element={
+              <RoleRoute roles={["Owner", "Admin", "Manager"]}>
+                <PolicyRoute />
+              </RoleRoute>
+            }
+          />
         </Route>
       </Route>
       <Route path="/" element={<Navigate to="/app/overview" replace />} />

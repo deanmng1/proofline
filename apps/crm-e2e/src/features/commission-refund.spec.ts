@@ -1,6 +1,7 @@
 import { ledgerSeed } from "@testbed/test-kit";
 
 import { expect, test } from "../fixtures/test";
+import { login } from "../helpers";
 
 const seededLedger = ledgerSeed();
 
@@ -34,9 +35,10 @@ test.describe("commission corrections", () => {
   });
 
   test("@commission @finance @refund allocations reverse only selected settled premium commission", async ({
-    page,
+    scenario,
   }) => {
-    await page.goto("/app/crm/policies/fixture-policy-1");
+    const page = await scenario.newPage();
+    await login(page, "/app/crm/policies/fixture-policy-1");
     await expect(page.getByRole("heading", { name: "Policy fixture-policy-1" })).toBeVisible();
 
     await page.getByLabel("Finance event").selectOption("refund_recorded");
@@ -70,5 +72,10 @@ test.describe("commission corrections", () => {
     ).toBeVisible();
     await expect(page.getByLabel("Commission entries").getByText("-$1.50")).toBeVisible();
     await expect(page.getByLabel("Commission entries").getByText("$4.00")).toBeVisible();
+    const ledger = (await scenario.inspect()).state.finance.ledgers[0];
+    expect(ledger.financeEntries.filter((entry) => entry.kind === "refund")).toHaveLength(3);
+    expect(
+      ledger.commissionEntries.filter((entry) => entry.kind === "refund_adjustment"),
+    ).toHaveLength(1);
   });
 });

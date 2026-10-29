@@ -20,10 +20,16 @@
       ],
       "playwright": [
         {
-          "path": "apps/crm-e2e/src/features/quote-bind-finance.spec.ts",
-          "title": "@quote @policy @finance creates, binds, and funds a Risk Secure Plus policy",
-          "line": 3,
-          "tag": "@quote"
+          "path": "apps/crm-e2e/src/proofline/golden-workflow.spec.ts",
+          "title": "completes_the_unauthenticated_deep_link_to_policy_finance_logout_journey",
+          "line": 5,
+          "tag": "@proofline-golden"
+        },
+        {
+          "path": "apps/crm-e2e/src/proofline/recovery-and-authority.spec.ts",
+          "title": "recovers_an_accepted_bind_without_duplicate_policy_or_ledger",
+          "line": 11,
+          "tag": "@proofline-recovery"
         }
       ]
     },
@@ -100,7 +106,7 @@
         {
           "path": "apps/crm-e2e/src/features/commission-refund.spec.ts",
           "title": "commission corrections > @commission @finance @refund allocations reverse only selected settled premium commission",
-          "line": 36,
+          "line": 37,
           "tag": "@finance"
         }
       ]
@@ -121,7 +127,7 @@
         {
           "path": "apps/crm-e2e/src/features/commission-refund.spec.ts",
           "title": "commission corrections > @commission @finance @refund allocations reverse only selected settled premium commission",
-          "line": 36,
+          "line": 37,
           "tag": "@refund"
         }
       ]
@@ -171,7 +177,14 @@
           "line": 386
         }
       ],
-      "playwright": []
+      "playwright": [
+        {
+          "path": "apps/crm-e2e/src/proofline/golden-workflow.spec.ts",
+          "title": "completes_the_unauthenticated_deep_link_to_policy_finance_logout_journey",
+          "line": 5,
+          "tag": "@proofline-golden"
+        }
+      ]
     },
     {
       "id": "FIN-002",
@@ -203,7 +216,7 @@
         {
           "path": "apps/crm-e2e/src/features/commission-refund.spec.ts",
           "title": "commission corrections > @commission @finance @refund allocations reverse only selected settled premium commission",
-          "line": 36,
+          "line": 37,
           "tag": "@finance"
         }
       ]
@@ -220,7 +233,14 @@
           "line": 331
         }
       ],
-      "playwright": []
+      "playwright": [
+        {
+          "path": "apps/crm-e2e/src/features/commission-refund.spec.ts",
+          "title": "commission corrections > @commission @finance @refund allocations reverse only selected settled premium commission",
+          "line": 37,
+          "tag": "@refund"
+        }
+      ]
     },
     {
       "id": "BUS-001",
@@ -323,8 +343,14 @@
         {
           "path": "apps/crm-e2e/src/features/isolation.spec.ts",
           "title": "@policy isolates concurrent guarded browser journeys",
-          "line": 21,
+          "line": 22,
           "tag": "@policy"
+        },
+        {
+          "path": "apps/crm-e2e/src/proofline/recovery-and-authority.spec.ts",
+          "title": "denies_cross_tenant_read_and_mutation_in_a_shared_runtime",
+          "line": 51,
+          "tag": "@proofline-authority"
         }
       ]
     },
@@ -340,7 +366,20 @@
           "line": 530
         }
       ],
-      "playwright": []
+      "playwright": [
+        {
+          "path": "apps/crm-e2e/src/proofline/recovery-and-authority.spec.ts",
+          "title": "denies_crm_navigation_and_direct_routes_for_viewer",
+          "line": 131,
+          "tag": "@proofline-authority"
+        },
+        {
+          "path": "apps/crm-e2e/src/proofline/recovery-and-authority.spec.ts",
+          "title": "denies_cross_tenant_read_and_mutation_in_a_shared_runtime",
+          "line": 51,
+          "tag": "@proofline-authority"
+        }
+      ]
     },
     {
       "id": "API-002",
@@ -356,10 +395,16 @@
       ],
       "playwright": [
         {
-          "path": "apps/crm-e2e/src/features/browser-worker-crm.spec.ts",
-          "title": "@crm-worker starts the CRM with browser Test API handlers",
-          "line": 3,
-          "tag": "@crm-worker"
+          "path": "apps/crm-e2e/src/proofline/golden-workflow.spec.ts",
+          "title": "completes_the_unauthenticated_deep_link_to_policy_finance_logout_journey",
+          "line": 5,
+          "tag": "@proofline-golden"
+        },
+        {
+          "path": "apps/crm-e2e/src/proofline/recovery-and-authority.spec.ts",
+          "title": "recovers_an_accepted_bind_without_duplicate_policy_or_ledger",
+          "line": 11,
+          "tag": "@proofline-recovery"
         }
       ]
     },
@@ -446,7 +491,14 @@
           "line": 28
         }
       ],
-      "playwright": []
+      "playwright": [
+        {
+          "path": "apps/crm-e2e/src/proofline/recovery-and-authority.spec.ts",
+          "title": "recovers_an_accepted_bind_without_duplicate_policy_or_ledger",
+          "line": 11,
+          "tag": "@proofline-recovery"
+        }
+      ]
     },
     {
       "id": "AUTH-001",
@@ -460,7 +512,26 @@
           "line": 52
         }
       ],
-      "playwright": []
+      "playwright": [
+        {
+          "path": "apps/crm-e2e/src/proofline/golden-workflow.spec.ts",
+          "title": "completes_the_unauthenticated_deep_link_to_policy_finance_logout_journey",
+          "line": 5,
+          "tag": "@proofline-golden"
+        },
+        {
+          "path": "apps/crm-e2e/src/proofline/recovery-and-authority.spec.ts",
+          "title": "denies_crm_navigation_and_direct_routes_for_viewer",
+          "line": 131,
+          "tag": "@proofline-authority"
+        },
+        {
+          "path": "apps/crm-e2e/src/proofline/cross-browser-smoke.spec.ts",
+          "title": "runs_the_cross_browser_invariant_smoke @proofline-smoke",
+          "line": 4,
+          "tag": "@proofline-smoke"
+        }
+      ]
     },
     {
       "id": "INT-001",
@@ -547,7 +618,7 @@
         {
           "path": "apps/crm-e2e/src/features/isolation.spec.ts",
           "title": "@policy isolates concurrent guarded browser journeys",
-          "line": 21,
+          "line": 22,
           "tag": "@policy"
         }
       ]
@@ -593,13 +664,25 @@
         {
           "path": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "rejects_role_and_cross_tenant_mutations_through_the_test_api",
-          "line": 366,
+          "line": 526,
           "tag": "@authority"
         },
         {
           "path": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "copies_identity_claims_and_rejects_conflicting_redefinitions",
-          "line": 438,
+          "line": 598,
+          "tag": "@authority"
+        },
+        {
+          "path": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+          "title": "keeps_context_contract_authority_faults_and_tenant_inspection_inside_the_adapter",
+          "line": 366,
+          "tag": "@authority"
+        },
+        {
+          "path": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+          "title": "binds_contract_requests_to_context_tokens_and_revokes_them_after_logout",
+          "line": 384,
           "tag": "@authority"
         }
       ]
@@ -632,20 +715,26 @@
         {
           "path": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "scenario_reset_retains_failed_contexts_for_a_deterministic_retry",
-          "line": 492,
+          "line": 652,
           "tag": "@scenario"
         },
         {
           "path": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "worker_setup_stops_the_server_when_bootstrap_close_fails",
-          "line": 513,
+          "line": 673,
           "tag": "@scenario"
         },
         {
           "path": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "factory_teardown_rejects_an_unacknowledged_caught_denial",
-          "line": 540,
+          "line": 700,
           "tag": "@egress"
+        },
+        {
+          "path": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+          "title": "matches_an_operation_fault_once_to_an_opaque_ui_created_bind",
+          "line": 448,
+          "tag": "@scenario"
         }
       ]
     },
@@ -689,13 +778,13 @@
         {
           "path": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "factory_teardown_rejects_an_unacknowledged_caught_denial",
-          "line": 540,
+          "line": 700,
           "tag": "@egress"
         },
         {
           "path": "apps/crm-e2e/src/features/isolation.spec.ts",
           "title": "@policy isolates concurrent guarded browser journeys",
-          "line": 21,
+          "line": 22,
           "tag": "@policy"
         }
       ]
@@ -722,25 +811,25 @@
         {
           "path": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "shard_a_isolates_runtime_and_storage",
-          "line": 550,
+          "line": 710,
           "tag": "@isolation"
         },
         {
           "path": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "shard_b_isolates_runtime_and_storage",
-          "line": 558,
+          "line": 718,
           "tag": "@isolation"
         },
         {
           "path": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "shard_a_uses_an_os_assigned_worker_port",
-          "line": 566,
+          "line": 726,
           "tag": "@isolation"
         },
         {
           "path": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "shard_b_uses_an_os_assigned_worker_port",
-          "line": 574,
+          "line": 734,
           "tag": "@isolation"
         }
       ]

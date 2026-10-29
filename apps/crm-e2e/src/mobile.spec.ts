@@ -1,11 +1,10 @@
 import { expect, test } from "./fixtures/test";
-import { login } from "./helpers";
 
 test.describe("mobile continuity", () => {
   test.use({ viewport: { width: 390, height: 844 } });
 
   test("navigates through the grouped mobile nav", async ({ page }) => {
-    await login(page);
+    await page.goto("/app/overview");
 
     await page.getByRole("button", { name: /open navigation/i }).click();
     const dialog = page.getByRole("dialog");
@@ -22,8 +21,12 @@ test.describe("mobile continuity", () => {
   });
 
   test("renders roster cards and opens invite dialog", async ({ page }) => {
-    await login(page);
-    await page.goto("/app/users");
+    await page.goto("/app/overview");
+    await page.getByRole("button", { name: /open navigation/i }).click();
+    const navigation = page.getByRole("dialog");
+    await navigation.getByRole("button", { name: /people/i }).click();
+    await navigation.getByRole("link", { name: "Users" }).click();
+    await expect(page).toHaveURL(/\/app\/users$/);
 
     await expect(page.getByRole("searchbox", { name: /search users/i })).toBeVisible();
     await expect(page.getByRole("button", { name: /invite user/i })).toBeVisible();
@@ -37,7 +40,7 @@ test.describe("mobile continuity", () => {
   });
 
   test("command palette is reachable from the compact search button", async ({ page }) => {
-    await login(page);
+    await page.goto("/app/overview");
     await page
       .getByRole("button", { name: /search data/i })
       .first()
@@ -47,7 +50,7 @@ test.describe("mobile continuity", () => {
   });
 
   test("switches the workspace from the mobile navigation dialog", async ({ page }) => {
-    await login(page);
+    await page.goto("/app/overview");
 
     await page.getByRole("button", { name: /open navigation/i }).click();
     const dialog = page.getByRole("dialog");

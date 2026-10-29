@@ -6,14 +6,14 @@ export type NavItem = {
   children?: NavItem[];
 };
 
-export type AppRole = "Owner" | "Admin" | "Manager";
+export type AppRole = "Owner" | "Admin" | "Manager" | "Viewer";
 
 export type Session = {
   user: {
     id: string;
     name: string;
     email: string;
-    role: "Owner" | "Admin" | "Manager";
+    role: AppRole;
     organization: string;
   };
   isAuthenticated: boolean;

@@ -4,6 +4,7 @@ import {
   createTestApi,
   type TestApi,
   type TestApiAuthorityClaims,
+  type TestApiOperation,
   type TestApiRole,
   type TestApiSnapshot,
   type TestSeed,
@@ -84,7 +85,27 @@ type ContextRecord = {
   commandNamespace: string;
   authenticated: boolean;
   accessTokens: Set<string>;
+  currentAccessToken: string | null;
 };
+
+export type ScenarioRequestJournalEntry = {
+  contextId: string;
+  identityId: string;
+  operation: TestApiOperation;
+  method: string;
+  path: string;
+  tenantId: string;
+  status: number;
+};
+
+export type ScenarioContractRequest = {
+  method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
+  path: string;
+  tenantId: string;
+  body?: unknown;
+};
+
+export type ScenarioContractResponse = { status: number; body: unknown };
 
 export type ScenarioInspection = {
   scenarioId: string;
@@ -93,6 +114,7 @@ export type ScenarioInspection = {
   serviceWorkers: number;
   unexpectedRequests: readonly UnexpectedRequest[];
   providerRequests: readonly ProviderRequest[];
+  requestJournal: readonly ScenarioRequestJournalEntry[];
   contexts: Array<{
     contextId: string;
     runtimeId: string;
@@ -108,7 +130,15 @@ export type ProoflineScenario = {
   readonly api: TestApi;
   createContext(identity?: ScenarioIdentity): Promise<BrowserContext>;
   newPage(identity?: ScenarioIdentity): Promise<Page>;
-  inspect(): Promise<ScenarioInspection>;
+  request(
+    context: BrowserContext,
+    input: ScenarioContractRequest,
+  ): Promise<ScenarioContractResponse>;
+  faultOnce(input: {
+    operation: "quote.bind";
+    outcome: "response-lost" | { status: number; body?: unknown };
+  }): void;
+  inspect(options?: { tenantId?: string }): Promise<ScenarioInspection>;
   reset(): Promise<void>;
   assertNoUnexpectedRequests(): Promise<void>;
 };
@@ -120,6 +150,27 @@ const safeUrl = (raw: string) => {
   } catch {
     return "<invalid>";
   }
+};
+
+const operationFor = (method: string, path: string): TestApiOperation | undefined => {
+  if (method === "GET") {
+    if (path === "/api/tenants") return "tenant.list";
+    if (path === "/api/test/state") return "state.read";
+    if (path === "/api/customers") return "customer.read";
+    if (path === "/api/properties") return "property.read";
+    if (path === "/api/quotes") return "quote.read";
+    if (path === "/api/policies" || /^\/api\/policies\/[^/]+(?:\/ledger)?$/.test(path))
+      return "policy.read";
+  }
+  if (method === "POST") {
+    if (path === "/api/customers") return "customer.create";
+    if (path === "/api/properties") return "property.create";
+    if (path === "/api/quotes") return "quote.create";
+    if (/^\/api\/quotes\/[^/]+\/bind$/.test(path)) return "quote.bind";
+    if (/^\/api\/policies\/[^/]+\/lifecycle$/.test(path)) return "policy.lifecycle";
+    if (/^\/api\/policies\/[^/]+\/finance-events$/.test(path)) return "policy.finance";
+  }
+  return undefined;
 };
 
 const sessionFor = (identity: ScenarioIdentity, accessToken: string, refreshToken: string) => ({
@@ -179,6 +230,11 @@ export function createScenario(options: ScenarioOptions): ProoflineScenario {
   const contexts: ContextRecord[] = [];
   const unexpectedRequests: UnexpectedRequest[] = [];
   const providerRequests: ProviderRequest[] = [];
+  const requestJournal: ScenarioRequestJournalEntry[] = [];
+  const operationFaults = new Map<
+    TestApiOperation,
+    { responseLost?: boolean; status?: number; body?: unknown }
+  >();
   let contextSequence = 0;
   let lifecycle: "active" | "cleaning" | "cleanup-failed" | "closed" = "active";
   let cleanupAttempt = 0;
@@ -214,6 +270,7 @@ export function createScenario(options: ScenarioOptions): ProoflineScenario {
       }),
     );
     record.accessTokens.add(accessToken);
+    record.currentAccessToken = accessToken;
     record.authenticated = true;
     return sessionFor(record.identity, accessToken, refreshToken);
   };
@@ -311,6 +368,7 @@ export function createScenario(options: ScenarioOptions): ProoflineScenario {
           }
           for (const token of record.accessTokens) principals.delete(token);
           record.accessTokens.clear();
+          record.currentAccessToken = null;
           record.authenticated = false;
           await route.fulfill({ json: { success: true } });
           return;
@@ -318,11 +376,25 @@ export function createScenario(options: ScenarioOptions): ProoflineScenario {
       }
       if (origin === options.workerServer.origin && url.pathname.startsWith("/api/")) {
         const method = request.method();
+        const operation = operationFor(method, url.pathname);
         const faultKey = `${method} ${url.pathname}`;
-        const fault = faults.get(faultKey);
+        const fault =
+          faults.get(faultKey) ?? (operation ? operationFaults.get(operation) : undefined);
         if (fault && !fault.responseLost) {
-          fault.times -= 1;
-          if (fault.times === 0) faults.delete(faultKey);
+          if ("times" in fault) {
+            fault.times -= 1;
+            if (fault.times === 0) faults.delete(faultKey);
+          } else if (operation) operationFaults.delete(operation);
+          if (operation)
+            requestJournal.push({
+              contextId,
+              identityId: record.identity.id,
+              operation,
+              method,
+              path: url.pathname,
+              tenantId: request.headers()["x-tenant-id"] ?? "",
+              status: fault.status ?? 500,
+            });
           await route.fulfill({
             status: fault.status,
             json: fault.body ?? { error: { code: "scenario_fault", recoverable: true } },
@@ -337,15 +409,50 @@ export function createScenario(options: ScenarioOptions): ProoflineScenario {
           }),
         );
         if (fault?.responseLost) {
-          fault.times -= 1;
-          if (fault.times === 0) faults.delete(faultKey);
+          if ("times" in fault) {
+            fault.times -= 1;
+            if (fault.times === 0) faults.delete(faultKey);
+          } else if (operation) operationFaults.delete(operation);
+          if (operation)
+            requestJournal.push({
+              contextId,
+              identityId: record.identity.id,
+              operation,
+              method,
+              path: url.pathname,
+              tenantId: request.headers()["x-tenant-id"] ?? "",
+              status: response.status,
+            });
           await route.abort("failed");
           return;
+        }
+        if (operation)
+          requestJournal.push({
+            contextId,
+            identityId: record.identity.id,
+            operation,
+            method,
+            path: url.pathname,
+            tenantId: request.headers()["x-tenant-id"] ?? "",
+            status: response.status,
+          });
+        let responseBody = await response.text();
+        if (response.ok && url.pathname === "/api/tenants") {
+          const names: Record<string, string> = {
+            tn_northstar: "Northstar",
+            tn_aurora: "Aurora Labs",
+          };
+          responseBody = JSON.stringify(
+            (JSON.parse(responseBody) as Array<Record<string, unknown>>).map((tenant) => ({
+              ...tenant,
+              name: names[String(tenant.id)] ?? tenant.name,
+            })),
+          );
         }
         await route.fulfill({
           status: response.status,
           headers: Object.fromEntries(response.headers),
-          body: await response.text(),
+          body: responseBody,
         });
         return;
       }
@@ -450,6 +557,7 @@ export function createScenario(options: ScenarioOptions): ProoflineScenario {
         commandNamespace: sequence.toString(16).padStart(8, "0"),
         authenticated: false,
         accessTokens: new Set(),
+        currentAccessToken: null,
       };
       contexts.push(record);
       try {
@@ -492,8 +600,74 @@ export function createScenario(options: ScenarioOptions): ProoflineScenario {
       const context = await scenario.createContext(identity);
       return context.newPage();
     },
-    async inspect() {
-      const tenantId = defaultIdentity.tenantIds[0] ?? tenants[0];
+    async request(context, input) {
+      const record = contexts.find((entry) => entry.context === context);
+      if (!record)
+        throw new Error("Scenario contract request requires a context owned by this scenario.");
+      const method = input.method ?? "GET";
+      const operation = operationFor(method, input.path);
+      if (!operation)
+        throw new Error(
+          `Scenario contract request is not a classified Test API operation: ${method} ${input.path}.`,
+        );
+      if (!input.path.startsWith("/api/") || input.path.includes("?") || input.path.includes("#"))
+        throw new Error(
+          "Scenario contract request path must be a safe absolute Test API pathname.",
+        );
+      const token = record.currentAccessToken;
+      const response = await api.handle(
+        new Request(`${options.workerServer.origin}${input.path}`, {
+          method,
+          headers: {
+            ...(input.body === undefined ? {} : { "Content-Type": "application/json" }),
+            ...(token ? { authorization: `Bearer ${token}` } : {}),
+            "X-Tenant-Id": input.tenantId,
+          },
+          body: input.body === undefined ? undefined : JSON.stringify(input.body),
+        }),
+      );
+      requestJournal.push({
+        contextId: record.contextId,
+        identityId: record.identity.id,
+        operation,
+        method,
+        path: input.path,
+        tenantId: input.tenantId,
+        status: response.status,
+      });
+      const text = await response.text();
+      let body: unknown = null;
+      if (text) {
+        try {
+          body = JSON.parse(text) as unknown;
+        } catch {
+          body = text;
+        }
+      }
+      return { status: response.status, body };
+    },
+    faultOnce(input) {
+      if (operationFaults.has(input.operation))
+        throw new Error(`Scenario already has a pending one-shot fault for ${input.operation}.`);
+      if (input.outcome !== "response-lost") {
+        if (
+          !Number.isInteger(input.outcome.status) ||
+          input.outcome.status < 400 ||
+          input.outcome.status > 599
+        )
+          throw new Error("Scenario operation fault status must be between 400 and 599.");
+      }
+      operationFaults.set(
+        input.operation,
+        input.outcome === "response-lost"
+          ? { responseLost: true }
+          : { status: input.outcome.status, body: input.outcome.body },
+      );
+    },
+    async inspect(inspectOptions = {}) {
+      const tenantId = inspectOptions.tenantId ?? defaultIdentity.tenantIds[0] ?? tenants[0];
+      if (!tenants.includes(tenantId))
+        throw new Error(`Scenario inspection tenant ${tenantId} is not declared.`);
       const inspectionToken = `${scenarioId}.inspection`;
       principals.set(inspectionToken, {
         subject: "proofline-inspector",
@@ -521,6 +695,7 @@ export function createScenario(options: ScenarioOptions): ProoflineScenario {
         ),
         unexpectedRequests: [...unexpectedRequests],
         providerRequests: [...providerRequests],
+        requestJournal: [...requestJournal],
         contexts: contexts.map((record) => ({
           contextId: record.contextId,
           runtimeId,

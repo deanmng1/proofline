@@ -8,9 +8,10 @@ describe("Proofline product E2E boundary", () => {
     const files = (await readdir(sourceRoot, { recursive: true }))
       .filter(
         (file) =>
-          /\.spec\.tsx?$/.test(file) &&
+          /\.tsx?$/.test(file) &&
           !file.startsWith(`fixtures${path.sep}`) &&
-          !file.startsWith("fixtures/"),
+          !file.startsWith("fixtures/") &&
+          !file.endsWith(".d.ts"),
       )
       .sort();
     const violations: string[] = [];

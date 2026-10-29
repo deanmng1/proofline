@@ -1,15 +1,16 @@
 import type { Page } from "@playwright/test";
 import type { ProoflineScenario } from "../fixtures/scenario";
 import { expect, test } from "../fixtures/test";
+import { navigateInsurance } from "../helpers";
 
 async function guardedAuthenticatedPage(scenario: ProoflineScenario): Promise<Page> {
   const page = await scenario.newPage();
-  await page.goto("/app/crm/customers");
+  await page.goto("/app/overview");
+  await navigateInsurance(page, "Customer intake");
   return page;
 }
 
 async function addCustomer(page: Page, name: string) {
-  await page.goto("/app/crm/customers");
   await page.getByLabel("Customer name").fill(name);
   await page
     .getByLabel("Customer email")

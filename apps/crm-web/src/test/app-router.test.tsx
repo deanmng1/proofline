@@ -1,9 +1,45 @@
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { defaultSession } from "@/mocks/data";
+import { server } from "@/test/server";
 import { renderApp } from "@/test/test-app";
 
 describe("app routing", () => {
+  it("denies_crm_direct_routes_to_an_authenticated_unauthorized_role", async () => {
+    const crmRequests: string[] = [];
+    const recordRequest = ({ request }: { request: Request }) => {
+      const url = new URL(request.url);
+      if (/^\/api\/(?:customers|properties|quotes|policies)(?:\/|$)/.test(url.pathname))
+        crmRequests.push(`${request.method} ${url.pathname}`);
+    };
+    server.events.on("request:start", recordRequest);
+    window.localStorage.setItem(
+      "admin-dashboard-template:session",
+      JSON.stringify({
+        ...defaultSession,
+        user: { ...defaultSession.user, id: "viewer", role: "Viewer" },
+      }),
+    );
+
+    try {
+      for (const route of [
+        "/app/crm/customers",
+        "/app/crm/quotes",
+        "/app/crm/policies/foreign-policy",
+      ]) {
+        const view = renderApp({ initialEntries: [route] });
+        expect(await screen.findByText(/dashboard overview/i)).toBeInTheDocument();
+        expect(screen.queryByText(/customer and property intake/i)).not.toBeInTheDocument();
+        expect(screen.queryByText(/quote and bind coverage/i)).not.toBeInTheDocument();
+        expect(screen.queryByText(/policy foreign-policy/i)).not.toBeInTheDocument();
+        view.unmount();
+      }
+      expect(crmRequests).toEqual([]);
+    } finally {
+      server.events.removeListener("request:start", recordRequest);
+    }
+  });
+
   it("renders user settings and persists the selected theme", async () => {
     const user = userEvent.setup();
     window.localStorage.setItem("admin-dashboard-template:session", JSON.stringify(defaultSession));

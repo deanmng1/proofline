@@ -363,6 +363,166 @@ test("honors_declared_roles_and_one_shot_route_faults", { tag: "@scenario" }, as
   expect(statuses).toEqual([503, 200]);
 });
 
+test("keeps_context_contract_authority_faults_and_tenant_inspection_inside_the_adapter", {
+  tag: "@authority",
+}, async ({ scenarioFactory }) => {
+  const scenario = scenarioFactory({ tenants: ["tenant-a", "tenant-b"], startAuthenticated: true });
+  const context = await scenario.createContext();
+  const adapter = scenario as unknown as {
+    request: (context: unknown, input: unknown) => Promise<unknown>;
+    inspect: (input?: { tenantId: string }) => Promise<unknown>;
+    faultOnce: (input: unknown) => void;
+  };
+  expect(typeof adapter.request).toBe("function");
+  expect(typeof adapter.faultOnce).toBe("function");
+  await expect(adapter.inspect({ tenantId: "tenant-b" })).resolves.toBeDefined();
+  await expect(
+    adapter.request(context, { method: "GET", path: "/api/customers", tenantId: "tenant-b" }),
+  ).resolves.toMatchObject({ status: 403, body: { error: { code: "cross_tenant" } } });
+});
+
+test("binds_contract_requests_to_context_tokens_and_revokes_them_after_logout", {
+  tag: "@authority",
+}, async ({ scenarioFactory }) => {
+  const firstIdentity = {
+    id: "first-owner",
+    role: "Owner" as const,
+    tenantIds: ["tenant-a"],
+    email: "first@example.test",
+  };
+  const secondIdentity = {
+    id: "second-owner",
+    role: "Owner" as const,
+    tenantIds: ["tenant-b"],
+    email: "second@example.test",
+  };
+  const scenario = scenarioFactory({
+    tenants: ["tenant-a", "tenant-b"],
+    identity: firstIdentity,
+    startAuthenticated: true,
+  });
+  const first = await scenario.createContext(firstIdentity);
+  const second = await scenario.createContext(secondIdentity);
+  await expect(
+    scenario.request(first, { path: "/api/customers", tenantId: "tenant-a" }),
+  ).resolves.toMatchObject({ status: 200 });
+  await expect(
+    scenario.request(first, { path: "/api/customers", tenantId: "tenant-b" }),
+  ).resolves.toMatchObject({ status: 403, body: { error: { code: "cross_tenant" } } });
+  await expect(
+    scenario.request(second, { path: "/api/customers", tenantId: "tenant-b" }),
+  ).resolves.toMatchObject({ status: 200 });
+  await expect(
+    scenario.request(second, { path: "/api/test/state", tenantId: "tenant-a" }),
+  ).resolves.toMatchObject({ status: 403, body: { error: { code: "cross_tenant" } } });
+  const secondPage = await second.newPage();
+  await secondPage.goto("/app/overview");
+  await secondPage.evaluate(async () => {
+    const session = JSON.parse(
+      localStorage.getItem("admin-dashboard-template:session") ?? "{}",
+    ) as { accessToken?: string };
+    await fetch("/api/auth/logout", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${session.accessToken ?? ""}` },
+    });
+  });
+  await expect(
+    scenario.request(second, { path: "/api/customers", tenantId: "tenant-b" }),
+  ).resolves.toMatchObject({ status: 401, body: { error: { code: "unauthenticated" } } });
+  expect((await scenario.inspect({ tenantId: "tenant-b" })).requestJournal).toEqual(
+    expect.arrayContaining([
+      expect.objectContaining({
+        contextId: expect.any(String),
+        identityId: "first-owner",
+        operation: "customer.read",
+        method: "GET",
+        path: "/api/customers",
+        tenantId: "tenant-b",
+        status: 403,
+      }),
+    ]),
+  );
+  expect(JSON.stringify((await scenario.inspect()).requestJournal)).not.toContain("access.");
+});
+
+test("matches_an_operation_fault_once_to_an_opaque_ui_created_bind", {
+  tag: "@scenario",
+}, async ({ scenarioFactory }) => {
+  const scenario = scenarioFactory({
+    startAuthenticated: true,
+    seed: {
+      tenants: ["test-tenant"],
+      customers: [
+        {
+          tenantId: "test-tenant",
+          id: "fault-customer",
+          name: "Fault Customer",
+          email: "fault@example.test",
+        },
+      ],
+      properties: [
+        {
+          tenantId: "test-tenant",
+          id: "fault-property",
+          customerId: "fault-customer",
+          addressLine1: "1 Fault Way",
+          city: "Austin",
+          state: "TX",
+          postalCode: "78701",
+        },
+      ],
+    },
+  });
+  const context = await scenario.createContext();
+  const created = await scenario.request(context, {
+    method: "POST",
+    path: "/api/quotes",
+    tenantId: "test-tenant",
+    body: {
+      commandId: "create-opaque-quote",
+      correlationId: "operation-fault",
+      customerId: "fault-customer",
+      propertyId: "fault-property",
+      product: "risk_secure",
+      premiumCents: 10000,
+      commissionPlan: {
+        timing: "on_bind",
+        rateBasisPoints: 1250,
+        holdPeriodDays: 0,
+        reverseOnRefund: true,
+      },
+    },
+  });
+  expect(created.status).toBe(201);
+  const quoteId = (created.body as { id: string }).id;
+  scenario.faultOnce({ operation: "quote.bind", outcome: "response-lost" });
+  const page = await context.newPage();
+  await page.goto("/app/overview");
+  const results = await page.evaluate(async (id) => {
+    const session = JSON.parse(
+      localStorage.getItem("admin-dashboard-template:session") ?? "{}",
+    ) as { accessToken?: string };
+    const headers = {
+      Authorization: `Bearer ${session.accessToken ?? ""}`,
+      "Content-Type": "application/json",
+      "X-Tenant-Id": "test-tenant",
+    };
+    const body = JSON.stringify({ commandId: "opaque-bind", correlationId: "operation-fault" });
+    const first = await fetch(`/api/quotes/${id}/bind`, { method: "POST", headers, body })
+      .then((response) => response.status)
+      .catch(() => "lost");
+    const second = await fetch(`/api/quotes/${id}/bind`, { method: "POST", headers, body }).then(
+      (response) => response.status,
+    );
+    return [first, second];
+  }, quoteId);
+  expect(results).toEqual(["lost", 201]);
+  const state = (await scenario.inspect()).state;
+  expect(state.policy.policies).toHaveLength(1);
+  expect(state.policyState.timelines[state.policy.policies[0].id]).toHaveLength(1);
+  expect(state.finance.ledgers).toHaveLength(1);
+});
+
 test("rejects_role_and_cross_tenant_mutations_through_the_test_api", { tag: "@authority" }, async ({
   scenarioFactory,
 }) => {

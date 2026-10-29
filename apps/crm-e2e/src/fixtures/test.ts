@@ -1,14 +1,11 @@
 import { test as base, expect, type Page } from "@playwright/test";
-import type { TestApi, TestSeed } from "@testbed/api-contracts";
-import { createBearerAuthority, createTestApi } from "@testbed/api-contracts";
+import type { TestSeed } from "@testbed/api-contracts";
 
-import { prepareTestApiPage } from "./install-test-api";
 import { createScenario, type ProoflineScenario, type ScenarioOptions } from "./scenario";
 import { startWorkerScenarioServer, type WorkerScenarioServer } from "./scenario-server";
 
 type CrmFixtures = {
   seed: TestSeed;
-  testApi: TestApi;
   scenarioOptions: Omit<Partial<ScenarioOptions>, "browser" | "workerServer">;
   scenario: ProoflineScenario;
   compatibilityScenario: ProoflineScenario;
@@ -33,28 +30,25 @@ export const test = base.extend<CrmFixtures, CrmWorkerFixtures>({
   ],
   seed: [{}, { option: true }],
   scenarioOptions: [{}, { option: true }],
-  testApi: async ({ seed }, use) => {
+  compatibilityScenario: async ({ scenarioFactory, scenarioOptions, seed }, use) => {
     const tenants = [
       ...new Set(["test-tenant", "tn_northstar", "tn_aurora", ...(seed.tenants ?? [])]),
     ];
     await use(
-      createTestApi(
-        { ...seed, tenants },
-        {
-          now: "2026-01-01T00:00:00.000Z",
-          authority: createBearerAuthority({
-            "e2e-access-token": {
-              subject: "e2e-owner",
-              role: "Owner",
-              tenantIds: tenants,
-            },
-          }),
+      scenarioFactory({
+        seed: { ...seed, tenants },
+        tenants,
+        identity: {
+          id: "compatibility-owner",
+          role: "Owner",
+          tenantIds: tenants,
+          name: "Avery Stone",
+          email: "avery@northstar.app",
         },
-      ),
+        ...scenarioOptions,
+        startAuthenticated: true,
+      }),
     );
-  },
-  compatibilityScenario: async ({ scenarioFactory }, use) => {
-    await use(scenarioFactory());
   },
   context: async ({ compatibilityScenario }, use) => {
     await use(await compatibilityScenario.createContext());
@@ -62,15 +56,9 @@ export const test = base.extend<CrmFixtures, CrmWorkerFixtures>({
   unauthenticatedPage: async ({ scenarioFactory }, use) => {
     await use(await scenarioFactory().newPage());
   },
-  page: async ({ context, testApi }, use) => {
+  page: async ({ context }, use) => {
     const page = await context.newPage();
-    const removeRoute = await prepareTestApiPage(page, testApi);
-    try {
-      await use(page);
-    } finally {
-      await removeRoute();
-      await page.context().clearCookies();
-    }
+    await use(page);
   },
   scenarioFactory: async ({ browser, workerServer }, use) => {
     const created = new Set<ProoflineScenario>();
