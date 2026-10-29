@@ -49,6 +49,14 @@ jobs:
       - name: Validate portable harness manifest
         run: pnpm harness:validate
 
+      - name: Build and audit the production application boundary
+        shell: bash
+        run: |
+          mkdir -p artifacts
+          set -o pipefail
+          pnpm build 2>&1 | tee artifacts/proofline-production-output.txt
+          pnpm proofline:check-production 2>&1 | tee -a artifacts/proofline-production-output.txt
+
       - name: Validate portable execution record and generated catalog
         run: pnpm record:check -- --base "$IMPACT_BASE" --head "$IMPACT_HEAD"
 
@@ -120,5 +128,8 @@ jobs:
             artifacts/vitest-output.txt
             artifacts/browser-output.txt
             artifacts/coverage-output.txt
+            artifacts/proofline-production-output.txt
+            dist/crm-web/.proofline/modules.json
+            dist/crm-web/.vite/manifest.json
             playwright-report/
             test-results/

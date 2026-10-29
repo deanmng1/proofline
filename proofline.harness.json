@@ -29,8 +29,32 @@
       "argv": ["pnpm", "record:check"],
       "cwd": "."
     },
+    "buildProduction": {
+      "argv": ["pnpm", "build"],
+      "cwd": "."
+    },
+    "buildTest": {
+      "argv": ["pnpm", "build:test"],
+      "cwd": "."
+    },
+    "checkProduction": {
+      "argv": ["pnpm", "proofline:check-production"],
+      "cwd": "."
+    },
     "testEntrypoint": {
-      "argv": ["pnpm", "dev"],
+      "argv": [
+        "node",
+        "tools/proofline/run-guarded.mjs",
+        "--allow-origin",
+        "http://127.0.0.1",
+        "--",
+        "node",
+        "tools/proofline/serve-test-app.mjs",
+        "--directory",
+        "dist/crm-web-test",
+        "--port",
+        "0"
+      ],
       "cwd": "."
     }
   },
@@ -98,6 +122,12 @@
       "unitCommand": "unit",
       "browserCommands": [],
       "browserOptOutReason": "Deterministic library/tool behavior is owned by Vitest; cross-screen evidence runs through crm-e2e."
+    },
+    {
+      "path": "tools/proofline",
+      "unitCommand": "unit",
+      "browserCommands": [],
+      "browserOptOutReason": "Runner, artifact, and launch-boundary behavior is deterministic and owned by focused Vitest process tests."
     }
   ],
   "browser": {
@@ -388,9 +418,142 @@
           "version": { "kind": "package-json", "package": "@vitest/coverage-v8" }
         }
       }
+    },
+    {
+      "workspace": "tools/proofline",
+      "provider": "v8",
+      "providerVersion": "3.2.7",
+      "sourceGlobs": [
+        "tools/proofline/**/*.ts",
+        "tools/proofline/**/*.mts",
+        "tools/proofline/**/*.mjs"
+      ],
+      "exclusions": [
+        {
+          "glob": "tools/proofline/src/egress-guard.test.ts",
+          "reason": "Test sources are not instrumented production sources."
+        },
+        {
+          "glob": "tools/proofline/src/production-negative.test.ts",
+          "reason": "Test sources are not instrumented production sources."
+        },
+        {
+          "glob": "tools/proofline/run-guarded.d.mts",
+          "reason": "Type-only declarations emit no runtime behavior."
+        },
+        {
+          "glob": "tools/proofline/check-production.mjs",
+          "reason": "The repository adapter CLI is exercised by the canonical production build-and-audit integration gate; Vitest V8 cannot attribute its separate Node process."
+        },
+        {
+          "glob": "tools/proofline/egress-guard.mjs",
+          "reason": "The preload must execute in isolated real child processes; Vitest V8 does not merge child-process instrumentation, so focused process tests own every enabled plane and bypass regression."
+        },
+        {
+          "glob": "tools/proofline/serve-test-app.mjs",
+          "reason": "The real loopback server is exercised in a separate Node process for missing, wrong, accepted, and replayed capability behavior; Vitest V8 cannot attribute that child process."
+        }
+      ],
+      "report": "artifacts/coverage/proofline-tools/coverage-summary.json",
+      "reportFormat": "istanbul-json-summary",
+      "metrics": ["lines", "functions", "branches", "statements"],
+      "aggregation": "per-file",
+      "producer": {
+        "command": { "kind": "nx-target", "target": "coverage" },
+        "adapter": {
+          "kind": "vitest",
+          "implementation": "vitest-v8",
+          "version": { "kind": "package-json", "package": "@vitest/coverage-v8" }
+        }
+      }
     }
   ],
   "ownership": [
+    {
+      "glob": "tools/proofline/**",
+      "entrypoints": [
+        "tools/proofline/run-guarded.mjs",
+        "tools/proofline/serve-test-app.mjs",
+        "tools/proofline/check-production.mjs",
+        "tools/proofline/src/production-negative.ts"
+      ],
+      "ruleIds": ["SAFE-001"],
+      "layers": ["contract"],
+      "testBindings": [
+        {
+          "ruleId": "SAFE-001",
+          "layer": "contract",
+          "testId": "binding-55d162a6203efae35911",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/egress-guard.test.ts",
+          "title": "Proofline egress guard > denies_fetch_http_https_websocket_and_inherited_child_egress",
+          "line": 208
+        },
+        {
+          "ruleId": "SAFE-001",
+          "layer": "contract",
+          "testId": "binding-4da1e9247e9fd510fc63",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/production-negative.test.ts",
+          "title": "Proofline production boundary > rejects_test_markers_in_a_production_bundle",
+          "line": 76
+        }
+      ],
+      "ruleLayers": [{ "ruleId": "SAFE-001", "layer": "contract" }]
+    },
+    {
+      "glob": "apps/crm-web/src/{bootstrap.tsx,main.tsx,test-capability.ts,test-entry.tsx}",
+      "entrypoints": ["apps/crm-web/src/main.tsx", "apps/crm-web/src/test-entry.tsx"],
+      "ruleIds": ["SAFE-001"],
+      "layers": ["ui", "contract"],
+      "testBindings": [
+        {
+          "ruleId": "SAFE-001",
+          "layer": "ui",
+          "testId": "binding-72792b103754b6f503e5",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "apps/crm-web/src/bootstrap.test.tsx",
+          "title": "CRM application bootstrap > test_bootstrap_never_initializes_monitoring",
+          "line": 29
+        },
+        {
+          "ruleId": "SAFE-001",
+          "layer": "contract",
+          "testId": "binding-373b264df7d2f52d7ff9",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/production-negative.test.ts",
+          "title": "Proofline production boundary > rejects_test_markers_in_a_production_bundle",
+          "line": 76
+        }
+      ],
+      "ruleLayers": [
+        { "ruleId": "SAFE-001", "layer": "ui" },
+        { "ruleId": "SAFE-001", "layer": "contract" }
+      ]
+    },
+    {
+      "glob": "apps/crm-web/vite.config.ts",
+      "entrypoints": ["apps/crm-web/vite.config.ts"],
+      "ruleIds": ["SAFE-001"],
+      "layers": ["contract"],
+      "testBindings": [
+        {
+          "ruleId": "SAFE-001",
+          "layer": "contract",
+          "testId": "binding-ae893599392659b6fb6a",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/production-negative.test.ts",
+          "title": "Proofline production boundary > rejects_test_markers_in_a_production_bundle",
+          "line": 76
+        }
+      ],
+      "ruleLayers": [{ "ruleId": "SAFE-001", "layer": "contract" }]
+    },
     {
       "glob": "packages/policy-service/src/**",
       "entrypoints": ["packages/policy-service/src/index.ts"],

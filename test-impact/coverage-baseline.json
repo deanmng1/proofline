@@ -56,6 +56,27 @@
       "branches": 86.85,
       "functions": 100,
       "statements": 94.14
+    },
+    "tools/proofline/src/production-negative.ts": {
+      "report": "artifacts/coverage/proofline-tools/coverage-summary.json",
+      "lines": 99.45,
+      "branches": 83.33,
+      "functions": 100,
+      "statements": 99.45
+    },
+    "tools/proofline/guard-policy.mjs": {
+      "report": "artifacts/coverage/proofline-tools/coverage-summary.json",
+      "lines": 86.84,
+      "branches": 79.41,
+      "functions": 83.33,
+      "statements": 86.84
+    },
+    "tools/proofline/run-guarded.mjs": {
+      "report": "artifacts/coverage/proofline-tools/coverage-summary.json",
+      "lines": 61.17,
+      "branches": 50,
+      "functions": 50,
+      "statements": 61.17
     }
   }
 }

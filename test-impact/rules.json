@@ -495,6 +495,37 @@
         }
       ],
       "playwright": []
+    },
+    {
+      "id": "SAFE-001",
+      "description": "Production artifacts exclude test-only adapters and guarded runner, server, and child processes deny undeclared egress before target code starts.",
+      "criticality": "critical",
+      "paths": [
+        "tools/proofline/**",
+        "apps/crm-web/src/bootstrap.tsx",
+        "apps/crm-web/src/main.tsx",
+        "apps/crm-web/src/test-capability.ts",
+        "apps/crm-web/src/test-entry.tsx",
+        "apps/crm-web/vite.config.ts"
+      ],
+      "vitest": [
+        {
+          "file": "tools/proofline/src/egress-guard.test.ts",
+          "title": "Proofline egress guard > denies_fetch_http_https_websocket_and_inherited_child_egress",
+          "line": 208
+        },
+        {
+          "file": "tools/proofline/src/production-negative.test.ts",
+          "title": "Proofline production boundary > rejects_test_markers_in_a_production_bundle",
+          "line": 76
+        },
+        {
+          "file": "apps/crm-web/src/bootstrap.test.tsx",
+          "title": "CRM application bootstrap > test_bootstrap_never_initializes_monitoring",
+          "line": 29
+        }
+      ],
+      "playwright": []
     }
   ]
 }

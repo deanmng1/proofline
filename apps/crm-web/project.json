@@ -13,6 +13,11 @@
       "command": "pnpm exec tsc -b apps/crm-web/tsconfig.json && pnpm exec vite build --config apps/crm-web/vite.config.ts",
       "outputs": ["{workspaceRoot}/dist/crm-web"]
     },
+    "build-test": {
+      "command": "pnpm exec tsc -b apps/crm-web/tsconfig.json && pnpm exec vite build --mode proofline-test --config apps/crm-web/vite.config.ts",
+      "outputs": ["{workspaceRoot}/dist/crm-web-test"],
+      "cache": false
+    },
     "test": {
       "command": "pnpm exec vitest run --config apps/crm-web/vite.config.ts"
     },
@@ -27,6 +32,10 @@
     },
     "preview": {
       "command": "pnpm exec vite preview --config apps/crm-web/vite.config.ts",
+      "cache": false
+    },
+    "preview-test": {
+      "command": "node tools/proofline/serve-test-app.mjs --directory dist/crm-web-test --port 0",
       "cache": false
     },
     "typecheck": {

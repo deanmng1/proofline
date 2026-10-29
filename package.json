@@ -10,6 +10,8 @@
   "scripts": {
     "dev": "pnpm nx run crm-web:serve",
     "build": "pnpm nx run crm-web:build",
+    "build:test": "pnpm nx run crm-web:build-test",
+    "proofline:check-production": "node --experimental-strip-types tools/proofline/check-production.mjs",
     "preview": "pnpm nx run crm-web:preview",
     "test": "pnpm nx run-many --target=test --all",
     "coverage": "pnpm nx run-many --target=coverage --all --parallel=1 --output-style=static && node --experimental-strip-types tools/impact/src/coverage-policy.ts --normalize-reports",
