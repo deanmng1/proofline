@@ -325,9 +325,13 @@ const validateHarnessUnchecked = ({
   cwd: string;
   manifest: unknown;
   discovered?: DiscoveredTests;
-}): { errors: string[] } => {
+}): { errors: string[]; commandErrors: string[] } => {
   const parsed = harnessManifestSchema.safeParse(input);
-  if (!parsed.success) return { errors: [`Invalid harness manifest: ${parsed.error.message}`] };
+  if (!parsed.success)
+    return {
+      errors: [`Invalid harness manifest: ${parsed.error.message}`],
+      commandErrors: [`Invalid harness manifest: ${parsed.error.message}`],
+    };
   const manifest = parsed.data;
   const errors: string[] = [];
   const root = realpathSync(cwd);
@@ -434,6 +438,7 @@ const validateHarnessUnchecked = ({
         errors.push(`${key}: missing repository Node entrypoint`);
     }
   }
+  const commandErrors = [...errors];
   const workspacePaths = manifest.workspaces.map((workspace) => workspace.path);
   unique(workspacePaths, "workspace");
   for (const workspace of manifest.workspaces) {
@@ -766,16 +771,17 @@ const validateHarnessUnchecked = ({
       }
     }
   }
-  return { errors };
+  return { errors, commandErrors };
 };
 
 // Keep the public static-validation contract total even for malformed/unreadable repositories.
 export const validateHarness = (
   options: Parameters<typeof validateHarnessUnchecked>[0],
-): { errors: string[] } => {
+): { errors: string[]; commandErrors: string[] } => {
   try {
     return validateHarnessUnchecked(options);
   } catch (error) {
-    return { errors: [`Harness filesystem/metadata validation failed: ${String(error)}`] };
+    const errors = [`Harness filesystem/metadata validation failed: ${String(error)}`];
+    return { errors, commandErrors: errors };
   }
 };

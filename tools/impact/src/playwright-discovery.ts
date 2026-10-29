@@ -1,3 +1,4 @@
+import path from "node:path";
 import type { PlaywrightCandidate, PlaywrightIdentity } from "./types.ts";
 
 type DiscoverySpec = {
@@ -19,7 +20,10 @@ type PlaywrightDiscovery = {
   errors?: unknown[];
 };
 
-export function parsePlaywrightIdentities(report: PlaywrightDiscovery): PlaywrightIdentity[] {
+export function parsePlaywrightIdentities(
+  report: PlaywrightDiscovery,
+  rootDir = ".",
+): PlaywrightIdentity[] {
   if (report.errors?.length || !Array.isArray(report.suites))
     throw new Error("Invalid Playwright discovery");
   const result: PlaywrightIdentity[] = [];
@@ -36,7 +40,7 @@ export function parsePlaywrightIdentities(report: PlaywrightDiscovery): Playwrig
       )
         throw new Error("Missing Playwright identity");
       result.push({
-        path: `apps/crm-e2e/src/${spec.file}`,
+        path: path.posix.isAbsolute(spec.file) ? spec.file : path.posix.join(rootDir, spec.file),
         title: [...titles, spec.title].join(" > "),
         line: spec.line as number,
         tags: spec.tags.map((tag: string) => (tag.startsWith("@") ? tag : `@${tag}`)),
@@ -49,24 +53,29 @@ export function parsePlaywrightIdentities(report: PlaywrightDiscovery): Playwrig
   return result;
 }
 
-export function parsePlaywrightDiscovery(report: PlaywrightDiscovery): PlaywrightCandidate[] {
+export function parsePlaywrightDiscovery(
+  report: PlaywrightDiscovery,
+  rootDir = ".",
+): PlaywrightCandidate[] {
   const tagsByPath = new Map<string, Set<string>>();
   const visitSuite = (suite: DiscoverySuite) => {
     for (const spec of suite.specs ?? []) {
       if (!spec.file || !spec.tests?.length) {
         continue;
       }
-      const path = `apps/crm-e2e/src/${spec.file}`;
+      const file = path.posix.isAbsolute(spec.file)
+        ? spec.file
+        : path.posix.join(rootDir, spec.file);
       const tags = Array.isArray(spec.tags)
         ? spec.tags
             .filter((tag): tag is string => typeof tag === "string")
             .map((tag) => (tag.startsWith("@") ? tag : `@${tag}`))
         : [];
-      const currentTags = tagsByPath.get(path) ?? new Set<string>();
+      const currentTags = tagsByPath.get(file) ?? new Set<string>();
       for (const tag of tags) {
         currentTags.add(tag);
       }
-      tagsByPath.set(path, currentTags);
+      tagsByPath.set(file, currentTags);
     }
     for (const child of suite.suites ?? []) {
       visitSuite(child);

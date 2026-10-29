@@ -43,7 +43,7 @@ describe("machine-readable regression contract", () => {
       const artifact = JSON.parse(
         readFileSync(path.join(cwd, "artifacts/impact/selection.json"), "utf8"),
       );
-      expect(artifact.fallback).toBe("all-tests");
+      expect(artifact.fallback).toBe("canonical-full");
       expect(artifact.errors.length).toBeGreaterThan(0);
       expect(artifact.executionBlocked).toBe(true);
     } finally {
@@ -137,34 +137,41 @@ describe("machine-readable regression contract", () => {
       rmSync(directory, { recursive: true, force: true });
     }
   });
-  test("uses_crm_configuration_for_crm_identity", () => {
+  test("uses_explicit_runner_configuration_for_identity", () => {
     expect(
-      selection.vitestCommand({
-        file: "apps/crm-web/src/features/crm-workflow.test.tsx",
-        title: "suite > selected",
-        line: 1,
-      }),
+      selection.vitestCommand(
+        {
+          file: "apps/crm-web/src/features/crm-workflow.test.tsx",
+          title: "suite > selected",
+          line: 1,
+        },
+        "apps/crm-web/vite.config.ts",
+      ),
     ).toContain("apps/crm-web/vite.config.ts");
   });
   test("selects_one_playwright_location_without_its_sibling_test", () => {
     const run = spawnSync(
       "pnpm",
       [
-        ...selection.playwrightCommand([
-          {
-            path: "apps/crm-e2e/src/auth.spec.ts",
-            title: "signs in through the mock auth flow",
-            line: 4,
-            tags: [],
-          },
-        ]),
+        ...selection.playwrightCommand(
+          [
+            {
+              path: "apps/crm-e2e/src/auth.spec.ts",
+              title: "signs in through the mock auth flow",
+              line: 4,
+              tags: [],
+            },
+          ],
+          "apps/crm-e2e/playwright.config.ts",
+        ),
+        "--project=chromium",
         "--list",
         "--reporter=json",
       ],
       { encoding: "utf8" },
     );
     expect(run.status, run.stderr).toBe(0);
-    expect(parsePlaywrightIdentities(JSON.parse(run.stdout))).toEqual([
+    expect(parsePlaywrightIdentities(JSON.parse(run.stdout), "apps/crm-e2e/src")).toEqual([
       {
         path: "apps/crm-e2e/src/auth.spec.ts",
         title: "signs in through the mock auth flow",
@@ -192,4 +199,14 @@ describe("machine-readable regression contract", () => {
       expect(JSON.parse(run.stdout).config.failOnFlakyTests).toBe(Boolean(ci));
     }
   });
+});
+
+test("rejects_extra_catalog_evidence_without_a_manifest_binding", () => {
+  expect(
+    validation
+      .validateRules(registry(), discovered, undefined, {
+        ownership: [],
+      } as unknown as import("./types.ts").HarnessManifest)
+      .errors.join(" "),
+  ).toMatch(/Unbound catalog evidence/);
 });

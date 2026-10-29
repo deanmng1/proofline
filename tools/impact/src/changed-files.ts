@@ -50,7 +50,7 @@ export const parseNameStatus = (output: Buffer): ChangedFile[] => {
     }
 
     const status = parseStatus(rawStatus);
-    if (status === "renamed") {
+    if (status === "renamed" || rawStatus.startsWith("C")) {
       const previousPath = values[index++];
       const path = values[index++];
       if (path && previousPath) {
@@ -71,7 +71,13 @@ export const parseNameStatus = (output: Buffer): ChangedFile[] => {
 const mergeFiles = (...groups: ChangedFile[][]) => {
   const files = new Map<string, ChangedFile>();
   for (const file of groups.flat()) {
-    files.set(file.path, file);
+    const existing = files.get(file.path);
+    files.set(
+      file.path,
+      existing?.previousPath && !file.previousPath
+        ? { ...file, previousPath: existing.previousPath, status: "renamed" }
+        : file,
+    );
   }
   return [...files.values()].sort((left, right) => left.path.localeCompare(right.path));
 };
@@ -107,27 +113,47 @@ export const readChangedFiles = ({
   cwd: string;
   env?: NodeJS.ProcessEnv;
 }): ChangeManifest => {
-  const head = resolveRevision(cwd, env.IMPACT_HEAD || env.GITHUB_SHA || "HEAD") ?? "HEAD";
-  const ci = env.CI === "true";
-  const explicitBases = [env.IMPACT_BASE, env.GITHUB_BASE_SHA].filter(
-    (candidate): candidate is string => Boolean(candidate),
-  );
-  const baseCandidates = ci ? explicitBases : [...explicitBases, "origin/main", "main", "HEAD~1"];
-  const base = baseCandidates
-    .map((candidate) => {
-      const result = git(cwd, ["merge-base", candidate, head]);
-      return result.ok ? result.stdout.toString().trim() : undefined;
-    })
-    .find(Boolean);
   const uncertainty: string[] = [];
-
-  if (!base) {
+  const requestedHead = env.IMPACT_HEAD ?? env.GITHUB_SHA ?? "HEAD";
+  const resolvedHead = resolveRevision(cwd, requestedHead);
+  const head = resolvedHead ?? requestedHead;
+  const checkoutHead = resolveRevision(cwd, "HEAD");
+  if (resolvedHead && checkoutHead !== resolvedHead)
+    uncertainty.push("requested head differs from checkout used for discovery");
+  const shallow = git(cwd, ["rev-parse", "--is-shallow-repository"]);
+  if (!shallow.ok || shallow.stdout.toString().trim() !== "false")
+    uncertainty.push("shallow or unverifiable repository history");
+  if (!resolvedHead) uncertainty.push(`unresolved supplied head:${requestedHead}`);
+  const ci =
+    Boolean(env.CI && !["false", "0"].includes(env.CI.toLowerCase())) ||
+    Boolean(env.GITHUB_ACTIONS);
+  const suppliedBase = env.IMPACT_BASE ?? env.GITHUB_BASE_SHA;
+  const baseCandidates =
+    suppliedBase !== undefined ? [suppliedBase] : ci ? [] : ["origin/main", "main", "HEAD~1"];
+  let resolvedBase: string | undefined;
+  const base = resolvedHead
+    ? baseCandidates
+        .map((candidate) => {
+          const revision = resolveRevision(cwd, candidate);
+          if (!revision) return undefined;
+          const result = git(cwd, ["merge-base", "--all", revision, resolvedHead]);
+          const bases = result.ok
+            ? result.stdout.toString().trim().split(/\s+/).filter(Boolean)
+            : [];
+          if (bases.length !== 1) return undefined;
+          resolvedBase = revision;
+          return bases[0];
+        })
+        .find(Boolean)
+    : undefined;
+  if (!base)
     uncertainty.push(
-      ci
-        ? "missing CI base revision; set IMPACT_BASE or GITHUB_BASE_SHA"
-        : "missing local merge base; compare against origin/main, main, or HEAD~1",
+      suppliedBase !== undefined
+        ? `unresolved supplied base or merge base:${suppliedBase}`
+        : ci
+          ? "missing CI base revision; set IMPACT_BASE or GITHUB_BASE_SHA"
+          : "missing local merge base",
     );
-  }
 
   const committed = base
     ? git(cwd, ["diff", "--name-status", "-z", "--find-renames", `${base}...${head}`])
@@ -138,6 +164,15 @@ export const readChangedFiles = ({
 
   const workingTree = worktreeFiles(cwd);
   return {
+    revisions: {
+      requestedBase: suppliedBase ?? null,
+      requestedHead,
+      resolvedBase: resolvedBase ?? null,
+      resolvedHead: resolvedHead ?? null,
+      mergeBase: base ?? null,
+      checkoutHead: checkoutHead ?? null,
+      historyComplete: shallow.ok && shallow.stdout.toString().trim() === "false",
+    },
     base: base ?? null,
     head,
     files: mergeFiles(committed?.ok ? parseNameStatus(committed.stdout) : [], workingTree.files),

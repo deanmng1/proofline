@@ -21,6 +21,15 @@ export type ChangeManifest = {
   head: string;
   files: ChangedFile[];
   uncertainty: string[];
+  revisions?: {
+    requestedBase: string | null;
+    requestedHead: string;
+    resolvedBase: string | null;
+    resolvedHead: string | null;
+    mergeBase: string | null;
+    checkoutHead: string | null;
+    historyComplete: boolean;
+  };
 };
 
 export type Feature = {
@@ -63,10 +72,21 @@ export type TestCandidates = {
 };
 
 export type ImpactSelection = {
-  vitestFiles: string[];
-  playwrightTests: string[];
-  playwrightIdentities: PlaywrightCandidate[];
-  reasons: Record<string, string[]>;
-  fallback: "none" | "all-tests";
+  fallback: "none" | "canonical-full";
+  commandKeys: string[];
+  identities: DiscoveredTests;
+  pathReasons: Record<string, string[]>;
+  rationale: Record<
+    string,
+    {
+      ownership: string;
+      ruleId: string | null;
+      layer: string | null;
+      testId: string | null;
+      commandKey: string;
+      identity: VitestIdentity | PlaywrightIdentity;
+      evidence: string[];
+    }[]
+  >;
   errors: string[];
 };

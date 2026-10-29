@@ -1,5 +1,11 @@
 import { z } from "zod";
-import type { DiscoveredTests, FeatureMap, PlaywrightCandidate, RuleRegistry } from "./types.ts";
+import type {
+  DiscoveredTests,
+  FeatureMap,
+  HarnessManifest,
+  PlaywrightCandidate,
+  RuleRegistry,
+} from "./types.ts";
 
 export const relativePath = z
   .string()
@@ -63,7 +69,12 @@ export const renderRules = (registry: RuleRegistry) => {
   ].join("\n");
 };
 
-export const validateRules = (input: unknown, discovered: DiscoveredTests, markdown?: string) => {
+export const validateRules = (
+  input: unknown,
+  discovered: DiscoveredTests,
+  markdown?: string,
+  manifest?: HarnessManifest,
+) => {
   const parsed = rulesSchema.safeParse(input);
   if (!parsed.success) return { errors: [`Invalid rule registry: ${parsed.error.message}`] };
   const registry = parsed.data;
@@ -115,6 +126,36 @@ export const validateRules = (input: unknown, discovered: DiscoveredTests, markd
         errors.push(
           `${rule.id}: ambiguous Playwright evidence ${reference.path}:${reference.line}`,
         );
+    }
+  }
+  if (manifest) {
+    const bindings = manifest.ownership.flatMap((owner) => owner.testBindings);
+    for (const rule of registry.rules) {
+      for (const reference of rule.vitest)
+        if (
+          !bindings.some(
+            (binding) =>
+              binding.ruleId === rule.id &&
+              binding.runner === "vitest" &&
+              binding.file === reference.file &&
+              binding.title === reference.title &&
+              binding.line === reference.line,
+          )
+        )
+          errors.push(`Unbound catalog evidence:${rule.id}:${reference.title}`);
+      for (const reference of rule.playwright)
+        if (
+          !bindings.some(
+            (binding) =>
+              binding.ruleId === rule.id &&
+              binding.runner === "playwright" &&
+              binding.file === reference.path &&
+              binding.title === reference.title &&
+              binding.line === reference.line &&
+              (!binding.tag || binding.tag === reference.tag),
+          )
+        )
+          errors.push(`Unbound catalog evidence:${rule.id}:${reference.title}`);
     }
   }
   if (markdown !== undefined && markdown !== renderRules(registry))

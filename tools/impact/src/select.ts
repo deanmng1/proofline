@@ -1,154 +1,47 @@
 import path from "node:path";
+import ts from "typescript";
 import type {
-  ChangedFile,
   ChangeManifest,
   DiscoveredTests,
-  FeatureMap,
+  HarnessManifest,
+  HarnessTestBinding,
   ImpactSelection,
   PlaywrightIdentity,
   RuleRegistry,
-  TestCandidates,
   VitestIdentity,
 } from "./types.ts";
-import { validateFeatureMap, validateRules } from "./validate.ts";
+import { validateRules } from "./validate.ts";
 
-type SelectionInput = {
-  manifest: ChangeManifest;
-  featureMap: FeatureMap;
-  candidates: TestCandidates;
-  sourceFiles: Record<string, string>;
-};
-
-const knownRoots = [
-  "apps/crm-web/",
-  "apps/crm-e2e/",
-  "packages/domain/",
-  "packages/api-contracts/",
-  "packages/test-kit/",
-  "packages/service-bus/",
-  "packages/policy-service/",
-  "packages/policy-state-service/",
-  "packages/finance-service/",
-  "packages/insurance-runtime/",
-  "tools/impact/",
-];
-
-const configurationFiles = new Set([
-  "package.json",
-  "pnpm-lock.yaml",
-  "pnpm-workspace.yaml",
-  "nx.json",
-  "biome.json",
-  "test-impact/features.json",
-  "test-impact/rules.json",
-  "test-impact/rules.schema.json",
-  "test-impact/coverage-baseline.json",
-]);
-
-const sourceExtensions = ["", ".ts", ".tsx", ".js", ".jsx", "/index.ts", "/index.tsx"];
-
-const sortUnique = (values: Iterable<string>) => [...new Set(values)].sort();
-
-const pathVariants = (file: ChangedFile) => [
-  file.path,
-  ...(file.previousPath ? [file.previousPath] : []),
-];
-
-const matchesGlob = (value: string, glob: string) => {
-  let expression = "^";
-
-  for (let index = 0; index < glob.length; index += 1) {
-    const character = glob[index];
-    if (character === "*") {
-      if (glob[index + 1] === "*") {
-        expression += ".*";
-        index += 1;
-      } else {
-        expression += "[^/]*";
-      }
-    } else {
-      expression += character.replace(/[|\\{}()[\]^$+?.]/g, "\\$&");
-    }
-  }
-
-  return new RegExp(`${expression}$`).test(value);
-};
-
-const isConfigurationChange = (file: string) =>
-  configurationFiles.has(file) ||
+const unique = (values: string[]) => [...new Set(values)].sort();
+const configuration = (file: string) =>
+  /(?:^|\/)(?:package\.json|project\.json|pnpm-lock\.yaml|pnpm-workspace\.yaml|nx\.json|biome\.json|proofline\.harness\.json|tsconfig[^/]*\.json|(?:vite|vitest|playwright)\.config\.[^/]+)$/.test(
+    file,
+  ) ||
   file.startsWith(".github/") ||
-  /(?:^|\/)package\.json$/.test(file) ||
-  /(?:^|\/)tsconfig(?:\.[^/]+)?\.json$/.test(file) ||
-  file.endsWith("/project.json") ||
-  /(?:^|\/)vite\.config\.[^/]+$/.test(file) ||
-  /(?:^|\/)playwright\.config\.[^/]+$/.test(file);
-
-const hasUnknownExecutableOwner = (file: string) =>
-  /^(apps|packages|tools)\//.test(file) && !knownRoots.some((root) => file.startsWith(root));
-
-const isRuntimeFile = (file: string) =>
-  knownRoots.some((root) => file.startsWith(root)) &&
-  (file.includes("/src/") || /\.(?:css|json)$/.test(file));
-
-const addReason = (reasons: Map<string, Set<string>>, test: string, reason: string) => {
-  const existing = reasons.get(test) ?? new Set<string>();
-  existing.add(reason);
-  reasons.set(test, existing);
-};
-
-const resolveImport = (from: string, specifier: string, sourceFiles: Record<string, string>) => {
-  let unextendedPath: string | undefined;
-
-  if (specifier.startsWith(".")) {
-    unextendedPath = path.posix.normalize(path.posix.join(path.posix.dirname(from), specifier));
-  } else if (specifier.startsWith("@/")) {
-    unextendedPath = `apps/crm-web/src/${specifier.slice(2)}`;
-  } else if (specifier === "@testbed/domain") {
-    unextendedPath = "packages/domain/src/index";
-  } else if (specifier === "@testbed/api-contracts") {
-    unextendedPath = "packages/api-contracts/src/index";
-  } else if (specifier === "@testbed/test-kit") {
-    unextendedPath = "packages/test-kit/src/index";
-  } else if (
-    /^@testbed\/(service-bus|policy-service|policy-state-service|finance-service|insurance-runtime)$/.test(
-      specifier,
-    )
-  ) {
-    unextendedPath = `packages/${specifier.slice("@testbed/".length)}/src/index`;
-  }
-
-  if (!unextendedPath) {
-    return undefined;
-  }
-
-  return sourceExtensions
-    .map((extension) => `${unextendedPath}${extension}`)
-    .find((candidate) => Object.hasOwn(sourceFiles, candidate));
-};
-
-export const vitestCommand = (test: VitestIdentity) => [
+  file.startsWith("test-impact/");
+const executable = (file: string) => /\.(?:[cm]?[jt]sx?|css|json|html|vue|svelte|wasm)$/.test(file);
+const pattern = (title: string) =>
+  `^${title
+    .split(" > ")
+    .map((part) => part.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
+    .join("(?: > | )")}$`;
+export const vitestCommand = (test: VitestIdentity, config?: string) => [
   "exec",
   "vitest",
   "run",
-  ...(test.file.startsWith("apps/crm-web/") ? ["--config", "apps/crm-web/vite.config.ts"] : []),
+  ...(config ? ["--config", config] : []),
   test.file,
   "--testNamePattern",
-  // List output uses " > " between suites; a test title can contain that literal too.
-  // Discovery rejects normalized-title collisions before either form can execute.
-  `^${test.title
-    .split(" > ")
-    .map((part) => part.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
-    .join("(?: > | )")}$`,
+  pattern(test.title),
 ];
-
-export const playwrightCommand = (tests: PlaywrightIdentity[]) => [
+export const playwrightCommand = (tests: PlaywrightIdentity[], config?: string) => [
   "exec",
   "playwright",
   "test",
-  "--config",
-  "apps/crm-e2e/playwright.config.ts",
-  "--project=chromium",
-  ...tests.map((test) => `${test.path}:${test.line}`),
+  ...(config ? ["--config", config] : []),
+  ...tests.map(
+    (test) => `(?:^|/)${test.path.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$:${test.line}`,
+  ),
 ];
 
 export const selectRuleTests = (
@@ -161,7 +54,7 @@ export const selectRuleTests = (
   const selected: DiscoveredTests = { vitest: [], playwright: [] };
   const reasons: Record<string, string[]> = {};
   for (const rule of registry.rules) {
-    if (!paths.some((file) => rule.paths.some((glob) => matchesGlob(file, glob)))) continue;
+    if (!paths.some((file) => rule.paths.some((glob) => path.matchesGlob(file, glob)))) continue;
     for (const reference of rule.vitest) {
       const test = discovered.vitest.find(
         (test) => test.file === reference.file && test.title === reference.title,
@@ -182,177 +75,272 @@ export const selectRuleTests = (
   return { ...selected, reasons };
 };
 
-const importsFor = (source: string) => {
-  const matches = source.matchAll(
-    /\b(?:import|export)\s+(?:type\s+)?(?:[\s\S]*?\s+from\s+)?["']([^"']+)["']/g,
-  );
-  return [...matches].map((match) => match[1]);
-};
-
-const dependencyClosure = (entry: string, sourceFiles: Record<string, string>) => {
-  const visited = new Set<string>();
-  const pending = [entry];
-
-  while (pending.length > 0) {
-    const current = pending.pop();
-    if (!current || visited.has(current)) {
-      continue;
-    }
-
-    visited.add(current);
-    const source = sourceFiles[current];
-    if (!source) {
-      continue;
-    }
-
-    for (const specifier of importsFor(source)) {
-      const imported = resolveImport(current, specifier, sourceFiles);
-      if (imported && !visited.has(imported)) {
-        pending.push(imported);
-      }
-    }
-  }
-
-  return visited;
-};
-
-const testCandidates = (candidates: TestCandidates) => [
-  ...candidates.vitest,
-  ...candidates.playwright.map((candidate) => candidate.path),
-];
-
-const selectAll = (candidates: TestCandidates, errors: string[], reasons: string[]) => {
-  const impactReasons = new Map<string, Set<string>>();
-  for (const test of testCandidates(candidates)) {
-    for (const reason of reasons) {
-      addReason(impactReasons, test, reason);
-    }
-  }
-
-  return {
-    vitestFiles: [...new Set(candidates.vitest)],
-    playwrightTests: [...new Set(candidates.playwright.map((candidate) => candidate.path))],
-    playwrightIdentities: [...candidates.playwright],
-    reasons: Object.fromEntries(
-      [...impactReasons.entries()].map(([test, testReasons]) => [test, sortUnique(testReasons)]),
-    ),
-    fallback: "all-tests" as const,
-    errors: sortUnique(errors),
+const imports = (file: string, text: string) => {
+  const source = ts.createSourceFile(file, text, ts.ScriptTarget.Latest, true);
+  const result: { target?: string; dynamic: boolean }[] = [];
+  const visit = (node: ts.Node) => {
+    if (
+      (ts.isImportDeclaration(node) || ts.isExportDeclaration(node)) &&
+      node.moduleSpecifier &&
+      ts.isStringLiteralLike(node.moduleSpecifier)
+    )
+      result.push({ target: node.moduleSpecifier.text, dynamic: false });
+    if (ts.isCallExpression(node) && node.expression.kind === ts.SyntaxKind.ImportKeyword)
+      result.push({
+        target:
+          node.arguments[0] && ts.isStringLiteralLike(node.arguments[0])
+            ? node.arguments[0].text
+            : undefined,
+        dynamic: true,
+      });
+    ts.forEachChild(node, visit);
   };
+  visit(source);
+  return result;
 };
+const resolve = (file: string, target: string | undefined, sources: Record<string, string>) => {
+  if (!target?.startsWith(".")) return undefined;
+  const base = path.posix.normalize(path.posix.join(path.posix.dirname(file), target));
+  return ["", ".ts", ".tsx", ".js", ".jsx", "/index.ts", "/index.tsx"]
+    .map((ext) => base + ext)
+    .find((candidate) => Object.hasOwn(sources, candidate));
+};
+
+export const canonicalCommandKeys = (manifest: HarnessManifest) => [
+  ...new Set([
+    "unit",
+    "browser",
+    ...manifest.workspaces.flatMap((workspace) => [
+      ...(workspace.unitCommand ? [workspace.unitCommand] : []),
+      ...workspace.browserCommands,
+    ]),
+  ]),
+];
 
 export const selectImpact = ({
   manifest,
-  featureMap,
-  candidates,
+  changes,
+  discovered,
   sourceFiles,
-}: SelectionInput): ImpactSelection => {
-  const validation = validateFeatureMap(featureMap, candidates.playwright, candidates.vitest);
-  const fallbackReasons = [
-    ...manifest.uncertainty.map((uncertainty) => `uncertainty:${uncertainty}`),
-    ...validation.errors.map((error) => `metadata:${error}`),
-  ];
-
-  for (const changed of manifest.files) {
-    for (const changedPath of pathVariants(changed)) {
-      if (isConfigurationChange(changedPath)) {
-        fallbackReasons.push(`configuration:${changedPath}`);
-      }
-      if (hasUnknownExecutableOwner(changedPath)) {
-        fallbackReasons.push(`unknown-owner:${changedPath}`);
-      }
+}: {
+  manifest: HarnessManifest;
+  changes: ChangeManifest;
+  discovered: DiscoveredTests;
+  sourceFiles: Record<string, string>;
+}): ImpactSelection => {
+  const errors = [...changes.uncertainty];
+  const identities: DiscoveredTests = { vitest: [], playwright: [] };
+  const commandKeys: string[] = [];
+  const rationale: ImpactSelection["rationale"] = {};
+  const bindings = new Map<HarnessTestBinding, VitestIdentity | PlaywrightIdentity>();
+  for (const owner of manifest.ownership) {
+    for (const binding of owner.testBindings) {
+      const matches =
+        binding.runner === "vitest"
+          ? discovered.vitest.filter(
+              (test) =>
+                test.file === binding.file &&
+                test.title === binding.title &&
+                test.line === binding.line,
+            )
+          : discovered.playwright.filter(
+              (test) =>
+                test.path === binding.file &&
+                test.title === binding.title &&
+                test.line === binding.line &&
+                (!binding.tag || test.tags.includes(binding.tag)),
+            );
+      const runnable =
+        binding.runner === "vitest"
+          ? discovered.vitest.filter(
+              (test) =>
+                test.file.toLowerCase().includes(binding.file.toLowerCase()) &&
+                test.title.replaceAll(" > ", " ") === binding.title.replaceAll(" > ", " "),
+            )
+          : discovered.playwright.filter(
+              (test) => test.path === binding.file && test.line === binding.line,
+            );
+      if (matches.length !== 1 || runnable.length !== 1)
+        errors.push(`missing or ambiguous binding:${binding.testId}`);
+      else bindings.set(binding, matches[0]);
     }
   }
-
-  if (fallbackReasons.length > 0) {
-    return selectAll(candidates, validation.errors, sortUnique(fallbackReasons));
-  }
-
-  const reasons = new Map<string, Set<string>>();
-  const vitestCandidates = new Set(candidates.vitest);
-  const playwrightCandidates = new Set(candidates.playwright.map((candidate) => candidate.path));
-  const taggedPlaywright = new Set<(typeof candidates.playwright)[number]>();
-  const allCandidates = testCandidates(candidates);
-  const closures = new Map(
-    allCandidates.map((candidate) => [candidate, dependencyClosure(candidate, sourceFiles)]),
+  const dependencies = new Map(
+    Object.entries(sourceFiles).map(([file, text]) => [file, imports(file, text)]),
   );
-  const unmappedRuntimePaths: string[] = [];
-
-  for (const changed of manifest.files) {
-    const changedTestDirectly = pathVariants(changed).some((changedPath) =>
-      allCandidates.includes(changedPath),
-    );
-    let hasSelectionEvidence = changedTestDirectly;
-
-    for (const candidate of allCandidates) {
-      if (pathVariants(changed).includes(candidate)) {
-        addReason(reasons, candidate, "direct-test-edit");
+  const closure = (entry: string) => {
+    const visited = new Set<string>();
+    const pending = [entry];
+    while (pending.length) {
+      const file = pending.pop() as string;
+      if (visited.has(file)) continue;
+      visited.add(file);
+      for (const dependency of dependencies.get(file) ?? []) {
+        const target = resolve(file, dependency.target, sourceFiles);
+        if (dependency.dynamic) {
+          const owners = target
+            ? manifest.ownership.filter(
+                (owner) =>
+                  path.matchesGlob(target, owner.glob) && owner.entrypoints.includes(target),
+              )
+            : [];
+          if (
+            owners.length !== 1 ||
+            !owners[0].testBindings.length ||
+            owners[0].testBindings.some((binding) => !bindings.has(binding))
+          )
+            errors.push(
+              `unresolved dynamic dependency:${file}:${dependency.target ?? "<expression>"}`,
+            );
+        }
+        if (target) pending.push(target);
+      }
+    }
+    return visited;
+  };
+  for (const changed of changes.files) {
+    for (const file of [changed.path, ...(changed.previousPath ? [changed.previousPath] : [])]) {
+      rationale[file] = [];
+      if (configuration(file)) errors.push(`configuration:${file}`);
+      const owners = manifest.ownership.filter((owner) => path.matchesGlob(file, owner.glob));
+      const workspace = manifest.workspaces.find((workspace) =>
+        file.startsWith(`${workspace.path}/`),
+      );
+      if (!owners.length && !executable(file) && (!workspace || /\.(?:md|txt)$/.test(file)))
+        continue;
+      if (/\.(?:test|spec)\.[cm]?[jt]sx?$/.test(file))
+        errors.push(`direct test change requires full validation:${file}`);
+      if (changed.status !== "modified") errors.push(`structural change:${changed.status}:${file}`);
+      if (!manifest.workspaces.some((workspace) => file.startsWith(`${workspace.path}/`)))
+        errors.push(`unmapped workspace:${file}`);
+      if (owners.length !== 1) {
+        errors.push(`missing or ambiguous ownership:${file}`);
         continue;
       }
-
-      const closure = closures.get(candidate) ?? new Set<string>();
-      for (const changedPath of pathVariants(changed)) {
-        if (closure.has(changedPath)) {
-          addReason(reasons, candidate, `static-import:${changedPath}`);
-          hasSelectionEvidence = true;
+      const owner = owners[0];
+      if (
+        !owner.testBindings.length ||
+        owner.ruleLayers.some(
+          (pair) =>
+            !owner.testBindings.some(
+              (binding) => binding.ruleId === pair.ruleId && binding.layer === pair.layer,
+            ),
+        )
+      )
+        errors.push(`unbound ownership:${file}`);
+      const reachable = closure(file);
+      const relatedOwners = new Set([owner]);
+      for (const importer of reachable)
+        for (const dependency of dependencies.get(importer) ?? []) {
+          if (!dependency.dynamic) continue;
+          const target = resolve(importer, dependency.target, sourceFiles);
+          if (target)
+            for (const targetOwner of manifest.ownership.filter(
+              (item) => path.matchesGlob(target, item.glob) && item.entrypoints.includes(target),
+            ))
+              relatedOwners.add(targetOwner);
         }
-      }
-    }
-
-    const matchedFeatures = changedTestDirectly
-      ? []
-      : featureMap.features.filter((feature) =>
-          pathVariants(changed).some((changedPath) =>
-            feature.paths.some((pattern) => matchesGlob(changedPath, pattern)),
-          ),
-        );
-
-    for (const feature of matchedFeatures) {
-      hasSelectionEvidence = true;
-      for (const test of feature.vitest) {
-        if (vitestCandidates.has(test)) {
-          addReason(reasons, test, `feature:${feature.id}`);
+      for (const selectedOwner of relatedOwners)
+        for (const binding of selectedOwner.testBindings) {
+          const identity = bindings.get(binding);
+          if (!identity) {
+            const declaredIdentity =
+              binding.runner === "vitest"
+                ? { file: binding.file, title: binding.title, line: binding.line }
+                : {
+                    path: binding.file,
+                    title: binding.title,
+                    line: binding.line,
+                    tags: binding.tag ? [binding.tag] : [],
+                  };
+            rationale[file].push({
+              ownership: selectedOwner.glob,
+              ruleId: binding.ruleId,
+              layer: binding.layer,
+              testId: binding.testId,
+              commandKey: binding.commandKey,
+              identity: declaredIdentity,
+              evidence: ["unresolved-manifest-binding"],
+            });
+            continue;
+          }
+          const evidence = [
+            "manifest-binding",
+            ...(selectedOwner !== owner ? [`dynamic-import:${file}->${selectedOwner.glob}`] : []),
+          ];
+          if (closure(binding.file).has(file))
+            evidence.push(binding.file === file ? "direct-test-edit" : "static-import");
+          rationale[file].push({
+            ownership: selectedOwner.glob,
+            ruleId: binding.ruleId,
+            layer: binding.layer,
+            testId: binding.testId,
+            commandKey: binding.commandKey,
+            identity,
+            evidence,
+          });
+          commandKeys.push(binding.commandKey);
+          if (
+            binding.runner === "vitest" &&
+            !identities.vitest.includes(identity as VitestIdentity)
+          )
+            identities.vitest.push(identity as VitestIdentity);
+          if (
+            binding.runner === "playwright" &&
+            !identities.playwright.includes(identity as PlaywrightIdentity)
+          )
+            identities.playwright.push(identity as PlaywrightIdentity);
         }
-      }
-
-      for (const test of candidates.playwright) {
-        if (feature.playwrightTags.some((tag) => test.tags.includes(tag))) {
-          taggedPlaywright.add(test);
-          addReason(reasons, test.path, `feature:${feature.id}`);
+      // Static dependencies add exact identities only after reviewed ownership succeeds.
+      for (const runner of ["vitest", "playwright"] as const) {
+        for (const identity of discovered[runner]) {
+          const testFile = "file" in identity ? identity.file : identity.path;
+          if (
+            !closure(testFile).has(file) ||
+            (identities[runner] as (VitestIdentity | PlaywrightIdentity)[]).includes(identity)
+          )
+            continue;
+          const testWorkspace = manifest.workspaces.find((workspace) =>
+            testFile.startsWith(`${workspace.path}/`),
+          );
+          const key =
+            runner === "vitest"
+              ? testWorkspace?.unitCommand
+              : testWorkspace?.browserCommands.length === 1
+                ? testWorkspace.browserCommands[0]
+                : undefined;
+          if (!key) {
+            errors.push(`unmapped diagnostic identity:${testFile}`);
+            continue;
+          }
+          rationale[file].push({
+            ownership: owner.glob,
+            ruleId: null,
+            layer: null,
+            testId: null,
+            commandKey: key,
+            identity,
+            evidence: ["static-import"],
+          });
+          commandKeys.push(key);
+          (identities[runner] as (VitestIdentity | PlaywrightIdentity)[]).push(identity);
         }
-      }
-    }
-
-    for (const changedPath of pathVariants(changed)) {
-      if (isRuntimeFile(changedPath) && !hasSelectionEvidence) {
-        unmappedRuntimePaths.push(changedPath);
       }
     }
   }
-
-  if (unmappedRuntimePaths.length > 0) {
-    return selectAll(
-      candidates,
-      validation.errors,
-      sortUnique(unmappedRuntimePaths.map((changedPath) => `unmapped-runtime:${changedPath}`)),
-    );
-  }
-
-  const selected = sortUnique(reasons.keys());
+  const pathReasons = Object.fromEntries(
+    Object.keys(rationale).map((file) => [file, errors.filter((error) => error.includes(file))]),
+  );
+  for (const file of Object.keys(pathReasons))
+    if (errors.length && !pathReasons[file].length) pathReasons[file] = [...errors];
   return {
-    vitestFiles: selected.filter((test) => vitestCandidates.has(test)),
-    playwrightTests: selected.filter((test) => playwrightCandidates.has(test)),
-    playwrightIdentities: candidates.playwright.filter(
-      (test) =>
-        taggedPlaywright.has(test) ||
-        [...(reasons.get(test.path) ?? [])].some(
-          (reason) => reason === "direct-test-edit" || reason.startsWith("static-import:"),
-        ),
-    ),
-    reasons: Object.fromEntries(
-      selected.map((test) => [test, sortUnique(reasons.get(test) ?? [])]),
-    ),
-    fallback: "none",
-    errors: validation.errors,
+    pathReasons,
+    fallback: errors.length ? "canonical-full" : "none",
+    commandKeys: errors.length
+      ? canonicalCommandKeys(manifest)
+      : canonicalCommandKeys(manifest).filter((key) => commandKeys.includes(key)),
+    identities: errors.length ? { vitest: [], playwright: [] } : identities,
+    rationale,
+    errors: unique(errors),
   };
 };

@@ -23,7 +23,7 @@ describe("Playwright discovery", () => {
       }),
     ).toEqual([
       {
-        path: "apps/crm-e2e/src/example.spec.ts",
+        path: "example.spec.ts",
         title: "suite > test",
         line: 12,
         tags: ["@rule"],
@@ -49,8 +49,25 @@ describe("Playwright discovery", () => {
       ],
     });
 
-    expect(candidates).toEqual([
-      { path: "apps/crm-e2e/src/features/quote.spec.ts", tags: ["@quote"] },
-    ]);
+    expect(candidates).toEqual([{ path: "features/quote.spec.ts", tags: ["@quote"] }]);
   });
+});
+
+test("normalizes_relative_and_absolute_runner_files_from_the_reported_root", () => {
+  const spec = { title: "journey", line: 3, tags: [], tests: [{}] };
+  expect(
+    parsePlaywrightIdentities(
+      {
+        suites: [
+          {
+            specs: [
+              { ...spec, file: "journey.spec.ts" },
+              { ...spec, file: "/repo/checks/journey.spec.ts" },
+            ],
+          },
+        ],
+      },
+      "/repo/checks",
+    ).map((test) => test.path),
+  ).toEqual(["/repo/checks/journey.spec.ts", "/repo/checks/journey.spec.ts"]);
 });

@@ -16,11 +16,6 @@
           "file": "packages/insurance-runtime/src/runtime.test.ts",
           "title": "insurance runtime > bind_chain_is_idempotent_across_all_consumers",
           "line": 54
-        },
-        {
-          "file": "packages/policy-service/src/policy-service.test.ts",
-          "title": "Policy service > owns_input_terms_and_detaches_results_queries_and_replay_receipts",
-          "line": 184
         }
       ],
       "playwright": [
@@ -42,11 +37,6 @@
           "file": "packages/policy-service/src/policy-service.test.ts",
           "title": "Policy service > rejects_same_command_id_with_different_payload",
           "line": 159
-        },
-        {
-          "file": "packages/policy-service/src/policy-service.test.ts",
-          "title": "Policy service > rejects_property_from_another_tenant_or_customer",
-          "line": 172
         }
       ],
       "playwright": []
@@ -125,16 +115,6 @@
           "file": "packages/finance-service/src/finance-service.test.ts",
           "title": "Finance service > reverses_only_allocated_settled_premium_in_a_mixed_refund",
           "line": 141
-        },
-        {
-          "file": "packages/finance-service/src/finance-service.test.ts",
-          "title": "Finance service > preserves_allocation_identity_and_rounds_partial_refunds_cumulatively",
-          "line": 407
-        },
-        {
-          "file": "packages/finance-service/src/finance-service.test.ts",
-          "title": "Finance service > honors_reverse_on_refund_and_caps_written_reversal_at_bound_accrual",
-          "line": 463
         }
       ],
       "playwright": [
@@ -189,11 +169,6 @@
           "file": "packages/finance-service/src/finance-service.test.ts",
           "title": "Finance service > replays_commands_once_and_rejects_conflicting_input",
           "line": 229
-        },
-        {
-          "file": "packages/finance-service/src/finance-service.test.ts",
-          "title": "Finance service > distinct_commands_share_workflow_correlation_and_retry_independently",
-          "line": 246
         }
       ],
       "playwright": []
@@ -208,11 +183,6 @@
           "file": "packages/finance-service/src/finance-service.test.ts",
           "title": "Finance service > cash_first_accrues_only_settled_premium",
           "line": 86
-        },
-        {
-          "file": "packages/finance-service/src/finance-service.test.ts",
-          "title": "Finance service > does_not_reverse_an_allocated_deposit_refund",
-          "line": 120
         }
       ],
       "playwright": []
@@ -227,11 +197,6 @@
           "file": "packages/finance-service/src/finance-service.test.ts",
           "title": "Finance service > initializes_ledger_from_policy_state",
           "line": 58
-        },
-        {
-          "file": "packages/finance-service/src/finance-service.test.ts",
-          "title": "Finance service > rejects_finance_events_for_uninitialized_policy",
-          "line": 70
         }
       ],
       "playwright": [
@@ -253,21 +218,6 @@
           "file": "packages/finance-service/src/finance-service.test.ts",
           "title": "Finance service > rejects_over_refund_or_cross_tenant_allocation",
           "line": 174
-        },
-        {
-          "file": "packages/finance-service/src/finance-service.test.ts",
-          "title": "Finance service > validates_full_refund_atomically_and_rechecks_queued_balance",
-          "line": 328
-        },
-        {
-          "file": "packages/finance-service/src/finance-service.test.ts",
-          "title": "Finance service > requires_unique_nonempty_allocation_ids_before_publishing",
-          "line": 443
-        },
-        {
-          "file": "packages/finance-service/src/finance-service.test.ts",
-          "title": "Finance service > rejects_refund_sources_that_are_claims_or_other_policies",
-          "line": 372
         }
       ],
       "playwright": []
@@ -282,11 +232,6 @@
           "file": "packages/service-bus/src/service-bus.test.ts",
           "title": "in-memory service bus > delivers_once_per_consumer_and_preserves_delivery_log",
           "line": 62
-        },
-        {
-          "file": "packages/service-bus/src/immutable-delivery.test.ts",
-          "title": "immutable delivery > delimiter_ids_do_not_collide_between_consumers_and_messages",
-          "line": 71
         }
       ],
       "playwright": []
@@ -301,11 +246,6 @@
           "file": "packages/service-bus/src/service-bus.test.ts",
           "title": "in-memory service bus > drains_messages_in_publish_order",
           "line": 95
-        },
-        {
-          "file": "packages/service-bus/src/service-bus.test.ts",
-          "title": "in-memory service bus > appends_nested_publications_to_the_queue_tail",
-          "line": 110
         }
       ],
       "playwright": []
@@ -325,11 +265,6 @@
           "file": "packages/insurance-runtime/src/runtime.test.ts",
           "title": "insurance runtime > retries_pending_finance_delivery_without_duplicate_policy_or_commission_records",
           "line": 107
-        },
-        {
-          "file": "packages/service-bus/src/immutable-delivery.test.ts",
-          "title": "immutable delivery > consumer_mutation_cannot_change_later_delivery_or_failed_retry",
-          "line": 43
         }
       ],
       "playwright": []
@@ -344,11 +279,6 @@
           "file": "packages/policy-state-service/src/policy-state-service.test.ts",
           "title": "Policy State service > projects_bound_policy_and_publishes_state_change",
           "line": 52
-        },
-        {
-          "file": "packages/policy-state-service/src/policy-state-service.test.ts",
-          "title": "Policy State service > projects_valid_cancelled_revision",
-          "line": 106
         }
       ],
       "playwright": []
@@ -363,21 +293,6 @@
           "file": "packages/policy-state-service/src/policy-state-service.test.ts",
           "title": "Policy State service > ignores_duplicate_policy_lifecycle_delivery",
           "line": 133
-        },
-        {
-          "file": "packages/policy-state-service/src/policy-state-service.test.ts",
-          "title": "Policy State service > ignores_stale_policy_state_revision",
-          "line": 150
-        },
-        {
-          "file": "packages/policy-state-service/src/policy-state-service.test.ts",
-          "title": "Policy State service > rejects_conflicting_same_revision",
-          "line": 208
-        },
-        {
-          "file": "packages/policy-state-service/src/policy-state-service.test.ts",
-          "title": "Policy State service > rejects_skipped_or_invalid_lifecycle_transition",
-          "line": 223
         }
       ],
       "playwright": []
@@ -399,19 +314,9 @@
           "line": 29
         },
         {
-          "file": "packages/insurance-runtime/src/runtime.test.ts",
-          "title": "insurance runtime > fresh_runtimes_do_not_share_bus_or_ledger_state",
-          "line": 79
-        },
-        {
           "file": "packages/policy-state-service/src/policy-state-service.test.ts",
           "title": "Policy State service > isolates_tenant_and_policy_ids_that_contain_key_delimiters",
           "line": 171
-        },
-        {
-          "file": "packages/finance-service/src/finance-service.test.ts",
-          "title": "Finance service > isolates_same_command_and_policy_ids_across_tenants_and_detaches_snapshots",
-          "line": 341
         }
       ],
       "playwright": [
@@ -433,16 +338,6 @@
           "file": "packages/api-contracts/src/test-api.test.ts",
           "title": "createTestApi > requires_independent_command_and_correlation_identities_before_mutation",
           "line": 256
-        },
-        {
-          "file": "packages/api-contracts/src/test-api.test.ts",
-          "title": "createTestApi > rejects_missing_or_cross_tenant_request_context",
-          "line": 147
-        },
-        {
-          "file": "packages/api-contracts/src/test-api.test.ts",
-          "title": "createTestApi > rejects_foreign_quote_references_before_retrying_pending_finance_delivery",
-          "line": 33
         }
       ],
       "playwright": []
@@ -457,11 +352,6 @@
           "file": "packages/api-contracts/src/test-api.test.ts",
           "title": "createTestApi > binds_over_http_and_exposes_finance_initialized_through_policy_state",
           "line": 192
-        },
-        {
-          "file": "packages/api-contracts/src/test-api.test.ts",
-          "title": "createTestApi > uses the identical contract through MSW handlers",
-          "line": 269
         }
       ],
       "playwright": [
@@ -501,11 +391,6 @@
           "file": "packages/service-bus/src/immutable-delivery.test.ts",
           "title": "immutable delivery > owns_nested_publisher_and_inspection_values_before_delivery",
           "line": 20
-        },
-        {
-          "file": "packages/service-bus/src/immutable-delivery.test.ts",
-          "title": "immutable delivery > consumer_mutation_cannot_change_later_delivery_or_failed_retry",
-          "line": 43
         }
       ],
       "playwright": []
@@ -525,48 +410,8 @@
       "vitest": [
         {
           "file": "packages/insurance-runtime/src/timestamps.test.ts",
-          "title": "UTC timestamp boundaries > rejects_invalid_clock_command_and_envelope_2026-01-01T12:00:00",
-          "line": 17
-        },
-        {
-          "file": "packages/insurance-runtime/src/timestamps.test.ts",
-          "title": "UTC timestamp boundaries > rejects_invalid_clock_command_and_envelope_2026-01-01",
-          "line": 17
-        },
-        {
-          "file": "packages/insurance-runtime/src/timestamps.test.ts",
-          "title": "UTC timestamp boundaries > rejects_invalid_clock_command_and_envelope_bad",
-          "line": 17
-        },
-        {
-          "file": "packages/insurance-runtime/src/timestamps.test.ts",
-          "title": "UTC timestamp boundaries > rejects_invalid_clock_command_and_envelope_2026-02-30T00:00:00.000Z",
-          "line": 17
-        },
-        {
-          "file": "packages/insurance-runtime/src/timestamps.test.ts",
-          "title": "UTC timestamp boundaries > rejects_invalid_clock_command_and_envelope_2026-01-01T24:00:00.000Z",
-          "line": 17
-        },
-        {
-          "file": "packages/insurance-runtime/src/timestamps.test.ts",
-          "title": "UTC timestamp boundaries > rejects_invalid_clock_command_and_envelope_2026-01-01T12:00:00+00:00",
-          "line": 17
-        },
-        {
-          "file": "packages/insurance-runtime/src/timestamps.test.ts",
           "title": "UTC timestamp boundaries > policy_clock_rejection_leaves_each_command_retryable_without_partial_state",
           "line": 44
-        },
-        {
-          "file": "packages/insurance-runtime/src/timestamps.test.ts",
-          "title": "UTC timestamp boundaries > finance_rejects_invalid_command_and_projection_clocks",
-          "line": 76
-        },
-        {
-          "file": "packages/insurance-runtime/src/timestamps.test.ts",
-          "title": "UTC timestamp boundaries > preserves_explicit_UTC_across_runtime_and_commission_hold_calculation",
-          "line": 115
         }
       ],
       "playwright": []
@@ -579,7 +424,7 @@
       "vitest": [
         {
           "file": "tools/impact/src/main-selection.test.ts",
-          "title": "main_executes_only_feature_tag_matches_and_exact_rule_references_in_a_shared_spec",
+          "title": "runs_only_one_declared_vitest_and_playwright_identity",
           "line": 17
         }
       ],
@@ -599,31 +444,6 @@
           "file": "apps/crm-web/src/test/api.test.ts",
           "title": "api layer (http wrapper) > preserves the API recoverability contract on non-2xx responses",
           "line": 28
-        },
-        {
-          "file": "apps/crm-web/src/features/crm-workflow.test.tsx",
-          "title": "insurance CRM reference workflow > releases a terminal bind retry so another quoted policy can bind",
-          "line": 341
-        },
-        {
-          "file": "apps/crm-web/src/features/crm-workflow.test.tsx",
-          "title": "insurance CRM reference workflow > reconciles an uncertain accepted bind instead of allowing it to be dismissed",
-          "line": 377
-        },
-        {
-          "file": "apps/crm-web/src/features/crm-workflow.test.tsx",
-          "title": "insurance CRM reference workflow > serializes a pending bind reconciliation before allowing another bind action",
-          "line": 414
-        },
-        {
-          "file": "apps/crm-web/src/features/crm-workflow.test.tsx",
-          "title": "insurance CRM reference workflow > recovers accepted bind after quote refetch with lost response",
-          "line": 472
-        },
-        {
-          "file": "apps/crm-web/src/features/crm-workflow.test.tsx",
-          "title": "insurance CRM reference workflow > recovers accepted bind after quote refetch with pending delivery",
-          "line": 472
         }
       ],
       "playwright": []

@@ -35,5 +35,7 @@
       ],
       "playwrightTags": ["@quote", "@policy", "@finance", "@commission", "@refund", "@crm-worker"]
     }
-  ]
+  ],
+  "selectionAuthority": "proofline.harness.json",
+  "purpose": "Descriptive feature index only; exact ownership and runnable evidence are declared in the harness manifest."
 }
