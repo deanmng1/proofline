@@ -2135,6 +2135,45 @@
       ]
     },
     {
+      "glob": "apps/crm-web/src/{app/router.tsx,types/index.ts}",
+      "entrypoints": ["apps/crm-web/src/app/router.tsx", "apps/crm-web/src/types/index.ts"],
+      "ruleIds": ["AUTH-001"],
+      "layers": ["ui", "playwright"],
+      "testBindings": [
+        {
+          "ruleId": "AUTH-001",
+          "layer": "ui",
+          "testId": "binding-79fb6598b4b4f43639a1",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "apps/crm-web/src/test/app-router.test.tsx",
+          "title": "app routing > denies_crm_direct_routes_to_an_authenticated_unauthorized_role",
+          "line": 8
+        },
+        {
+          "ruleId": "AUTH-001",
+          "layer": "playwright",
+          "testId": "binding-d1e40ab90773a5de8325",
+          "commandKey": "browser",
+          "runner": "playwright",
+          "file": "apps/crm-e2e/src/proofline/recovery-and-authority.spec.ts",
+          "title": "denies_crm_navigation_and_direct_routes_for_viewer",
+          "line": 131,
+          "tag": "@proofline-authority"
+        }
+      ],
+      "ruleLayers": [
+        {
+          "ruleId": "AUTH-001",
+          "layer": "ui"
+        },
+        {
+          "ruleId": "AUTH-001",
+          "layer": "playwright"
+        }
+      ]
+    },
+    {
       "glob": "apps/crm-web/src/features/auth/**",
       "entrypoints": ["apps/crm-web/src/features/auth/auth-context.tsx"],
       "ruleIds": ["AUTH-001"],

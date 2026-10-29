@@ -1,11 +1,21 @@
 import { expect, type Page } from "@playwright/test";
 
+export async function openInitialPath(page: Page, initialPath: string): Promise<void> {
+  // proofline-navigation: initial
+  await page.goto(initialPath);
+}
+
+export async function revisitProtectedPath(page: Page, protectedPath: string): Promise<void> {
+  // proofline-navigation: guard
+  await page.goto(protectedPath);
+}
+
 export async function login(
   page: Page,
   initialPath = "/app/overview",
   email = "avery@northstar.app",
 ): Promise<void> {
-  await page.goto(initialPath);
+  await openInitialPath(page, initialPath);
   await expect(page).toHaveURL(/\/login$/);
   await page.getByRole("button", { name: /switch or remove account/i }).click();
   await page.getByLabel(/email/i).fill(email);

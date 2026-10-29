@@ -1,11 +1,11 @@
 import type { Page } from "@playwright/test";
 import type { ProoflineScenario } from "../fixtures/scenario";
 import { expect, test } from "../fixtures/test";
-import { navigateInsurance } from "../helpers";
+import { navigateInsurance, openInitialPath } from "../helpers";
 
 async function guardedAuthenticatedPage(scenario: ProoflineScenario): Promise<Page> {
   const page = await scenario.newPage();
-  await page.goto("/app/overview");
+  await openInitialPath(page, "/app/overview");
   await navigateInsurance(page, "Customer intake");
   return page;
 }

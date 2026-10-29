@@ -1,5 +1,5 @@
 import { expect, test } from "../fixtures/test";
-import { login, logout, navigateInsurance } from "../helpers";
+import { login, logout, navigateInsurance, revisitProtectedPath } from "../helpers";
 import { createCustomerAndProperty, createQuoteAndBind, recordFinance } from "./workflow-steps";
 
 test("completes_the_unauthenticated_deep_link_to_policy_finance_logout_journey", {
@@ -21,7 +21,7 @@ test("completes_the_unauthenticated_deep_link_to_policy_finance_logout_journey",
   await expect(page.getByLabel("Commission entries")).toContainText("$12.50");
   await recordFinance(page, "1000");
   await logout(page);
-  await page.goto(policyPath);
+  await revisitProtectedPath(page, policyPath);
   await expect(page).toHaveURL(/\/login$/);
   await expect(page.getByText(/Policy /)).toHaveCount(0);
 

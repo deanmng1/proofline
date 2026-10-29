@@ -502,14 +502,22 @@
     },
     {
       "id": "AUTH-001",
-      "description": "Role-restricted routes deny access to a Manager session.",
+      "description": "Authenticated route guards enforce their role allowlists before protected pages mount: Manager is denied from owner-only routes and Viewer is denied from every CRM route without emitting a protected request.",
       "criticality": "critical",
-      "paths": ["apps/crm-web/src/features/auth/**"],
+      "paths": [
+        "apps/crm-web/src/features/auth/**",
+        "apps/crm-web/src/{app/router.tsx,types/index.ts}"
+      ],
       "vitest": [
         {
           "file": "apps/crm-web/src/test/rbac.test.tsx",
           "title": "role-based access control > redirects a Manager away from a restricted route",
           "line": 52
+        },
+        {
+          "file": "apps/crm-web/src/test/app-router.test.tsx",
+          "title": "app routing > denies_crm_direct_routes_to_an_authenticated_unauthorized_role",
+          "line": 8
         }
       ],
       "playwright": [

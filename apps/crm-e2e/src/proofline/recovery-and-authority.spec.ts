@@ -1,6 +1,6 @@
 import { customerFixture, propertyFixture } from "@testbed/test-kit";
 import { expect, test } from "../fixtures/test";
-import { login } from "../helpers";
+import { login, revisitProtectedPath } from "../helpers";
 import {
   createCustomerAndProperty,
   createQuote,
@@ -99,7 +99,7 @@ test("denies_cross_tenant_read_and_mutation_in_a_shared_runtime", {
   const beforeA = (await scenario.inspect({ tenantId: "tenant-a" })).state;
   const beforeB = (await scenario.inspect({ tenantId: "tenant-b" })).state;
   const foreignPolicyB = beforeB.policy.policies[0].id;
-  await pageA.goto(policyB);
+  await revisitProtectedPath(pageA, policyB);
   await expect(pageA.getByText("Policy unavailable")).toBeVisible();
   await expect(pageA.getByText(foreignPolicyB)).toHaveCount(0);
 
@@ -143,7 +143,7 @@ test("denies_crm_navigation_and_direct_routes_for_viewer", { tag: "@proofline-au
   await login(page, "/app/overview", viewer.email);
   await expect(page.getByText("Insurance CRM")).toHaveCount(0);
   for (const path of ["/app/crm/customers", "/app/crm/quotes", "/app/crm/policies/guard-policy"]) {
-    await page.goto(path);
+    await revisitProtectedPath(page, path);
     await expect(page).toHaveURL(/\/app\/overview$/);
     await expect(
       page.getByText(/customer and property intake|quote and bind coverage|policy guard-policy/i),

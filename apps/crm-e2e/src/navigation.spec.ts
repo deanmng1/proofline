@@ -1,8 +1,8 @@
 import { expect, test } from "./fixtures/test";
-import { openUserSettings } from "./helpers";
+import { openInitialPath, openUserSettings } from "./helpers";
 
 test("navigates between module pages", async ({ page }) => {
-  await page.goto("/app/overview");
+  await openInitialPath(page, "/app/overview");
 
   await page.getByRole("button", { name: /people/i }).click();
   await page.getByRole("link", { name: /users/i }).click();
@@ -13,7 +13,7 @@ test("navigates between module pages", async ({ page }) => {
 });
 
 test("switches the active workspace", async ({ page }) => {
-  await page.goto("/app/overview");
+  await openInitialPath(page, "/app/overview");
 
   await page.getByRole("button", { name: /switch workspace/i }).click();
   await page.getByRole("menuitemradio", { name: /aurora labs/i }).click();
@@ -26,7 +26,7 @@ test("switches the active workspace", async ({ page }) => {
 });
 
 test("switches the UI language from user settings", async ({ page }) => {
-  await page.goto("/app/overview");
+  await openInitialPath(page, "/app/overview");
   await openUserSettings(page);
   await page.getByRole("radio", { name: /español/i }).click();
 
@@ -34,7 +34,7 @@ test("switches the UI language from user settings", async ({ page }) => {
 });
 
 test("selects a palette from user settings", async ({ page }) => {
-  await page.goto("/app/overview");
+  await openInitialPath(page, "/app/overview");
   await openUserSettings(page);
   await page.getByRole("radio", { name: /midnight ops/i }).click();
   await expect(page.getByRole("radio", { name: /midnight ops/i })).toBeChecked();
