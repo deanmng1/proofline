@@ -1,0 +1,96 @@
+
+ RUN  v3.2.7 /Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed
+
+Coverage ratchets passed for 1 manifest source groups.
+Coverage ratchets passed for 1 manifest source groups.
+Execution record governance passed.
+ ❯ tools/impact/src/governance.test.ts (56 tests | 1 failed) 1563ms
+   ✓ coverage baseline monotonicity > rejects a lower lines threshold 1ms
+   ✓ coverage baseline monotonicity > rejects a lower branches threshold 0ms
+   ✓ coverage baseline monotonicity > rejects a lower functions threshold 0ms
+   ✓ coverage baseline monotonicity > rejects a lower statements threshold 0ms
+   ✓ coverage baseline monotonicity > rejects deleted groups and sources 0ms
+   ✓ coverage baseline monotonicity > rejects changed provider coverage-group authority 0ms
+   ✓ coverage baseline monotonicity > rejects changed providerVersion coverage-group authority 0ms
+   ✓ coverage baseline monotonicity > rejects changed report coverage-group authority 0ms
+   ✓ coverage baseline monotonicity > rejects changed reportFormat coverage-group authority 0ms
+   ✓ coverage baseline monotonicity > rejects changed aggregation coverage-group authority 0ms
+   ✓ coverage baseline monotonicity > rejects changed exclusions coverage-group authority 0ms
+   ✓ coverage baseline monotonicity > rejects changed sourceGlobs coverage-group authority 0ms
+   ✓ coverage baseline monotonicity > rejects duplicate coverage-group identities instead of collapsing them 0ms
+   ✓ coverage baseline monotonicity > rejects changed coverage producer authority after adoption 0ms
+   ✓ coverage baseline monotonicity > allows an explicit reasoned exclusion outside the base set but rejects wildcard hiding 2ms
+   ✓ coverage baseline monotonicity > rejects narrowing a base production glob to the currently known source list 0ms
+   ✓ coverage baseline monotonicity > rejects excluding a base-effective source omitted from a stale baseline 0ms
+   ✓ coverage baseline monotonicity > allows only exact, explicitly non-production test-source exclusions 1ms
+   ✓ verified merge base > rejects missing, unresolved, shallow, checkout-mismatched, and conflicting revisions 156ms
+   ✓ byte-exact execution record prefix > accepts an exact prefix with complete unique appended rows 0ms
+   ✓ byte-exact execution record prefix > rejects historical byte rewrite 0ms
+   ✓ byte-exact execution record prefix > rejects historical insertion 0ms
+   ✓ byte-exact execution record prefix > rejects historical deletion 0ms
+   ✓ byte-exact execution record prefix > rejects historical reordering 0ms
+   ✓ byte-exact execution record prefix > rejects CRLF normalization 0ms
+   ✓ byte-exact execution record prefix > rejects missing or extra trailing newlines and malformed or duplicate appended rows 0ms
+   ✓ byte-exact execution record prefix > rejects invalid UTF-8 and records without event identities 0ms
+   ✓ changed harness evidence > requires an appended scope for packages/example/src/value.ts 0ms
+   ✓ changed harness evidence > requires an appended scope for proofline.harness.json 0ms
+   ✓ changed harness evidence > requires an appended scope for test-impact/workflows/example.json 0ms
+   ✓ changed harness evidence > requires an appended scope for test-impact/rules.json 0ms
+   ✓ changed harness evidence > requires an appended scope for tools/impact/src/governance.ts 0ms
+   ✓ changed harness evidence > requires an appended scope for .github/workflows/verify.yml 0ms
+   ✓ changed harness evidence > requires an appended scope for docs/TESTING.md 0ms
+   ✓ changed harness evidence > requires an appended scope for docs/PORTABLE_TEST_AUTOMATION.md 0ms
+   ✓ changed harness evidence > requires an appended scope for package.json 0ms
+   ✓ changed harness evidence > governs manifest adapter and workspace project paths with segment-aware scopes 0ms
+   ✓ changed harness evidence > uses base and proposed manifests so removed ownership cannot evade evidence 0ms
+   ✓ changed harness evidence > checks both renamed identities and excludes only explicit generated artifacts 0ms
+   ✓ changed harness evidence > governs README and rejects an unscoped governed change 0ms
+   ✓ coverage and record governance entrypoints > records exact resolved coverage producer provenance in the ratchet 63ms
+   ✓ coverage and record governance entrypoints > accepts a manifest-command browser-compatible Istanbul summary producer 65ms
+   ✓ coverage and record governance entrypoints > normalizes generated in-repository absolute paths before they become evidence 34ms
+   ✓ coverage and record governance entrypoints > rejects incompatible provider metadata and always writes a complete ratchet 63ms
+   ✓ coverage and record governance entrypoints > rejects unclassified baseline sources, missing reports and metrics, and duplicate report paths 148ms
+   ✓ coverage and record governance entrypoints > rejects a newly matching production source and a missing baseline source 121ms
+   ✓ coverage and record governance entrypoints > rejects escaping and duplicate-normalized report source identities 118ms
+   ✓ coverage and record governance entrypoints > binds declared coverage provider and version to the executed target 87ms
+   ✓ coverage and record governance entrypoints > rejects conflicting duplicate coverage target flags 168ms
+   ✓ coverage and record governance entrypoints > retains invalid revisions and git-show failures as gate errors 95ms
+   ✓ coverage and record governance entrypoints > recordMain verifies merge-base bytes and changed-path scopes 108ms
+   ✓ coverage and record governance entrypoints > an_old_or_unrelated_record_cannot_satisfy_a_new_governed_change 69ms
+   ✓ coverage and record governance entrypoints > recordMain governs paths removed from the proposed manifest using base authority 70ms
+   ✓ coverage and record governance entrypoints > recordMain writes revision diagnostics when the proposed record is missing 64ms
+   ✓ CI governance contract > resolves trusted manual, pull-request, and push revision authority 122ms
+   × CI governance contract > keeps explicit revisions, validation, full gates, and always-retained diagnostics 4ms
+     → expected '- name: Fetch trusted manual impact b…' to contain 'case "$PROOFLINE_MANUAL_BASE_REF" in'
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tools/impact/src/governance.test.ts > CI governance contract > keeps explicit revisions, validation, full gates, and always-retained diagnostics
+AssertionError: expected '- name: Fetch trusted manual impact b…' to contain 'case "$PROOFLINE_MANUAL_BASE_REF" in'
+
+- Expected
++ Received
+
+- case "$PROOFLINE_MANUAL_BASE_REF" in
++ - name: Fetch trusted manual impact base
++         if: ${{ github.event_name == 'workflow_dispatch' }}
++         shell: bash
++         env:
++           PROOFLINE_MANUAL_BASE_REF: ${{ inputs.base_ref }}
++         run: git fetch --no-tags origin "+refs/heads/${PROOFLINE_MANUAL_BASE_REF}:refs/remotes/origin/${PROOFLINE_MANUAL_BASE_REF}"
+
+ ❯ tools/impact/src/governance.test.ts:1039:25
+    1037|     const manualFetch = step("Fetch trusted manual impact base");
+    1038|     expect(manualFetch).toContain("github.event_name == 'workflow_disp…
+    1039|     expect(manualFetch).toContain('case "$PROOFLINE_MANUAL_BASE_REF" i…
+       |                         ^
+    1040|     expect(manualFetch).toContain("main|master)");
+    1041|     expect(manualFetch.indexOf("case ")).toBeLessThan(manualFetch.inde…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 55 passed (56)
+   Start at  22:36:23
+   Duration  2.01s (transform 60ms, setup 0ms, collect 286ms, tests 1.56s, environment 0ms, prepare 32ms)

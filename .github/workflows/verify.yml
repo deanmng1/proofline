@@ -45,7 +45,12 @@ jobs:
         shell: bash
         env:
           PROOFLINE_MANUAL_BASE_REF: ${{ inputs.base_ref }}
-        run: git fetch --no-tags origin "+refs/heads/${PROOFLINE_MANUAL_BASE_REF}:refs/remotes/origin/${PROOFLINE_MANUAL_BASE_REF}"
+        run: |
+          case "$PROOFLINE_MANUAL_BASE_REF" in
+            main|master) ;;
+            *) echo "Manual base ref is outside the reviewed choices" >&2; exit 1 ;;
+          esac
+          git fetch --no-tags origin "+refs/heads/${PROOFLINE_MANUAL_BASE_REF}:refs/remotes/origin/${PROOFLINE_MANUAL_BASE_REF}"
 
       - name: Resolve exact CI revision authority
         shell: bash

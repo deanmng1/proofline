@@ -1036,6 +1036,9 @@ describe("CI governance contract", () => {
     );
     const manualFetch = step("Fetch trusted manual impact base");
     expect(manualFetch).toContain("github.event_name == 'workflow_dispatch'");
+    expect(manualFetch).toContain('case "$PROOFLINE_MANUAL_BASE_REF" in');
+    expect(manualFetch).toContain("main|master)");
+    expect(manualFetch.indexOf("case ")).toBeLessThan(manualFetch.indexOf("git fetch"));
     expect(manualFetch).toContain(`refs/remotes/origin/${dollar}{PROOFLINE_MANUAL_BASE_REF}`);
     const revisionResolver = step("Resolve exact CI revision authority");
     expect(revisionResolver).toContain(
