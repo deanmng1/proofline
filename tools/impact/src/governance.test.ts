@@ -980,7 +980,7 @@ describe("CI governance contract", () => {
     runGit(cwd, ["update-ref", "refs/remotes/origin/main", base]);
     const resolver = path.resolve(
       import.meta.dirname,
-      "../../../tools/impact/resolve-ci-revisions.sh",
+      "../../../tools/impact/resolve-ci-revisions.mjs",
     );
     const resolve = ({
       eventName,
@@ -991,7 +991,7 @@ describe("CI governance contract", () => {
       impactBase?: string;
       manualBaseRef?: string;
     }) =>
-      execFileSync("bash", [resolver], {
+      execFileSync(process.execPath, [resolver], {
         cwd,
         encoding: "utf8",
         stdio: ["ignore", "pipe", "pipe"],
@@ -1045,7 +1045,7 @@ describe("CI governance contract", () => {
       `PROOFLINE_MANUAL_BASE_REF: ${dollar}{{ inputs.base_ref || '' }}`,
     );
     expect(revisionResolver).toContain(
-      'bash tools/impact/resolve-ci-revisions.sh >> "$GITHUB_ENV"',
+      'node tools/impact/resolve-ci-revisions.mjs >> "$GITHUB_ENV"',
     );
     expect(workflow).toContain("pnpm harness:validate");
     expect(workflow).toContain(

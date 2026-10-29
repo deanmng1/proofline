@@ -7,6 +7,7 @@ export type GuardedRunResult = {
 
 export type GuardedRunOptions = {
   allowedOrigins: string[];
+  allowedChildExecutables?: string[];
   cwd?: string;
   env?: NodeJS.ProcessEnv;
   shell?: false;

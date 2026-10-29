@@ -1,6 +1,7 @@
 import { customerFixture, propertyFixture } from "@testbed/test-kit";
 import { expect, test } from "../fixtures/test";
 import { login, revisitProtectedPath } from "../helpers";
+import { bindWorkflowEvidence } from "./workflow-matrix";
 import {
   createCustomerAndProperty,
   createQuote,
@@ -153,4 +154,29 @@ test("denies_crm_navigation_and_direct_routes_for_viewer", { tag: "@proofline-au
     (entry) => entry.operation !== "tenant.list",
   );
   expect(crmOperations).toEqual([]);
+});
+
+bindWorkflowEvidence({
+  rowId: "recoverable-bind",
+  file: "apps/crm-e2e/src/proofline/recovery-and-authority.spec.ts",
+  title: "recovers_an_accepted_bind_without_duplicate_policy_or_ledger",
+  line: 12,
+  tag: "@proofline-recovery",
+  ruleIds: ["UI-001", "POL-001", "API-002"],
+});
+bindWorkflowEvidence({
+  rowId: "tenant-isolation",
+  file: "apps/crm-e2e/src/proofline/recovery-and-authority.spec.ts",
+  title: "denies_cross_tenant_read_and_mutation_in_a_shared_runtime",
+  line: 52,
+  tag: "@proofline-authority",
+  ruleIds: ["TEN-001", "API-001"],
+});
+bindWorkflowEvidence({
+  rowId: "role-denied-navigation",
+  file: "apps/crm-e2e/src/proofline/recovery-and-authority.spec.ts",
+  title: "denies_crm_navigation_and_direct_routes_for_viewer",
+  line: 132,
+  tag: "@proofline-authority",
+  ruleIds: ["AUTH-001", "API-001"],
 });

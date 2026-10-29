@@ -228,6 +228,7 @@ export function createScenario(options: ScenarioOptions): ProoflineScenario {
   );
   const principals = new Map<string, TestApiAuthorityClaims>();
   const identityDefinitions = new Map([[defaultIdentity.id, identityDefinition(defaultIdentity)]]);
+  const pendingIdentityDefinitions = new Map<string, { definition: string; count: number }>();
   const contexts: ContextRecord[] = [];
   const unexpectedRequests: UnexpectedRequest[] = [];
   const providerRequests: ProviderRequest[] = [];
@@ -528,12 +529,16 @@ export function createScenario(options: ScenarioOptions): ProoflineScenario {
       if (lifecycle !== "active")
         throw new Error(`Scenario ${scenarioId} cannot create a context while ${lifecycle}.`);
       const normalizedIdentity = immutableIdentity(identity);
-      const existingDefinition = identityDefinitions.get(normalizedIdentity.id);
-      if (existingDefinition && existingDefinition !== identityDefinition(normalizedIdentity))
+      const definition = identityDefinition(normalizedIdentity);
+      const existingDefinition =
+        identityDefinitions.get(normalizedIdentity.id) ??
+        pendingIdentityDefinitions.get(normalizedIdentity.id)?.definition;
+      if (existingDefinition && existingDefinition !== definition)
         throw new Error(
           `Scenario identity ${normalizedIdentity.id} was redefined with different claims.`,
         );
       const identities = new Set(contexts.map((record) => record.identity.id));
+      for (const id of pendingIdentityDefinitions.keys()) identities.add(id);
       identities.add(normalizedIdentity.id);
       if (identities.size > 2)
         throw new Error("A Proofline scenario supports at most two explicitly shared identities.");
@@ -543,26 +548,42 @@ export function createScenario(options: ScenarioOptions): ProoflineScenario {
         throw new Error(
           `Scenario identity role ${normalizedIdentity.role} is not declared in roles.`,
         );
-      identityDefinitions.set(normalizedIdentity.id, identityDefinition(normalizedIdentity));
+      const pending = pendingIdentityDefinitions.get(normalizedIdentity.id);
+      pendingIdentityDefinitions.set(normalizedIdentity.id, {
+        definition,
+        count: (pending?.count ?? 0) + 1,
+      });
+      const releasePendingIdentity = () => {
+        const current = pendingIdentityDefinitions.get(normalizedIdentity.id);
+        if (!current) return;
+        if (current.count === 1) pendingIdentityDefinitions.delete(normalizedIdentity.id);
+        else
+          pendingIdentityDefinitions.set(normalizedIdentity.id, {
+            ...current,
+            count: current.count - 1,
+          });
+      };
       const sequence = ++contextSequence;
       const contextId = `${scenarioId}-context-${sequence}`;
-      const context = await options.browser.newContext({
-        baseURL: options.workerServer.origin,
-        serviceWorkers: "block",
-        storageState: options.workerServer.storageState,
-        ...(options.videoDirectory ? { recordVideo: { dir: options.videoDirectory } } : {}),
-      });
-      const record: ContextRecord = {
-        context,
-        identity: normalizedIdentity,
-        contextId,
-        commandNamespace: sequence.toString(16).padStart(8, "0"),
-        authenticated: false,
-        accessTokens: new Set(),
-        currentAccessToken: null,
-      };
-      contexts.push(record);
+      let context: BrowserContext | undefined;
+      let record: ContextRecord | undefined;
       try {
+        context = await options.browser.newContext({
+          baseURL: options.workerServer.origin,
+          serviceWorkers: "block",
+          storageState: options.workerServer.storageState,
+          ...(options.videoDirectory ? { recordVideo: { dir: options.videoDirectory } } : {}),
+        });
+        record = {
+          context,
+          identity: normalizedIdentity,
+          contextId,
+          commandNamespace: sequence.toString(16).padStart(8, "0"),
+          authenticated: false,
+          accessTokens: new Set(),
+          currentAccessToken: null,
+        };
+        contexts.push(record);
         await install(record);
         if (options.startAuthenticated) {
           const bootstrapPage = await context.newPage();
@@ -584,8 +605,12 @@ export function createScenario(options: ScenarioOptions): ProoflineScenario {
             await bootstrapPage.close();
           }
         }
+        identityDefinitions.set(normalizedIdentity.id, definition);
+        releasePendingIdentity();
         return context;
       } catch (error) {
+        releasePendingIdentity();
+        if (!context || !record) throw error;
         try {
           await context.close();
           contexts.splice(contexts.indexOf(record), 1);

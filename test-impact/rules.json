@@ -22,13 +22,13 @@
         {
           "path": "apps/crm-e2e/src/proofline/golden-workflow.spec.ts",
           "title": "completes_the_unauthenticated_deep_link_to_policy_finance_logout_journey",
-          "line": 5,
+          "line": 6,
           "tag": "@proofline-golden"
         },
         {
           "path": "apps/crm-e2e/src/proofline/recovery-and-authority.spec.ts",
           "title": "recovers_an_accepted_bind_without_duplicate_policy_or_ledger",
-          "line": 11,
+          "line": 12,
           "tag": "@proofline-recovery"
         }
       ]
@@ -106,7 +106,7 @@
         {
           "path": "apps/crm-e2e/src/features/commission-refund.spec.ts",
           "title": "commission corrections > @commission @finance @refund allocations reverse only selected settled premium commission",
-          "line": 37,
+          "line": 38,
           "tag": "@finance"
         }
       ]
@@ -127,7 +127,7 @@
         {
           "path": "apps/crm-e2e/src/features/commission-refund.spec.ts",
           "title": "commission corrections > @commission @finance @refund allocations reverse only selected settled premium commission",
-          "line": 37,
+          "line": 38,
           "tag": "@refund"
         }
       ]
@@ -181,7 +181,7 @@
         {
           "path": "apps/crm-e2e/src/proofline/golden-workflow.spec.ts",
           "title": "completes_the_unauthenticated_deep_link_to_policy_finance_logout_journey",
-          "line": 5,
+          "line": 6,
           "tag": "@proofline-golden"
         }
       ]
@@ -216,7 +216,7 @@
         {
           "path": "apps/crm-e2e/src/features/commission-refund.spec.ts",
           "title": "commission corrections > @commission @finance @refund allocations reverse only selected settled premium commission",
-          "line": 37,
+          "line": 38,
           "tag": "@finance"
         }
       ]
@@ -237,7 +237,7 @@
         {
           "path": "apps/crm-e2e/src/features/commission-refund.spec.ts",
           "title": "commission corrections > @commission @finance @refund allocations reverse only selected settled premium commission",
-          "line": 37,
+          "line": 38,
           "tag": "@refund"
         }
       ]
@@ -349,7 +349,7 @@
         {
           "path": "apps/crm-e2e/src/proofline/recovery-and-authority.spec.ts",
           "title": "denies_cross_tenant_read_and_mutation_in_a_shared_runtime",
-          "line": 51,
+          "line": 52,
           "tag": "@proofline-authority"
         }
       ]
@@ -370,13 +370,13 @@
         {
           "path": "apps/crm-e2e/src/proofline/recovery-and-authority.spec.ts",
           "title": "denies_crm_navigation_and_direct_routes_for_viewer",
-          "line": 131,
+          "line": 132,
           "tag": "@proofline-authority"
         },
         {
           "path": "apps/crm-e2e/src/proofline/recovery-and-authority.spec.ts",
           "title": "denies_cross_tenant_read_and_mutation_in_a_shared_runtime",
-          "line": 51,
+          "line": 52,
           "tag": "@proofline-authority"
         }
       ]
@@ -397,13 +397,13 @@
         {
           "path": "apps/crm-e2e/src/proofline/golden-workflow.spec.ts",
           "title": "completes_the_unauthenticated_deep_link_to_policy_finance_logout_journey",
-          "line": 5,
+          "line": 6,
           "tag": "@proofline-golden"
         },
         {
           "path": "apps/crm-e2e/src/proofline/recovery-and-authority.spec.ts",
           "title": "recovers_an_accepted_bind_without_duplicate_policy_or_ledger",
-          "line": 11,
+          "line": 12,
           "tag": "@proofline-recovery"
         }
       ]
@@ -470,7 +470,7 @@
         {
           "file": "tools/impact/src/main-selection.test.ts",
           "title": "runs_only_one_declared_vitest_and_playwright_identity",
-          "line": 21
+          "line": 38
         }
       ],
       "playwright": []
@@ -495,7 +495,7 @@
         {
           "path": "apps/crm-e2e/src/proofline/recovery-and-authority.spec.ts",
           "title": "recovers_an_accepted_bind_without_duplicate_policy_or_ledger",
-          "line": 11,
+          "line": 12,
           "tag": "@proofline-recovery"
         }
       ]
@@ -524,19 +524,19 @@
         {
           "path": "apps/crm-e2e/src/proofline/golden-workflow.spec.ts",
           "title": "completes_the_unauthenticated_deep_link_to_policy_finance_logout_journey",
-          "line": 5,
+          "line": 6,
           "tag": "@proofline-golden"
         },
         {
           "path": "apps/crm-e2e/src/proofline/recovery-and-authority.spec.ts",
           "title": "denies_crm_navigation_and_direct_routes_for_viewer",
-          "line": 131,
+          "line": 132,
           "tag": "@proofline-authority"
         },
         {
           "path": "apps/crm-e2e/src/proofline/cross-browser-smoke.spec.ts",
           "title": "runs_the_cross_browser_invariant_smoke @proofline-smoke",
-          "line": 4,
+          "line": 5,
           "tag": "@proofline-smoke"
         }
       ]
@@ -592,12 +592,12 @@
         {
           "file": "tools/proofline/src/egress-guard.test.ts",
           "title": "Proofline egress guard > denies_fetch_http_https_websocket_and_inherited_child_egress",
-          "line": 226
+          "line": 297
         },
         {
           "file": "tools/proofline/src/production-negative.test.ts",
           "title": "Proofline production boundary > rejects_test_markers_in_a_production_bundle",
-          "line": 76
+          "line": 106
         },
         {
           "file": "apps/crm-web/src/bootstrap.test.tsx",
@@ -607,7 +607,7 @@
         {
           "file": "tools/proofline/src/product-e2e-boundary.test.ts",
           "title": "Proofline product E2E boundary > product_e2e_specs_delegate_transport_and_storage_to_fixtures",
-          "line": 6
+          "line": 7
         }
       ],
       "playwright": [
@@ -723,19 +723,19 @@
         {
           "path": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "scenario_reset_retains_failed_contexts_for_a_deterministic_retry",
-          "line": 652,
+          "line": 735,
           "tag": "@scenario"
         },
         {
           "path": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "worker_setup_stops_the_server_when_bootstrap_close_fails",
-          "line": 673,
+          "line": 756,
           "tag": "@scenario"
         },
         {
           "path": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "factory_teardown_rejects_an_unacknowledged_caught_denial",
-          "line": 700,
+          "line": 783,
           "tag": "@egress"
         },
         {
@@ -786,7 +786,7 @@
         {
           "path": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "factory_teardown_rejects_an_unacknowledged_caught_denial",
-          "line": 700,
+          "line": 783,
           "tag": "@egress"
         },
         {
@@ -819,25 +819,25 @@
         {
           "path": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "shard_a_isolates_runtime_and_storage",
-          "line": 710,
+          "line": 793,
           "tag": "@isolation"
         },
         {
           "path": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "shard_b_isolates_runtime_and_storage",
-          "line": 718,
+          "line": 801,
           "tag": "@isolation"
         },
         {
           "path": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "shard_a_uses_an_os_assigned_worker_port",
-          "line": 726,
+          "line": 809,
           "tag": "@isolation"
         },
         {
           "path": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "shard_b_uses_an_os_assigned_worker_port",
-          "line": 734,
+          "line": 817,
           "tag": "@isolation"
         }
       ]

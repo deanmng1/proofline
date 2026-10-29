@@ -123,6 +123,7 @@ export const harnessManifestSchema = z
             path: relativePath,
             unitCommand: text.nullable(),
             browserCommands: z.array(text),
+            browserDiscoveryCommand: text.optional(),
             browserOptOutReason: z.string().optional(),
           })
           .strict()
@@ -168,6 +169,7 @@ export const harnessManifestSchema = z
         auth: relativePath,
         api: relativePath,
         providers: z.array(relativePath),
+        runnerEgress: relativePath.optional(),
       })
       .strict(),
     coverage: z.array(coverageSchema).min(1),
@@ -268,6 +270,17 @@ export const lifecycleMatrixSchema = z
   })
   .strict();
 export type LifecycleMatrix = z.infer<typeof lifecycleMatrixSchema>;
+const goldenEvidence = z
+  .object({
+    rowId: text,
+    commandKey: text,
+    file: relativePath,
+    title: text,
+    line: z.number().int().positive(),
+    tag: z.string().regex(/^@[^\s]+$/),
+    ruleIds: strings,
+  })
+  .strict();
 const goldenRow = z
   .object({
     id: text,
@@ -278,6 +291,7 @@ const goldenRow = z
     visibleAssertions: z.array(text),
     persistedInvariants: strings,
     ruleIds: strings,
+    evidence: z.array(goldenEvidence).default([]),
     exclusions: z.array(
       z
         .object({
@@ -296,7 +310,8 @@ const goldenRow = z
         !row.exclusions.length ||
         row.userActions.length ||
         row.urlTransitions.length ||
-        row.visibleAssertions.length
+        row.visibleAssertions.length ||
+        row.evidence.length
       )
         context.addIssue({
           code: "custom",
@@ -312,6 +327,34 @@ const goldenRow = z
         code: "custom",
         message: "Golden workflows require actions, URL transitions, and visible assertions",
       });
+    if (row.status === "implemented" && !row.evidence.length)
+      context.addIssue({
+        code: "custom",
+        message: "Implemented golden workflows require exact browser evidence",
+      });
+    for (const evidence of row.evidence)
+      if (evidence.rowId !== row.id)
+        context.addIssue({
+          code: "custom",
+          message: `Golden evidence row ID ${evidence.rowId} does not match ${row.id}`,
+        });
+    const evidenceRules = new Set(row.evidence.flatMap((evidence) => evidence.ruleIds));
+    if (
+      row.status === "implemented" &&
+      (evidenceRules.size !== new Set(row.ruleIds).size ||
+        row.ruleIds.some((rule) => !evidenceRules.has(rule)))
+    )
+      context.addIssue({
+        code: "custom",
+        message: "Golden evidence must cover exactly the workflow rule IDs",
+      });
+    for (const evidence of row.evidence)
+      for (const rule of evidence.ruleIds)
+        if (!row.ruleIds.includes(rule))
+          context.addIssue({
+            code: "custom",
+            message: `Golden evidence claims rule ${rule} outside workflow ${row.id}`,
+          });
   });
 export const goldenWorkflowMatrixSchema = z
   .object({
@@ -543,7 +586,55 @@ const validateHarnessUnchecked = ({
       commandKey(key);
       commandRole(key, "playwright");
     }
+    if (workspace.browserCommands.length) {
+      const discovery =
+        workspace.browserDiscoveryCommand ??
+        (workspace.browserCommands.length === 1 ? workspace.browserCommands[0] : undefined);
+      if (!discovery)
+        commandError(
+          `${workspace.path}: multiple browser commands require browserDiscoveryCommand`,
+        );
+      else if (!workspace.browserCommands.includes(discovery))
+        commandError(`${workspace.path}: browserDiscoveryCommand must name a browser command`);
+      else commandRole(discovery, "playwright");
+    } else if (workspace.browserDiscoveryCommand)
+      commandError(`${workspace.path}: browserDiscoveryCommand requires browserCommands`);
     unique(workspace.browserCommands, "workspace browser command");
+  }
+  if (manifest.adapters.runnerEgress) {
+    const runnerEgress = manifest.adapters.runnerEgress;
+    inspectPath(runnerEgress);
+    const usesRunnerEgress = (command: HarnessCommand) => {
+      const [binary, ...args] = command.argv;
+      if (binary === "node") return args.find((arg) => !arg.startsWith("-")) === runnerEgress;
+      if (!["pnpm", "npm", "yarn"].includes(binary)) return false;
+      const script = args[0] === "run" ? args[1] : args[0];
+      if (!script) return false;
+      try {
+        const packageFile = path.posix.join(command.cwd === "." ? "" : command.cwd, "package.json");
+        const pkg = JSON.parse(readFileSync(path.join(root, packageFile), "utf8"));
+        const body = pkg.scripts?.[script];
+        return (
+          typeof body === "string" &&
+          new RegExp(
+            `^node(?:\\s+--[\\w-]+(?:=[^\\s]+)?)?\\s+${runnerEgress.replace(/[.*+?^${}()|[\\]\\\\]/g, "\\$&")}(?:\\s|$)`,
+          ).test(body.trim())
+        );
+      } catch {
+        return false;
+      }
+    };
+    const runnerCommands = new Set([
+      "unit",
+      "browser",
+      ...manifest.workspaces.flatMap((workspace) => [
+        ...(workspace.unitCommand ? [workspace.unitCommand] : []),
+        ...workspace.browserCommands,
+      ]),
+    ]);
+    for (const key of runnerCommands)
+      if (manifest.commands[key] && !usesRunnerEgress(manifest.commands[key]))
+        commandError(`Test command ${key} bypasses the runner egress adapter`);
   }
   const files: string[] = [];
   const projectRoots = new Set<string>();
@@ -666,9 +757,19 @@ const validateHarnessUnchecked = ({
         const project = JSON.parse(
           readFileSync(path.join(root, group.workspace, "project.json"), "utf8"),
         ) as { targets?: Record<string, { command?: unknown }> };
-        if (typeof project.targets?.[group.producer.command.target]?.command !== "string")
+        const coverageCommand = project.targets?.[group.producer.command.target]?.command;
+        if (typeof coverageCommand !== "string")
           errors.push(
             `Missing coverage producer target ${group.producer.command.target}: ${group.workspace}`,
+          );
+        else if (
+          manifest.adapters.runnerEgress &&
+          !new RegExp(
+            `^node\\s+${manifest.adapters.runnerEgress.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\s+vitest(?:\\s|$)`,
+          ).test(coverageCommand.trim())
+        )
+          commandError(
+            `Coverage target ${group.workspace}:${group.producer.command.target} bypasses the runner egress adapter`,
           );
       } catch (error) {
         errors.push(`Invalid coverage producer target ${group.workspace}: ${String(error)}`);
@@ -789,8 +890,9 @@ const validateHarnessUnchecked = ({
       errors.push(`Invalid rule catalog: ${String(error)}`);
     }
   }
+  let actual: DiscoveredTests = { vitest: [], playwright: [] };
   try {
-    const actual = discoveredSchema.parse(discovered ?? staticIdentities(root, readableBindings));
+    actual = discoveredSchema.parse(discovered ?? staticIdentities(root, readableBindings));
     for (const binding of bindings) {
       const matches =
         binding.runner === "vitest"
@@ -868,6 +970,27 @@ const validateHarnessUnchecked = ({
     );
     for (const row of golden.rows) {
       checkRules(row.ruleIds, "golden workflow");
+      for (const evidence of row.evidence ?? []) {
+        checkRules(evidence.ruleIds, `golden evidence ${row.id}`);
+        const workspace = resolveWorkspace(evidence.file, manifest.workspaces);
+        if (!workspace?.browserCommands.includes(evidence.commandKey))
+          errors.push(`Golden evidence ${row.id} has an unmapped browser command`);
+        else commandRole(evidence.commandKey, "playwright");
+        const matches = actual.playwright.filter(
+          (test) =>
+            test.path === evidence.file &&
+            test.title === evidence.title &&
+            test.line === evidence.line &&
+            test.tags.includes(evidence.tag),
+        );
+        const runnable = actual.playwright.filter(
+          (test) => test.path === evidence.file && test.line === evidence.line,
+        );
+        if (matches.length !== 1 || runnable.length !== 1)
+          errors.push(
+            `Stale or ambiguous golden evidence ${row.id}: ${evidence.file}:${evidence.line} ${evidence.title}`,
+          );
+      }
       for (const exclusion of row.exclusions) {
         checkRules(exclusion.ruleIds, "golden exclusion");
         for (const rule of exclusion.ruleIds)

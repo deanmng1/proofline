@@ -1,5 +1,6 @@
 import { expect, test } from "../fixtures/test";
 import { login, logout, navigateInsurance, revisitProtectedPath } from "../helpers";
+import { bindWorkflowEvidence } from "./workflow-matrix";
 import { createCustomerAndProperty, createQuoteAndBind, recordFinance } from "./workflow-steps";
 
 test("completes_the_unauthenticated_deep_link_to_policy_finance_logout_journey", {
@@ -36,4 +37,13 @@ test("completes_the_unauthenticated_deep_link_to_policy_finance_logout_journey",
   expect(inspection.state.finance.ledgers[0].financeEntries).toHaveLength(1);
   expect(inspection.state.finance.ledgers[0].commissionEntries).toHaveLength(1);
   expect(inspection.state.pendingMessages).toEqual([]);
+});
+
+bindWorkflowEvidence({
+  rowId: "protected-intake-bind-finance-logout",
+  file: "apps/crm-e2e/src/proofline/golden-workflow.spec.ts",
+  title: "completes_the_unauthenticated_deep_link_to_policy_finance_logout_journey",
+  line: 6,
+  tag: "@proofline-golden",
+  ruleIds: ["AUTH-001", "POL-001", "API-002", "FIN-001"],
 });

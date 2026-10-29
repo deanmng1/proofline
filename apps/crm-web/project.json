@@ -22,7 +22,7 @@
       "command": "pnpm exec vitest run --config apps/crm-web/vite.config.ts"
     },
     "coverage": {
-      "command": "pnpm exec vitest run --config apps/crm-web/vite.config.ts --coverage",
+      "command": "node tools/proofline/canonical-runner.mjs vitest run --config apps/crm-web/vite.config.ts --coverage",
       "outputs": ["{workspaceRoot}/artifacts/coverage/crm-web"],
       "cache": false
     },

@@ -51,8 +51,6 @@ const plansFor = (cwd: string, manifest: HarnessManifest): RunnerPlan[] => {
     for (const runner of ["vitest", "playwright"] as const) {
       if (runner === "vitest" ? !workspace.unitCommand : !workspace.browserCommands.length)
         continue;
-      if (runner === "playwright" && workspace.browserCommands.length > 1)
-        throw new Error(`Ambiguous browser command adapters:${workspace.path}`);
       const targets = Object.values(project?.targets ?? {}).filter(
         (target) =>
           typeof (target as { command?: string }).command === "string" &&
@@ -72,9 +70,25 @@ const plansFor = (cwd: string, manifest: HarnessManifest): RunnerPlan[] => {
         throw new Error(`Missing ${runner} target:${workspace.path}`);
       }
       const key =
-        runner === "vitest" ? (workspace.unitCommand as string) : workspace.browserCommands[0];
-      const command = target ? { argv: argv(target.command), cwd: "." } : manifest.commands[key];
-      if (!command.argv.includes(runner)) throw new Error(`No exact ${runner} adapter:${key}`);
+        runner === "vitest"
+          ? (workspace.unitCommand as string)
+          : (workspace.browserDiscoveryCommand ??
+            (workspace.browserCommands.length === 1 ? workspace.browserCommands[0] : undefined));
+      if (!key) throw new Error(`Ambiguous browser command adapters:${workspace.path}`);
+      const rawCommand = target ? { argv: argv(target.command), cwd: "." } : manifest.commands[key];
+      const runnerIndex = rawCommand.argv.indexOf(runner);
+      if (runnerIndex < 0) throw new Error(`No exact ${runner} adapter:${key}`);
+      const command = manifest.adapters.runnerEgress
+        ? {
+            argv: [
+              process.execPath,
+              manifest.adapters.runnerEgress,
+              runner,
+              ...rawCommand.argv.slice(runnerIndex + 1),
+            ],
+            cwd: ".",
+          }
+        : rawCommand;
       const dependencies = (target?.dependsOn ?? []).flatMap((dependency) => {
         if (!Array.isArray(dependency.projects) || !dependency.target)
           throw new Error(`Unsupported target dependency:${workspace.path}`);
@@ -210,10 +224,7 @@ export const runSelection = (cwd: string, selection: DiscoveredTests, plans: Run
       const plan = match.plan;
       for (const dependency of plan.dependencies)
         if (!built.has(dependency)) {
-          invoke(cwd, {
-            argv: [...plan.argv.slice(0, plan.argv.indexOf(runner)), "nx", "run", dependency],
-            cwd: ".",
-          });
+          invoke(cwd, { argv: ["pnpm", "nx", "run", dependency], cwd: "." });
           built.add(dependency);
         }
       // Keep runner configuration/flags; remove existing positional file filters.

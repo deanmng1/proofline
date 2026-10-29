@@ -1,9 +1,23 @@
 import { execFileSync } from "node:child_process";
-import { chmodSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import {
+  chmodSync,
+  existsSync,
+  mkdtempSync,
+  readFileSync,
+  realpathSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
 import { createServer, type Server } from "node:http";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
+import {
+  assertSafeNodeArgv,
+  normalizeAllowedChildExecutables,
+  parseAllowedChildExecutablesEnvironment,
+  // @ts-expect-error The preload policy stays runtime-native JavaScript; this test exercises it directly.
+} from "../guard-policy.mjs";
 import {
   type GuardedRunResult,
   launchProoflineTestApp,
@@ -17,6 +31,13 @@ let ipv6Origin: string;
 let ipv6Requests = 0;
 const repositoryRoot = path.resolve(import.meta.dirname, "../../..");
 const temporaryRoot = mkdtempSync(path.join(tmpdir(), "proofline-egress-"));
+const executableOnPath = (name: string) => {
+  for (const directory of (process.env.PATH ?? "").split(path.delimiter)) {
+    const candidate = path.join(directory, name);
+    if (existsSync(candidate)) return realpathSync(candidate);
+  }
+  throw new Error(`Missing test executable: ${name}`);
+};
 
 const script = (name: string, source: string) => {
   const file = path.join(temporaryRoot, name);
@@ -101,6 +122,56 @@ afterAll(async () => {
 });
 
 describe("Proofline egress guard", () => {
+  test("validates_exact_child_executable_policy_and_node_preload_argv", () => {
+    const node = realpathSync(process.execPath);
+    expect(normalizeAllowedChildExecutables([node])).toEqual([node]);
+    expect(parseAllowedChildExecutablesEnvironment(JSON.stringify([node]))).toEqual([node]);
+    expect(() => normalizeAllowedChildExecutables("node" as never)).toThrow(/must be an array/i);
+    expect(() => normalizeAllowedChildExecutables(["node"])).toThrow(/absolute path/i);
+    expect(() => normalizeAllowedChildExecutables([path.join(temporaryRoot, "missing")])).toThrow(
+      /resolve to a file/i,
+    );
+    expect(() => normalizeAllowedChildExecutables([temporaryRoot])).toThrow(/resolve to a file/i);
+    expect(() => normalizeAllowedChildExecutables([node, node])).toThrow(/duplicates/i);
+    expect(() => parseAllowedChildExecutablesEnvironment("{")).toThrow(/JSON array/i);
+    expect(() => assertSafeNodeArgv(["--loader=replace", "target.mjs"])).toThrow(
+      /cannot replace preload execution/i,
+    );
+    expect(() => assertSafeNodeArgv(["--inspect-brk=0", "target.mjs"])).toThrow(
+      /cannot replace preload execution/i,
+    );
+    expect(() => assertSafeNodeArgv(["--run=target"])).toThrow(/cannot replace preload execution/i);
+    expect(() => assertSafeNodeArgv(["--", "--import=ordinary-argument"])).not.toThrow();
+  });
+
+  test("resolves_an_exact_PATH_child_but_rejects_network_capable_git_arguments", async () => {
+    const file = script(
+      "safe-git-child.mjs",
+      `
+        import { spawnSync } from "node:child_process";
+        import { mkdtempSync } from "node:fs";
+        import { tmpdir } from "node:os";
+        import path from "node:path";
+        const cwd = mkdtempSync(path.join(tmpdir(), "proofline-safe-git-"));
+        const local = spawnSync("git", ["init", "-q"], { cwd, encoding: "utf8" });
+        let remote;
+        try { spawnSync("git", ["ls-remote", "https://example.com/repository.git"]); }
+        catch (error) { remote = String(error.message); }
+        console.log(JSON.stringify({ local: local.status, remote }));
+      `,
+    );
+    const result = await withProoflineGuard([process.execPath, file], {
+      allowedOrigins: [allowedOrigin],
+      allowedChildExecutables: [executableOnPath("git")],
+      cwd: temporaryRoot,
+    });
+    expect(result.code, result.stderr).toBe(0);
+    expect(JSON.parse(result.stdout.trim())).toEqual({
+      local: 0,
+      remote: expect.stringContaining("network-capable git arguments are denied"),
+    });
+  });
+
   test("allows_only_declared_loopback_runner_requests", async () => {
     const file = script(
       "allowed-overloads.mjs",
@@ -656,9 +727,36 @@ describe("Proofline egress guard", () => {
     });
     await expect(earlyExit.ready).rejects.toThrow(/before readiness.*code=4/i);
     await earlyExit.completion;
+
+    const callbackFailure = launchProoflineTestApp([process.execPath, exitsBeforeReadiness], {
+      allowedOrigins: [allowedOrigin],
+      cwd: temporaryRoot,
+      onSpawn: () => {
+        throw new Error("injected spawn callback failure");
+      },
+    });
+    await expect(callbackFailure.ready).rejects.toThrow(/injected spawn callback failure/i);
+    await expect(callbackFailure.completion).rejects.toThrow(/injected spawn callback failure/i);
   });
 
   test("preserves_structured_argv_exit_signal_stdout_and_stderr", async () => {
+    expect(() => withProoflineGuard([] as never, { allowedOrigins: [allowedOrigin] })).toThrow(
+      /non-empty structured argv/i,
+    );
+    expect(() =>
+      withProoflineGuard([process.execPath, 42] as never, { allowedOrigins: [allowedOrigin] }),
+    ).toThrow(/non-empty structured argv/i);
+    expect(() =>
+      withProoflineGuard([process.execPath, "target.mjs"], {
+        allowedOrigins: [allowedOrigin],
+        shell: true,
+      } as never),
+    ).toThrow(/never execute through a shell/i);
+    expect(() =>
+      withProoflineGuard([path.join(temporaryRoot, "missing-node")], {
+        allowedOrigins: [allowedOrigin],
+      }),
+    ).toThrow(/trusted Node executable/i);
     const overridePreload = script("override-preload.mjs", "globalThis.fetch = () => undefined;");
     expect(() =>
       withProoflineGuard(["/usr/bin/curl", "https://example.com"], {

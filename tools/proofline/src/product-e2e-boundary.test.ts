@@ -1,6 +1,7 @@
 import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 import { describe, expect, test } from "vitest";
+import { validateHarness } from "../../impact/src/harness-manifest.ts";
 
 describe("Proofline product E2E boundary", () => {
   test("product_e2e_specs_delegate_transport_and_storage_to_fixtures", async () => {
@@ -63,6 +64,19 @@ await revisitProtectedPath(page, policyPath);`,
 }`,
       ),
     ).toEqual(["helpers.ts:2 forbidden CRM screen navigation"]);
+  });
+
+  test("canonical_test_commands_cannot_bypass_the_declared_runner_egress_adapter", async () => {
+    const manifest = JSON.parse(await readFile("proofline.harness.json", "utf8"));
+    expect(manifest.adapters.runnerEgress).toBe("tools/proofline/canonical-runner.mjs");
+    expect(validateHarness({ cwd: process.cwd(), manifest }).errors).toEqual([]);
+    manifest.commands.browser = {
+      argv: ["pnpm", "exec", "playwright", "test"],
+      cwd: ".",
+    };
+    expect(validateHarness({ cwd: process.cwd(), manifest }).commandErrors).toContain(
+      "Test command browser bypasses the runner egress adapter",
+    );
   });
 });
 

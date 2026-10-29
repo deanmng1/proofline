@@ -5,6 +5,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { afterAll, describe, expect, test } from "vitest";
 import { createTestCapabilityGate } from "../../../apps/crm-web/src/test-capability.ts";
+import { withProoflineGuard } from "../run-guarded.mjs";
 import {
   assertProductionNegativeArtifact,
   DEFAULT_PRODUCTION_FORBIDDEN_MARKERS,
@@ -37,6 +38,35 @@ const temporaryDirectory = () => {
   const directory = mkdtempSync(path.join(tmpdir(), "proofline-production-negative-"));
   temporaryRoots.push(directory);
   return directory;
+};
+
+const fetchThroughGuard = async (
+  origin: string,
+  pathname = "/",
+  headers: Record<string, string> = {},
+) => {
+  const directory = temporaryDirectory();
+  const client = path.join(directory, "client.mjs");
+  writeFileSync(
+    client,
+    `
+      const response = await fetch(new URL(process.argv[3], process.argv[2]), {
+        redirect: "manual",
+        headers: JSON.parse(process.argv[4]),
+      });
+      process.stdout.write(JSON.stringify({
+        status: response.status,
+        text: await response.text(),
+        cookie: response.headers.get("set-cookie"),
+      }));
+    `,
+  );
+  const result = await withProoflineGuard(
+    [process.execPath, client, origin, pathname, JSON.stringify(headers)],
+    { allowedOrigins: [origin], cwd: repositoryRoot },
+  );
+  if (result.code !== 0) throw new Error(result.stderr || `Guarded fetch exited ${result.code}`);
+  return JSON.parse(result.stdout) as { status: number; text: string; cookie: string | null };
 };
 
 const writePositiveManifests = async (directory: string) => {
@@ -369,25 +399,32 @@ describe("Proofline production boundary", () => {
     expect(secondReady.capability).not.toBe(callerCapability);
     expect(new URL(origin).hostname).toBe("127.0.0.1");
     try {
-      expect((await fetch(origin)).status).toBe(403);
-      expect((await fetch(`${origin}/?__proofline_capability=wrong`)).status).toBe(403);
-      const accepted = await fetch(
-        `${origin}/?__proofline_capability=${encodeURIComponent(capability)}`,
-        { redirect: "manual" },
+      expect((await fetchThroughGuard(origin)).status).toBe(403);
+      expect((await fetchThroughGuard(origin, "/?__proofline_capability=wrong")).status).toBe(403);
+      const accepted = await fetchThroughGuard(
+        origin,
+        `/?__proofline_capability=${encodeURIComponent(capability)}`,
       );
       expect(accepted.status).toBe(200);
-      expect(await accepted.text()).toContain(capability);
-      expect(accepted.headers.get("set-cookie")).toMatch(/__proofline_session=/);
-      const sessionCookie = accepted.headers.get("set-cookie")?.split(";", 1)[0];
+      expect(accepted.text).toContain(capability);
+      expect(accepted.cookie).toMatch(/__proofline_session=/);
+      const sessionCookie = accepted.cookie?.split(";", 1)[0];
       expect(sessionCookie).toBeTruthy();
       expect(
-        (await fetch(`${origin}/?__proofline_capability=${encodeURIComponent(capability)}`)).status,
+        (
+          await fetchThroughGuard(
+            origin,
+            `/?__proofline_capability=${encodeURIComponent(capability)}`,
+          )
+        ).status,
       ).toBe(409);
       expect(
         (
-          await fetch(`${origin}/?__proofline_capability=${encodeURIComponent(capability)}`, {
-            headers: { cookie: sessionCookie ?? "" },
-          })
+          await fetchThroughGuard(
+            origin,
+            `/?__proofline_capability=${encodeURIComponent(capability)}`,
+            { cookie: sessionCookie ?? "" },
+          )
         ).status,
       ).toBe(409);
     } finally {
@@ -397,7 +434,7 @@ describe("Proofline production boundary", () => {
         new Promise<void>((resolve) => first.child.once("close", () => resolve())),
         new Promise<void>((resolve) => second.child.once("close", () => resolve())),
       ]);
-      await expect(fetch(origin)).rejects.toThrow();
+      await expect(fetchThroughGuard(origin)).rejects.toThrow();
     }
   }, 30_000);
 });

@@ -28,13 +28,24 @@
         "After final visible outcome, query exactly one customer/property/quote/bound policy and matching policy-state and finance entries."
       ],
       "ruleIds": ["AUTH-001", "POL-001", "API-002", "FIN-001"],
-      "exclusions": []
+      "exclusions": [],
+      "evidence": [
+        {
+          "rowId": "protected-intake-bind-finance-logout",
+          "commandKey": "browser",
+          "file": "apps/crm-e2e/src/proofline/golden-workflow.spec.ts",
+          "title": "completes_the_unauthenticated_deep_link_to_policy_finance_logout_journey",
+          "line": 6,
+          "tag": "@proofline-golden",
+          "ruleIds": ["AUTH-001", "POL-001", "API-002", "FIN-001"]
+        }
+      ]
     },
     {
       "id": "recoverable-bind",
       "status": "implemented",
       "adapterSetup": [
-        "Fresh authenticated scenario with one operation-aware accepted-bind response-loss fault."
+        "Fresh unauthenticated scenario with seeded customer/property state and one operation-aware accepted-bind response-loss fault; sign in through the visible login form."
       ],
       "userActions": [
         "Create and bind a quote through the UI.",
@@ -49,7 +60,18 @@
         "After visible success, query exactly one policy, projection and ledger initialization for the command."
       ],
       "ruleIds": ["UI-001", "POL-001", "API-002"],
-      "exclusions": []
+      "exclusions": [],
+      "evidence": [
+        {
+          "rowId": "recoverable-bind",
+          "commandKey": "browser",
+          "file": "apps/crm-e2e/src/proofline/recovery-and-authority.spec.ts",
+          "title": "recovers_an_accepted_bind_without_duplicate_policy_or_ledger",
+          "line": 12,
+          "tag": "@proofline-recovery",
+          "ruleIds": ["UI-001", "POL-001", "API-002"]
+        }
+      ]
     },
     {
       "id": "role-denied-navigation",
@@ -66,7 +88,18 @@
         "After denial, inspect request log: no protected API command issued."
       ],
       "ruleIds": ["AUTH-001", "API-001"],
-      "exclusions": []
+      "exclusions": [],
+      "evidence": [
+        {
+          "rowId": "role-denied-navigation",
+          "commandKey": "browser",
+          "file": "apps/crm-e2e/src/proofline/recovery-and-authority.spec.ts",
+          "title": "denies_crm_navigation_and_direct_routes_for_viewer",
+          "line": 132,
+          "tag": "@proofline-authority",
+          "ruleIds": ["AUTH-001", "API-001"]
+        }
+      ]
     },
     {
       "id": "tenant-isolation",
@@ -76,20 +109,31 @@
       ],
       "userActions": [
         "In each authenticated context, visibly create customer/property, quote, bound policy and finance state.",
-        "Attempt foreign resource routes and adapter-owned foreign collection/detail/ledger/retry reads and representative mutations."
+        "Attempt foreign resource routes and adapter-owned foreign collection/detail/ledger reads and representative mutations."
       ],
       "urlTransitions": [
         "/app/crm/customers -> /app/crm/quotes -> /app/crm/policies/:id in each context"
       ],
       "visibleAssertions": [
-        "Customer, quote, policy, ledger and retry state are visible only to the owning tenant.",
+        "Customer, quote, policy and ledger state are visible only to the owning tenant.",
         "Foreign resources display denial without tenant data."
       ],
       "persistedInvariants": [
-        "After visible outcomes, contract reads and mutation attempts deny cross-tenant customer, quote, policy, ledger and retry access."
+        "After visible outcomes, contract reads and mutation attempts deny cross-tenant customer, quote, policy and ledger access."
       ],
       "ruleIds": ["TEN-001", "API-001"],
-      "exclusions": []
+      "exclusions": [],
+      "evidence": [
+        {
+          "rowId": "tenant-isolation",
+          "commandKey": "browser",
+          "file": "apps/crm-e2e/src/proofline/recovery-and-authority.spec.ts",
+          "title": "denies_cross_tenant_read_and_mutation_in_a_shared_runtime",
+          "line": 52,
+          "tag": "@proofline-authority",
+          "ruleIds": ["TEN-001", "API-001"]
+        }
+      ]
     },
     {
       "id": "visible-refund-correction",
@@ -108,6 +152,47 @@
         "Allocated refund corrections preserve source identity and cumulative commission reversal."
       ],
       "ruleIds": ["COM-002", "COM-003", "FIN-003", "FIN-004"],
+      "exclusions": [],
+      "evidence": [
+        {
+          "rowId": "visible-refund-correction",
+          "commandKey": "browser",
+          "file": "apps/crm-e2e/src/features/commission-refund.spec.ts",
+          "title": "commission corrections > @commission @finance @refund allocations reverse only selected settled premium commission",
+          "line": 38,
+          "tag": "@refund",
+          "ruleIds": ["COM-002", "COM-003", "FIN-003", "FIN-004"]
+        }
+      ]
+    },
+    {
+      "id": "cross-browser-smoke",
+      "status": "implemented",
+      "adapterSetup": ["Fresh unauthenticated scenario on each opted-in browser project."],
+      "userActions": [
+        "Sign in through the visible login form, create a customer, navigate to quotes, log out and revisit a protected route."
+      ],
+      "urlTransitions": [
+        "/app/crm/customers -> /login -> /app/crm/customers -> /app/crm/quotes -> /login"
+      ],
+      "visibleAssertions": [
+        "Created customer is visible and the protected revisit returns to login without protected content."
+      ],
+      "persistedInvariants": [
+        "After the visible outcome, exactly one customer remains in deterministic scenario state."
+      ],
+      "ruleIds": ["AUTH-001"],
+      "evidence": [
+        {
+          "rowId": "cross-browser-smoke",
+          "commandKey": "browser",
+          "file": "apps/crm-e2e/src/proofline/cross-browser-smoke.spec.ts",
+          "title": "runs_the_cross_browser_invariant_smoke @proofline-smoke",
+          "line": 5,
+          "tag": "@proofline-smoke",
+          "ruleIds": ["AUTH-001"]
+        }
+      ],
       "exclusions": []
     },
     {
@@ -136,7 +221,8 @@
           "ownerLayer": "service",
           "ruleIds": ["COM-005"]
         }
-      ]
+      ],
+      "evidence": []
     }
   ]
 }

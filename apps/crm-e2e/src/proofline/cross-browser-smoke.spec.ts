@@ -1,5 +1,6 @@
 import { expect, test } from "../fixtures/test";
 import { login, logout, navigateInsurance, revisitProtectedPath } from "../helpers";
+import { bindWorkflowEvidence } from "./workflow-matrix";
 
 test("runs_the_cross_browser_invariant_smoke @proofline-smoke", async ({ scenario }) => {
   const page = await scenario.newPage();
@@ -14,4 +15,13 @@ test("runs_the_cross_browser_invariant_smoke @proofline-smoke", async ({ scenari
   await expect(page).toHaveURL(/\/login$/);
   await expect(page.getByRole("heading", { name: "Customer and property intake" })).toHaveCount(0);
   expect((await scenario.inspect()).state.customers).toHaveLength(1);
+});
+
+bindWorkflowEvidence({
+  rowId: "cross-browser-smoke",
+  file: "apps/crm-e2e/src/proofline/cross-browser-smoke.spec.ts",
+  title: "runs_the_cross_browser_invariant_smoke @proofline-smoke",
+  line: 5,
+  tag: "@proofline-smoke",
+  ruleIds: ["AUTH-001"],
 });

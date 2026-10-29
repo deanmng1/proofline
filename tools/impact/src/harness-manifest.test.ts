@@ -341,6 +341,88 @@ test("rejects_invalid_lifecycle_and_golden_workflow_rows", () => {
   expect(validateHarness({ cwd, manifest }).errors).toEqual([]);
 });
 
+test("requires_exact_discovered_evidence_for_every_implemented_golden_row", () => {
+  const { cwd, manifest, golden, write } = fixture();
+  const evidence = {
+    rowId: "journey",
+    commandKey: "browser",
+    file: "app/src/value.spec.ts",
+    title: "@smoke visible",
+    line: 2,
+    tag: "@smoke",
+    ruleIds: ["RULE-001"],
+  };
+  const discovered = {
+    vitest: [{ file: "app/src/value.test.ts", title: "values > works", line: 3 }],
+    playwright: [
+      { path: evidence.file, title: evidence.title, line: evidence.line, tags: [evidence.tag] },
+    ],
+  };
+  const implemented = {
+    ...golden,
+    rows: [{ ...golden.rows[0], status: "implemented", evidence: [evidence] }],
+  };
+  write("golden.json", implemented);
+  expect(validateHarness({ cwd, manifest, discovered }).errors).toEqual([]);
+  for (const mutation of [
+    (row: (typeof implemented.rows)[0]) => {
+      row.evidence = [];
+    },
+    (row: (typeof implemented.rows)[0]) => {
+      row.evidence[0].title = "stale";
+    },
+    (row: (typeof implemented.rows)[0]) => {
+      row.evidence[0].rowId = "different-row";
+    },
+    (row: (typeof implemented.rows)[0]) => {
+      row.evidence[0].tag = "@metadata-drift";
+    },
+    (row: (typeof implemented.rows)[0]) => {
+      row.evidence[0].ruleIds = ["RULE-999"];
+    },
+    (row: (typeof implemented.rows)[0]) => {
+      row.evidence[0].file = "app/src/missing.spec.ts";
+    },
+  ]) {
+    const bad = structuredClone(implemented);
+    mutation(bad.rows[0]);
+    write("golden.json", bad);
+    expect(validateHarness({ cwd, manifest, discovered }).errors.length).toBeGreaterThan(0);
+  }
+});
+
+test("rejects_a_test_command_that_bypasses_the_declared_runner_egress_adapter", () => {
+  const { cwd, manifest, write } = fixture();
+  write("runner.mjs", "");
+  write("app/project.json", {
+    name: "fixture",
+    root: "app",
+    targets: {
+      test: {},
+      e2e: {},
+      coverage: { command: "node runner.mjs vitest run app/src --coverage" },
+    },
+  });
+  (manifest.adapters as typeof manifest.adapters & { runnerEgress?: string }).runnerEgress =
+    "runner.mjs";
+  manifest.commands.unit = { argv: ["node", "runner.mjs", "vitest"], cwd: "." };
+  manifest.commands.browser = { argv: ["node", "runner.mjs", "playwright"], cwd: "." };
+  expect(validateHarness({ cwd, manifest }).errors).toEqual([]);
+  manifest.commands.browser = { argv: ["pnpm", "check"], cwd: "." };
+  expect(validateHarness({ cwd, manifest }).commandErrors).toContain(
+    "Test command browser bypasses the runner egress adapter",
+  );
+  manifest.commands.browser = { argv: ["node", "runner.mjs", "playwright"], cwd: "." };
+  write("app/project.json", {
+    name: "fixture",
+    root: "app",
+    targets: { test: {}, e2e: {}, coverage: { command: "pnpm exec vitest run --coverage" } },
+  });
+  expect(validateHarness({ cwd, manifest }).commandErrors).toContain(
+    "Coverage target app:coverage bypasses the runner egress adapter",
+  );
+});
+
 test("rejects_symlink_escape_and_new_unregistered_nx_workspace", () => {
   const { cwd, manifest, write } = fixture();
   symlinkSync(tmpdir(), path.join(cwd, "external"));

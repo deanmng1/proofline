@@ -1,5 +1,5 @@
 import childProcess from "node:child_process";
-import { realpathSync } from "node:fs";
+import { accessSync, constants, realpathSync } from "node:fs";
 import http from "node:http";
 import https from "node:https";
 import { syncBuiltinESMExports } from "node:module";
@@ -8,7 +8,9 @@ import {
   assertSafeNodeArgv,
   guardImportOption,
   mergeGuardNodeOptions,
+  parseAllowedChildExecutablesEnvironment,
   parseAllowedOriginsEnvironment,
+  prooflineDelegatedPolicy,
 } from "./guard-policy.mjs";
 
 const installKey = Symbol.for("proofline.egress-guard.installed");
@@ -22,6 +24,10 @@ function installGuard() {
     parseAllowedOriginsEnvironment(process.env.PROOFLINE_ALLOWED_ORIGINS),
   );
   const immutableAllowedOrigins = JSON.stringify([...allowedOrigins]);
+  const allowedChildExecutables = new Set(
+    parseAllowedChildExecutablesEnvironment(process.env.PROOFLINE_ALLOWED_CHILD_EXECUTABLES),
+  );
+  const immutableAllowedChildExecutables = JSON.stringify([...allowedChildExecutables]);
   const immutablePreload = process.env.PROOFLINE_GUARD_PRELOAD;
   const immutableNodeOptions = mergeGuardNodeOptions(process.env.NODE_OPTIONS ?? guardImportOption);
 
@@ -233,29 +239,93 @@ function installGuard() {
     };
   }
 
-  const forcedChildEnvironment = (provided = {}) => ({
+  const forcedChildEnvironment = (provided = {}, delegated = false) => ({
     ...process.env,
     ...provided,
-    PROOFLINE_ALLOWED_ORIGINS: immutableAllowedOrigins,
+    PROOFLINE_ALLOWED_ORIGINS: delegated
+      ? JSON.stringify(parseAllowedOriginsEnvironment(provided.PROOFLINE_ALLOWED_ORIGINS))
+      : immutableAllowedOrigins,
+    PROOFLINE_ALLOWED_CHILD_EXECUTABLES: delegated
+      ? JSON.stringify(
+          parseAllowedChildExecutablesEnvironment(provided.PROOFLINE_ALLOWED_CHILD_EXECUTABLES),
+        )
+      : immutableAllowedChildExecutables,
     PROOFLINE_GUARD_PRELOAD: immutablePreload,
     NODE_OPTIONS: mergeGuardNodeOptions(provided.NODE_OPTIONS ?? immutableNodeOptions),
   });
-  const supportedNodeChild = (command, options = {}, argv = []) => {
+  const resolveExecutable = (command, environment = process.env) => {
+    const value = String(command);
+    const candidates = value.includes(path.sep)
+      ? [value]
+      : String(environment?.PATH ?? process.env.PATH ?? "")
+          .split(path.delimiter)
+          .filter(Boolean)
+          .map((directory) => path.join(directory, value));
+    for (const candidate of candidates)
+      try {
+        accessSync(candidate, constants.X_OK);
+        return realpathSync(candidate);
+      } catch {
+        // Continue through PATH; exact allowlist comparison happens after resolution.
+      }
+    throw new Error(
+      `Proofline unsupported-child-plane: child executable ${path.basename(value)} cannot be resolved to an exact reviewed file.`,
+    );
+  };
+  const assertSafeGitArgv = (argv) => {
+    let index = 0;
+    while (argv[index] === "-c") {
+      const setting = argv[index + 1] ?? "";
+      if (!/^(?:user\.name|user\.email|core\.hooksPath)=/.test(setting))
+        throw new Error("Proofline unsupported-child-plane: unsafe git configuration is denied.");
+      index += 2;
+    }
+    const subcommand = argv[index];
+    const localOnly = new Set([
+      "add",
+      "commit",
+      "diff",
+      "init",
+      "ls-files",
+      "ls-tree",
+      "merge-base",
+      "rev-parse",
+      "rm",
+      "show",
+      "status",
+      "update-ref",
+    ]);
+    if (subcommand === "clone") {
+      const source = argv.slice(index + 1).find((argument) => !argument.startsWith("-"));
+      if (source?.startsWith("file://")) return;
+    }
+    if (!localOnly.has(subcommand))
+      throw new Error(
+        "Proofline unsupported-child-plane: network-capable git arguments are denied.",
+      );
+  };
+  const supportedChild = (command, options = {}, argv = []) => {
     if (options.shell)
       throw new Error("Proofline unsupported-child-plane: shell child execution is denied.");
     let executable;
     try {
-      executable = realpathSync(String(command));
+      executable = resolveExecutable(command, options.env);
     } catch {
       throw new Error(
-        "Proofline unsupported-child-plane: child executable is not the trusted Node binary.",
+        `Proofline unsupported-child-plane: child executable ${path.basename(String(command))} cannot be resolved to an exact reviewed file.`,
       );
     }
-    if (executable !== realpathSync(process.execPath))
-      throw new Error(
-        `Proofline unsupported-child-plane: executable ${path.basename(executable)} cannot inherit the Node preload.`,
-      );
-    assertSafeNodeArgv(argv);
+    if (executable === realpathSync(process.execPath)) {
+      assertSafeNodeArgv(argv);
+      return true;
+    }
+    if (allowedChildExecutables.has(executable)) {
+      if (path.basename(executable) === "git") assertSafeGitArgv(argv);
+      return false;
+    }
+    throw new Error(
+      `Proofline unsupported-child-plane: executable ${path.basename(executable)} is not an exact reviewed child.`,
+    );
   };
   const patchSpawn = (name) => {
     const original = childProcess[name];
@@ -263,8 +333,12 @@ function installGuard() {
       const hasArgs = Array.isArray(argsOrOptions);
       const args = hasArgs ? argsOrOptions : undefined;
       const options = (hasArgs ? maybeOptions : argsOrOptions) ?? {};
-      supportedNodeChild(command, options, args ?? []);
-      const guardedOptions = { ...options, env: forcedChildEnvironment(options.env) };
+      const isNode = supportedChild(command, options, args ?? []);
+      const delegated = options[prooflineDelegatedPolicy] === true;
+      const guardedOptions = {
+        ...options,
+        ...(isNode ? { env: forcedChildEnvironment(options.env, delegated) } : {}),
+      };
       return args
         ? original.call(this, command, args, guardedOptions)
         : original.call(this, command, guardedOptions);
@@ -294,8 +368,12 @@ function installGuard() {
           : typeof argsOrOptions === "function"
             ? argsOrOptions
             : undefined;
-    supportedNodeChild(file, options, args);
-    const guardedOptions = { ...options, env: forcedChildEnvironment(options.env) };
+    const isNode = supportedChild(file, options, args);
+    const delegated = options[prooflineDelegatedPolicy] === true;
+    const guardedOptions = {
+      ...options,
+      ...(isNode ? { env: forcedChildEnvironment(options.env, delegated) } : {}),
+    };
     return done
       ? originalExecFile.call(this, file, args, guardedOptions, done)
       : originalExecFile.call(this, file, args, guardedOptions);
@@ -305,10 +383,11 @@ function installGuard() {
     const hasArgs = Array.isArray(argsOrOptions);
     const args = hasArgs ? argsOrOptions : [];
     const options = (hasArgs ? maybeOptions : argsOrOptions) ?? {};
-    supportedNodeChild(file, options, args);
+    const isNode = supportedChild(file, options, args);
+    const delegated = options[prooflineDelegatedPolicy] === true;
     return originalExecFileSync.call(this, file, args, {
       ...options,
-      env: forcedChildEnvironment(options.env),
+      ...(isNode ? { env: forcedChildEnvironment(options.env, delegated) } : {}),
     });
   };
   const originalFork = childProcess.fork;

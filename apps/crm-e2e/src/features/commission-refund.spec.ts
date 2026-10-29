@@ -2,6 +2,7 @@ import { ledgerSeed } from "@testbed/test-kit";
 
 import { expect, test } from "../fixtures/test";
 import { login } from "../helpers";
+import { bindWorkflowEvidence } from "../proofline/workflow-matrix";
 
 const seededLedger = ledgerSeed();
 
@@ -78,4 +79,14 @@ test.describe("commission corrections", () => {
       ledger.commissionEntries.filter((entry) => entry.kind === "refund_adjustment"),
     ).toHaveLength(1);
   });
+});
+
+bindWorkflowEvidence({
+  rowId: "visible-refund-correction",
+  file: "apps/crm-e2e/src/features/commission-refund.spec.ts",
+  title:
+    "commission corrections > @commission @finance @refund allocations reverse only selected settled premium commission",
+  line: 38,
+  tag: "@refund",
+  ruleIds: ["COM-002", "COM-003", "FIN-003", "FIN-004"],
 });

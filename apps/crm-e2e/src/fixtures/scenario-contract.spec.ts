@@ -1,5 +1,5 @@
 import { readdir, readFile } from "node:fs/promises";
-import type { ProoflineScenario, ScenarioOptions } from "./scenario";
+import { createScenario, type ProoflineScenario, type ScenarioOptions } from "./scenario";
 import { startWorkerScenarioServer, type WorkerScenarioServer } from "./scenario-server";
 import { expect, test } from "./test";
 
@@ -647,6 +647,89 @@ test("copies_identity_claims_and_rejects_conflicting_redefinitions", { tag: "@au
   });
   expect(result).toEqual([403, 403]);
   expect((await scenario.inspect()).state.customers).toEqual([]);
+});
+
+test("rolls_back_a_new_identity_after_context_setup_failure", { tag: "@authority" }, async ({
+  browser,
+  workerServer,
+}) => {
+  let fail = true;
+  const flakyBrowser = new Proxy(browser, {
+    get(target, property, receiver) {
+      if (property !== "newContext") return Reflect.get(target, property, receiver);
+      return async (...args: Parameters<typeof browser.newContext>) => {
+        if (fail) throw new Error("injected context setup failure");
+        return browser.newContext(...args);
+      };
+    },
+  });
+  const scenario = createScenario({
+    browser: flakyBrowser,
+    workerServer,
+    tenants: ["tenant-a"],
+  });
+  try {
+    await expect(
+      scenario.createContext({ id: "retry-identity", role: "Viewer", tenantIds: ["tenant-a"] }),
+    ).rejects.toThrow(/injected context setup failure/);
+    fail = false;
+    await expect(
+      scenario.createContext({ id: "retry-identity", role: "Owner", tenantIds: ["tenant-a"] }),
+    ).resolves.toBeDefined();
+    await expect(
+      scenario.createContext({ id: "retry-identity", role: "Viewer", tenantIds: ["tenant-a"] }),
+    ).rejects.toThrow(/redefined with different claims/);
+  } finally {
+    await scenario.reset();
+  }
+});
+
+test("reserves_pending_identity_claims_until_concurrent_context_setup_commits", {
+  tag: "@authority",
+}, async ({ browser, workerServer }) => {
+  let releaseSetup!: () => void;
+  const setupBlocked = new Promise<void>((resolve) => {
+    releaseSetup = resolve;
+  });
+  let markEntered!: () => void;
+  const setupEntered = new Promise<void>((resolve) => {
+    markEntered = resolve;
+  });
+  const delayedBrowser = new Proxy(browser, {
+    get(target, property, receiver) {
+      if (property !== "newContext") return Reflect.get(target, property, receiver);
+      return async (...args: Parameters<typeof browser.newContext>) => {
+        markEntered();
+        await setupBlocked;
+        return browser.newContext(...args);
+      };
+    },
+  });
+  const scenario = createScenario({
+    browser: delayedBrowser,
+    workerServer,
+    tenants: ["tenant-a"],
+  });
+  try {
+    const owner = scenario.createContext({
+      id: "concurrent-identity",
+      role: "Owner",
+      tenantIds: ["tenant-a"],
+    });
+    await setupEntered;
+    await expect(
+      scenario.createContext({
+        id: "concurrent-identity",
+        role: "Viewer",
+        tenantIds: ["tenant-a"],
+      }),
+    ).rejects.toThrow(/redefined with different claims/);
+    releaseSetup();
+    await expect(owner).resolves.toBeDefined();
+  } finally {
+    releaseSetup();
+    await scenario.reset();
+  }
 });
 
 test("scenario_reset_retains_failed_contexts_for_a_deterministic_retry", {

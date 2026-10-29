@@ -57,7 +57,7 @@ jobs:
         env:
           GITHUB_EVENT_NAME: ${{ github.event_name }}
           PROOFLINE_MANUAL_BASE_REF: ${{ inputs.base_ref || '' }}
-        run: bash tools/impact/resolve-ci-revisions.sh >> "$GITHUB_ENV"
+        run: node tools/impact/resolve-ci-revisions.mjs >> "$GITHUB_ENV"
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -135,7 +135,7 @@ jobs:
           PROOFLINE_CROSS_BROWSER: "1"
         run: |
           set -o pipefail
-          pnpm exec playwright test --config apps/crm-e2e/playwright.config.ts apps/crm-e2e/src/proofline/cross-browser-smoke.spec.ts --project=firefox --project=webkit 2>&1 | tee -a artifacts/browser-output.txt
+          node tools/proofline/canonical-runner.mjs playwright test --config apps/crm-e2e/playwright.config.ts apps/crm-e2e/src/proofline/cross-browser-smoke.spec.ts --project=firefox --project=webkit 2>&1 | tee -a artifacts/browser-output.txt
 
       - name: Generate Vitest coverage baseline
         if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}

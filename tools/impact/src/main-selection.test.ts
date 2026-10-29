@@ -17,6 +17,23 @@ import { discoverCandidates, main, runCanonicalFull, runSelection } from "./main
 import { renderRules } from "./validate.ts";
 
 vi.mock("node:child_process", { spy: true });
+const repositoryVitestCli = path.join(process.cwd(), "node_modules/vitest/vitest.mjs");
+const repositoryPlaywrightCli = path.join(process.cwd(), "node_modules/@playwright/test/cli.js");
+
+const linkFixtureDependency = (cwd: string, packageName: string) => {
+  const destination = path.join(cwd, "node_modules", packageName);
+  mkdirSync(path.dirname(destination), { recursive: true });
+  symlinkSync(
+    realpathSync(path.join(process.cwd(), "node_modules", packageName)),
+    destination,
+    "dir",
+  );
+  const binary = packageName === "vitest" ? "vitest" : "playwright";
+  const binaryDestination = path.join(cwd, "node_modules/.bin", binary);
+  mkdirSync(path.dirname(binaryDestination), { recursive: true });
+  if (!existsSync(binaryDestination))
+    symlinkSync(path.join(process.cwd(), "node_modules/.bin", binary), binaryDestination, "file");
+};
 
 test("runs_only_one_declared_vitest_and_playwright_identity", () => {
   const cwd = realpathSync(mkdtempSync(path.join(tmpdir(), "impact-main-selection-")));
@@ -41,16 +58,26 @@ test("runs_only_one_declared_vitest_and_playwright_identity", () => {
     ],
   };
   try {
-    symlinkSync(path.join(process.cwd(), "node_modules"), path.join(cwd, "node_modules"), "dir");
+    linkFixtureDependency(cwd, "vitest");
+    linkFixtureDependency(cwd, "@playwright/test");
     write(".gitignore", "node_modules/\nartifacts/\n.nx/\ntest-results/\n");
     write("package.json", '{"name":"selection-fixture","private":true,"type":"module"}');
     write("nx.json", "{}");
+    write(
+      "fixture-runner.cjs",
+      `const { spawnSync } = require("node:child_process");
+const cli = process.argv[2] === "vitest" ? ${JSON.stringify(repositoryVitestCli)} : ${JSON.stringify(repositoryPlaywrightCli)};
+const result = spawnSync(process.execPath, [cli, ...process.argv.slice(3)], { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] });
+process.stdout.write(result.stdout || ""); process.stderr.write(result.stderr || ""); process.exit(result.status ?? 1);`,
+    );
     write(
       "modules/orders/project.json",
       JSON.stringify({
         name: "crm-web",
         targets: {
-          test: { command: "pnpm exec vitest run --config modules/orders/vite.config.ts" },
+          test: {
+            command: "node fixture-runner.cjs vitest run --config modules/orders/vite.config.ts",
+          },
           coverage: { command: "pnpm exec vitest run --coverage" },
         },
       }),
@@ -79,7 +106,7 @@ test("runs_only_one_declared_vitest_and_playwright_identity", () => {
       "libraries/value/project.json",
       JSON.stringify({
         name: "example",
-        targets: { test: { command: "pnpm exec vitest run libraries/value" } },
+        targets: { test: { command: "node fixture-runner.cjs vitest run libraries/value" } },
       }),
     );
     write(
@@ -88,7 +115,8 @@ test("runs_only_one_declared_vitest_and_playwright_identity", () => {
         name: "browser",
         targets: {
           e2e: {
-            command: "pnpm exec playwright test --config checks/browser/playwright.config.ts",
+            command:
+              "node fixture-runner.cjs playwright test --config checks/browser/playwright.config.ts",
           },
         },
       }),
@@ -98,7 +126,7 @@ test("runs_only_one_declared_vitest_and_playwright_identity", () => {
       'import { test } from "@playwright/test";\n\n\ntest("unselected backup", () => { throw new Error("file pattern widened"); });',
     );
     write(source, "export const version = 1;\n");
-    const check = { argv: ["pnpm", "exec", "vitest", "run"], cwd: "." };
+    const check = { argv: ["node", "fixture-runner.cjs", "vitest", "run"], cwd: "." };
     write(
       "proofline.harness.json",
       JSON.stringify({
@@ -109,8 +137,8 @@ test("runs_only_one_declared_vitest_and_playwright_identity", () => {
           unit: check,
           browser: {
             argv: [
-              "pnpm",
-              "exec",
+              "node",
+              "fixture-runner.cjs",
               "playwright",
               "test",
               "--config",
@@ -282,7 +310,7 @@ test("runs_only_one_declared_vitest_and_playwright_identity", () => {
     const unchanged = JSON.parse(
       readFileSync(path.join(cwd, "artifacts/impact/selection.json"), "utf8"),
     );
-    expect(unchanged).toMatchObject({
+    expect(unchanged, JSON.stringify(unchanged, null, 2)).toMatchObject({
       fallback: "none",
       commandKeys: [],
       identities: { vitest: [], playwright: [] },
@@ -299,7 +327,7 @@ test("runs_only_one_declared_vitest_and_playwright_identity", () => {
     expect(() =>
       runSelection(cwd, { vitest: [{ ...evidence, title: "missing title" }], playwright: [] }, [
         {
-          argv: ["pnpm", "exec", "vitest", "run", "libraries/value"],
+          argv: ["node", "fixture-runner.cjs", "vitest", "run", "libraries/value"],
           cwd: ".",
           workspace: "libraries/value",
           runner: "vitest",
@@ -382,7 +410,8 @@ test("runs_only_one_declared_vitest_and_playwright_identity", () => {
         }),
       ]),
     );
-    fullManifest.commands.unit.cwd = "node_modules";
+    symlinkSync(tmpdir(), path.join(cwd, "outside"), "dir");
+    fullManifest.commands.unit.cwd = "outside";
     write("proofline.harness.json", JSON.stringify(fullManifest));
     expect(() => main(cwd, ["--dry-run"])).toThrow(/outside repository/);
     expect(
@@ -401,8 +430,12 @@ test("uses_structured_runner_and_canonical_commands_with_their_declared_cwd", ()
   const cwd = realpathSync(mkdtempSync(path.join(tmpdir(), "impact-cwd-")));
   try {
     mkdirSync(path.join(cwd, "module/tests"), { recursive: true });
-    symlinkSync(path.join(process.cwd(), "node_modules"), path.join(cwd, "node_modules"), "dir");
+    linkFixtureDependency(path.join(cwd, "module"), "vitest");
     writeFileSync(path.join(cwd, "package.json"), '{"type":"module"}');
+    writeFileSync(
+      path.join(cwd, "module/runner.cjs"),
+      `const { spawnSync } = require("node:child_process"); const result = spawnSync(process.execPath, [${JSON.stringify(repositoryVitestCli)}, ...process.argv.slice(3)], { encoding: "utf8" }); process.stdout.write(result.stdout || ""); process.stderr.write(result.stderr || ""); process.exit(result.status ?? 1);`,
+    );
     writeFileSync(
       path.join(cwd, "module/custom.config.ts"),
       'export default { test: { include: ["tests/*.test.ts"] } };',
@@ -414,8 +447,9 @@ test("uses_structured_runner_and_canonical_commands_with_their_declared_cwd", ()
     const manifest = JSON.parse(
       readFileSync(path.join(process.cwd(), "proofline.harness.json"), "utf8"),
     );
+    delete manifest.adapters.runnerEgress;
     manifest.commands.unit = {
-      argv: ["pnpm", "exec", "vitest", "run", "--config", "custom.config.ts"],
+      argv: ["node", "runner.cjs", "vitest", "run", "--config", "custom.config.ts"],
       cwd: "module",
     };
     manifest.workspaces = [
@@ -455,10 +489,10 @@ test("uses_structured_runner_and_canonical_commands_with_their_declared_cwd", ()
 test("discovers_nested_workspace_once_and_executes_its_own_cwd", () => {
   const cwd = realpathSync(mkdtempSync(path.join(tmpdir(), "impact-nested-")));
   try {
-    symlinkSync(path.join(process.cwd(), "node_modules"), path.join(cwd, "node_modules"), "dir");
     writeFileSync(path.join(cwd, "package.json"), '{"type":"module"}');
     for (const workspace of ["modules/orders", "modules/orders/nested"]) {
       mkdirSync(path.join(cwd, workspace, "tests"), { recursive: true });
+      linkFixtureDependency(path.join(cwd, workspace), "vitest");
       writeFileSync(
         path.join(cwd, workspace, "tests.config.ts"),
         'export default { test: { include: ["**/tests/*.test.ts"] } };',
@@ -471,7 +505,7 @@ test("discovers_nested_workspace_once_and_executes_its_own_cwd", () => {
       writeFileSync(
         path.join(cwd, workspace, "runner.cjs"),
         `const { spawnSync } = require("node:child_process"); const path = require("node:path");
-const args = process.argv.slice(2); const result = spawnSync("pnpm", ["exec", ...args], { encoding: "utf8" });
+const args = process.argv.slice(2); const result = spawnSync(process.execPath, [${JSON.stringify(repositoryVitestCli)}, ...args.slice(1)], { encoding: "utf8" });
 if (result.status !== 0) { process.stderr.write(result.stderr); process.exit(result.status ?? 1); }
 if (args[1] === "list" && ${workspace.endsWith("nested")}) { const tests = JSON.parse(result.stdout); for (const test of tests) test.file = path.relative(process.cwd(), test.file); process.stdout.write(JSON.stringify(tests)); } else process.stdout.write(result.stdout);`,
       );
@@ -479,6 +513,7 @@ if (args[1] === "list" && ${workspace.endsWith("nested")}) { const tests = JSON.
     const manifest = JSON.parse(
       readFileSync(path.join(process.cwd(), "proofline.harness.json"), "utf8"),
     );
+    delete manifest.adapters.runnerEgress;
     manifest.workspaces = [
       {
         path: "modules/orders",

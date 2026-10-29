@@ -3,7 +3,11 @@ import { randomBytes } from "node:crypto";
 import { realpathSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { assertSafeNodeArgv, guardedEnvironment } from "./guard-policy.mjs";
+import {
+  assertSafeNodeArgv,
+  guardedEnvironment,
+  prooflineDelegatedPolicy,
+} from "./guard-policy.mjs";
 
 export const withProoflineGuard = (command, options = {}) => {
   if (
@@ -27,6 +31,7 @@ export const withProoflineGuard = (command, options = {}) => {
   const env = guardedEnvironment({
     env: options.env,
     allowedOrigins: options.allowedOrigins,
+    allowedChildExecutables: options.allowedChildExecutables,
   });
 
   return new Promise((resolve, reject) => {
@@ -35,6 +40,7 @@ export const withProoflineGuard = (command, options = {}) => {
       env,
       shell: false,
       stdio: ["ignore", "pipe", "pipe"],
+      [prooflineDelegatedPolicy]: true,
     });
     let stdout = "";
     let stderr = "";
@@ -128,11 +134,17 @@ const runCli = async () => {
   if (separator < 0) throw new Error("Usage: run-guarded.mjs --allow-origin <origin> -- <argv...>");
   const options = process.argv.slice(2, separator);
   const allowedOrigins = [];
+  const allowedChildExecutables = [];
   let testApp = false;
   for (let index = 0; index < options.length; index += 1) {
     if (options[index] === "--test-app") {
       if (testApp) throw new Error("Duplicate guarded launcher option: --test-app");
       testApp = true;
+      continue;
+    }
+    if (options[index] === "--allow-child-executable" && options[index + 1]) {
+      allowedChildExecutables.push(options[index + 1]);
+      index += 1;
       continue;
     }
     if (options[index] !== "--allow-origin" || !options[index + 1])
@@ -146,6 +158,7 @@ const runCli = async () => {
   process.once("SIGINT", () => forwardSignal("SIGINT"));
   const guardedOptions = {
     allowedOrigins,
+    allowedChildExecutables,
     cwd: process.cwd(),
     onSpawn: (child) => {
       guardedChild = child;

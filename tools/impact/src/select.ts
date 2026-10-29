@@ -314,9 +314,10 @@ export const selectImpact = ({
           const key =
             runner === "vitest"
               ? testWorkspace?.unitCommand
-              : testWorkspace?.browserCommands.length === 1
-                ? testWorkspace.browserCommands[0]
-                : undefined;
+              : (testWorkspace?.browserDiscoveryCommand ??
+                (testWorkspace?.browserCommands.length === 1
+                  ? testWorkspace.browserCommands[0]
+                  : undefined));
           if (!key) {
             errors.push(`unmapped diagnostic identity:${testFile}`);
             continue;

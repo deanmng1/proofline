@@ -23,25 +23,25 @@ Proofline treats business rules as executable contracts. Use the smallest determ
 
 ## Portable contracts
 
-`pnpm harness:validate` validates structured commands without executing them; workspace membership; capability-gated test entrypoint and adapters; browser matrix; coverage groups; exact ownership; rule registry; and lifecycle/golden matrices. Missing or ambiguous metadata fails closed and writes `artifacts/harness/validation.json`.
+`pnpm harness:validate` validates structured commands without executing them; workspace membership; capability-gated test entrypoint and adapters; browser matrix; coverage groups; exact ownership; rule registry; and lifecycle/golden matrices. Each browser workspace has one `browserDiscoveryCommand` for exact discovery/execution; its worker and shard commands remain separate canonical-full gates. Missing or ambiguous metadata fails closed and writes `artifacts/harness/validation.json`.
 
 A target adapts Proofline by inventorying its repository and boundaries, inventorying rules/providers/side effects, declaring the manifest and matrices, implementing deterministic scenarios and golden rows, authoring narrow tests plus true browser journeys, then appending evidence and running complete gates. See [Portable test automation](PORTABLE_TEST_AUTOMATION.md) for the ordered protocol and the machine-checked canonical command table.
 
 A lifecycle target declares rows with state, operation, role, tenant scope, expected result, next state, rule IDs, and deterministic owner layer. A stateless target declares `lifecycleMatrix: null`. State-model generation remains an optional parked extension for unusually large lifecycle matrices.
 
-Every golden row declares adapter-only setup, user-performed actions, URL transitions, accessible visible assertions, and persisted invariants inspected only after visible success. The adapter may seed or inspect; it cannot perform an in-scope user operation.
+Every golden row declares adapter-only setup, user-performed actions, URL transitions, accessible visible assertions, and persisted invariants inspected only after visible success. An implemented row also binds its exact discovered Playwright file/title/line/tag, command, and complete rule-ID set. The bound spec consumes the same row ID, identity, and rules through the shared workflow helper, so stale row metadata fails validation or module loading. Excluded rows have service-owned evidence and no browser binding. The adapter may seed or inspect; it cannot perform an in-scope user operation.
 
 ## Test-only boundary and egress
 
 The test application is a separate build. Its loopback server accepts one fresh launcher-generated capability and rejects missing, incorrect, or replayed capabilities. `pnpm proofline:check-production` rejects Test API, fake-auth, provider-fake, test-entrypoint modules, and test markers in production output.
 
-Deny-by-default egress covers runner fetch/HTTP(S)/WebSocket/children, guarded server/runtime requests and configured SDK clients, BrowserContext pages and workers, the service-worker block/cleanup policy, WebSockets, and deterministic provider fakes. No test uses live Epay, GhostDraft, Smarty, Sage, fonts, or provider credentials.
+Deny-by-default egress covers canonical Vitest/Playwright runner fetch/HTTP(S)/WebSocket/inherited Node children, guarded server/runtime requests and configured SDK clients, BrowserContext pages and workers, the service-worker block/cleanup policy, WebSockets, and deterministic provider fakes. Runner startup admits only exact installed browser, video, and transform executables needed for Playwright/Vite; it does not add a network origin. Static manifest governance rejects test commands that bypass the runner adapter. No test uses live Epay, GhostDraft, Smarty, Sage, fonts, or provider credentials.
 
 The fixture refresh flow rotates the opaque access bearer. The `refreshToken` field is a client-side refresh-capability marker, not a separately authenticated refresh credential; that broader protocol remains explicitly deferred.
 
 ## Impact, coverage, and immutable evidence
 
-`pnpm test:impacted` writes `artifacts/impact/manifest.json`, `discovery.json`, and `selection.json`. Evidence names exact test identities and ownership. Dynamic-import evidence includes importer, literal specifier, resolved target, and target owner. Configuration/structural changes, incomplete Git history, missing ownership, stale discovery, ambiguous bindings, or unresolved dynamic imports trigger canonical-full fallback.
+`pnpm test:impacted` writes `artifacts/impact/manifest.json`, `discovery.json`, and `selection.json`. Discovery uses the single declared adapter for each workspace; selected execution retains the canonical runner guard. Evidence names exact test identities and ownership. Dynamic-import evidence includes importer, literal specifier, resolved target, and target owner. Configuration/structural changes, incomplete Git history, missing ownership, stale discovery, ambiguous bindings, or unresolved dynamic imports trigger canonical-full fallback.
 
 `pnpm coverage` generates normalized repository-relative Istanbul summaries. `pnpm coverage:check -- --base <trusted-base> --head <head>` verifies a unique merge base, compatible manifest groups, provider provenance, complete classified sources, and monotonic line/function/branch/statement baselines. It writes `artifacts/coverage/ratchet.json` on success or failure.
 
