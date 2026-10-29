@@ -6,6 +6,14 @@ on:
     branches: [main, master]
   workflow_dispatch:
     inputs:
+      base_ref:
+        description: Trusted remote base branch for impact analysis
+        required: true
+        default: main
+        type: choice
+        options:
+          - main
+          - master
       cross_browser:
         description: Run the invariant smoke in Firefox and WebKit
         required: false
@@ -31,6 +39,20 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - name: Fetch trusted manual impact base
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        shell: bash
+        env:
+          PROOFLINE_MANUAL_BASE_REF: ${{ inputs.base_ref }}
+        run: git fetch --no-tags origin "+refs/heads/${PROOFLINE_MANUAL_BASE_REF}:refs/remotes/origin/${PROOFLINE_MANUAL_BASE_REF}"
+
+      - name: Resolve exact CI revision authority
+        shell: bash
+        env:
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
+          PROOFLINE_MANUAL_BASE_REF: ${{ inputs.base_ref || '' }}
+        run: bash tools/impact/resolve-ci-revisions.sh >> "$GITHUB_ENV"
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4

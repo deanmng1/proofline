@@ -1,0 +1,499 @@
+
+ RUN  v3.2.7 /Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed
+
+ ❯ tools/impact/src/policy.test.ts (14 tests | 1 failed) 18ms
+   ✓ coverage ratchets > requires explicit revisions and retains the failure in the ratchet artifact 10ms
+   ✓ coverage ratchets > accepts_repository_relative_report_paths_and_the_baseline 1ms
+   ✓ coverage ratchets > rejects_absolute_report_paths_even_when_they_point_inside_the_repository 0ms
+   ✓ coverage ratchets > rejects_a_critical_file_below_its_lines_baseline 0ms
+   ✓ coverage ratchets > rejects_a_critical_file_below_its_branches_baseline 0ms
+   ✓ coverage ratchets > rejects_a_critical_file_below_its_functions_baseline 0ms
+   ✓ coverage ratchets > rejects_a_critical_file_below_its_statements_baseline 0ms
+   ✓ coverage ratchets > fails_closed_for_missing_reports_files_metrics_and_baselines 0ms
+   × portable execution record > documents access-bearer rotation without claiming an independent refresh credential 3ms
+     → expected '# Proofline\n\nA deterministic, agent…' not to match /access\/refresh tokens?/refresh tokens?
+   ✓ portable execution record > requires_exact_manifest_command_parity_in_the_canonical_documentation_table 3ms
+   ✓ portable execution record > accepts_repository_relative_directory_artifacts_without_rewriting_history 0ms
+   ✓ portable execution record > accepts_valid_records 0ms
+   ✓ portable execution record > rejects_malformed_lines 0ms
+   ✓ portable execution record > rejects_duplicate_record_ids 0ms
+Coverage ratchets passed for 1 manifest source groups.
+Coverage ratchets passed for 1 manifest source groups.
+Execution record governance passed.
+bash: /Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed/tools/impact/resolve-ci-revisions.sh: No such file or directory
+ ❯ tools/impact/src/governance.test.ts (56 tests | 2 failed) 1526ms
+   ✓ coverage baseline monotonicity > rejects a lower lines threshold 1ms
+   ✓ coverage baseline monotonicity > rejects a lower branches threshold 0ms
+   ✓ coverage baseline monotonicity > rejects a lower functions threshold 0ms
+   ✓ coverage baseline monotonicity > rejects a lower statements threshold 0ms
+   ✓ coverage baseline monotonicity > rejects deleted groups and sources 0ms
+   ✓ coverage baseline monotonicity > rejects changed provider coverage-group authority 0ms
+   ✓ coverage baseline monotonicity > rejects changed providerVersion coverage-group authority 0ms
+   ✓ coverage baseline monotonicity > rejects changed report coverage-group authority 0ms
+   ✓ coverage baseline monotonicity > rejects changed reportFormat coverage-group authority 0ms
+   ✓ coverage baseline monotonicity > rejects changed aggregation coverage-group authority 0ms
+   ✓ coverage baseline monotonicity > rejects changed exclusions coverage-group authority 0ms
+   ✓ coverage baseline monotonicity > rejects changed sourceGlobs coverage-group authority 0ms
+   ✓ coverage baseline monotonicity > rejects duplicate coverage-group identities instead of collapsing them 0ms
+   ✓ coverage baseline monotonicity > rejects changed coverage producer authority after adoption 0ms
+   ✓ coverage baseline monotonicity > allows an explicit reasoned exclusion outside the base set but rejects wildcard hiding 2ms
+   ✓ coverage baseline monotonicity > rejects narrowing a base production glob to the currently known source list 0ms
+   ✓ coverage baseline monotonicity > rejects excluding a base-effective source omitted from a stale baseline 0ms
+   ✓ coverage baseline monotonicity > allows only exact, explicitly non-production test-source exclusions 1ms
+   ✓ verified merge base > rejects missing, unresolved, shallow, checkout-mismatched, and conflicting revisions 167ms
+   ✓ byte-exact execution record prefix > accepts an exact prefix with complete unique appended rows 0ms
+   ✓ byte-exact execution record prefix > rejects historical byte rewrite 0ms
+   ✓ byte-exact execution record prefix > rejects historical insertion 0ms
+   ✓ byte-exact execution record prefix > rejects historical deletion 0ms
+   ✓ byte-exact execution record prefix > rejects historical reordering 0ms
+   ✓ byte-exact execution record prefix > rejects CRLF normalization 0ms
+   ✓ byte-exact execution record prefix > rejects missing or extra trailing newlines and malformed or duplicate appended rows 0ms
+   ✓ byte-exact execution record prefix > rejects invalid UTF-8 and records without event identities 0ms
+   ✓ changed harness evidence > requires an appended scope for packages/example/src/value.ts 0ms
+   ✓ changed harness evidence > requires an appended scope for proofline.harness.json 0ms
+   ✓ changed harness evidence > requires an appended scope for test-impact/workflows/example.json 0ms
+   ✓ changed harness evidence > requires an appended scope for test-impact/rules.json 0ms
+   ✓ changed harness evidence > requires an appended scope for tools/impact/src/governance.ts 0ms
+   ✓ changed harness evidence > requires an appended scope for .github/workflows/verify.yml 0ms
+   ✓ changed harness evidence > requires an appended scope for docs/TESTING.md 0ms
+   ✓ changed harness evidence > requires an appended scope for docs/PORTABLE_TEST_AUTOMATION.md 0ms
+   ✓ changed harness evidence > requires an appended scope for package.json 0ms
+   ✓ changed harness evidence > governs manifest adapter and workspace project paths with segment-aware scopes 0ms
+   ✓ changed harness evidence > uses base and proposed manifests so removed ownership cannot evade evidence 0ms
+   ✓ changed harness evidence > checks both renamed identities and excludes only explicit generated artifacts 0ms
+   ✓ changed harness evidence > governs README and rejects an unscoped governed change 0ms
+   ✓ coverage and record governance entrypoints > records exact resolved coverage producer provenance in the ratchet 65ms
+   ✓ coverage and record governance entrypoints > accepts a manifest-command browser-compatible Istanbul summary producer 65ms
+   ✓ coverage and record governance entrypoints > normalizes generated in-repository absolute paths before they become evidence 35ms
+   ✓ coverage and record governance entrypoints > rejects incompatible provider metadata and always writes a complete ratchet 62ms
+   ✓ coverage and record governance entrypoints > rejects unclassified baseline sources, missing reports and metrics, and duplicate report paths 143ms
+   ✓ coverage and record governance entrypoints > rejects a newly matching production source and a missing baseline source 119ms
+   ✓ coverage and record governance entrypoints > rejects escaping and duplicate-normalized report source identities 119ms
+   ✓ coverage and record governance entrypoints > binds declared coverage provider and version to the executed target 90ms
+   ✓ coverage and record governance entrypoints > rejects conflicting duplicate coverage target flags 168ms
+   ✓ coverage and record governance entrypoints > retains invalid revisions and git-show failures as gate errors 113ms
+   ✓ coverage and record governance entrypoints > recordMain verifies merge-base bytes and changed-path scopes 104ms
+   ✓ coverage and record governance entrypoints > an_old_or_unrelated_record_cannot_satisfy_a_new_governed_change 70ms
+   ✓ coverage and record governance entrypoints > recordMain governs paths removed from the proposed manifest using base authority 70ms
+   ✓ coverage and record governance entrypoints > recordMain writes revision diagnostics when the proposed record is missing 65ms
+   × CI governance contract > resolves trusted manual, pull-request, and push revision authority 62ms
+     → Command failed: bash /Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed/tools/impact/resolve-ci-revisions.sh
+bash: /Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed/tools/impact/resolve-ci-revisions.sh: No such file or directory
+
+   × CI governance contract > keeps explicit revisions, validation, full gates, and always-retained diagnostics 1ms
+     → expected 'name: Verify CRM regression harness\n…' to match /base_ref:\n\s+description:.*base/i
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tools/impact/src/governance.test.ts > CI governance contract > resolves trusted manual, pull-request, and push revision authority
+Error: Command failed: bash /Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed/tools/impact/resolve-ci-revisions.sh
+bash: /Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed/tools/impact/resolve-ci-revisions.sh: No such file or directory
+
+ ❯ resolve tools/impact/src/governance.test.ts:994:7
+    992|       manualBaseRef?: string;
+    993|     }) =>
+    994|       execFileSync("bash", [resolver], {
+       |       ^
+    995|         cwd,
+    996|         encoding: "utf8",
+ ❯ tools/impact/src/governance.test.ts:1007:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  tools/impact/src/governance.test.ts > CI governance contract > keeps explicit revisions, validation, full gates, and always-retained diagnostics
+AssertionError: expected 'name: Verify CRM regression harness\n…' to match /base_ref:\n\s+description:.*base/i
+
+- Expected:
+/base_ref:\n\s+description:.*base/i
+
++ Received:
+"name: Verify CRM regression harness
+
+on:
+  pull_request:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+    inputs:
+      cross_browser:
+        description: Run the invariant smoke in Firefox and WebKit
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    env:
+      IMPACT_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+      IMPACT_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+    steps:
+      - name: Checkout full history for impact analysis
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11.24.0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install dependencies
+        id: dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Validate portable harness manifest
+        run: pnpm harness:validate
+
+      - name: Build and audit the production application boundary
+        shell: bash
+        run: |
+          mkdir -p artifacts
+          set -o pipefail
+          pnpm build 2>&1 | tee artifacts/proofline-production-output.txt
+          pnpm proofline:check-production 2>&1 | tee -a artifacts/proofline-production-output.txt
+
+      - name: Validate portable execution record and generated catalog
+        run: pnpm record:check -- --base \"$IMPACT_BASE\" --head \"$IMPACT_HEAD\"
+
+      - name: Install Chromium
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Install optional smoke browsers
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' && github.event_name == 'workflow_dispatch' && inputs.cross_browser }}
+        run: pnpm exec playwright install --with-deps firefox webkit
+
+      - name: Preview impact selection
+        id: impact
+        shell: bash
+        run: |
+          pnpm test:impacted -- --dry-run --base \"$IMPACT_BASE\" --head \"$IMPACT_HEAD\"
+          echo \"fallback=$(node -p \\\"require('./artifacts/impact/selection.json').fallback\\\")\" >> \"$GITHUB_OUTPUT\"
+
+      - name: Run impact-selected tests
+        run: pnpm test:impacted -- --base \"$IMPACT_BASE\" --head \"$IMPACT_HEAD\"
+
+      - name: Run full Vitest safety gate
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
+        shell: bash
+        run: |
+          mkdir -p artifacts
+          set -o pipefail
+          pnpm test 2>&1 | tee artifacts/vitest-output.txt
+
+      - name: Run full Chromium safety gate
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
+        shell: bash
+        run: |
+          mkdir -p artifacts
+          set -o pipefail
+          pnpm e2e 2>&1 | tee artifacts/browser-output.txt
+
+      - name: Run optional Firefox and WebKit invariant smoke
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' && github.event_name == 'workflow_dispatch' && inputs.cross_browser }}
+        shell: bash
+        env:
+          PROOFLINE_CROSS_BROWSER: \"1\"
+        run: |
+          set -o pipefail
+          pnpm exec playwright test --config apps/crm-e2e/playwright.config.ts apps/crm-e2e/src/proofline/cross-browser-smoke.spec.ts --project=firefox --project=webkit 2>&1 | tee -a artifacts/browser-output.txt
+
+      - name: Generate Vitest coverage baseline
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
+        shell: bash
+        run: |
+          mkdir -p artifacts
+          set -o pipefail
+          pnpm coverage 2>&1 | tee artifacts/coverage-output.txt
+
+      - name: Check scoped critical-file coverage ratchets
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
+        run: pnpm coverage:check -- --base \"$IMPACT_BASE\" --head \"$IMPACT_HEAD\"
+
+      - name: Check patch whitespace
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
+        run: git diff --check
+
+      - name: Upload coverage baseline
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-baseline
+          if-no-files-found: warn
+          retention-days: 14
+          path: |
+            artifacts/coverage/
+            artifacts/coverage-output.txt
+
+      - name: Upload immutable verification diagnostics
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: verification-diagnostics
+          if-no-files-found: warn
+          retention-days: 14
+          path: |
+            artifacts/harness/
+            artifacts/impact/
+            artifacts/record/
+            artifacts/coverage/
+            artifacts/vitest-output.txt
+            artifacts/browser-output.txt
+            artifacts/coverage-output.txt
+            artifacts/proofline-production-output.txt
+            dist/crm-web/.proofline/modules.json
+            dist/crm-web/.vite/manifest.json
+            playwright-report/
+            test-results/
+"
+
+ ❯ tools/impact/src/governance.test.ts:1021:22
+    1019|     );
+    1020|     expect(workflow).toContain("fetch-depth: 0");
+    1021|     expect(workflow).toMatch(/base_ref:\n\s+description:.*base/i);
+       |                      ^
+    1022|     expect(workflow).toMatch(/base_ref:[\s\S]*?type: choice[\s\S]*?opt…
+    1023|     expect(step("Resolve exact CI revision authority")).toContain(
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  tools/impact/src/policy.test.ts > portable execution record > documents access-bearer rotation without claiming an independent refresh credential
+AssertionError: expected '# Proofline\n\nA deterministic, agent…' not to match /access\/refresh tokens?/refresh tokens?
+
+- Expected:
+/access\/refresh tokens?/i
+
++ Received:
+"# Proofline
+
+A deterministic, agent-authored regression harness for React/Vite apps—Vitest service and UI tests, Playwright end-to-end journeys, coverage ratchets, change-aware test selection, and portable execution evidence.
+
+## Reference implementation
+
+A production-shaped **React 19 + Vite 6 + TypeScript** insurance CRM reference application and regression-testing harness. It models Risk Secure and Risk Secure Plus quoting, binding, finance events, and commission timing without requiring a live backend or provider account.
+
+**Purpose:** build product rules once, exercise them at the domain/API/UI/browser
+layers, and keep future changes from consuming agent time on rediscovering old
+regressions.
+
+[![License: MIT](https://img.shields.io/badge/license-MIT-2563eb)](LICENSE)
+[![Version](https://img.shields.io/badge/version-0.8.0-2563eb)](CHANGELOG.md)
+[![React](https://img.shields.io/badge/React-19-087ea4?logo=react&logoColor=white)](https://react.dev)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.8_strict-3178c6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
+[![Vite](https://img.shields.io/badge/Vite-6-646cff?logo=vite&logoColor=white)](https://vite.dev)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06b6d4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
+
+![Admin Dashboard Template — Overview page with KPI cards, revenue chart, and category breakdown](docs/images/dashboard-overview.png)
+
+## About
+
+Standing up an insurance CRM usually means weeks of plumbing before the first real feature: session handling, tenant scoping, data tables, finance transitions, commissions, audit history, accessibility, and a test pipeline. This reference app makes those decisions concrete — and proves the business rules with unit, contract, UI, and end-to-end tests.
+
+The CRM journeys use a fresh in-memory Test API per browser test. A separate capability-gated test build listens only on loopback, blocks undeclared browser and runtime egress, and is audited out of production artifacts. This makes quoting and finance flows deterministic without provider credentials.
+
+## Regression harness
+
+The test strategy is intentionally layered: pure insurance rules first,
+contract and UI behavior next, and browser journeys only where a real workflow
+crosses screens. The conservative selector explains why each test ran and
+falls back to the entire suite when it cannot safely narrow scope.
+
+```bash
+pnpm test:impacted -- --dry-run  # inspect the conservative selection and reasons
+pnpm test:impacted               # run selected project tests and browser journeys
+pnpm test                        # every Vitest project
+pnpm e2e                         # complete Chromium regression suite
+```
+
+See [the testing guide](docs/TESTING.md) for the rule-to-regression workflow and [portable automation guide](docs/PORTABLE_TEST_AUTOMATION.md) for the adaptation sequence, exact manifest command contract, append-only evidence, and CI boundary.
+
+## Portable adaptation
+
+Proofline is the reusable harness; the insurance CRM is its reference proof. Adapt another React/Vite repository by inventorying routes, roles, tenants, APIs, providers, rules, transitions, and runners; declaring structured commands, ownership, coverage, lifecycle, and golden-workflow contracts; implementing an isolated scenario adapter; then writing deterministic rule tests and a small set of navigated workflows. Stateless targets set the lifecycle matrix to `null`; state-model generation is intentionally parked for targets whose transition matrix later outgrows hand-authored service tests.
+
+The selector retains exact ownership and dynamic-import edge reasons and falls back to canonical full commands on uncertainty. Coverage baselines rise monotonically, execution history is byte-exact append-only JSONL, and README/manifest/docs/CI changes require fresh scoped evidence. Normal CI runs deterministic Node/shell/JSON commands and never calls an agent or model. Future Codex or Cursor integrations consume the same checked-in contracts rather than becoming an execution dependency.
+
+Chromium runs the full visible matrix: authenticated deep-link restoration, sidebar customer/property/quote/bind/finance/logout, response-loss recovery, role denial, tenant isolation, and refund/correction. Firefox and WebKit are opt-in and run only the `@proofline-smoke` invariant. The fixture rotates access tokens; its `refreshToken` value is a refresh-capability marker, while an independent refresh-credential protocol remains outside this harness delivery.
+
+## Key Features
+
+- **20 routed pages** across a strict 3-level information architecture — Overview, Analytics, Mail (Inbox/Sent), Calendar, Notifications, Support, Integrations, Users, Team, Billing, Transactions, Profile, UI Kit, Tables & Charts galleries, Settings, User Settings, Login and 404 — all lazy-loaded behind a protected shell.
+- **Three-level sidebar** (Group › Section › Subsection) with collapsible sections, RBAC-aware subtrees, and route-driven **breadcrumbs** above every page.
+- **Multi-tenancy built in** — every request is scoped with an `X-Tenant-Id` header; a branded workspace switcher lives at the top of the sidebar and mobile nav.
+- **Production-shaped auth** — access/refresh tokens, automatic `401 → refresh → retry`, silent refresh on load, and redirect-to-login on failure. The login screen mirrors modern SaaS re-auth flows: a continue-as card for the remembered account, an email/password form, and mock Google/Apple providers.
+- **Role-based access control** — nav visibility and route guards gated by Owner / Admin / Manager through a single `canAccess()` source of truth.
+- **Four theme presets** (Core Light, Midnight Ops, Sunset Ember, Forest Deep) driven by CSS variables, honoring `prefers-color-scheme` by default.
+- **Internationalized** — English, Spanish, and French bundles via `react-i18next`, switchable per user.
+- **Resilient UX contract** — skeleton-first loading (no spinner page-swaps), retryable error panels, confirm dialogs with **Undo** toasts, and zero decorative buttons.
+- **Dashboard hierarchy done right** — KPI cards with sparklines on top, interactive charts in the middle, operational tables at the bottom (inverted pyramid).
+- **Accessible to WCAG 2.2 AA** — skip link, focus management on navigation, keyboard-operable tables, sr-only chart data tables, AA-contrast tokens, `prefers-reduced-motion`; enforced by jest-axe in CI.
+- **Observability-ready** — Sentry error reporting activates lazily when `VITE_SENTRY_DSN` is set; console fallback otherwise.
+- **Quality pipeline** — domain, contract, UI, and Playwright regression suites; conservative impact selection; Biome lint/format; and a GitHub Actions safety gate.
+- **⌘K command palette** — fuzzy navigation across every routable page (auto-flattened from the nav tree), theme switching, and account actions.
+
+## Getting Started
+
+### Prerequisites
+
+| Tool   | Version |
+| ------ | ------- |
+| Node.js | ≥ 22 |
+| pnpm    | ≥ 11 |
+
+### Installation
+
+```bash
+# 1. Get the code (or click \"Use this template\" on GitHub)
+git clone <your-repo-url> admin-dashboard
+cd admin-dashboard
+
+# 2. Install dependencies
+pnpm install
+```
+
+### Quickstart — running in under 2 minutes
+
+```bash
+pnpm dev
+```
+
+Then:
+
+1. Open **http://localhost:5173** — unauthenticated visits redirect to `/login`.
+2. Click **Continue as Avery Stone** — or switch to the password form or a mock Google/Apple button — every sign-in path issues a real-shaped access/refresh token session (no real credentials needed).
+3. You land on the Overview. Press **⌘K / Ctrl+K** to explore the command palette, or switch workspaces from the top of the sidebar.
+
+The MSW worker starts automatically unless a real backend is configured via `VITE_API_BASE_URL`, so all data, invites, and mutations work immediately against seeded fixtures.
+
+## Usage & Examples
+
+### Everyday commands
+
+```bash
+pnpm dev          # Vite dev server + MSW worker
+pnpm build        # tsc -b typecheck + vite build -> dist/
+pnpm preview      # serve the production build
+pnpm test         # every Vitest project (domain, contract, UI, selector)
+pnpm e2e          # isolated Chromium CRM/browser suite
+pnpm test:impacted -- --dry-run  # explain the conservative test selection
+pnpm typecheck    # typecheck all projects that own a typecheck target
+pnpm lint         # Biome check
+pnpm format       # Biome format --write .
+```
+
+### Point it at a real backend
+
+```bash
+cp .env.example .env.local
+```
+
+```dotenv
+VITE_API_BASE_URL=https://api.example.com
+VITE_SENTRY_DSN=            # optional: enables Sentry error reporting
+VITE_APP_ENV=production     # optional: tags Sentry events
+```
+
+Build and deploy `dist/` to any static host (Vercel, Netlify, S3 + CloudFront…). As soon as `VITE_API_BASE_URL` is set at build time, the MSW mock layer stays off and all requests go straight to your backend — just implement the same `/api/*` paths defined in [`src/mocks/handlers.ts`](src/mocks/handlers.ts). Without it (as on the live demo), the app runs fully interactive against the seeded mocks.
+
+### Restrict a feature by role
+
+RBAC is wired in two places, both backed by [`src/lib/rbac.ts`](src/lib/rbac.ts):
+
+```ts
+// src/components/layout/nav-items.ts — hide the nav entry
+{ title: \"Audit Log\", href: \"/app/audit\", icon: \"scroll-text\", roles: [\"Owner\", \"Admin\"] }
+```
+
+```tsx
+// src/app/router.tsx — guard the route itself
+<RoleRoute roles={[\"Owner\", \"Admin\"]}>
+  <Suspense>{/* <AuditPage /> */}</Suspense>
+</RoleRoute>
+```
+
+Unauthorized roles are redirected to `/app/overview`. Note this is client-side gating only — enforce authorization on your backend.
+
+## Project Structure
+
+```text
+apps/
+├── crm-web/        # Vite React application and CRM UI/component tests
+└── crm-e2e/        # Playwright journeys and isolated Test API fixture
+packages/
+├── domain/         # Deterministic policy, finance, commission, and audit rules
+├── api-contracts/  # HTTP contract and in-memory Test API
+└── test-kit/       # Shared deterministic fixtures and rendering helpers
+test-impact/        # Reviewed feature map and business-rule catalog
+tools/impact/       # Changed-file manifest and conservative test selector
+docs/TESTING.md     # Rule-to-regression and CI workflow guide
+```
+
+Imports always use the `@/` path alias (mapped to `src/`).
+
+## Roadmap / Status
+
+**Status:** actively developed, pre-1.0. Releases are cut locally with [Commitizen](https://commitizen-tools.github.io/commitizen/) (`czg bump`) and documented in the [changelog](CHANGELOG.md); publishing a release also deploys the live demo to Vercel.
+
+Recently shipped (v0.3–v0.4): tenancy scoping, token refresh lifecycle, i18n, Sentry foundation, and a full UX/a11y overhaul (skeletons, undo flows, command palette, keyboard-accessible tables).
+
+Candidate milestones toward **v1.0**:
+
+- Hardened production auth story (server-issued sessions instead of `localStorage` tokens)
+- Documented server-side authorization contract alongside the client RBAC
+- Coverage reporting wired into CI
+- Additional themes and locale bundles
+
+## Community & Ecosystem
+
+| Resource | Description |
+| -------- | ----------- |
+| [Architecture guide](ARCHITECTURE.md) | Full architectural reference — components, data flow, security notes, and the recipe for adding new modules |
+| [Contributing guide](CONTRIBUTING.md) | Setup, branch/commit conventions, testing expectations, PR checklist |
+| [Security policy](.github/SECURITY.md) | How to report vulnerabilities privately |
+| [Code of conduct](.github/CODE_OF_CONDUCT.md) | Contributor Covenant 2.1 |
+| [Changelog](CHANGELOG.md) | Release history, generated from Conventional Commits |
+| [Environment variables](.env.example) | Backend URL, Sentry DSN, environment label |
+
+**Contributing** — see the [contributing guide](CONTRIBUTING.md) for setup and conventions. In short: commits follow [Conventional Commits](https://www.conventionalcommits.org/), a Husky pre-commit hook runs Biome on staged files, and PRs must pass conservative impact selection plus the complete lint, typecheck, Vitest, and Chromium safety gates.
+
+**Support** — please open a GitHub issue for bugs and feature requests.
+
+**License** — released under the [MIT License](LICENSE).
+"
+
+ ❯ tools/impact/src/policy.test.ts:97:24
+     95|   test("documents access-bearer rotation without claiming an independe…
+     96|     const readme = readFileSync(path.resolve(import.meta.dirname, "../…
+     97|     expect(readme).not.toMatch(/access\/refresh tokens?/i);
+       |                        ^
+     98|     expect(readme).not.toMatch(/refresh-token (?:credential|rotation|s…
+     99|     expect(readme).toMatch(/access bearer/i);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  3 failed | 67 passed (70)
+   Start at  22:30:37
+   Duration  1.97s (transform 71ms, setup 0ms, collect 565ms, tests 1.54s, environment 0ms, prepare 60ms)

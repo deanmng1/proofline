@@ -92,6 +92,15 @@ const record = {
   exitCode: 0,
 };
 describe("portable execution record", () => {
+  test("documents access-bearer rotation without claiming an independent refresh credential", () => {
+    const readme = readFileSync(path.resolve(import.meta.dirname, "../../../README.md"), "utf8");
+    expect(readme).not.toMatch(/access\/refresh tokens?/i);
+    expect(readme).not.toMatch(/refresh-token (?:credential|rotation|session)/i);
+    expect(readme).toMatch(/access(?: |-)?bearer/i);
+    expect(readme).toMatch(/refresh-capability marker/i);
+    expect(readme).toMatch(/independent refresh-credential protocol remains outside/i);
+  });
+
   test("requires_exact_manifest_command_parity_in_the_canonical_documentation_table", () => {
     const repositoryRoot = path.resolve(import.meta.dirname, "../../..");
     const manifest = harnessManifestSchema.parse(

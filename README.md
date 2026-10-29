@@ -54,7 +54,7 @@ Chromium runs the full visible matrix: authenticated deep-link restoration, side
 - **20 routed pages** across a strict 3-level information architecture — Overview, Analytics, Mail (Inbox/Sent), Calendar, Notifications, Support, Integrations, Users, Team, Billing, Transactions, Profile, UI Kit, Tables & Charts galleries, Settings, User Settings, Login and 404 — all lazy-loaded behind a protected shell.
 - **Three-level sidebar** (Group › Section › Subsection) with collapsible sections, RBAC-aware subtrees, and route-driven **breadcrumbs** above every page.
 - **Multi-tenancy built in** — every request is scoped with an `X-Tenant-Id` header; a branded workspace switcher lives at the top of the sidebar and mobile nav.
-- **Production-shaped auth** — access/refresh tokens, automatic `401 → refresh → retry`, silent refresh on load, and redirect-to-login on failure. The login screen mirrors modern SaaS re-auth flows: a continue-as card for the remembered account, an email/password form, and mock Google/Apple providers.
+- **Production-shaped auth** — access-bearer rotation with a refresh-capability marker, automatic `401 → refresh → retry`, silent refresh on load, and redirect-to-login on failure. The login screen mirrors modern SaaS re-auth flows: a continue-as card for the remembered account, an email/password form, and mock Google/Apple providers.
 - **Role-based access control** — nav visibility and route guards gated by Owner / Admin / Manager through a single `canAccess()` source of truth.
 - **Four theme presets** (Core Light, Midnight Ops, Sunset Ember, Forest Deep) driven by CSS variables, honoring `prefers-color-scheme` by default.
 - **Internationalized** — English, Spanish, and French bundles via `react-i18next`, switchable per user.
@@ -94,7 +94,7 @@ pnpm dev
 Then:
 
 1. Open **http://localhost:5173** — unauthenticated visits redirect to `/login`.
-2. Click **Continue as Avery Stone** — or switch to the password form or a mock Google/Apple button — every sign-in path issues a real-shaped access/refresh token session (no real credentials needed).
+2. Click **Continue as Avery Stone** — or switch to the password form or a mock Google/Apple button — every sign-in path issues an access-token session with a refresh-capability marker (no real credentials needed).
 3. You land on the Overview. Press **⌘K / Ctrl+K** to explore the command palette, or switch workspaces from the top of the sidebar.
 
 The MSW worker starts automatically unless a real backend is configured via `VITE_API_BASE_URL`, so all data, invites, and mutations work immediately against seeded fixtures.

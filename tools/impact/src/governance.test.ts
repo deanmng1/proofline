@@ -973,12 +973,77 @@ describe("coverage and record governance entrypoints", () => {
 });
 
 describe("CI governance contract", () => {
+  test("resolves trusted manual, pull-request, and push revision authority", () => {
+    const { cwd, base } = initializedFixture();
+    writeFileSync(path.join(cwd, "packages/example/src/value.ts"), "export const value = 2;\n");
+    const head = commitAll(cwd, "head");
+    runGit(cwd, ["update-ref", "refs/remotes/origin/main", base]);
+    const resolver = path.resolve(
+      import.meta.dirname,
+      "../../../tools/impact/resolve-ci-revisions.sh",
+    );
+    const resolve = ({
+      eventName,
+      impactBase = "",
+      manualBaseRef = "",
+    }: {
+      eventName: string;
+      impactBase?: string;
+      manualBaseRef?: string;
+    }) =>
+      execFileSync("bash", [resolver], {
+        cwd,
+        encoding: "utf8",
+        stdio: ["ignore", "pipe", "pipe"],
+        env: {
+          ...process.env,
+          GITHUB_EVENT_NAME: eventName,
+          IMPACT_BASE: impactBase,
+          IMPACT_HEAD: head,
+          PROOFLINE_MANUAL_BASE_REF: manualBaseRef,
+        },
+      });
+
+    const expected = `IMPACT_BASE=${base}\nIMPACT_HEAD=${head}\n`;
+    expect(resolve({ eventName: "workflow_dispatch", manualBaseRef: "main" })).toBe(expected);
+    expect(resolve({ eventName: "pull_request", impactBase: base })).toBe(expected);
+    expect(resolve({ eventName: "push", impactBase: base })).toBe(expected);
+    expect(() =>
+      resolve({ eventName: "workflow_dispatch", manualBaseRef: "feature/untrusted" }),
+    ).toThrow();
+  });
+
   test("keeps explicit revisions, validation, full gates, and always-retained diagnostics", () => {
     const workflow = readFileSync(
       path.resolve(import.meta.dirname, "../../../.github/workflows/verify.yml"),
       "utf8",
     );
+    const step = (name: string) => {
+      const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      return (
+        workflow.match(new RegExp(`- name: ${escaped}\\n([\\s\\S]*?)(?=\\n\\s+- name:|$)`))?.[0] ??
+        ""
+      );
+    };
+    const dollar = "$";
     expect(workflow).toContain("fetch-depth: 0");
+    expect(workflow).toMatch(/base_ref:\n\s+description:.*base/i);
+    expect(workflow).toMatch(
+      /base_ref:[\s\S]*?type: choice[\s\S]*?options:\n\s+- main\n\s+- master/,
+    );
+    expect(workflow).toContain(
+      `IMPACT_BASE: ${dollar}{{ github.event.pull_request.base.sha || github.event.before }}`,
+    );
+    const manualFetch = step("Fetch trusted manual impact base");
+    expect(manualFetch).toContain("github.event_name == 'workflow_dispatch'");
+    expect(manualFetch).toContain(`refs/remotes/origin/${dollar}{PROOFLINE_MANUAL_BASE_REF}`);
+    const revisionResolver = step("Resolve exact CI revision authority");
+    expect(revisionResolver).toContain(
+      `PROOFLINE_MANUAL_BASE_REF: ${dollar}{{ inputs.base_ref || '' }}`,
+    );
+    expect(revisionResolver).toContain(
+      'bash tools/impact/resolve-ci-revisions.sh >> "$GITHUB_ENV"',
+    );
     expect(workflow).toContain("pnpm harness:validate");
     expect(workflow).toContain(
       'pnpm test:impacted -- --dry-run --base "$IMPACT_BASE" --head "$IMPACT_HEAD"',
@@ -987,13 +1052,6 @@ describe("CI governance contract", () => {
       'pnpm coverage:check -- --base "$IMPACT_BASE" --head "$IMPACT_HEAD"',
     );
     expect(workflow).toContain('pnpm record:check -- --base "$IMPACT_BASE" --head "$IMPACT_HEAD"');
-    const step = (name: string) => {
-      const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-      return (
-        workflow.match(new RegExp(`- name: ${escaped}\\n([\\s\\S]*?)(?=\\n\\s+- name:|$)`))?.[0] ??
-        ""
-      );
-    };
     const mandatory = /if: \$\{\{ !cancelled\(\) && steps\.dependencies\.outcome == 'success' \}\}/;
     expect(step("Install Chromium")).toMatch(mandatory);
     expect(step("Run full Vitest safety gate")).toMatch(mandatory);

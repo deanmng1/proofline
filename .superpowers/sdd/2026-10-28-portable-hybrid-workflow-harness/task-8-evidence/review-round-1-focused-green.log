@@ -1,0 +1,13 @@
+
+ RUN  v3.2.7 /Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed
+
+ ✓ tools/impact/src/policy.test.ts (14 tests) 16ms
+Coverage ratchets passed for 1 manifest source groups.
+Coverage ratchets passed for 1 manifest source groups.
+Execution record governance passed.
+ ✓ tools/impact/src/governance.test.ts (56 tests) 1568ms
+
+ Test Files  2 passed (2)
+      Tests  70 passed (70)
+   Start at  22:31:03
+   Duration  2.03s (transform 75ms, setup 0ms, collect 589ms, tests 1.58s, environment 0ms, prepare 60ms)
