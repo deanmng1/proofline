@@ -622,6 +622,33 @@ describe("Proofline egress guard", () => {
     await expect(invalid.ready).rejects.toThrow(/invalid readiness/i);
     await invalid.completion;
 
+    const fragmentedReadiness = script(
+      "fragmented-readiness.mjs",
+      `
+        process.stdout.write('{"origin":"http://127.0.0.1:');
+        setTimeout(() => process.stdout.write('4173"}\\n'), 50);
+        setInterval(() => {}, 1_000);
+      `,
+    );
+    const fragmented = launchProoflineTestApp([process.execPath, fragmentedReadiness], {
+      allowedOrigins: [allowedOrigin],
+      cwd: temporaryRoot,
+    });
+    expect(await fragmented.ready).toMatchObject({ origin: "http://127.0.0.1:4173" });
+    expect(fragmented.stop()).toBe(true);
+    await fragmented.completion;
+
+    const nonLoopbackReadiness = script(
+      "non-loopback-readiness.mjs",
+      'console.log(JSON.stringify({ origin: "https://example.com" }));',
+    );
+    const nonLoopback = launchProoflineTestApp([process.execPath, nonLoopbackReadiness], {
+      allowedOrigins: [allowedOrigin],
+      cwd: temporaryRoot,
+    });
+    await expect(nonLoopback.ready).rejects.toThrow(/invalid readiness/i);
+    await nonLoopback.completion;
+
     const exitsBeforeReadiness = script("no-readiness.mjs", "process.exit(4);");
     const earlyExit = launchProoflineTestApp([process.execPath, exitsBeforeReadiness], {
       allowedOrigins: [allowedOrigin],
