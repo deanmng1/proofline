@@ -917,8 +917,8 @@
           "commandKey": "browser",
           "runner": "playwright",
           "file": "apps/crm-e2e/src/features/isolation.spec.ts",
-          "title": "@policy isolates concurrent browser journeys",
-          "line": 15,
+          "title": "@policy isolates concurrent guarded browser journeys",
+          "line": 34,
           "tag": "@policy"
         },
         {
@@ -1379,8 +1379,8 @@
           "commandKey": "browser",
           "runner": "playwright",
           "file": "apps/crm-e2e/src/features/isolation.spec.ts",
-          "title": "@policy isolates concurrent browser journeys",
-          "line": 15,
+          "title": "@policy isolates concurrent guarded browser journeys",
+          "line": 34,
           "tag": "@policy"
         },
         {
@@ -1543,8 +1543,8 @@
           "commandKey": "browser",
           "runner": "playwright",
           "file": "apps/crm-e2e/src/features/isolation.spec.ts",
-          "title": "@policy isolates concurrent browser journeys",
-          "line": 15,
+          "title": "@policy isolates concurrent guarded browser journeys",
+          "line": 34,
           "tag": "@policy"
         },
         {
@@ -1720,8 +1720,8 @@
           "commandKey": "browser",
           "runner": "playwright",
           "file": "apps/crm-e2e/src/features/isolation.spec.ts",
-          "title": "@policy isolates concurrent browser journeys",
-          "line": 15,
+          "title": "@policy isolates concurrent guarded browser journeys",
+          "line": 34,
           "tag": "@policy"
         },
         {
@@ -2299,6 +2299,28 @@
           "title": "compatibility_document_fakes_fonts_and_denies_every_browser_egress_plane",
           "line": 3,
           "tag": "@egress"
+        },
+        {
+          "ruleId": "SAFE-001",
+          "layer": "playwright",
+          "testId": "binding-4bc9c56f992a081dd511",
+          "commandKey": "browser",
+          "runner": "playwright",
+          "file": "apps/crm-e2e/src/features/isolation.spec.ts",
+          "title": "@policy isolates concurrent guarded browser journeys",
+          "line": 34,
+          "tag": "@policy"
+        },
+        {
+          "ruleId": "SCN-002",
+          "layer": "playwright",
+          "testId": "binding-834c2531b36f6633d740",
+          "commandKey": "browser",
+          "runner": "playwright",
+          "file": "apps/crm-e2e/src/features/isolation.spec.ts",
+          "title": "@policy isolates concurrent guarded browser journeys",
+          "line": 34,
+          "tag": "@policy"
         }
       ],
       "ruleLayers": [

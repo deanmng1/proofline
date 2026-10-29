@@ -322,8 +322,8 @@
       "playwright": [
         {
           "path": "apps/crm-e2e/src/features/isolation.spec.ts",
-          "title": "@policy isolates concurrent browser journeys",
-          "line": 15,
+          "title": "@policy isolates concurrent guarded browser journeys",
+          "line": 34,
           "tag": "@policy"
         }
       ]
@@ -538,6 +538,12 @@
           "title": "compatibility_document_fakes_fonts_and_denies_every_browser_egress_plane",
           "line": 3,
           "tag": "@egress"
+        },
+        {
+          "path": "apps/crm-e2e/src/features/isolation.spec.ts",
+          "title": "@policy isolates concurrent guarded browser journeys",
+          "line": 34,
+          "tag": "@policy"
         }
       ]
     },
@@ -680,6 +686,12 @@
           "title": "factory_teardown_rejects_an_unacknowledged_caught_denial",
           "line": 540,
           "tag": "@egress"
+        },
+        {
+          "path": "apps/crm-e2e/src/features/isolation.spec.ts",
+          "title": "@policy isolates concurrent guarded browser journeys",
+          "line": 34,
+          "tag": "@policy"
         }
       ]
     },
