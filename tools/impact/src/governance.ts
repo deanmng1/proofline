@@ -187,6 +187,7 @@ const comparableGroupFields = (group: CoverageGroup) => ({
   reportFormat: group.reportFormat,
   metrics: sorted(group.metrics),
   aggregation: group.aggregation,
+  producer: group.producer ?? null,
 });
 
 export const checkCoverageGroupCompatibility = ({
@@ -221,7 +222,8 @@ export const checkCoverageGroupCompatibility = ({
     const before = comparableGroupFields(baseGroup);
     const after = comparableGroupFields(proposed);
     for (const field of Object.keys(before) as Array<keyof typeof before>)
-      if ((field === "sourceGlobs" || field === "exclusions") && baseSources) continue;
+      if (field === "producer" && !baseGroup.producer) continue;
+      else if ((field === "sourceGlobs" || field === "exclusions") && baseSources) continue;
       else if (JSON.stringify(before[field]) !== JSON.stringify(after[field]))
         errors.push(`Coverage ${field} changed for group ${baseGroup.workspace}`);
     if (baseSources) {

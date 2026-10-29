@@ -65,6 +65,14 @@ const recordLine = (eventId: string, scope: string[] = []) =>
   `${JSON.stringify(record(eventId, scope))}\n`;
 
 const metrics = { lines: 90, branches: 80, functions: 100, statements: 90 };
+const vitestProducer = {
+  command: { kind: "nx-target" as const, target: "coverage" },
+  adapter: {
+    kind: "vitest" as const,
+    implementation: "vitest-v8",
+    version: { kind: "package-json" as const, package: "@vitest/coverage-v8" },
+  },
+};
 const baseline = baselineSchema.parse({
   version: 1,
   files: {
@@ -117,6 +125,7 @@ const manifest = harnessManifestSchema.parse({
       reportFormat: "istanbul-json-summary",
       metrics: ["lines", "functions", "branches", "statements"],
       aggregation: "per-file",
+      producer: vitestProducer,
     },
   ],
   ownership: [
@@ -270,6 +279,18 @@ describe("coverage baseline monotonicity", () => {
         proposedGroups: [manifest.coverage[0], structuredClone(manifest.coverage[0])],
       }).errors.join(" "),
     ).toMatch(/duplicate.*group/i);
+  });
+
+  test("rejects changed coverage producer authority after adoption", () => {
+    const proposed = structuredClone(manifest.coverage[0]);
+    if (!proposed.producer) throw new Error("fixture producer missing");
+    proposed.producer.adapter.implementation = "different-producer";
+    expect(
+      checkCoverageGroupCompatibility({
+        baseGroups: [manifest.coverage[0]],
+        proposedGroups: [proposed],
+      }).errors.join(" "),
+    ).toMatch(/producer/i);
   });
 
   test("allows an explicit reasoned exclusion outside the base set but rejects wildcard hiding", () => {
@@ -569,6 +590,97 @@ describe("changed harness evidence", () => {
 });
 
 describe("coverage and record governance entrypoints", () => {
+  test("records exact resolved coverage producer provenance in the ratchet", () => {
+    const { cwd, base } = initializedFixture();
+    const result = coverageMain(cwd, { base, head: "HEAD" });
+    expect(result.groups[0]).toMatchObject({
+      provenance: {
+        commandSource: { kind: "nx-target", target: "coverage" },
+        command:
+          "vitest run --coverage --coverage.provider=v8 --coverage.reporter=json-summary --coverage.reportsDirectory=artifacts/coverage/example --coverage.include=packages/example/src/*.ts --coverage.exclude=**/*.test.ts",
+        adapter: "vitest",
+        implementation: "vitest-v8",
+        provider: "v8",
+        providerPackage: "@vitest/coverage-v8",
+        resolvedVersion: "3.2.7",
+      },
+    });
+    expect(result.groups[0].provenance.argv).toEqual([
+      "vitest",
+      "run",
+      "--coverage",
+      "--coverage.provider=v8",
+      "--coverage.reporter=json-summary",
+      "--coverage.reportsDirectory=artifacts/coverage/example",
+      "--coverage.include=packages/example/src/*.ts",
+      "--coverage.exclude=**/*.test.ts",
+    ]);
+  });
+
+  test("accepts a manifest-command browser-compatible Istanbul summary producer", () => {
+    const cwd = temporaryDirectory("proofline-browser-coverage-");
+    runGit(cwd, ["init", "-q"]);
+    writeFixture(cwd);
+    const browserManifest = {
+      ...structuredClone(manifest),
+      commands: {
+        ...manifest.commands,
+        browserCoverage: {
+          argv: [
+            "node",
+            "packages/example/browser-coverage.mjs",
+            "--report-format=istanbul-json-summary",
+            "--report=artifacts/coverage/example/coverage-summary.json",
+          ],
+          cwd: "." as const,
+        },
+      },
+      coverage: [
+        {
+          ...structuredClone(manifest.coverage[0]),
+          provider: "istanbul-browser",
+          providerVersion: "1.4.0",
+          producer: {
+            command: { kind: "manifest-command" as const, commandKey: "browserCoverage" },
+            adapter: {
+              kind: "istanbul-summary" as const,
+              implementation: "browser-istanbul",
+              reportFormatArg: "--report-format=istanbul-json-summary",
+              reportPathArg: "--report=artifacts/coverage/example/coverage-summary.json",
+              version: { kind: "package-json" as const, package: "browser-istanbul" },
+            },
+          },
+        },
+      ],
+    };
+    writeFileSync(
+      path.join(cwd, "packages/example/browser-coverage.mjs"),
+      "// Browser instrumentation producer fixture.\n",
+    );
+    mkdirSync(path.join(cwd, "node_modules/browser-istanbul"), { recursive: true });
+    writeFileSync(
+      path.join(cwd, "node_modules/browser-istanbul/package.json"),
+      `${JSON.stringify({ name: "browser-istanbul", version: "1.4.0" })}\n`,
+    );
+    writeFileSync(
+      path.join(cwd, "proofline.harness.json"),
+      `${JSON.stringify(browserManifest, null, 2)}\n`,
+    );
+    const base = commitAll(cwd, "browser coverage base");
+    const result = coverageMain(cwd, { base, head: "HEAD" });
+    expect(result.groups[0].provenance).toMatchObject({
+      commandSource: { kind: "manifest-command", commandKey: "browserCoverage" },
+      command: JSON.stringify(browserManifest.commands.browserCoverage),
+      argv: browserManifest.commands.browserCoverage.argv,
+      cwd: ".",
+      adapter: "istanbul-summary",
+      implementation: "browser-istanbul",
+      provider: "istanbul-browser",
+      providerPackage: "browser-istanbul",
+      resolvedVersion: "1.4.0",
+    });
+  });
+
   test("normalizes generated in-repository absolute paths before they become evidence", () => {
     const { cwd } = initializedFixture();
     const absoluteSource = path.join(cwd, "packages/example/src/value.ts");
@@ -600,7 +712,16 @@ describe("coverage and record governance entrypoints", () => {
     );
     expect(ratchet).toMatchObject({
       revisions: { requestedBase: base, requestedHead: "HEAD", mergeBase: base },
-      groups: [expect.objectContaining({ workspace: "packages/example" })],
+      groups: [
+        expect.objectContaining({
+          workspace: "packages/example",
+          provenance: expect.objectContaining({
+            implementation: "vitest-v8",
+            providerPackage: "@vitest/coverage-v8",
+            resolvedVersion: "3.2.7",
+          }),
+        }),
+      ],
     });
     expect(ratchet.errors).toEqual(
       expect.arrayContaining([expect.stringMatching(/providerVersion/i)]),
@@ -803,6 +924,24 @@ describe("coverage and record governance entrypoints", () => {
       `${recordLine("base")}${recordLine("manifest-only", ["proofline.harness.json"])}`,
     );
     expect(() => recordMain(cwd, { base, head: "HEAD" })).toThrow(/value\.ts/);
+  });
+
+  test("recordMain writes revision diagnostics when the proposed record is missing", () => {
+    const { cwd, base } = initializedFixture();
+    rmSync(path.join(cwd, "test-impact/execution-record.jsonl"));
+    expect(() => recordMain(cwd, { base, head: "HEAD" })).toThrow(/execution-record\.jsonl/i);
+    const artifact = JSON.parse(
+      readFileSync(path.join(cwd, "artifacts/record/check.json"), "utf8"),
+    );
+    expect(artifact).toMatchObject({
+      revisions: {
+        requestedBase: base,
+        requestedHead: "HEAD",
+        resolvedBase: base,
+        mergeBase: base,
+      },
+      errors: [expect.stringMatching(/execution-record\.jsonl/i)],
+    });
   });
 });
 

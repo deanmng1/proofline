@@ -74,83 +74,116 @@ export const recordMain = (
   const errors: string[] = [];
   const revisions = readVerifiedMergeBase({ cwd, ...requested, requireCheckoutMatch: true });
   errors.push(...revisions.errors);
-  const proposedRecord = readFileSync(path.join(cwd, "test-impact/execution-record.jsonl"));
+  const recordRelativePath = "test-impact/execution-record.jsonl";
+  const recordAbsolutePath = path.join(cwd, recordRelativePath);
+  const proposedRecordDiagnostic: {
+    path: string;
+    status: "unreadable" | "read";
+    bytes: number | null;
+    validationErrors: string[];
+  } = {
+    path: recordRelativePath,
+    status: "unreadable",
+    bytes: null,
+    validationErrors: [],
+  };
   let prefix = { errors: [] as string[], appendedRecords: [] as ExecutionRecord[] };
-  if (revisions.mergeBase) {
-    const base = gitShowBytes(cwd, revisions.mergeBase, "test-impact/execution-record.jsonl");
-    if (base.error || !base.bytes)
-      errors.push(base.error ?? "Unable to read base execution record");
-    else {
-      prefix = verifyRecordPrefix({
-        baseRecord: base.bytes,
-        proposedRecord,
-        validate: validateRecords,
-      });
-      errors.push(...prefix.errors);
-    }
-  }
-
   let evidence = { errors: [] as string[], excludedGeneratedPaths: [] as string[] };
   let changedFiles: ReturnType<typeof readGovernedChanges>["files"] = [];
+  mkdirSync(path.join(cwd, "artifacts/record"), { recursive: true });
   try {
-    const manifest = harnessManifestSchema.parse(
-      JSON.parse(readFileSync(path.join(cwd, "proofline.harness.json"), "utf8")),
-    );
-    errors.push(...validateHarnessAuthority(manifest).errors);
-    let baseManifest: typeof manifest | undefined;
-    if (revisions.mergeBase) {
-      const baseManifestObject = gitShowBytes(cwd, revisions.mergeBase, "proofline.harness.json");
-      if (baseManifestObject.error || !baseManifestObject.bytes)
-        errors.push(baseManifestObject.error ?? "Unable to read base harness manifest");
+    let proposedRecord: Buffer | undefined;
+    try {
+      proposedRecord = readFileSync(recordAbsolutePath);
+      proposedRecordDiagnostic.status = "read";
+      proposedRecordDiagnostic.bytes = proposedRecord.length;
+      const validation = validateRecords(proposedRecord.toString("utf8"));
+      proposedRecordDiagnostic.validationErrors = validation.errors;
+      errors.push(...validation.errors);
+    } catch (error) {
+      errors.push(
+        `Unable to read proposed execution record ${recordRelativePath}: ${String(error)}`,
+      );
+    }
+
+    if (revisions.mergeBase && proposedRecord) {
+      const base = gitShowBytes(cwd, revisions.mergeBase, recordRelativePath);
+      if (base.error || !base.bytes)
+        errors.push(base.error ?? "Unable to read base execution record");
       else {
-        try {
-          baseManifest = harnessManifestSchema.parse(
-            JSON.parse(baseManifestObject.bytes.toString("utf8")),
-          );
-        } catch (error) {
-          errors.push(`Invalid base harness manifest: ${String(error)}`);
-        }
+        prefix = verifyRecordPrefix({
+          baseRecord: base.bytes,
+          proposedRecord,
+          validate: validateRecords,
+        });
+        errors.push(...prefix.errors);
       }
     }
-    const changes = readGovernedChanges({ cwd, revisions });
-    changedFiles = changes.files;
-    errors.push(...changes.errors);
-    evidence = verifyChangedHarnessEvidence({
+
+    try {
+      const manifest = harnessManifestSchema.parse(
+        JSON.parse(readFileSync(path.join(cwd, "proofline.harness.json"), "utf8")),
+      );
+      errors.push(...validateHarnessAuthority(manifest).errors);
+      let baseManifest: typeof manifest | undefined;
+      if (revisions.mergeBase) {
+        const baseManifestObject = gitShowBytes(cwd, revisions.mergeBase, "proofline.harness.json");
+        if (baseManifestObject.error || !baseManifestObject.bytes)
+          errors.push(baseManifestObject.error ?? "Unable to read base harness manifest");
+        else {
+          try {
+            baseManifest = harnessManifestSchema.parse(
+              JSON.parse(baseManifestObject.bytes.toString("utf8")),
+            );
+          } catch (error) {
+            errors.push(`Invalid base harness manifest: ${String(error)}`);
+          }
+        }
+      }
+      const changes = readGovernedChanges({ cwd, revisions });
+      changedFiles = changes.files;
+      errors.push(...changes.errors);
+      evidence = verifyChangedHarnessEvidence({
+        changedFiles,
+        appendedRecords: prefix.appendedRecords,
+        manifest,
+        baseManifest,
+      });
+      errors.push(...evidence.errors);
+    } catch (error) {
+      errors.push(`Unable to validate changed harness evidence: ${String(error)}`);
+    }
+
+    try {
+      const registry = rulesSchema.parse(
+        JSON.parse(readFileSync(path.join(cwd, "test-impact/rules.json"), "utf8")),
+      );
+      if (readFileSync(path.join(cwd, "test-impact/rules.md"), "utf8") !== renderRules(registry))
+        errors.push("rules.md drift: run pnpm rules:generate");
+    } catch (error) {
+      errors.push(`Invalid rule registry or generated catalog: ${String(error)}`);
+    }
+  } catch (error) {
+    errors.push(`Execution record governance failed unexpectedly: ${String(error)}`);
+  } finally {
+    const artifact = {
+      revisions,
+      proposedRecord: proposedRecordDiagnostic,
+      appendedRecordIds: prefix.appendedRecords.map((record) => record.eventId),
       changedFiles,
-      appendedRecords: prefix.appendedRecords,
-      manifest,
-      baseManifest,
-    });
-    errors.push(...evidence.errors);
-  } catch (error) {
-    errors.push(`Unable to validate changed harness evidence: ${String(error)}`);
-  }
-
-  try {
-    const registry = rulesSchema.parse(
-      JSON.parse(readFileSync(path.join(cwd, "test-impact/rules.json"), "utf8")),
+      excludedGeneratedPaths: evidence.excludedGeneratedPaths,
+      errors: [...new Set(errors)],
+    };
+    writeFileSync(
+      path.join(cwd, "artifacts/record/check.json"),
+      `${JSON.stringify(artifact, null, 2)}\n`,
     );
-    if (readFileSync(path.join(cwd, "test-impact/rules.md"), "utf8") !== renderRules(registry))
-      errors.push("rules.md drift: run pnpm rules:generate");
-  } catch (error) {
-    errors.push(`Invalid rule registry or generated catalog: ${String(error)}`);
   }
 
-  const artifact = {
-    revisions,
-    appendedRecordIds: prefix.appendedRecords.map((record) => record.eventId),
-    changedFiles,
-    excludedGeneratedPaths: evidence.excludedGeneratedPaths,
-    errors: [...new Set(errors)],
-  };
-  mkdirSync(path.join(cwd, "artifacts/record"), { recursive: true });
-  writeFileSync(
-    path.join(cwd, "artifacts/record/check.json"),
-    `${JSON.stringify(artifact, null, 2)}\n`,
-  );
-  if (artifact.errors.length) throw new Error(artifact.errors.join("\n"));
+  const uniqueErrors = [...new Set(errors)];
+  if (uniqueErrors.length) throw new Error(uniqueErrors.join("\n"));
   process.stdout.write("Execution record governance passed.\n");
-  return artifact;
+  return JSON.parse(readFileSync(path.join(cwd, "artifacts/record/check.json"), "utf8"));
 };
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) recordMain();

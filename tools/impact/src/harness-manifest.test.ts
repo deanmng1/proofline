@@ -27,7 +27,11 @@ const fixture = () => {
   write("package.json", {
     scripts: { check: "node -e \"require('fs').writeFileSync('EXECUTED', 'bad')\"" },
   });
-  write("app/project.json", { name: "fixture", root: "app", targets: { test: {}, e2e: {} } });
+  write("app/project.json", {
+    name: "fixture",
+    root: "app",
+    targets: { test: {}, e2e: {}, coverage: { command: "pnpm check" } },
+  });
   write("app/src/value.ts", "export const value = 1;");
   write(
     "app/src/value.test.ts",
@@ -111,6 +115,14 @@ const fixture = () => {
         reportFormat: "istanbul-json-summary",
         metrics: ["lines", "functions", "branches", "statements"],
         aggregation: "per-file",
+        producer: {
+          command: { kind: "nx-target", target: "coverage" },
+          adapter: {
+            kind: "vitest",
+            implementation: "vitest-v8",
+            version: { kind: "package-json", package: "@vitest/coverage-v8" },
+          },
+        },
       },
     ],
     ownership: [
@@ -212,6 +224,15 @@ test("rejects_invalid_or_non_executable_harness_metadata", () => {
     },
     (m: typeof manifest) => {
       m.coverage[0].metrics = ["lines"];
+    },
+    (m: typeof manifest) => {
+      Reflect.deleteProperty(m.coverage[0], "producer");
+    },
+    (m: typeof manifest) => {
+      Reflect.set(m.coverage[0].producer, "command", {
+        kind: "manifest-command",
+        commandKey: "unknown",
+      });
     },
     (m: typeof manifest) => {
       m.browser.testEntrypoint = "unknown";

@@ -50,6 +50,35 @@ const ownershipSchema = z
   })
   .strict();
 const metrics = ["lines", "functions", "branches", "statements"] as const;
+const packageName = z
+  .string()
+  .regex(/^(?:@[a-z0-9][a-z0-9._-]*\/)?[a-z0-9][a-z0-9._-]*$/i, "Expected package name");
+const coverageProducerSchema = z
+  .object({
+    command: z.discriminatedUnion("kind", [
+      z.object({ kind: z.literal("nx-target"), target: text }).strict(),
+      z.object({ kind: z.literal("manifest-command"), commandKey: text }).strict(),
+    ]),
+    adapter: z.discriminatedUnion("kind", [
+      z
+        .object({
+          kind: z.literal("vitest"),
+          implementation: text,
+          version: z.object({ kind: z.literal("package-json"), package: packageName }).strict(),
+        })
+        .strict(),
+      z
+        .object({
+          kind: z.literal("istanbul-summary"),
+          implementation: text,
+          reportFormatArg: text,
+          reportPathArg: text,
+          version: z.object({ kind: z.literal("package-json"), package: packageName }).strict(),
+        })
+        .strict(),
+    ]),
+  })
+  .strict();
 const coverageSchema = z
   .object({
     workspace: relativePath,
@@ -64,6 +93,9 @@ const coverageSchema = z
       .length(4)
       .refine((values) => new Set(values).size === 4, "All four coverage metrics are required"),
     aggregation: z.literal("per-file"),
+    // Optional only so merge-base manifests written before producer adapters remain parseable.
+    // Proposed manifests are required to declare it by semantic validation below.
+    producer: coverageProducerSchema.optional(),
   })
   .strict();
 export const harnessManifestSchema = z
@@ -178,6 +210,12 @@ export const validateHarnessAuthority = (input: unknown) => {
   for (const group of manifest.coverage) {
     if (!workspaces.includes(group.workspace))
       errors.push(`Unknown coverage workspace: ${group.workspace}`);
+    if (!group.producer) errors.push(`Missing coverage producer: ${group.report}`);
+    else if (
+      group.producer.command.kind === "manifest-command" &&
+      !manifest.commands[group.producer.command.commandKey]
+    )
+      errors.push(`Unknown coverage producer command: ${group.producer.command.commandKey}`);
     unique(group.sourceGlobs, "coverage source glob");
     unique(
       group.exclusions.map((entry) => entry.glob),
@@ -620,6 +658,22 @@ const validateHarnessUnchecked = ({
     for (const glob of group.sourceGlobs) inspectGlob(glob);
     if (!workspacePaths.includes(group.workspace))
       errors.push(`Unknown coverage workspace: ${group.workspace}`);
+    if (!group.producer) errors.push(`Missing coverage producer: ${group.report}`);
+    else if (group.producer.command.kind === "manifest-command")
+      commandKey(group.producer.command.commandKey);
+    else {
+      try {
+        const project = JSON.parse(
+          readFileSync(path.join(root, group.workspace, "project.json"), "utf8"),
+        ) as { targets?: Record<string, { command?: unknown }> };
+        if (typeof project.targets?.[group.producer.command.target]?.command !== "string")
+          errors.push(
+            `Missing coverage producer target ${group.producer.command.target}: ${group.workspace}`,
+          );
+      } catch (error) {
+        errors.push(`Invalid coverage producer target ${group.workspace}: ${String(error)}`);
+      }
+    }
     for (const glob of [
       ...group.sourceGlobs,
       ...group.exclusions.map((exclusion) => exclusion.glob),

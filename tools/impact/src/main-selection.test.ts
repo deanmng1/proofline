@@ -51,6 +51,7 @@ test("runs_only_one_declared_vitest_and_playwright_identity", () => {
         name: "crm-web",
         targets: {
           test: { command: "pnpm exec vitest run --config modules/orders/vite.config.ts" },
+          coverage: { command: "pnpm exec vitest run --coverage" },
         },
       }),
     );
@@ -150,6 +151,14 @@ test("runs_only_one_declared_vitest_and_playwright_identity", () => {
             reportFormat: "istanbul-json-summary",
             metrics: ["lines", "functions", "branches", "statements"],
             aggregation: "per-file",
+            producer: {
+              command: { kind: "nx-target", target: "coverage" },
+              adapter: {
+                kind: "vitest",
+                implementation: "vitest-v8",
+                version: { kind: "package-json", package: "@vitest/coverage-v8" },
+              },
+            },
           },
         ],
         ownership: [

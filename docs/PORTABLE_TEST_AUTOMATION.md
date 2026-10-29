@@ -39,7 +39,12 @@ rejects lowered thresholds, deleted sources, incompatible measurement
 metadata, unclassified sources, or incomplete reports. Every report source is
 either governed by a source glob or named by a reasoned exclusion. The command
 writes requested/resolved revisions, complete group authority, measurements,
-and errors to `artifacts/coverage/ratchet.json`, including on failure. There is
+resolved producer command/argv, adapter and implementation identity, provider
+package, installed version, and errors to `artifacts/coverage/ratchet.json`,
+including on failure. Each group declares either an Nx target or a structured
+manifest command plus a producer adapter and package-based version resolver.
+Vitest and compatible non-Vitest Istanbul-summary producers have separate
+adapter validation. There is
 no global coverage target. `pnpm coverage` normalizes the absolute paths emitted
 by Vitest into repository-relative report keys before the summaries become
 governance evidence; the checker rejects absolute, escaping, backslash, or
@@ -51,7 +56,9 @@ rows. It rejects any historical rewrite, CRLF conversion, malformed/duplicate
 row, invalid scope, or missing single trailing LF. Each changed governed path
 must overlap a newly appended row's repository-relative scope; old records
 cannot satisfy a new change. `test-impact/rules.md` remains a separately
-verified deterministic artifact. CI validates but never edits the record.
+verified deterministic artifact. Missing, unreadable, and invalid proposed
+records still produce `artifacts/record/check.json` with revision and error
+evidence. CI validates but never edits the record.
 
 ## Future Codex/Cursor adapter boundary
 

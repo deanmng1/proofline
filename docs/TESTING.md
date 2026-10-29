@@ -55,7 +55,11 @@ eight sources: service bus, Policy, Policy State, Finance, runtime, Test API,
 the impact validator, and merge-base governance. Missing reports/files/metrics,
 unclassified production sources, incompatible provider/format/aggregation
 metadata, and lower coverage fail. The merge-base baseline and manifest remain
-the comparison authority.
+the comparison authority. Every group declares its producer command source,
+adapter, implementation, and package version resolver. The ratchet records the
+exact resolved command and argv plus the resolved provider package version,
+including on failed checks. Compatible browser instrumentation can use a
+structured manifest command with the non-Vitest Istanbul-summary adapter.
 There is no global percentage gate; untested template code remains visible.
 Baseline reductions require a recorded review decision. Raise the checked-in
 metrics after reviewing improved reports; ordinary CI never rewrites them.

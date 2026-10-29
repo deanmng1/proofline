@@ -202,7 +202,21 @@ type GroupResult = {
   sources: string[];
   excluded: string[];
   measurements: Record<string, Record<string, number>>;
+  provenance: CoverageProvenance;
   errors: string[];
+};
+
+type CoverageProvenance = {
+  commandSource: NonNullable<CoverageGroup["producer"]>["command"] | null;
+  command: string | null;
+  argv: string[];
+  cwd: string | null;
+  adapter: NonNullable<CoverageGroup["producer"]>["adapter"]["kind"] | null;
+  implementation: string | null;
+  provider: string;
+  providerPackage: string | null;
+  declaredVersion: string;
+  resolvedVersion: string | null;
 };
 
 const shellWords = (command: string) => {
@@ -241,22 +255,56 @@ const coverageFlagValues = (words: string[], name: string) => {
   return values;
 };
 
-const coverageProvenanceErrors = (cwd: string, group: CoverageGroup) => {
+const resolveCoverageProvenance = (
+  cwd: string,
+  manifest: HarnessManifest,
+  group: CoverageGroup,
+) => {
   const errors: string[] = [];
-  let command = "";
-  try {
-    const project = JSON.parse(
-      readFileSync(path.join(cwd, group.workspace, "project.json"), "utf8"),
-    ) as { targets?: { coverage?: { command?: unknown } } };
-    command =
-      typeof project.targets?.coverage?.command === "string"
-        ? project.targets.coverage.command
-        : "";
-  } catch (error) {
-    errors.push(`Missing coverage target for ${group.workspace}: ${String(error)}`);
+  const producer = group.producer;
+  const provenance: CoverageProvenance = {
+    commandSource: producer?.command ?? null,
+    command: null,
+    argv: [],
+    cwd: null,
+    adapter: producer?.adapter.kind ?? null,
+    implementation: producer?.adapter.implementation ?? null,
+    provider: group.provider,
+    providerPackage: producer?.adapter.version.package ?? null,
+    declaredVersion: group.providerVersion,
+    resolvedVersion: null,
+  };
+  if (!producer) {
+    errors.push(`Missing coverage producer for ${group.report}`);
+    return { errors, provenance };
   }
+
   try {
-    const words = shellWords(command);
+    if (producer.command.kind === "nx-target") {
+      const project = JSON.parse(
+        readFileSync(path.join(cwd, group.workspace, "project.json"), "utf8"),
+      ) as { targets?: Record<string, { command?: unknown }> };
+      const command = project.targets?.[producer.command.target]?.command;
+      if (typeof command !== "string" || !command.trim())
+        throw new Error(`Missing target ${producer.command.target}`);
+      provenance.command = command;
+      provenance.argv = shellWords(command);
+      provenance.cwd = ".";
+    } else {
+      const command = manifest.commands[producer.command.commandKey];
+      if (!command) throw new Error(`Unknown manifest command ${producer.command.commandKey}`);
+      provenance.command = JSON.stringify(command);
+      provenance.argv = [...command.argv];
+      provenance.cwd = command.cwd;
+    }
+  } catch (error) {
+    errors.push(`Unable to resolve coverage command for ${group.workspace}: ${String(error)}`);
+  }
+
+  const words = provenance.argv;
+  if (producer.adapter.kind === "vitest") {
+    if (!words.includes("vitest"))
+      errors.push(`Coverage producer for ${group.workspace} does not invoke vitest`);
     const singletonFlag = (name: string, expected: string) => {
       const values = coverageFlagValues(words, name);
       if (values.length !== 1 || values[0] !== expected)
@@ -278,14 +326,32 @@ const coverageProvenanceErrors = (cwd: string, group: CoverageGroup) => {
     }
     if (coverageFlagValues(words, "include").length !== 1)
       errors.push(`Coverage target for ${group.workspace} must declare exactly one include flag`);
-  } catch (error) {
-    errors.push(`Invalid coverage target command for ${group.workspace}: ${String(error)}`);
+    const expectedPackage = `@vitest/coverage-${group.provider}`;
+    if (producer.adapter.version.package !== expectedPackage)
+      errors.push(`Vitest provider resolver for ${group.workspace} must use ${expectedPackage}`);
+  } else {
+    const exactArgument = (expected: string, label: string) => {
+      const count = words.filter((word) => word === expected).length;
+      if (count !== 1)
+        errors.push(
+          `Coverage producer for ${group.workspace} must contain exactly one ${label} argument ${expected}; received ${count}`,
+        );
+    };
+    exactArgument(producer.adapter.reportFormatArg, "report-format");
+    exactArgument(producer.adapter.reportPathArg, "report-path");
+    if (!producer.adapter.reportFormatArg.endsWith(`=${group.reportFormat}`))
+      errors.push(`Coverage producer for ${group.workspace} does not bind ${group.reportFormat}`);
+    if (!producer.adapter.reportPathArg.endsWith(`=${group.report}`))
+      errors.push(`Coverage producer for ${group.workspace} does not bind report ${group.report}`);
   }
-  const providerPackage = `@vitest/coverage-${group.provider}`;
+
+  const providerPackage = producer.adapter.version.package;
   try {
     const provider = JSON.parse(
       readFileSync(path.join(cwd, "node_modules", providerPackage, "package.json"), "utf8"),
     ) as { version?: unknown };
+    if (typeof provider.version === "string") provenance.resolvedVersion = provider.version;
+    else errors.push(`Coverage provider ${providerPackage} has no string version`);
     if (provider.version !== group.providerVersion)
       errors.push(
         `Coverage provider version for ${group.workspace} is ${String(provider.version)}, expected ${group.providerVersion}`,
@@ -293,20 +359,23 @@ const coverageProvenanceErrors = (cwd: string, group: CoverageGroup) => {
   } catch (error) {
     errors.push(`Unable to resolve coverage provider ${providerPackage}: ${String(error)}`);
   }
-  return errors;
+  return { errors, provenance };
 };
 
 const inspectGroup = ({
   cwd,
+  manifest,
   group,
   baseline,
 }: {
   cwd: string;
+  manifest: HarnessManifest;
   group: CoverageGroup;
   baseline: CoverageBaseline;
 }): GroupResult => {
   const errors: string[] = [];
-  errors.push(...coverageProvenanceErrors(cwd, group));
+  const resolvedProvenance = resolveCoverageProvenance(cwd, manifest, group);
+  errors.push(...resolvedProvenance.errors);
   const sources = groupSources(cwd, group).sort();
   if (sources.length === 0)
     errors.push(`Coverage group ${group.workspace} has no effective source files`);
@@ -384,6 +453,7 @@ const inspectGroup = ({
     sources,
     excluded,
     measurements,
+    provenance: resolvedProvenance.provenance,
     errors,
   };
 };
@@ -483,7 +553,12 @@ export const coverageMain = (
         else if (owners.length > 1) errors.push(`Ambiguous coverage source ${source}`);
       }
       artifact.groups = proposedManifest.coverage.map((group) =>
-        inspectGroup({ cwd, group, baseline: proposedBaseline as CoverageBaseline }),
+        inspectGroup({
+          cwd,
+          manifest: proposedManifest,
+          group,
+          baseline: proposedBaseline as CoverageBaseline,
+        }),
       );
       errors.push(...artifact.groups.flatMap((group) => group.errors));
     }
