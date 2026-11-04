@@ -1,0 +1,206 @@
+{
+  "schemaVersion": 1,
+  "sourceRevision": "40988bbc7d1f875ab5e3a7159c593be1bb88c0fb",
+  "sourceRevisionRole": "Repository HEAD is contextual only; sourceSha256 binds the actual implementation and localTestBuildSha256 binds the served artifact. Documentation edits were ongoing; no clean-HEAD claim is made.",
+  "capturedAt": "2026-11-04T22:12:32.961Z",
+  "captureRuntime": {
+    "node": "v24.22.1",
+    "playwright": "1.62.1",
+    "browserProject": "chromium",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    }
+  },
+  "captureCommand": "PATH=/Users/dio/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin:/opt/homebrew/bin:$PATH /Users/dio/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node docs/showcase/demo/capture_demo.mjs",
+  "guardedRunnerCommand": "node tools/proofline/canonical-runner.mjs playwright test --config output/demo-capture/playwright.config.ts",
+  "localTestBuildCommand": "pnpm build:test",
+  "encodingCommand": "ffmpeg -y -hide_banner -loglevel error -i docs/showcase/demo/workflow.webm -c:v libx264 -preset slow -crf 26 -pix_fmt yuv420p -movflags +faststart -an docs/showcase/demo/workflow.mp4",
+  "result": "1 passed (35.7s)",
+  "assertions": {
+    "customers": 1,
+    "properties": 1,
+    "quotes": 1,
+    "policies": 1,
+    "policyTimelineEntries": 1,
+    "financeLedgers": 1,
+    "financeEntries": 1,
+    "commissionEntries": 1,
+    "pendingMessages": 0,
+    "unexpectedRequests": 0,
+    "authenticatedContextsAfterLogout": 0
+  },
+  "video": {
+    "webm": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "vp8",
+          "width": 1440,
+          "height": 1000,
+          "r_frame_rate": "25/1"
+        }
+      ],
+      "format": {
+        "duration": "34.800000",
+        "size": "2637416"
+      }
+    },
+    "mp4": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "width": 1440,
+          "height": 1000,
+          "r_frame_rate": "25/1"
+        }
+      ],
+      "format": {
+        "duration": "34.800000",
+        "size": "849073"
+      }
+    }
+  },
+  "sourceSha256": {
+    "apps/crm-e2e/src/proofline/golden-workflow.spec.ts": "3d05313b52544c94b3c865aac0526ca6e1493b3483b6bbcbc7e805ea3a893917",
+    "apps/crm-e2e/src/proofline/workflow-steps.ts": "a9f128f6c9e569250db04b82dcda30233273dfe3a06bd58facf1b0a5d9909cae",
+    "apps/crm-e2e/src/helpers.ts": "70e43d7804e3dca80f6920aa691d01f209dbbddd38be57989b0ef1b5c86d91d7",
+    "apps/crm-e2e/src/fixtures/scenario.ts": "6f6b1b83f6ee6fabf4a037cefadc36696c2810ad28fb002081d9757fe7f9c27a",
+    "apps/crm-e2e/src/fixtures/scenario-server.ts": "5e92185df9b0ce9f19b48974ae82c9f92af273964ff9cf3bea150f18b2ed2b51",
+    "apps/crm-e2e/playwright.config.ts": "b7f116ecb7d04762957b00a102813219e09989d25e52adb2f17a6ce395fed991",
+    "proofline.harness.json": "9dede70a4fec135b8fa87b06370c309fd5e9336dc330739c871ca7eae1dd51f2",
+    "tools/proofline/canonical-runner.mjs": "1b6a04eecb373b160dc9da9ea8e8a19694f4735a73cc7562561144c97f373c1b",
+    "tools/proofline/run-guarded.mjs": "a7f2d6775d77535ae83d08b4b41fc47c653da7a2b368f467ada39f0e6b08a253",
+    "tools/proofline/egress-guard.mjs": "87ede0e08571c74f3c6df9aee32ede65d351dcd4189f0394a064af743ab44230"
+  },
+  "localTestBuildSha256": {
+    "dist/crm-web-test/.proofline/modules.json": "d8df77e5b38705fe34cb7aeb8e0130b33f255bc0746b1d12b509c04430b6d99c",
+    "dist/crm-web-test/.vite/manifest.json": "dc43b9dbb06446ce578ee07b69638e5c7623ef7809b4ebd20a5f35437758b6d0",
+    "dist/crm-web-test/assets/AreaChart-BIsHyWO7.js": "1bb860e499133e6e39d3dd403dd90e7bb8ccb6f206e1240579bbecaa67fd98eb",
+    "dist/crm-web-test/assets/BarChart-CmCET2PF.js": "a5835318c07d8b2d1d548ec04a59e8af7b75705ba831ad22c826407454f471b6",
+    "dist/crm-web-test/assets/alert-BDNvMYp4.js": "6b7fc81ab2d466704771cb4231ec04b138dbde35e0527c2d74c9a6e2ed80005d",
+    "dist/crm-web-test/assets/analytics-api-CB8WCBnE.js": "a23e0a250ab6a15b54021dc975b14dd0e5efc6c0d30779a5b3f1a724d151075c",
+    "dist/crm-web-test/assets/analytics-page-D13o1fR3.js": "5ab50ba3da5974f607d6545b5e95c9f8f05c9ca7ea0755d52f6fbe5f90d5a45d",
+    "dist/crm-web-test/assets/billing-page-DfDKHzRM.js": "e118bba7ce3197fe1c3514c5af952a768b12ee8a1847b966b74c91e7b4533b27",
+    "dist/crm-web-test/assets/bootstrap-1Egg0h9u.js": "623f126e236b64a9aa42942fea8ab1bf219d662e2e8ecbec92c5b2a8b127dd03",
+    "dist/crm-web-test/assets/bootstrap-DouU2gPs.css": "4d5f18f9a8e11fc5efaae7f1271d5ecd9374603d17dd291b63a97fc673a1c0a5",
+    "dist/crm-web-test/assets/browser-BqzQLWlQ.js": "0608ef6c56013e19289a657a4af23138f45b331f2e2c73ab2eeec5310112aa5e",
+    "dist/crm-web-test/assets/calendar-days-D4E8ZEas.js": "80ff17a94ee286df894837f940c8d2613f861bfb7115f9b77e158857f860c218",
+    "dist/crm-web-test/assets/calendar-page-BiNU6apq.js": "d2c7d1d82413e35868eb6419e2cf9afe951cfca14e9043b1b54deb4adbc00858",
+    "dist/crm-web-test/assets/card-Y7gRZuEg.js": "74a8d38a0d9ddbc0f309282f870c7b23d0fdc7a1d2d4b84d247d0bf0fe9b4558",
+    "dist/crm-web-test/assets/circle-alert-DRArIXp9.js": "8ec604915dd87ae861a4655d5060894e7a274761113a608f8d2dab2504696601",
+    "dist/crm-web-test/assets/confirm-dialog-Ctrqlpgb.js": "18b2004f0484dffe86d912eb54eae0a847e042bfe5c76d3c17821dbd86f22b04",
+    "dist/crm-web-test/assets/customer-list-page-BEMX96dc.js": "14f00aaa4404ab7d632d8d786fb90c2bf4dcf83eb34f00978cfb19e32765a696",
+    "dist/crm-web-test/assets/data-charts-page-D8lin5Xo.js": "53a6a79720182d32d2c25266d1c4d1bdcd5483e9a1f0cf18736474b3bf9107b8",
+    "dist/crm-web-test/assets/data-table-b3s42gZ9.js": "0f9e09fa0c5cb24def7da5643e2a8941f42742261fe48e22525964d6e4a80eb5",
+    "dist/crm-web-test/assets/data-tables-page-CcKi5f-D.js": "c2fd7fa7278a42e178c014ef2bc519720714f203d0ae00a2b4fc6ba3545ab466",
+    "dist/crm-web-test/assets/detail-drawer-pqPnuOZ7.js": "7faee2b30fae5dba0812b01401ab45d976a71446d0cc23a81de2318df3f2a8d1",
+    "dist/crm-web-test/assets/download-CsBy3vKg.js": "f676ac56e534946e267e16898529ce0ed6c642cd068054ece3b0d1596b64f781",
+    "dist/crm-web-test/assets/empty-state-DUQJEAFS.js": "d042dcd372cb29660da0304973a0b82f819a05dfc3a47913b298f8fe0e19a327",
+    "dist/crm-web-test/assets/format-CiRAzA6a.js": "79c61de6df601fa70a0491943cda537672d5b2f055f4fbcb882d64a931e5b6af",
+    "dist/crm-web-test/assets/index-Bz66wyN4.js": "f71e8fcc8563fdc3213acc160483fcd615ff0e12f6e6624ef6b89fb148541b2e",
+    "dist/crm-web-test/assets/integrations-page-BaWVe5h3.js": "beae1154a4002608ca3994d8fb1efbadb637b067154c72e38d1acf1791a87300",
+    "dist/crm-web-test/assets/kpi-card-Ti5EpwfH.js": "9345601c16b92da6c376f937bc98157db9de513595a98c3b22bbbc2be011403b",
+    "dist/crm-web-test/assets/label-Cc-c56IS.js": "15549d2b1736bb51d04a7d3e4d5ca71a32e54db9f00458d9711887b5360de5d1",
+    "dist/crm-web-test/assets/login-page-BJSk1vBE.js": "87956dfec5cf216b162874519f316300045953562f9ee1e653e8026250d7b41c",
+    "dist/crm-web-test/assets/mail-page-CozkVMMY.js": "eaf2dcd5752049be64f5e764b2f6a9fb97aa71891c96b9f7b609be3df63a72a5",
+    "dist/crm-web-test/assets/not-found-page-Kb3ED2cF.js": "a7114169f63da0cec4c1ad1e90e0b050b667187e729b07f8a5e2343b75f550b8",
+    "dist/crm-web-test/assets/notifications-page-Bbb8L5Jv.js": "d6a1f199a9f8eac4e8f9d0f5ac04c31cfefa0e9f6a997eb1294d4dac309e2480",
+    "dist/crm-web-test/assets/overview-api-DkbFwBD5.js": "2cafdaa72c062b6d89047246bc57fc43b1613b5c1caed250ba0f9f7aa0844569",
+    "dist/crm-web-test/assets/overview-page-BUQKffa9.js": "816633525e411ede376700593314e76e80db225e0a51f60b2f4804be663ea5bc",
+    "dist/crm-web-test/assets/page-header-IzM1-q83.js": "30a9ec11cd1257f87c5c8c48daf4ec5db46c9cadb24c7d511dee707a58fc9f8f",
+    "dist/crm-web-test/assets/policy-detail-page-CGaaXGQU.js": "069f22d84569e2be1024ea972231de7866383be23f5ffa08e32d677a752ee23d",
+    "dist/crm-web-test/assets/profile-page-Bp1RjM_7.js": "184939828ad58d606eb28473cc7a10dc580b4bd64e7d50c24cdeb1869a58c0a7",
+    "dist/crm-web-test/assets/quote-form-D5ZDloES.js": "cc6f7bada89ff2caf281f1583cc82953bc1eeb65c6d4473e62a2a672c372ab8a",
+    "dist/crm-web-test/assets/search-filter-bar-Dzw0iVl1.js": "fcef756b8e90a7421b1c1182a96021afccefaac5e3eddbaae039879caaa6d4ca",
+    "dist/crm-web-test/assets/section-card-Cmmv-_Yo.js": "0ccb7077df8f70b400f4cefa0c7bcfe06c34e25d8e64e9573a04350f90a27892",
+    "dist/crm-web-test/assets/settings-page-D_xZoeyG.js": "5dcf40f92fc97d50fc670a643025fe7ee28b3d0d650e6dcb8709de9569ca73a5",
+    "dist/crm-web-test/assets/skeleton-DdmVxuQ-.js": "c52a572cc3325be0530b546a0bc33c14252f43843664c3fa1e4da2b4391a39c9",
+    "dist/crm-web-test/assets/skeletons-Dvr9dhKi.js": "e249837907434d799f8c7e6601abdb143cfdd7bdab1a3eafb8502e51b27789aa",
+    "dist/crm-web-test/assets/support-page-BoFXpjqF.js": "3f367461f554bbf74d6adacd5cf3db9e46717bbe4826a2390a1c563075880ba0",
+    "dist/crm-web-test/assets/switch-CkA-NLQD.js": "7205667a2452f35f5bb45ce0b374aeff2e74cb162893265fb802430b9848f716",
+    "dist/crm-web-test/assets/team-page-CQh3cgcm.js": "f6e0086d3b706d3de75d459b9d7d54ec26ec3612d1364173b7f81c780fc4693b",
+    "dist/crm-web-test/assets/transactions-api-BByFdUV9.js": "ed9ccd973f5d79237be114ea4d0cb892273d6f9af58c1a304bddc747c39f79cc",
+    "dist/crm-web-test/assets/transactions-page-BEKSse2J.js": "fec03de3b961ae1d8e61ae0d9421bfdf89e37712ef8631d99d6250ee7d015db7",
+    "dist/crm-web-test/assets/types-DE4Ej3Bg.js": "25cfdfb8bb0ab3c92295d045f8467f456a8cb30e3bf75dc89a037e68d2e6c023",
+    "dist/crm-web-test/assets/ui-kit-page-C705sxQ1.js": "90137580e955c19231fb4563f2418d8f6b65d8552a169d95790d1b911056aa7d",
+    "dist/crm-web-test/assets/use-command-vKfmEcq7.js": "521b93a769ab605c7624c264a28d2827f32eb03efb0c359c4171d8e16cd26b7f",
+    "dist/crm-web-test/assets/user-cell-DXJiQmBG.js": "a6c44f4b389bf42d65e623e92e29db5e315d4a9a168f3a2c600612f18c5e5684",
+    "dist/crm-web-test/assets/user-settings-page-vwpXiOqF.js": "0c82cf74be40e8b8bfae192bc70c440bc7b07cff3644bc4440a69d203d17ff4b",
+    "dist/crm-web-test/assets/users-page-C_I8Houv.js": "7aa75b96eb0eaa95d8be2a572869a1e0a2718f97e77798fc4fea39609684bc48",
+    "dist/crm-web-test/favicon.svg": "a3eddf029a721cd4df2fcb56a9e142686486e5412b60f1b696edd17559b16246",
+    "dist/crm-web-test/index.html": "83f39ac03531a9d823ac0d378bac208c1f12e7ce578e2a9cbfa302f1b213c581",
+    "dist/crm-web-test/mockServiceWorker.js": "26171599d94d5445297303f3a1f1cedec26835ea3d0057dcfa92ec520cb35cca"
+  },
+  "artifacts": {
+    "01-login.png": {
+      "sha256": "d9de8c5a1d7c559ca257682ed30cd84449ede042e64fd5b634aaf359f5144633",
+      "bytes": 46484
+    },
+    "02-intake.png": {
+      "sha256": "661fa327c3af489561b363cd0b021a8f2e820592cc5d3116d743bcf001aeeb52",
+      "bytes": 114386
+    },
+    "03-quote.png": {
+      "sha256": "f0473d601a2b9394e1a0bb1a1c87461d082cb8602c2d8678c4777bb9979c29a6",
+      "bytes": 119542
+    },
+    "04-bound-policy.png": {
+      "sha256": "e33ec49b816dc053697c7f9e31644897b84fef2da12239b98c545211a1b057bf",
+      "bytes": 150408
+    },
+    "05-finance-ledger.png": {
+      "sha256": "dbcf84cd04f9e2a3a0195f91d4ecc7105958c1d79cde48cf8d7515dd1fc79635",
+      "bytes": 152874
+    },
+    "06-denied-route.png": {
+      "sha256": "d9de8c5a1d7c559ca257682ed30cd84449ede042e64fd5b634aaf359f5144633",
+      "bytes": 46484
+    },
+    "README.md": {
+      "sha256": "bd07163ebaa0454bf85188297c14c14b0b5a8287868b5d570831c93911b29101",
+      "bytes": 5071
+    },
+    "capture-summary.json": {
+      "sha256": "60e55f8fc7de1a136adb795c3fb10814bf978e9bb581e2ce4a901ab3fadee1f1",
+      "bytes": 1628
+    },
+    "capture-workflow.ts.txt": {
+      "sha256": "86c36045941a1d3d55e66b913133ee34cc240ebb5e6a0b8d4b7c187f61cd080d",
+      "bytes": 6568
+    },
+    "capture.log": {
+      "sha256": "27e4d55269d427b5c706f6ddb89110c09344912176351a50b2b66b94aeb2fd88",
+      "bytes": 1316
+    },
+    "capture_demo.mjs": {
+      "sha256": "af092176c76da87bcdd4d7497fd6725c3056fea63d2f739083c70043f3834509",
+      "bytes": 1881
+    },
+    "inspection.json": {
+      "sha256": "93cc33c7b33d6b85abadba1069c265fc53f0fa1095df936764298d5614503ccc",
+      "bytes": 13419
+    },
+    "workflow.mp4": {
+      "sha256": "f8675072beb9d53e1e5e463fa5b95ba4da64cf6b3225ac7042e5bf063b51009f",
+      "bytes": 849073
+    },
+    "workflow.vtt": {
+      "sha256": "91d7bdbc2b7806a04b63abed2bf07064b536e628c0cca20f77e7785c449b6f82",
+      "bytes": 544
+    },
+    "workflow.webm": {
+      "sha256": "6ec7b75289092cec57df167f2b3e2670321825e19b67238181ba0ed04b41eeb5",
+      "bytes": 2637416
+    }
+  },
+  "limits": [
+    "Focused local Chromium demo only; no new full-suite, completion-gate, or cross-browser claim.",
+    "Silent recording of deterministic test-build adapters; no live provider integration.",
+    "The first temporary capture attempt failed at a capture-only remembered-account selector before stage one; ignored attempt-1-selector-failure.log retains that failure. Subsequent temporary runs passed on Node20; all delivered capture assets and evidence were replaced with this passing Node24 run. Prior run logs remain only in ignored output/demo-capture/.",
+    "The MP4 transcodes original video pixels; captions are a separate WebVTT file."
+  ]
+}

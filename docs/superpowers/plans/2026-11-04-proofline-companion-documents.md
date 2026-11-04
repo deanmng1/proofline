@@ -6,13 +6,13 @@
 
 **Architecture:** Both documents describe the same verified implementation snapshot. Audited measurements drive vector charts; detailed Mermaid diagrams and source references remain in Markdown.
 
-**Tech Stack:** Markdown, Mermaid, JSON, Python ReportLab, Poppler PDF rendering.
+**Tech Stack:** Markdown, Mermaid, JSON, self-contained HTML/CSS/JavaScript, Playwright Chromium print export, Poppler PDF rendering. The initial PDF used ReportLab; the revised browser deck replaces that authoring path.
 
 **Spec:** `docs/superpowers/specs/2026-11-04-proofline-companion-documents-design.md`
 
 ## Global constraints
 
-- Eight landscape presentation pages with one primary takeaway per page.
+- Nine landscape presentation slides with one primary takeaway per slide, using the user-selected Warm Editorial visual treatment.
 - Tested snapshot `4dc77a6ec005c710bd992b771a1c984b94b4e6a1`; no invented speedups.
 - Keep portable harness distinct from the CRM reference implementation.
 - Preserve all earlier execution-record bytes and the existing `.codex/` directory.
@@ -44,3 +44,12 @@
 - [x] Repair material findings; check PDF text, page count, link targets, and `git diff --check`.
 - [x] Append scoped execution evidence and run pinned record governance.
 - [x] Make a small documentation commit and open the PDF in Codex.
+
+### Task 4: Redesign the visual deck and add the recorded demo
+
+- [x] Find and inspect online presentation skills, show three design previews, and incorporate the user's Warm Editorial and browser-plus-PDF selections.
+- [x] Capture the actual guarded reference journey, retain screenshots/video/captions, and bind provenance to the supported runtime and implementation sources.
+- [x] Author `docs/showcase/proofline-overview.html` with varied editorial compositions, embedded fonts, nine slides, native demo playback, and keyboard/touch controls.
+- [x] Replace the PDF generator with Chromium print export and preserve the Python compatibility entrypoint.
+- [x] Verify desktop/phone fitting, keyboard behavior, media playback, offline dependencies, all nine PDF pages, chart values, and source references.
+- [x] Independently review the final deck, append scoped evidence, run lint and pinned record governance, commit locally, and open the browser presentation.

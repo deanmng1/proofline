@@ -11,27 +11,33 @@ document serves readers who choose to investigate the implementation.
 
 Separate deliverables preserve both reading experiences. A single dense report
 would impede the introduction; a presentation alone would lack technical depth.
-The author chooses PDF for the presentation and repository-native Markdown with
-Mermaid for the technical guide. These are format choices, not new product work.
+The user selected an interactive browser presentation plus a PDF copy for the
+revised presentation, and repository-native Markdown with Mermaid remains the
+technical guide. These are format choices, not new product work.
 
 ## Presentation
 
-Create an eight-page landscape PDF, one takeaway per page. Use large typography,
-generous whitespace, a consistent blue/teal/amber visual language, vector diagrams,
-and brief prose. Explain unfamiliar terms when first used. Readers should leave
+Create nine slides on a fixed 1920x1080 canvas, one takeaway per slide, with a
+matching PDF. The user selected the Warm Editorial visual preview: paper
+`#F5EEE3`, ink `#2F2721`, terracotta `#A6422A`, Instrument Serif headlines, and
+Manrope body text. Use large typography, generous whitespace, varied editorial
+compositions, editable diagrams/charts, and brief prose. Explain unfamiliar terms
+when first used. Readers should leave
 able to say what the harness is, what it checks, how it fits a development workflow,
 what the evidence proves, and what adoption requires.
 
 1. What Proofline is and the recurring regression problem it addresses.
 2. The reusable cycle: describe behavior, author checks, run each change, retain evidence.
 3. How application, portable manifest/runners, rule tests, and browser journeys fit.
-4. One user-visible CRM journey as the reference proof, with clear navigation steps.
-5. Practical capabilities: correctness, retries, tenant/role boundaries, isolated tests,
+4. A recorded real CRM user journey, playable in the browser with native controls
+   and captions. The PDF shows a clearly identified static frame.
+5. Evidence from that demo: visible finance state and persisted invariant counts.
+6. Practical capabilities: correctness, retries, tenant/role boundaries, isolated tests,
    and production separation.
-6. Coverage infographic using explicitly classified governed sources; no universal
+7. Coverage infographic using explicitly classified governed sources; no universal
    product-quality score or invented completeness claim.
-7. Observed browser execution measurements and a compact verification summary.
-8. What transfers to another React/Vite application, what must be adapted, and
+8. Observed browser execution measurements and a compact verification summary.
+9. What transfers to another React/Vite application, what must be adapted, and
    where to read more. Include browser/distribution limitations briefly.
 
 Keep commands, source inventories, binding internals, guard mechanics, and lengthy
@@ -73,9 +79,30 @@ smoke ran locally when browser binaries were absent.
 
 The source generator and measurements live beside the guide. The generated PDF is
 retained in the project, with any QA page images kept under ignored output paths.
+The browser deck uses inline CSS/JavaScript and embedded fonts, with relative demo
+media assets. It supports keyboard, touch, reduced motion, and optional inline
+text editing. Chromium print export preserves selectable PDF text. The existing
+Python build entrypoint delegates to the Node exporter for compatibility.
+
 Render every presentation page and inspect for clipping, overlap, unreadable labels,
 and information density. Independently review both documents for factual accuracy
 and clarity. Verify Mermaid syntax, local source links, PDF text/page count,
 measurement values, record governance, and whitespace. Documentation-only work
 does not change harness behavior or require rerunning the completed full gate.
 Append new evidence without rewriting any earlier JSONL record. Do not push.
+
+## Demo integrity
+
+Capture the existing visible golden workflow through the real scenario adapter,
+canonical guarded runner, deterministic fakes, and local test build. Never replace
+live capture with a fabricated result. Record the source revision, implementation
+hashes, actual runtime, capture command, persisted assertions, and asset hashes.
+Pacing added for comprehension is presentation timing, not a performance result.
+Keep the original harness and application code unchanged.
+
+## External design guidance
+
+Use the inspected Frontend Slides skill from the upstream repository for fixed
+stage layout, motion, visual discovery, and browser presentation structure. Keep
+the selected Warm Editorial preview as the visual authority and retain MIT and
+font license notices. Do not deploy or publish the presentation.

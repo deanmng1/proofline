@@ -1,0 +1,28 @@
+$ pnpm build:test
+$ pnpm nx run crm-web:build-test
+
+ NX   1 task: 1 succeeded
+
+
+Re-run with --output-style=static to inline logs.
+
+  Run duration:      5.0s
+  Cache:             0/1 hit (0%)
+  Critical path:     5.0s (1 task)
+  Recoverable time:  <1ms
+$ /Users/dio/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node tools/proofline/canonical-runner.mjs playwright test --config output/demo-capture/playwright.config.ts
+
+Running 1 test using 1 worker
+
+(node:42489) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+PASS — Unauthenticated customer deep link redirects to sign in
+PASS — Customer and insured property created through the visible UI
+PASS — Risk Secure quote created for $100.00
+PASS — Bound policy and $12.50 commission visible
+PASS — $10.00 deposit added; immutable history and commission retained
+PASS — After logout, protected policy route redirects to sign in and reveals no policy
+PASS — persisted golden assertions; no pending messages; no unexpected egress; logout revoked authentication
+  ✓  1 [chromium] › output/demo-capture/capture-workflow.spec.ts:13:1 › records_the_real_guarded_golden_journey_and_asserts_persisted_state (35.3s)
+
+  1 passed (35.7s)

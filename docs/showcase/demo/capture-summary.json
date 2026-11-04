@@ -1,0 +1,56 @@
+{
+  "status": "passed",
+  "capturedAt": "2026-11-04T22:12:32.961Z",
+  "sourceWorkflow": "apps/crm-e2e/src/proofline/golden-workflow.spec.ts",
+  "viewport": {
+    "width": 1440,
+    "height": 1000
+  },
+  "stages": [
+    {
+      "image": "01-login.png",
+      "label": "Unauthenticated customer deep link redirects to sign in",
+      "elapsedSeconds": 0.69
+    },
+    {
+      "image": "02-intake.png",
+      "label": "Customer and insured property created through the visible UI",
+      "elapsedSeconds": 7.23
+    },
+    {
+      "image": "03-quote.png",
+      "label": "Risk Secure quote created for $100.00",
+      "elapsedSeconds": 11.95
+    },
+    {
+      "image": "04-bound-policy.png",
+      "label": "Bound policy and $12.50 commission visible",
+      "elapsedSeconds": 16.25
+    },
+    {
+      "image": "05-finance-ledger.png",
+      "label": "$10.00 deposit added; immutable history and commission retained",
+      "elapsedSeconds": 23.32
+    },
+    {
+      "image": "06-denied-route.png",
+      "label": "After logout, protected policy route redirects to sign in and reveals no policy",
+      "elapsedSeconds": 29.24
+    }
+  ],
+  "persisted": {
+    "customers": 1,
+    "properties": 1,
+    "quotes": 1,
+    "policies": 1,
+    "policyTimelineEntries": 1,
+    "financeLedgers": 1,
+    "financeEntries": 1,
+    "commissionEntries": 1,
+    "pendingMessages": 0,
+    "unexpectedRequests": 0,
+    "authenticatedContextsAfterLogout": 0
+  },
+  "finalPath": "/login",
+  "note": "Local test build; real existing scenario adapter and UI; provider origins fulfilled by deterministic fakes. No production/live provider connection."
+}

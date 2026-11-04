@@ -1,0 +1,428 @@
+{
+  "scenarioId": "proofline-showcase",
+  "runtimeId": "demo-runtime",
+  "serverPort": 64876,
+  "serviceWorkers": 0,
+  "unexpectedRequests": [],
+  "providerRequests": [
+    {
+      "plane": "page",
+      "method": "GET",
+      "url": "https://fonts.googleapis.com/css2",
+      "scenarioId": "proofline-showcase",
+      "trace": "proofline-showcase-context-1:stylesheet"
+    },
+    {
+      "plane": "page",
+      "method": "GET",
+      "url": "https://fonts.googleapis.com/css2",
+      "scenarioId": "proofline-showcase",
+      "trace": "proofline-showcase-context-1:stylesheet"
+    },
+    {
+      "plane": "page",
+      "method": "GET",
+      "url": "https://fonts.googleapis.com/css2",
+      "scenarioId": "proofline-showcase",
+      "trace": "proofline-showcase-context-1:stylesheet"
+    }
+  ],
+  "requestJournal": [
+    {
+      "contextId": "proofline-showcase-context-1",
+      "identityId": "proofline-owner",
+      "operation": "tenant.list",
+      "method": "GET",
+      "path": "/api/tenants",
+      "tenantId": "",
+      "status": 200
+    },
+    {
+      "contextId": "proofline-showcase-context-1",
+      "identityId": "proofline-owner",
+      "operation": "customer.read",
+      "method": "GET",
+      "path": "/api/customers",
+      "tenantId": "test-tenant",
+      "status": 200
+    },
+    {
+      "contextId": "proofline-showcase-context-1",
+      "identityId": "proofline-owner",
+      "operation": "property.read",
+      "method": "GET",
+      "path": "/api/properties",
+      "tenantId": "test-tenant",
+      "status": 200
+    },
+    {
+      "contextId": "proofline-showcase-context-1",
+      "identityId": "proofline-owner",
+      "operation": "customer.create",
+      "method": "POST",
+      "path": "/api/customers",
+      "tenantId": "test-tenant",
+      "status": 201
+    },
+    {
+      "contextId": "proofline-showcase-context-1",
+      "identityId": "proofline-owner",
+      "operation": "customer.read",
+      "method": "GET",
+      "path": "/api/customers",
+      "tenantId": "test-tenant",
+      "status": 200
+    },
+    {
+      "contextId": "proofline-showcase-context-1",
+      "identityId": "proofline-owner",
+      "operation": "property.create",
+      "method": "POST",
+      "path": "/api/properties",
+      "tenantId": "test-tenant",
+      "status": 201
+    },
+    {
+      "contextId": "proofline-showcase-context-1",
+      "identityId": "proofline-owner",
+      "operation": "property.read",
+      "method": "GET",
+      "path": "/api/properties",
+      "tenantId": "test-tenant",
+      "status": 200
+    },
+    {
+      "contextId": "proofline-showcase-context-1",
+      "identityId": "proofline-owner",
+      "operation": "quote.read",
+      "method": "GET",
+      "path": "/api/quotes",
+      "tenantId": "test-tenant",
+      "status": 200
+    },
+    {
+      "contextId": "proofline-showcase-context-1",
+      "identityId": "proofline-owner",
+      "operation": "quote.create",
+      "method": "POST",
+      "path": "/api/quotes",
+      "tenantId": "test-tenant",
+      "status": 201
+    },
+    {
+      "contextId": "proofline-showcase-context-1",
+      "identityId": "proofline-owner",
+      "operation": "quote.read",
+      "method": "GET",
+      "path": "/api/quotes",
+      "tenantId": "test-tenant",
+      "status": 200
+    },
+    {
+      "contextId": "proofline-showcase-context-1",
+      "identityId": "proofline-owner",
+      "operation": "quote.bind",
+      "method": "POST",
+      "path": "/api/quotes/demo-runtime-quote-3/bind",
+      "tenantId": "test-tenant",
+      "status": 201
+    },
+    {
+      "contextId": "proofline-showcase-context-1",
+      "identityId": "proofline-owner",
+      "operation": "quote.read",
+      "method": "GET",
+      "path": "/api/quotes",
+      "tenantId": "test-tenant",
+      "status": 200
+    },
+    {
+      "contextId": "proofline-showcase-context-1",
+      "identityId": "proofline-owner",
+      "operation": "policy.read",
+      "method": "GET",
+      "path": "/api/policies/demo-runtime-policy-5/ledger",
+      "tenantId": "test-tenant",
+      "status": 200
+    },
+    {
+      "contextId": "proofline-showcase-context-1",
+      "identityId": "proofline-owner",
+      "operation": "policy.finance",
+      "method": "POST",
+      "path": "/api/policies/demo-runtime-policy-5/finance-events",
+      "tenantId": "test-tenant",
+      "status": 201
+    }
+  ],
+  "contexts": [
+    {
+      "contextId": "proofline-showcase-context-1",
+      "runtimeId": "demo-runtime",
+      "identityId": "proofline-owner",
+      "authenticated": false
+    }
+  ],
+  "state": {
+    "customers": [
+      {
+        "tenantId": "test-tenant",
+        "id": "demo-runtime-customer-1",
+        "name": "Taylor Flagship",
+        "email": "taylor.flagship@example.test"
+      }
+    ],
+    "properties": [
+      {
+        "tenantId": "test-tenant",
+        "id": "demo-runtime-property-2",
+        "customerId": "demo-runtime-customer-1",
+        "addressLine1": "12 Cypress Way",
+        "city": "Austin",
+        "state": "TX",
+        "postalCode": "78701"
+      }
+    ],
+    "policy": {
+      "quotes": [
+        {
+          "id": "demo-runtime-quote-3",
+          "customerId": "demo-runtime-customer-1",
+          "propertyId": "demo-runtime-property-2",
+          "product": "risk_secure",
+          "premiumCents": 10000,
+          "commissionPlan": {
+            "timing": "on_bind",
+            "rateBasisPoints": 1250,
+            "holdPeriodDays": 0,
+            "reverseOnRefund": true,
+            "label": "Written: 12.5% when the policy binds"
+          },
+          "createdAt": "2026-01-01T00:00:00.000Z",
+          "status": "bound"
+        }
+      ],
+      "policies": [
+        {
+          "id": "demo-runtime-policy-5",
+          "customerId": "demo-runtime-customer-1",
+          "propertyId": "demo-runtime-property-2",
+          "product": "risk_secure",
+          "premiumCents": 10000,
+          "commissionPlan": {
+            "timing": "on_bind",
+            "rateBasisPoints": 1250,
+            "holdPeriodDays": 0,
+            "reverseOnRefund": true,
+            "label": "Written: 12.5% when the policy binds"
+          },
+          "quoteId": "demo-runtime-quote-3",
+          "boundAt": "2026-01-01T00:00:00.000Z",
+          "status": "bound"
+        }
+      ]
+    },
+    "policyState": {
+      "timelines": {
+        "demo-runtime-policy-5": [
+          {
+            "policyId": "demo-runtime-policy-5",
+            "lifecycle": "bound",
+            "revision": 1,
+            "product": "risk_secure",
+            "premiumCents": 10000,
+            "commissionPlan": {
+              "timing": "on_bind",
+              "rateBasisPoints": 1250,
+              "holdPeriodDays": 0,
+              "reverseOnRefund": true,
+              "label": "Written: 12.5% when the policy binds"
+            },
+            "sourcePolicyMessageId": "demo-runtime-message-6"
+          }
+        ]
+      }
+    },
+    "finance": {
+      "ledgers": [
+        {
+          "policyState": {
+            "policyId": "demo-runtime-policy-5",
+            "lifecycle": "bound",
+            "revision": 1,
+            "product": "risk_secure",
+            "premiumCents": 10000,
+            "commissionPlan": {
+              "timing": "on_bind",
+              "rateBasisPoints": 1250,
+              "holdPeriodDays": 0,
+              "reverseOnRefund": true,
+              "label": "Written: 12.5% when the policy binds"
+            },
+            "sourcePolicyMessageId": "demo-runtime-message-6"
+          },
+          "financeEntries": [
+            {
+              "id": "finance-entry:finance:[\"test-tenant\",\"00000001-0000-4000-8000-000000000010\"]",
+              "sourceEventId": "finance:[\"test-tenant\",\"00000001-0000-4000-8000-000000000010\"]",
+              "tenantId": "test-tenant",
+              "policyId": "demo-runtime-policy-5",
+              "kind": "deposit",
+              "amountCents": 1000,
+              "occurredAt": "2026-01-01T00:00:00.000Z"
+            }
+          ],
+          "commissionEntries": [
+            {
+              "id": "commission:policy-state:demo-runtime-message-6",
+              "sourceEventId": "policy-state:demo-runtime-message-6",
+              "policyId": "demo-runtime-policy-5",
+              "kind": "accrual",
+              "amountCents": 1250,
+              "status": "payable",
+              "earnedAt": "2026-01-01T00:00:00.000Z",
+              "payableAt": "2026-01-01T00:00:00.000Z"
+            }
+          ],
+          "auditEntries": [
+            {
+              "sourceEventId": "policy-state:demo-runtime-message-6",
+              "correlationId": "00000001-0000-4000-8000-000000000008",
+              "causationId": "demo-runtime-message-6",
+              "tenantId": "test-tenant",
+              "type": "policy.state.changed",
+              "occurredAt": "2026-01-01T00:00:00.000Z"
+            },
+            {
+              "sourceEventId": "finance:[\"test-tenant\",\"00000001-0000-4000-8000-000000000010\"]",
+              "correlationId": "00000001-0000-4000-8000-000000000011",
+              "causationId": "policy-state:demo-runtime-message-6",
+              "tenantId": "test-tenant",
+              "type": "finance.deposit.recorded",
+              "occurredAt": "2026-01-01T00:00:00.000Z"
+            }
+          ]
+        }
+      ]
+    },
+    "messages": [
+      {
+        "messageId": "demo-runtime-message-4",
+        "correlationId": "00000001-0000-4000-8000-000000000006",
+        "tenantId": "test-tenant",
+        "schemaVersion": 1,
+        "occurredAt": "2026-01-01T00:00:00.000Z",
+        "event": {
+          "type": "policy.quote.created",
+          "quote": {
+            "id": "demo-runtime-quote-3",
+            "customerId": "demo-runtime-customer-1",
+            "propertyId": "demo-runtime-property-2",
+            "product": "risk_secure",
+            "premiumCents": 10000,
+            "commissionPlan": {
+              "timing": "on_bind",
+              "rateBasisPoints": 1250,
+              "holdPeriodDays": 0,
+              "reverseOnRefund": true,
+              "label": "Written: 12.5% when the policy binds"
+            },
+            "createdAt": "2026-01-01T00:00:00.000Z",
+            "status": "quoted"
+          }
+        }
+      },
+      {
+        "messageId": "demo-runtime-message-6",
+        "correlationId": "00000001-0000-4000-8000-000000000008",
+        "causationId": "demo-runtime-message-4",
+        "tenantId": "test-tenant",
+        "schemaVersion": 1,
+        "occurredAt": "2026-01-01T00:00:00.000Z",
+        "event": {
+          "type": "policy.lifecycle.changed",
+          "policy": {
+            "id": "demo-runtime-policy-5",
+            "customerId": "demo-runtime-customer-1",
+            "propertyId": "demo-runtime-property-2",
+            "product": "risk_secure",
+            "premiumCents": 10000,
+            "commissionPlan": {
+              "timing": "on_bind",
+              "rateBasisPoints": 1250,
+              "holdPeriodDays": 0,
+              "reverseOnRefund": true,
+              "label": "Written: 12.5% when the policy binds"
+            },
+            "quoteId": "demo-runtime-quote-3",
+            "boundAt": "2026-01-01T00:00:00.000Z",
+            "status": "bound"
+          },
+          "lifecycle": "bound",
+          "revision": 1
+        }
+      },
+      {
+        "messageId": "policy-state:demo-runtime-message-6",
+        "correlationId": "00000001-0000-4000-8000-000000000008",
+        "causationId": "demo-runtime-message-6",
+        "tenantId": "test-tenant",
+        "schemaVersion": 1,
+        "occurredAt": "2026-01-01T00:00:00.000Z",
+        "event": {
+          "type": "policy.state.changed",
+          "state": {
+            "policyId": "demo-runtime-policy-5",
+            "lifecycle": "bound",
+            "revision": 1,
+            "product": "risk_secure",
+            "premiumCents": 10000,
+            "commissionPlan": {
+              "timing": "on_bind",
+              "rateBasisPoints": 1250,
+              "holdPeriodDays": 0,
+              "reverseOnRefund": true,
+              "label": "Written: 12.5% when the policy binds"
+            },
+            "sourcePolicyMessageId": "demo-runtime-message-6"
+          }
+        }
+      },
+      {
+        "messageId": "finance:[\"test-tenant\",\"00000001-0000-4000-8000-000000000010\"]",
+        "correlationId": "00000001-0000-4000-8000-000000000011",
+        "causationId": "policy-state:demo-runtime-message-6",
+        "tenantId": "test-tenant",
+        "schemaVersion": 1,
+        "occurredAt": "2026-01-01T00:00:00.000Z",
+        "event": {
+          "type": "finance.deposit.recorded",
+          "commandId": "00000001-0000-4000-8000-000000000010",
+          "policyId": "demo-runtime-policy-5",
+          "amountCents": 1000
+        }
+      }
+    ],
+    "deliveries": [
+      {
+        "consumerId": "policy-state",
+        "messageId": "demo-runtime-message-6",
+        "eventType": "policy.lifecycle.changed",
+        "status": "completed"
+      },
+      {
+        "consumerId": "finance-policy-state",
+        "messageId": "policy-state:demo-runtime-message-6",
+        "eventType": "policy.state.changed",
+        "status": "completed"
+      },
+      {
+        "consumerId": "finance-ledger",
+        "messageId": "finance:[\"test-tenant\",\"00000001-0000-4000-8000-000000000010\"]",
+        "eventType": "finance.deposit.recorded",
+        "status": "completed"
+      }
+    ],
+    "pendingMessages": []
+  }
+}

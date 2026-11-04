@@ -1,0 +1,124 @@
+import { mkdir, writeFile } from "node:fs/promises";
+import path from "node:path";
+import { expect, test, type Browser } from "@playwright/test";
+import { createScenario } from "../../apps/crm-e2e/src/fixtures/scenario";
+import { startWorkerScenarioServer } from "../../apps/crm-e2e/src/fixtures/scenario-server";
+import { login, logout, navigateInsurance, openInitialPath, revisitProtectedPath } from "../../apps/crm-e2e/src/helpers";
+import { bindLatestQuote, createCustomerAndProperty, createQuote, recordFinance } from "../../apps/crm-e2e/src/proofline/workflow-steps";
+
+const root = process.cwd();
+const assets = path.join(root, "docs/showcase/demo");
+const stages: Array<{ image: string; label: string; elapsedSeconds: number }> = [];
+
+test("records_the_real_guarded_golden_journey_and_asserts_persisted_state", async ({ browser }, testInfo) => {
+  test.setTimeout(120_000);
+  await mkdir(assets, { recursive: true });
+  const workerServer = await startWorkerScenarioServer(browser, testInfo.workerIndex);
+  const recordingBrowser = new Proxy(browser, {
+    get(target, key) {
+      if (key === "newContext") return (options: Parameters<Browser["newContext"]>[0]) => target.newContext({
+        ...options,
+        viewport: { width: 1440, height: 1000 },
+        recordVideo: { dir: path.join(root, "output/demo-capture/raw-video"), size: { width: 1440, height: 1000 } },
+      });
+      const value = Reflect.get(target, key);
+      return typeof value === "function" ? value.bind(target) : value;
+    },
+  });
+  const scenario = createScenario({
+    browser: recordingBrowser,
+    workerServer,
+    id: "proofline-showcase",
+    idPrefix: "demo",
+    permittedOrigins: ["https://fonts.googleapis.com", "https://fonts.gstatic.com"],
+  });
+  const started = Date.now();
+  let video: ReturnType<Awaited<ReturnType<typeof scenario.newPage>>["video"]>;
+  try {
+    const page = await scenario.newPage();
+    video = page.video();
+    const hold = (milliseconds: number) => page.waitForTimeout(milliseconds);
+    const capture = async (image: string, label: string, milliseconds = 3500) => {
+      await page.mouse.move(1420, 980);
+      await hold(400);
+      await page.screenshot({ path: path.join(assets, image), fullPage: false });
+      stages.push({ image, label, elapsedSeconds: Number(((Date.now() - started) / 1000).toFixed(2)) });
+      console.log(`PASS — ${label}`);
+      await hold(milliseconds);
+    };
+
+    await openInitialPath(page, "/app/crm/customers");
+    await expect(page).toHaveURL(/\/login$/);
+    await expect(page.getByRole("button", { name: /switch or remove account/i })).toBeVisible();
+    await capture("01-login.png", "Unauthenticated customer deep link redirects to sign in", 4000);
+
+    await login(page, "/app/crm/customers");
+    await expect(page.getByRole("heading", { name: "Customer and property intake" })).toBeVisible();
+    await createCustomerAndProperty(page, {
+      name: "Taylor Flagship",
+      email: "taylor.flagship@example.test",
+      address: "12 Cypress Way",
+    });
+    await capture("02-intake.png", "Customer and insured property created through the visible UI");
+
+    await navigateInsurance(page, "Customer intake");
+    await createQuote(page, { customer: "Taylor Flagship", address: "12 Cypress Way" });
+    await capture("03-quote.png", "Risk Secure quote created for $100.00");
+
+    const policyPath = await bindLatestQuote(page);
+    await expect(page.getByLabel("Commission entries")).toContainText("$12.50");
+    await capture("04-bound-policy.png", "Bound policy and $12.50 commission visible", 4500);
+
+    await page.getByLabel("Finance event").selectOption("deposit_recorded");
+    await page.getByLabel("Amount in cents").fill("1000");
+    await hold(1500);
+    await recordFinance(page, "1000");
+    await expect(page.getByLabel("Finance ledger entries")).toContainText("$10.00");
+    await expect(page.getByRole("heading", { name: "Immutable event-driven history" })).toBeVisible();
+    await capture("05-finance-ledger.png", "$10.00 deposit added; immutable history and commission retained", 5000);
+
+    await logout(page);
+    await revisitProtectedPath(page, policyPath);
+    await expect(page).toHaveURL(/\/login$/);
+    await expect(page.getByText(/Policy /)).toHaveCount(0);
+    await capture("06-denied-route.png", "After logout, protected policy route redirects to sign in and reveals no policy", 5000);
+
+    const inspection = await scenario.inspect();
+    expect(inspection.state.customers).toHaveLength(1);
+    expect(inspection.state.properties).toHaveLength(1);
+    expect(inspection.state.policy.quotes).toHaveLength(1);
+    expect(inspection.state.policy.policies).toHaveLength(1);
+    const policy = inspection.state.policy.policies[0];
+    expect(inspection.state.policyState.timelines[policy.id]).toHaveLength(1);
+    expect(inspection.state.finance.ledgers).toHaveLength(1);
+    expect(inspection.state.finance.ledgers[0].financeEntries).toHaveLength(1);
+    expect(inspection.state.finance.ledgers[0].commissionEntries).toHaveLength(1);
+    expect(inspection.state.pendingMessages).toEqual([]);
+    expect(inspection.unexpectedRequests).toEqual([]);
+    expect(inspection.contexts.every((context) => !context.authenticated)).toBe(true);
+    await scenario.assertNoUnexpectedRequests();
+    await writeFile(path.join(assets, "inspection.json"), `${JSON.stringify(inspection, null, 2)}\n`);
+    await writeFile(path.join(assets, "capture-summary.json"), `${JSON.stringify({
+      status: "passed",
+      capturedAt: new Date().toISOString(),
+      sourceWorkflow: "apps/crm-e2e/src/proofline/golden-workflow.spec.ts",
+      viewport: { width: 1440, height: 1000 },
+      stages,
+      persisted: { customers: 1, properties: 1, quotes: 1, policies: 1, policyTimelineEntries: 1, financeLedgers: 1, financeEntries: 1, commissionEntries: 1, pendingMessages: 0, unexpectedRequests: 0, authenticatedContextsAfterLogout: 0 },
+      finalPath: new URL(page.url()).pathname,
+      note: "Local test build; real existing scenario adapter and UI; provider origins fulfilled by deterministic fakes. No production/live provider connection.",
+    }, null, 2)}\n`);
+    console.log("PASS — persisted golden assertions; no pending messages; no unexpected egress; logout revoked authentication");
+  } finally {
+    try {
+      await scenario.assertNoUnexpectedRequests();
+    } finally {
+      try {
+        await scenario.reset();
+        if (video!) await video.saveAs(path.join(assets, "workflow.webm"));
+      } finally {
+        await workerServer.stop();
+      }
+    }
+  }
+});
