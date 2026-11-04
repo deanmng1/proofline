@@ -1,0 +1,40 @@
+
+ RUN  v3.2.7 /Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed
+
+ ❯ tools/proofline/src/canonical-runner-egress.test.ts (4 tests | 1 failed | 3 skipped) 158ms
+   ↓ canonical_unit_runner_denies_fetch_http_https_websocket_and_inherited_child_egress
+   ↓ canonical_unit_runner_rejects_package_manager_wrapper_escape_with_stripped_env
+   ↓ canonical_unit_runner_rejects_forged_delegated_policy_broadening
+   × canonical_unit_runner_rejects_repository_clean_filters_before_native_dispatch 153ms
+     → expected { denial: 'dispatched', …(1) } to deeply equal { denial: StringContaining{…}, …(1) }
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tools/proofline/src/canonical-runner-egress.test.ts > canonical_unit_runner_rejects_repository_clean_filters_before_native_dispatch
+AssertionError: expected { denial: 'dispatched', …(1) } to deeply equal { denial: StringContaining{…}, …(1) }
+
+- Expected
++ Received
+
+  {
+-   "denial": StringContaining "unsupported-child-plane",
+-   "helperRan": false,
++   "denial": "dispatched",
++   "helperRan": true,
+  }
+
+ ❯ tools/proofline/src/canonical-runner-egress.test.ts:205:53
+    203|   try { spawnSync("git", ["add", "tracked.txt"], { cwd }); }
+    204|   catch (error) { denial = String(error); }
+    205|   expect({ denial, helperRan: existsSync(marker) }).toEqual({
+       |                                                     ^
+    206|     denial: expect.stringContaining("unsupported-child-plane"), helper…
+    207|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 3 skipped (4)
+   Start at  14:08:22
+   Duration  369ms (transform 43ms, setup 0ms, collect 40ms, tests 158ms, environment 0ms, prepare 38ms)

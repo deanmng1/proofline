@@ -1,0 +1,11 @@
+$ pnpm nx run-many --target=typecheck --all
+
+ NX   11 tasks: 11 succeeded
+
+
+Re-run with --output-style=static to inline logs.
+
+  Run duration:      12.2s
+  Cache:             0/11 hit (0%)
+  Critical path:     4.6s (1 task)
+  Recoverable time:  7.6s (63% of the run)

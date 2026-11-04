@@ -1,0 +1,102 @@
+
+ RUN  v3.2.7 /Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed
+
+ ✓ tools/impact/src/harness-manifest.test.ts (22 tests) 859ms
+ ✓ tools/proofline/src/product-e2e-boundary.test.ts (11 tests) 1051ms
+   ✓ Proofline product E2E boundary > canonical_test_commands_cannot_bypass_the_declared_runner_egress_adapter  1034ms
+Coverage ratchets passed for 1 manifest source groups.
+Coverage ratchets passed for 1 manifest source groups.
+fatal: git cat-file HEAD:tracked.txt: bad file
+ ✓ tools/proofline/src/canonical-runner-egress.test.ts (6 tests) 2081ms
+   ✓ canonical_unit_runner_rejects_package_manager_wrapper_escape_with_stripped_env  1862ms
+ ✓ tools/impact/src/select.test.ts (15 tests) 1606ms
+   ✓ manifest-owned selection > fails_closed_for_unresolvable_revisions_dynamic_dependencies_and_unmapped_workspaces  363ms
+   ✓ requires_full_history_and_a_checked_out_discovery_head  626ms
+   ✓ retains_committed_staged_and_raw_worktree_change_evidence_without_Git_conversion  412ms
+ ✓ tools/proofline/src/egress-guard.test.ts (16 tests) 2398ms
+   ✓ Proofline egress guard > guards_or_rejects_every_spawn_fork_exec_and_execfile_child_plane  437ms
+   ✓ Proofline egress guard > generates_private_distinct_capabilities_for_programmatic_test_app_launches  345ms
+   ✓ Proofline egress guard > preserves_structured_argv_exit_signal_stdout_and_stderr  317ms
+ ✓ tools/proofline/src/production-negative.test.ts (4 tests) 3049ms
+   ✓ Proofline production boundary > rejects_test_markers_in_a_production_bundle  1562ms
+   ✓ Proofline production boundary > builds_the_test_entry_only_with_a_launcher_supplied_capability  915ms
+   ✓ Proofline production boundary > launches_the_test_artifact_only_after_one_server_side_capability_proof  559ms
+{
+  "fallback": "none",
+  "commandKeys": [],
+  "vitest": 0,
+  "playwright": 0,
+  "artifacts": "artifacts/impact"
+}
+{
+  "fallback": "none",
+  "commandKeys": [
+    "unit",
+    "browser"
+  ],
+  "vitest": 1,
+  "playwright": 1,
+  "artifacts": "artifacts/impact"
+}
+Execution record governance passed.
+
+Running 1 test using 1 worker
+
+
+
+[1/1] [chromium] › checks/browser/src/shared.spec.ts:4:1 › rule-only @rule
+  1 passed (421ms)
+(node:79286) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ tools/impact/src/governance.test.ts (56 tests) 6186ms
+   ✓ verified merge base > rejects missing, unresolved, shallow, checkout-mismatched, and conflicting revisions  921ms
+   ✓ coverage and record governance entrypoints > records exact resolved coverage producer provenance in the ratchet  320ms
+   ✓ coverage and record governance entrypoints > accepts a manifest-command browser-compatible Istanbul summary producer  334ms
+   ✓ coverage and record governance entrypoints > normalizes generated in-repository absolute paths before they become evidence  322ms
+   ✓ coverage and record governance entrypoints > rejects unclassified baseline sources, missing reports and metrics, and duplicate report paths  500ms
+   ✓ coverage and record governance entrypoints > rejects a newly matching production source and a missing baseline source  327ms
+   ✓ coverage and record governance entrypoints > binds declared coverage provider and version to the executed target  351ms
+   ✓ coverage and record governance entrypoints > rejects conflicting duplicate coverage target flags  506ms
+   ✓ coverage and record governance entrypoints > retains invalid revisions and missing Git blob failures as gate errors  338ms
+   ✓ coverage and record governance entrypoints > recordMain verifies merge-base bytes and changed-path scopes  422ms
+   ✓ CI governance contract > resolves trusted manual, pull-request, and push revision authority  617ms
+{
+  "fallback": "canonical-full",
+  "commandKeys": [
+    "unit",
+    "browser"
+  ],
+  "vitest": 0,
+  "playwright": 0,
+  "artifacts": "artifacts/impact"
+}
+{
+  "fallback": "canonical-full",
+  "commandKeys": [
+    "unit",
+    "browser"
+  ],
+  "vitest": 0,
+  "playwright": 0,
+  "artifacts": "artifacts/impact"
+}
+ ✓ tools/impact/src/main-selection.test.ts (3 tests) 11988ms
+   ✓ runs_only_one_declared_vitest_and_playwright_identity  8213ms
+   ✓ uses_structured_runner_and_canonical_commands_with_their_declared_cwd  1476ms
+   ✓ discovers_nested_workspace_once_and_executes_its_own_cwd  2298ms
+
+Running 1 test using 1 worker
+
+(node:80359) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [chromium] › apps/crm-e2e/src/proofline/recovery-and-authority.spec.ts:12:1 › recovers_an_accepted_bind_without_duplicate_policy_or_ledger @proofline-recovery (1.4s)
+
+  1 passed (4.6s)
+ ✓ tools/impact/src/real-manifest-selection.test.ts (2 tests) 52731ms
+   ✓ real_manifest_discovers_and_selects_exact_vitest_and_playwright_identities  27430ms
+   ✓ real_manifest_executes_its_selected_vitest_and_playwright_identities  25300ms
+
+ Test Files  9 passed (9)
+      Tests  135 passed (135)
+   Start at  14:16:38
+   Duration  53.37s (transform 436ms, setup 0ms, collect 3.29s, tests 81.95s, environment 3ms, prepare 463ms)

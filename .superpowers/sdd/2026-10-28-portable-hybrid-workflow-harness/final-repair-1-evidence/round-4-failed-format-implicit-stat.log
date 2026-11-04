@@ -1,0 +1,19 @@
+tools/impact/src/changed-files.ts:166:11 lint/suspicious/noImplicitAnyLet ━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × This variable implicitly has the any type.
+
+    164 │     for (const [file, entry] of index) {
+    165 │       const absolute = path.join(root, file);
+  > 166 │       let stat;
+        │           ^^^^
+    167 │       try {
+    168 │         stat = lstatSync(absolute);
+
+  i Variable declarations without type annotation and initialization implicitly have the any type. Declare a type or initialize the variable with some value.
+
+
+Checked 9 files in 40ms. Fixed 4 files.
+Found 1 error.
+check ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Some errors were emitted while applying fixes.

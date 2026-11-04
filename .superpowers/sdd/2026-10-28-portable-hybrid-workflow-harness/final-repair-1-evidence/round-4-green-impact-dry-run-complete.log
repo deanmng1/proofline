@@ -1,0 +1,8 @@
+$ node --experimental-strip-types tools/impact/src/main.ts -- --dry-run --base HEAD --head HEAD
+{
+  "fallback": "none",
+  "commandKeys": [],
+  "vitest": 0,
+  "playwright": 0,
+  "artifacts": "artifacts/impact"
+}

@@ -1,0 +1,259 @@
+
+ RUN  v3.2.7 /Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed
+
+ ❯ tools/proofline/src/product-e2e-boundary.test.ts (11 tests | 2 failed) 614ms
+   ✓ Proofline product E2E boundary > canonical_wrapper_descendant_retains_egress_guard 1ms
+   ✓ Proofline product E2E boundary > product_e2e_specs_delegate_transport_and_storage_to_fixtures 7ms
+   ✓ Proofline product E2E boundary > rejects_forbidden_crm_screen_to_screen_goto in features/direct-customer-to-quotes.spec.ts 0ms
+   ✓ Proofline product E2E boundary > rejects_forbidden_crm_screen_to_screen_goto in proofline/direct-quotes-to-policy.spec.ts 0ms
+   ✓ Proofline product E2E boundary > allows_declared_initial_and_guard_navigation_helpers 0ms
+   ✓ Proofline product E2E boundary > rejects_undeclared_navigation_even_inside_the_shared_helper_module 0ms
+   × Proofline product E2E boundary > canonical_test_commands_cannot_bypass_the_declared_runner_egress_adapter 456ms
+     → expected [ …(3) ] to deeply equal []
+   × Proofline product E2E boundary > canonical_runner_child_authority_is_structured_and_forces_guard_policy_on_every_child 140ms
+     → Target cannot be null or undefined.
+   ✓ Proofline product E2E boundary > scenario_fixture_declares_context_install_cleanup_and_retry_lifecycle 1ms
+   ✓ Proofline product E2E boundary > scenario_fixture_declares_every_reviewed_browser_egress_plane 4ms
+   ✓ Proofline product E2E boundary > scenario_commands_preserve_multi_worker_and_both_shard_isolation_gates 4ms
+ ✓ tools/impact/src/harness-manifest.test.ts (22 tests) 707ms
+ ✓ tools/impact/src/select.test.ts (14 tests) 1169ms
+   ✓ manifest-owned selection > fails_closed_for_unresolvable_revisions_dynamic_dependencies_and_unmapped_workspaces  519ms
+   ✓ requires_full_history_and_a_checked_out_discovery_head  463ms
+Coverage ratchets passed for 1 manifest source groups.
+Coverage ratchets passed for 1 manifest source groups.
+ ✓ tools/proofline/src/canonical-runner-egress.test.ts (6 tests) 2014ms
+   ✓ canonical_unit_runner_rejects_package_manager_wrapper_escape_with_stripped_env  1801ms
+ ✓ tools/proofline/src/egress-guard.test.ts (16 tests) 2217ms
+   ✓ Proofline egress guard > guards_or_rejects_every_spawn_fork_exec_and_execfile_child_plane  352ms
+   ✓ Proofline egress guard > generates_private_distinct_capabilities_for_programmatic_test_app_launches  329ms
+ ✓ tools/proofline/src/production-negative.test.ts (4 tests) 2974ms
+   ✓ Proofline production boundary > rejects_test_markers_in_a_production_bundle  1520ms
+   ✓ Proofline production boundary > builds_the_test_entry_only_with_a_launcher_supplied_capability  903ms
+   ✓ Proofline production boundary > launches_the_test_artifact_only_after_one_server_side_capability_proof  540ms
+{
+  "fallback": "none",
+  "commandKeys": [],
+  "vitest": 0,
+  "playwright": 0,
+  "artifacts": "artifacts/impact"
+}
+{
+  "fallback": "none",
+  "commandKeys": [
+    "unit",
+    "browser"
+  ],
+  "vitest": 1,
+  "playwright": 1,
+  "artifacts": "artifacts/impact"
+}
+Execution record governance passed.
+
+Running 1 test using 1 worker
+
+
+
+[1/1] [chromium] › checks/browser/src/shared.spec.ts:4:1 › rule-only @rule
+  1 passed (410ms)
+(node:73146) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ❯ tools/impact/src/governance.test.ts (56 tests | 1 failed) 6062ms
+   ✓ coverage baseline monotonicity > rejects a lower lines threshold 1ms
+   ✓ coverage baseline monotonicity > rejects a lower branches threshold 0ms
+   ✓ coverage baseline monotonicity > rejects a lower functions threshold 0ms
+   ✓ coverage baseline monotonicity > rejects a lower statements threshold 0ms
+   ✓ coverage baseline monotonicity > rejects deleted groups and sources 0ms
+   ✓ coverage baseline monotonicity > rejects changed provider coverage-group authority 0ms
+   ✓ coverage baseline monotonicity > rejects changed providerVersion coverage-group authority 0ms
+   ✓ coverage baseline monotonicity > rejects changed report coverage-group authority 0ms
+   ✓ coverage baseline monotonicity > rejects changed reportFormat coverage-group authority 0ms
+   ✓ coverage baseline monotonicity > rejects changed aggregation coverage-group authority 0ms
+   ✓ coverage baseline monotonicity > rejects changed exclusions coverage-group authority 0ms
+   ✓ coverage baseline monotonicity > rejects changed sourceGlobs coverage-group authority 0ms
+   ✓ coverage baseline monotonicity > rejects duplicate coverage-group identities instead of collapsing them 0ms
+   ✓ coverage baseline monotonicity > rejects changed coverage producer authority after adoption 0ms
+   ✓ coverage baseline monotonicity > allows an explicit reasoned exclusion outside the base set but rejects wildcard hiding 2ms
+   ✓ coverage baseline monotonicity > rejects narrowing a base production glob to the currently known source list 0ms
+   ✓ coverage baseline monotonicity > rejects excluding a base-effective source omitted from a stale baseline 0ms
+   ✓ coverage baseline monotonicity > allows only exact, explicitly non-production test-source exclusions 3ms
+   ✓ verified merge base > rejects missing, unresolved, shallow, checkout-mismatched, and conflicting revisions  934ms
+   ✓ byte-exact execution record prefix > accepts an exact prefix with complete unique appended rows 1ms
+   ✓ byte-exact execution record prefix > rejects historical byte rewrite 0ms
+   ✓ byte-exact execution record prefix > rejects historical insertion 0ms
+   ✓ byte-exact execution record prefix > rejects historical deletion 0ms
+   ✓ byte-exact execution record prefix > rejects historical reordering 0ms
+   ✓ byte-exact execution record prefix > rejects CRLF normalization 0ms
+   ✓ byte-exact execution record prefix > rejects missing or extra trailing newlines and malformed or duplicate appended rows 0ms
+   ✓ byte-exact execution record prefix > rejects invalid UTF-8 and records without event identities 0ms
+   ✓ changed harness evidence > requires an appended scope for packages/example/src/value.ts 0ms
+   ✓ changed harness evidence > requires an appended scope for proofline.harness.json 0ms
+   ✓ changed harness evidence > requires an appended scope for test-impact/workflows/example.json 0ms
+   ✓ changed harness evidence > requires an appended scope for test-impact/rules.json 0ms
+   ✓ changed harness evidence > requires an appended scope for tools/impact/src/governance.ts 0ms
+   ✓ changed harness evidence > requires an appended scope for .github/workflows/verify.yml 0ms
+   ✓ changed harness evidence > requires an appended scope for docs/TESTING.md 0ms
+   ✓ changed harness evidence > requires an appended scope for docs/PORTABLE_TEST_AUTOMATION.md 0ms
+   ✓ changed harness evidence > requires an appended scope for package.json 0ms
+   ✓ changed harness evidence > governs manifest adapter and workspace project paths with segment-aware scopes 1ms
+   ✓ changed harness evidence > uses base and proposed manifests so removed ownership cannot evade evidence 0ms
+   ✓ changed harness evidence > checks both renamed identities and excludes only explicit generated artifacts 0ms
+   ✓ changed harness evidence > governs README and rejects an unscoped governed change 1ms
+   ✓ coverage and record governance entrypoints > records exact resolved coverage producer provenance in the ratchet 287ms
+   ✓ coverage and record governance entrypoints > accepts a manifest-command browser-compatible Istanbul summary producer  300ms
+   ✓ coverage and record governance entrypoints > normalizes generated in-repository absolute paths before they become evidence  319ms
+   ✓ coverage and record governance entrypoints > rejects incompatible provider metadata and always writes a complete ratchet 209ms
+   ✓ coverage and record governance entrypoints > rejects unclassified baseline sources, missing reports and metrics, and duplicate report paths  482ms
+   ✓ coverage and record governance entrypoints > rejects a newly matching production source and a missing baseline source  315ms
+   ✓ coverage and record governance entrypoints > rejects escaping and duplicate-normalized report source identities  303ms
+   ✓ coverage and record governance entrypoints > binds declared coverage provider and version to the executed target  358ms
+   ✓ coverage and record governance entrypoints > rejects conflicting duplicate coverage target flags  481ms
+   × coverage and record governance entrypoints > retains invalid revisions and git-show failures as gate errors 359ms
+     → expected [Function] to throw error matching /git show/i but got 'Invalid proposed coverage baseline JS…'
+   ✓ coverage and record governance entrypoints > recordMain verifies merge-base bytes and changed-path scopes  390ms
+   ✓ coverage and record governance entrypoints > an_old_or_unrelated_record_cannot_satisfy_a_new_governed_change 226ms
+   ✓ coverage and record governance entrypoints > recordMain governs paths removed from the proposed manifest using base authority 231ms
+   ✓ coverage and record governance entrypoints > recordMain writes revision diagnostics when the proposed record is missing 207ms
+   ✓ CI governance contract > resolves trusted manual, pull-request, and push revision authority  644ms
+   ✓ CI governance contract > keeps explicit revisions, validation, full gates, and always-retained diagnostics 1ms
+{
+  "fallback": "canonical-full",
+  "commandKeys": [
+    "unit",
+    "browser"
+  ],
+  "vitest": 0,
+  "playwright": 0,
+  "artifacts": "artifacts/impact"
+}
+{
+  "fallback": "canonical-full",
+  "commandKeys": [
+    "unit",
+    "browser"
+  ],
+  "vitest": 0,
+  "playwright": 0,
+  "artifacts": "artifacts/impact"
+}
+ ✓ tools/impact/src/main-selection.test.ts (3 tests) 10205ms
+   ✓ runs_only_one_declared_vitest_and_playwright_identity  7875ms
+   ✓ uses_structured_runner_and_canonical_commands_with_their_declared_cwd  980ms
+   ✓ discovers_nested_workspace_once_and_executes_its_own_cwd  1349ms
+ ❯ tools/impact/src/real-manifest-selection.test.ts (2 tests | 2 failed) 38296ms
+   × real_manifest_discovers_and_selects_exact_vitest_and_playwright_identities 20666ms
+     → expected [ …(3) ] to deeply equal []
+   × real_manifest_executes_its_selected_vitest_and_playwright_identities 17629ms
+     → expected [ …(3) ] to deeply equal []
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tools/impact/src/governance.test.ts > coverage and record governance entrypoints > retains invalid revisions and git-show failures as gate errors
+AssertionError: expected [Function] to throw error matching /git show/i but got 'Invalid proposed coverage baseline JS…'
+
+- Expected:
+/git show/i
+
++ Received:
+"Invalid proposed coverage baseline JSON: Error: ENOENT: no such file or directory, open '/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-governance-iQwOL8/test-impact/coverage-baseline.json'
+git cat-file blob 1ecd5447c0a400545c9d1b21bf3586d3a2656786:test-impact/coverage-baseline.json failed: Command failed: /opt/homebrew/Cellar/git/2.51.0/bin/git --no-pager --no-lazy-fetch --no-replace-objects --literal-pathspecs cat-file blob 1ecd5447c0a400545c9d1b21bf3586d3a2656786:test-impact/coverage-baseline.json
+fatal: path 'test-impact/coverage-baseline.json' does not exist in '1ecd5447c0a400545c9d1b21bf3586d3a2656786'
+"
+
+ ❯ tools/impact/src/governance.test.ts:896:78
+    894|     rmSync(path.join(cwd, "test-impact/coverage-baseline.json"));
+    895|     const withoutBaseline = commitAll(cwd, "remove baseline");
+    896|     expect(() => coverageMain(cwd, { base: withoutBaseline, head: "HEA…
+       |                                                                              ^
+    897|   });
+    898|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  tools/impact/src/real-manifest-selection.test.ts > real_manifest_discovers_and_selects_exact_vitest_and_playwright_identities
+AssertionError: expected [ …(3) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "Stale or ambiguous test identity binding-55d162a6203efae35911: tools/proofline/src/egress-guard.test.ts:418 Proofline egress guard > denies_fetch_http_https_websocket_and_inherited_child_egress",
++   "Stale or ambiguous test identity binding-safe-git-helper-denial: tools/proofline/src/egress-guard.test.ts:247 Proofline egress guard > rejects_git_external_diff_helpers_before_native_dispatch",
++   "Stale or ambiguous test identity binding-8aafd77a2ee54488cb1b: tools/impact/src/main-selection.test.ts:45 runs_only_one_declared_vitest_and_playwright_identity",
++ ]
+
+ ❯ loadSelection tools/impact/src/real-manifest-selection.test.ts:24:87
+     22|   expect(discovery.identities.vitest.length).toBeGreaterThan(300);
+     23|   expect(discovery.identities.playwright.length).toBeGreaterThan(30);
+     24|   expect(validateHarness({ cwd, manifest, discovered: discovery.identi…
+       |                                                                                       ^
+     25|
+     26|   const source = "apps/crm-web/src/features/quotes/quote-form.tsx";
+ ❯ tools/impact/src/real-manifest-selection.test.ts:54:3
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  tools/impact/src/real-manifest-selection.test.ts > real_manifest_executes_its_selected_vitest_and_playwright_identities
+AssertionError: expected [ …(3) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "Stale or ambiguous test identity binding-55d162a6203efae35911: tools/proofline/src/egress-guard.test.ts:418 Proofline egress guard > denies_fetch_http_https_websocket_and_inherited_child_egress",
++   "Stale or ambiguous test identity binding-safe-git-helper-denial: tools/proofline/src/egress-guard.test.ts:247 Proofline egress guard > rejects_git_external_diff_helpers_before_native_dispatch",
++   "Stale or ambiguous test identity binding-8aafd77a2ee54488cb1b: tools/impact/src/main-selection.test.ts:45 runs_only_one_declared_vitest_and_playwright_identity",
++ ]
+
+ ❯ loadSelection tools/impact/src/real-manifest-selection.test.ts:24:87
+     22|   expect(discovery.identities.vitest.length).toBeGreaterThan(300);
+     23|   expect(discovery.identities.playwright.length).toBeGreaterThan(30);
+     24|   expect(validateHarness({ cwd, manifest, discovered: discovery.identi…
+       |                                                                                       ^
+     25|
+     26|   const source = "apps/crm-web/src/features/quotes/quote-form.tsx";
+ ❯ tools/impact/src/real-manifest-selection.test.ts:58:41
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+ FAIL  tools/proofline/src/product-e2e-boundary.test.ts > Proofline product E2E boundary > canonical_test_commands_cannot_bypass_the_declared_runner_egress_adapter
+AssertionError: expected [ …(3) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "Stale or ambiguous test identity binding-55d162a6203efae35911: tools/proofline/src/egress-guard.test.ts:418 Proofline egress guard > denies_fetch_http_https_websocket_and_inherited_child_egress",
++   "Stale or ambiguous test identity binding-safe-git-helper-denial: tools/proofline/src/egress-guard.test.ts:247 Proofline egress guard > rejects_git_external_diff_helpers_before_native_dispatch",
++   "Stale or ambiguous test identity binding-8aafd77a2ee54488cb1b: tools/impact/src/main-selection.test.ts:45 runs_only_one_declared_vitest_and_playwright_identity",
++ ]
+
+ ❯ tools/proofline/src/product-e2e-boundary.test.ts:78:70
+     76|     const manifest = JSON.parse(await readFile("proofline.harness.json…
+     77|     expect(manifest.adapters.runnerEgress).toBe("tools/proofline/canon…
+     78|     expect(validateHarness({ cwd: process.cwd(), manifest }).errors).t…
+       |                                                                      ^
+     79|     manifest.commands.browser = {
+     80|       argv: ["pnpm", "exec", "playwright", "test"],
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/5]⎯
+
+ FAIL  tools/proofline/src/product-e2e-boundary.test.ts > Proofline product E2E boundary > canonical_runner_child_authority_is_structured_and_forces_guard_policy_on_every_child
+AssertionError: Target cannot be null or undefined.
+ ❯ tools/proofline/src/product-e2e-boundary.test.ts:105:84
+    103|     ])
+    104|       expect(`${runner}\n${policy}`).toContain(`"${purpose}"`);
+    105|     expect(guard.match(/env: forcedChildEnvironment\(options\.env, del…
+       |                                                                                    ^
+    106|     expect(guard).toContain("pnpm is limited to reviewed Vitest, Playw…
+    107|     expect(policy).toContain("must contain only executable and purpose…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/5]⎯
+
+
+ Test Files  3 failed | 6 passed (9)
+      Tests  5 failed | 129 passed (134)
+   Start at  14:12:52
+   Duration  39.03s (transform 482ms, setup 0ms, collect 3.53s, tests 64.26s, environment 1ms, prepare 437ms)

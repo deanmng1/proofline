@@ -1,0 +1,74 @@
+
+ RUN  v3.2.7 /Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed
+
+ ❯ tools/proofline/src/canonical-runner-egress.test.ts (5 tests | 1 failed | 4 skipped) 16ms
+   ↓ canonical_unit_runner_denies_fetch_http_https_websocket_and_inherited_child_egress
+   ↓ canonical_unit_runner_rejects_package_manager_wrapper_escape_with_stripped_env
+   ↓ canonical_unit_runner_rejects_forged_delegated_policy_broadening
+   ↓ canonical_unit_runner_rejects_repository_clean_filters_before_native_dispatch
+   × canonical_unit_runner_ignores_HOME_and_XDG_git_configuration 12ms
+     → fatal: bad config line 1 in file /var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-canonical-egress-YIsAX2/git-config-home/home/.gitconfig
+: expected 128 to be +0 // Object.is equality
+ ❯ tools/impact/src/select.test.ts (14 tests | 1 failed | 13 skipped) 221ms
+   ↓ manifest-owned selection > selects_declared_test_bindings_even_when_static_imports_are_absent
+   ↓ manifest-owned selection > adds_static_import_evidence_without_treating_it_as_ownership
+   ↓ manifest-owned selection > rejects_deleted_or_ambiguous_bindings
+   ↓ manifest-owned selection > fails_closed_for_unresolvable_revisions_dynamic_dependencies_and_unmapped_workspaces
+   ↓ manifest-owned selection > accepts_a_literal_dynamic_target_only_with_reviewed_entrypoint_bindings
+   ↓ manifest-owned selection > retains_the_exact_transitive_dynamic_import_edge_in_selection_evidence
+   ↓ retains_path_reasons_and_registered_workspace_fallback_commands
+   ↓ requires_full_history_and_a_checked_out_discovery_head
+   ↓ adds_importing_identities_beyond_the_declared_binding_and_covers_owned_assets
+   ↓ deduplicates_runnable_identities_while_retaining_each_owner_and_binding
+   ↓ fails_closed_when_vitest_file_filter_could_match_another_identity
+   ↓ rejects_filename_collisions_for_unbound_static_import_additions
+   ↓ attributes_additive_identities_to_the_most_specific_workspace
+   × detects_worktree_changes_without_running_repository_attribute_filters 221ms
+     → expected true to be false // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tools/proofline/src/canonical-runner-egress.test.ts > canonical_unit_runner_ignores_HOME_and_XDG_git_configuration
+AssertionError: fatal: bad config line 1 in file /var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-canonical-egress-YIsAX2/git-config-home/home/.gitconfig
+: expected 128 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 128
+
+ ❯ tools/proofline/src/canonical-runner-egress.test.ts:223:42
+    221|       cwd, encoding: "utf8", env: { ...process.env, HOME: home, XDG_CO…
+    222|     });
+    223|     expect(result.status, result.stderr).toBe(0);
+       |                                          ^
+    224|   }
+    225| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tools/impact/src/select.test.ts > detects_worktree_changes_without_running_repository_attribute_filters
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ tools/impact/src/select.test.ts:414:32
+    412|     expect(changes.uncertainty).toEqual([]);
+    413|     expect(changes.files).toContainEqual({ path: "tracked.txt", status…
+    414|     expect(existsSync(marker)).toBe(false);
+       |                                ^
+    415|   } finally {
+    416|     rmSync(cwd, { recursive: true, force: true });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  2 failed | 17 skipped (19)
+   Start at  14:09:49
+   Duration  711ms (transform 56ms, setup 0ms, collect 304ms, tests 237ms, environment 0ms, prepare 76ms)
