@@ -17,7 +17,7 @@ technical guide. These are format choices, not new product work.
 
 ## Presentation
 
-Create nine slides on a fixed 1920x1080 canvas, one takeaway per slide, with a
+Create ten slides on a fixed 1920x1080 canvas, one takeaway per slide, with a
 matching PDF. The user selected the Warm Editorial visual preview: paper
 `#F5EEE3`, ink `#2F2721`, terracotta `#A6422A`, Instrument Serif headlines, and
 Manrope body text. Use large typography, generous whitespace, varied editorial
@@ -29,15 +29,19 @@ what the evidence proves, and what adoption requires.
 1. What Proofline is and the recurring regression problem it addresses.
 2. The reusable cycle: describe behavior, author checks, run each change, retain evidence.
 3. How application, portable manifest/runners, rule tests, and browser journeys fit.
-4. A recorded real CRM user journey, playable in the browser with native controls
+4. A controlled regression demonstration: the existing FIN-002 test catches a
+   source mutation that incorrectly earns $2.50 commission on a $25 deposit. Show
+   actual failing output, a developer restoring the condition, and the same
+   unchanged test passing. Clearly label this as replay of captured real runs.
+5. A recorded real CRM user journey, playable in the browser with native controls
    and captions. The PDF shows a clearly identified static frame.
-5. Evidence from that demo: visible finance state and persisted invariant counts.
-6. Practical capabilities: correctness, retries, tenant/role boundaries, isolated tests,
+6. Evidence from that demo: visible finance state and persisted invariant counts.
+7. Practical capabilities: correctness, retries, tenant/role boundaries, isolated tests,
    and production separation.
-7. Coverage infographic using explicitly classified governed sources; no universal
+8. Coverage infographic using explicitly classified governed sources; no universal
    product-quality score or invented completeness claim.
-8. Observed browser execution measurements and a compact verification summary.
-9. What transfers to another React/Vite application, what must be adapted, and
+9. Observed browser execution measurements and a compact verification summary.
+10. What transfers to another React/Vite application, what must be adapted, and
    where to read more. Include browser/distribution limitations briefly.
 
 Keep commands, source inventories, binding internals, guard mechanics, and lengthy
@@ -99,6 +103,16 @@ live capture with a fabricated result. Record the source revision, implementatio
 hashes, actual runtime, capture command, persisted assertions, and asset hashes.
 Pacing added for comprehension is presentation timing, not a performance result.
 Keep the original harness and application code unchanged.
+
+The regression demonstration uses a disposable isolated repository copy, with
+no fault committed to the application. Preserve a passing baseline, an actual
+assertion failure from the mutated source, and a passing fix with identical test
+bytes and command. Restore the source exactly and run the complete finance test
+file afterward. Retain the manifest rule/test binding, commands, exit statuses,
+raw reports, mutation diff, and source/test hashes. The browser replay and PDF
+before/after panel must distinguish captured test execution from live execution,
+and a developer-applied fix from automatic repair. Missing or unexpected evidence
+must stop generation rather than fabricate a result.
 
 ## External design guidance
 

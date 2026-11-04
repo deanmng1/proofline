@@ -12,7 +12,7 @@
 
 ## Global constraints
 
-- Nine landscape presentation slides with one primary takeaway per slide, using the user-selected Warm Editorial visual treatment.
+- Ten landscape presentation slides with one primary takeaway per slide, using the user-selected Warm Editorial visual treatment.
 - Tested snapshot `4dc77a6ec005c710bd992b771a1c984b94b4e6a1`; no invented speedups.
 - Keep portable harness distinct from the CRM reference implementation.
 - Preserve all earlier execution-record bytes and the existing `.codex/` directory.
@@ -53,3 +53,12 @@
 - [x] Replace the PDF generator with Chromium print export and preserve the Python compatibility entrypoint.
 - [x] Verify desktop/phone fitting, keyboard behavior, media playback, offline dependencies, all nine PDF pages, chart values, and source references.
 - [x] Independently review the final deck, append scoped evidence, run lint and pinned record governance, commit locally, and open the browser presentation.
+
+### Task 5: Show Proofline catching a regression and verifying the fix
+
+- [x] Preserve a clean main checkout while producing baseline/red/green evidence in a disposable isolated repository copy.
+- [x] Bind the case to the existing FIN-002 manifest identity and unchanged finance test. Reject environmental failures and unexpected outcomes.
+- [x] Retain source mutation, raw output, test/source hashes, command, actual exit statuses, and a passing restored finance-file suite.
+- [x] Add an interactive captured-run replay before the CRM workflow, with a static PDF before/after composition. Label the controlled regression and developer-applied fix clearly.
+- [x] Verify playback states, unchanged existing video, desktop/phone layout, ten PDF pages, evidence links, independent review, lint and append-only record governance.
+- [x] Commit the documentation locally and reopen the presentation at the regression demo. Do not push.

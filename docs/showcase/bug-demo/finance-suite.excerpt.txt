@@ -1,0 +1,4 @@
+ ✓ packages/finance-service/src/finance-service.test.ts > Finance service > cash_first_accrues_only_settled_premium 0ms
+ Test Files  1 passed (1)
+      Tests  24 passed (24)
+   Duration  220ms (transform 44ms, setup 0ms, collect 50ms, tests 10ms, environment 0ms, prepare 30ms)

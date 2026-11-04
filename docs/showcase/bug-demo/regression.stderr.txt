@@ -1,0 +1,33 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  packages/finance-service/src/finance-service.test.ts > Finance service > cash_first_accrues_only_settled_premium
+AssertionError: expected [ { …(8) } ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   {
++     "amountCents": 250,
++     "earnedAt": "2026-01-01T00:00:00.000Z",
++     "id": "commission:finance:[\"tenant-1\",\"deposit\"]",
++     "kind": "accrual",
++     "payableAt": "2026-01-01T00:00:00.000Z",
++     "policyId": "policy-1",
++     "sourceEventId": "finance:[\"tenant-1\",\"deposit\"]",
++     "status": "earned",
++   },
++ ]
+
+ ❯ packages/finance-service/src/finance-service.test.ts:249:42
+    247|     s.finance.recordClaimPayment({ ...base, commandId: "claim", amount…
+    248|     s.bus.drain();
+    249|     expect(s.ledger().commissionEntries).toEqual([]);
+       |                                          ^
+    250|     s.finance.settlePremiumPayment({ ...base, commandId: "premium", am…
+    251|     s.bus.drain();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

@@ -1,6 +1,6 @@
 # Proofline technical guide
 
-Companion to the [nine-slide browser presentation with recorded demo](proofline-overview.html) and its [PDF copy](proofline-overview.pdf). This guide describes the implemented harness at tested snapshot **`4dc77a6`**, with verification pinned to base/merge base **`31b63c3`**. Documentation and demo captures created afterward are not covered by that historical gate.
+Companion to the [ten-slide browser presentation with regression and workflow demos](proofline-overview.html) and its [PDF copy](proofline-overview.pdf). This guide describes the implemented harness at tested snapshot **`4dc77a6`**, with verification pinned to base/merge base **`31b63c3`**. Documentation and demo captures created afterward are not covered by that historical gate.
 
 ## 1. What is portable
 
@@ -198,6 +198,8 @@ These 12 classified files total 3,573/4,004 lines (89.24%). They are a subset of
 PDF timing bars use canonical-full Pass 2 Playwright reporter durations: 43 Chromium tests in 14.5s, 24 scenario tests with two workers in 4.0s, and overlapping 12-test shards in 2.5s/2.4s. Builds are excluded. Direct `pnpm e2e` took 16.7s in the same gate. Coverage instrumentation separately took 135s with 0/11 cache hits. These are observations of different workloads on one local machine, not a speedup benchmark or a complete-gate duration. [Definitions and raw observations](measurements.json).
 
 ## 10. Verified snapshot and limits
+
+The later [regression demonstration](bug-demo/README.md) uses the existing FIN-002 manifest binding and guarded focused runner in a disposable repository copy. Its test creates a $25 deposit, expects no deposit commission, and then separately verifies that settled premium earns commission. Broadening the source condition to include deposits causes the existing assertion to fail on a 250-cent accrual. Restoring the condition makes the identical test pass; the restored finance file passes 24 tests. A passing baseline precedes the mutation, and test bytes and focused argv are identical across baseline, regression, and fix. The [raw results and hashes](bug-demo/results.json) bind those observations to the captured source. This is a controlled injected regression with real execution, followed by a developer-applied fix. The slide replays retained results rather than running or repairing code in the viewer.
 
 Official final Pass 2 completed from cleared generated state at **`4dc77a6ec005c710bd992b771a1c984b94b4e6a1`**, with base/merge base **`31b63c305eb37ab11c117a42445a5b0c9b1695e0`**. The complete lint/typecheck/manifest/selection/full-unit/browser/coverage/record/production/diff chain exited zero. Unit evidence covers **404 tests in 45 files across 11 targets**; test-kit is an empty target. The **43 Chromium tests include 24 scenario tests**. Separate two-worker and 12-test shard gates repeat overlapping tests; these counts must not be added into a unique-test total.
 

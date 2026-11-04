@@ -1,0 +1,1 @@
+node tools/proofline/canonical-runner.mjs vitest run packages/finance-service/src/finance-service.test.ts --cache=false --reporter=verbose --reporter=json --outputFile=artifacts/bug-demo-selected.json

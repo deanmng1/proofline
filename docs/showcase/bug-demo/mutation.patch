@@ -1,0 +1,11 @@
+--- a/packages/finance-service/src/finance-service.ts
++++ b/packages/finance-service/src/finance-service.ts
+@@ -248,7 +248,7 @@
+         ledger.financeEntries.push(entry("deposit", event.amountCents));
+       if (event.type === "finance.claim.payment.recorded")
+         ledger.financeEntries.push(entry("claim_payment", -event.amountCents));
+-      if (event.type === "finance.premium.payment.settled") {
++      if (event.type === "finance.premium.payment.settled" || event.type === "finance.deposit.recorded") {
+         ledger.financeEntries.push(entry("premium_payment", event.amountCents));
+         if (policy.commissionPlan.timing === "as_earned")
+           ledger.commissionEntries.push(

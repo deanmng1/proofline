@@ -51,7 +51,7 @@ Chromium runs the full visible matrix: authenticated deep-link restoration, side
 
 ## Visual guides
 
-Start with the [nine-slide browser presentation](docs/showcase/proofline-overview.html) for a plain-language introduction, a recorded product demo, workflow diagrams, and measured charts. A [PDF copy](docs/showcase/proofline-overview.pdf) is available for reading and sharing. Read the [technical companion](docs/showcase/TECHNICAL_GUIDE.md) for editable architecture diagrams, execution contracts, adaptation steps, and measurement sources.
+Start with the [ten-slide browser presentation](docs/showcase/proofline-overview.html) for a plain-language introduction, a real test catching a controlled regression and passing after the fix, a recorded product workflow, and measured charts. A [PDF copy](docs/showcase/proofline-overview.pdf) is available for reading and sharing. Read the [technical companion](docs/showcase/TECHNICAL_GUIDE.md) for editable architecture diagrams, execution contracts, adaptation steps, and measurement sources.
 
 ## Key Features
 

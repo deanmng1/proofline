@@ -1,0 +1,1 @@
+node tools/proofline/canonical-runner.mjs vitest run packages/finance-service/src/finance-service.test.ts --testNamePattern '^Finance\ service(?: > | )cash_first_accrues_only_settled_premium$' --cache=false --reporter=verbose --reporter=json --outputFile=artifacts/bug-demo-selected.json

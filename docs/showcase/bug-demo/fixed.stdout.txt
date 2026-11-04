@@ -1,0 +1,34 @@
+
+ RUN  v3.2.7 /Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed/output/bug-demo/final-capture/repository
+
+ ↓ packages/finance-service/src/finance-service.test.ts > Finance service > hydrates_a_detached_complete_finance_checkpoint
+ ↓ packages/finance-service/src/finance-service.test.ts > Finance service > rejects_forged_checkpoint_receipts_and_cross_tenant_ledger_history
+ ↓ packages/finance-service/src/finance-service.test.ts > Finance service > initializes_ledger_from_policy_state
+ ↓ packages/finance-service/src/finance-service.test.ts > Finance service > rejects_finance_events_for_uninitialized_policy
+ ✓ packages/finance-service/src/finance-service.test.ts > Finance service > cash_first_accrues_only_settled_premium 2ms
+ ↓ packages/finance-service/src/finance-service.test.ts > Finance service > written_accrues_on_bound_state
+ ↓ packages/finance-service/src/finance-service.test.ts > Finance service > does_not_reverse_an_allocated_deposit_refund
+ ↓ packages/finance-service/src/finance-service.test.ts > Finance service > reverses_only_allocated_settled_premium_in_a_mixed_refund
+ ↓ packages/finance-service/src/finance-service.test.ts > Finance service > rejects_over_refund_or_cross_tenant_allocation
+ ↓ packages/finance-service/src/finance-service.test.ts > Finance service > appends_commission_payment_without_rewriting_accrual
+ ↓ packages/finance-service/src/finance-service.test.ts > Finance service > replays_commands_once_and_rejects_conflicting_input
+ ↓ packages/finance-service/src/finance-service.test.ts > Finance service > distinct_commands_share_workflow_correlation_and_retry_independently
+ ↓ packages/finance-service/src/finance-service.test.ts > Finance service > consumes_distinct_command_ids_in_one_workflow_and_rejects_missing_command_id
+ ↓ packages/finance-service/src/finance-service.test.ts > Finance service > keeps_refund_rounding_per_original_premium_accrual
+ ↓ packages/finance-service/src/finance-service.test.ts > Finance service > validates_full_refund_atomically_and_rechecks_queued_balance
+ ↓ packages/finance-service/src/finance-service.test.ts > Finance service > isolates_same_command_and_policy_ids_across_tenants_and_detaches_snapshots
+ ↓ packages/finance-service/src/finance-service.test.ts > Finance service > rejects_invalid_cents_0
+ ↓ packages/finance-service/src/finance-service.test.ts > Finance service > rejects_invalid_cents_-1
+ ↓ packages/finance-service/src/finance-service.test.ts > Finance service > rejects_invalid_cents_1.5
+ ↓ packages/finance-service/src/finance-service.test.ts > Finance service > rejects_invalid_cents_9007199254740992
+ ↓ packages/finance-service/src/finance-service.test.ts > Finance service > rejects_refund_sources_that_are_claims_or_other_policies
+ ↓ packages/finance-service/src/finance-service.test.ts > Finance service > preserves_allocation_identity_and_rounds_partial_refunds_cumulatively
+ ↓ packages/finance-service/src/finance-service.test.ts > Finance service > requires_unique_nonempty_allocation_ids_before_publishing
+ ↓ packages/finance-service/src/finance-service.test.ts > Finance service > honors_reverse_on_refund_and_caps_written_reversal_at_bound_accrual
+
+ Test Files  1 passed (1)
+      Tests  1 passed | 23 skipped (24)
+   Start at  17:43:47
+   Duration  198ms (transform 50ms, setup 0ms, collect 54ms, tests 2ms, environment 0ms, prepare 46ms)
+
+JSON report written to /Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed/output/bug-demo/final-capture/repository/artifacts/bug-demo-selected.json

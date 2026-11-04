@@ -1,0 +1,27 @@
+{
+  "sourceCommit": "90987ce90891babfb7fc2f610ae52ba9f8200f32",
+  "binding": {
+    "ruleId": "FIN-002",
+    "layer": "service",
+    "testId": "binding-9bb406121555e978c4ee",
+    "commandKey": "unit",
+    "runner": "vitest",
+    "file": "packages/finance-service/src/finance-service.test.ts",
+    "title": "Finance service > cash_first_accrues_only_settled_premium",
+    "line": 243
+  },
+  "rule": {
+    "id": "FIN-002",
+    "description": "Deposits and claim payments never create commission; deposit refunds never reverse it.",
+    "criticality": "critical",
+    "paths": ["packages/finance-service/src/**"],
+    "vitest": [
+      {
+        "file": "packages/finance-service/src/finance-service.test.ts",
+        "title": "Finance service > cash_first_accrues_only_settled_premium",
+        "line": 243
+      }
+    ],
+    "playwright": []
+  }
+}

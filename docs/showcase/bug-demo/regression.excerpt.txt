@@ -1,0 +1,8 @@
+ FAIL  packages/finance-service/src/finance-service.test.ts > Finance service > cash_first_accrues_only_settled_premium
+AssertionError: expected [ { …(8) } ] to deeply equal []
+- Expected
++ Received
+- []
++ [
++   {
++     "amountCents": 250,

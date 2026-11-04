@@ -1,7 +1,7 @@
 # Presentation design and playback
 
 The user selected the Warm Editorial preview: paper, ink, terracotta, Instrument
-Serif headlines, and Manrope body text. The revised nine-slide presentation pairs
+Serif headlines, and Manrope body text. The revised ten-slide presentation pairs
 that visual system with actual recorded product footage and the retained harness
 measurements. The detailed technical guide remains the implementation companion.
 
@@ -30,6 +30,14 @@ The recording demonstrates the real reference application's test build using
 isolated deterministic adapters. [Capture provenance](demo/provenance.json)
 records the actual runner, runtime, assertions, implementation hashes, and asset
 hashes. Pacing and pauses serve the walkthrough; they are not benchmark timings.
+
+Slide 4 adds a user-paced replay of [actual baseline, failing, and fixed test
+runs](bug-demo/results.json), using FIN-002 and an unchanged existing test. The
+regression is deliberately introduced in an isolated copy, then corrected by
+restoring the source condition. The viewer replays captured evidence. It does
+not execute tests or apply a fix. The PDF shows the failing and passing outcomes
+together. IBM Plex Mono is embedded for readable code/output excerpts, with its
+[OFL notice](licenses/IBM-Plex-Mono-OFL.txt) retained.
 
 ## Reading and rebuilding
 
