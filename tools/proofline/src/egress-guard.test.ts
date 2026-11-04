@@ -91,9 +91,13 @@ beforeAll(async () => {
     response.writeHead(200, { "content-type": "text/plain" });
     response.end("loopback-ok");
   });
+  const declaredOrigin = process.env.PROOFLINE_EGRESS_TEST_ORIGIN;
+  const declaredUrl = declaredOrigin ? new URL(declaredOrigin) : undefined;
+  if (declaredUrl && declaredUrl.hostname !== "127.0.0.1")
+    throw new Error("Canonical egress fixture requires an IPv4 loopback origin.");
   await new Promise<void>((resolve, reject) => {
     server.once("error", reject);
-    server.listen(0, "127.0.0.1", () => resolve());
+    server.listen(declaredUrl ? Number(declaredUrl.port) : 0, "127.0.0.1", () => resolve());
   });
   const address = server.address();
   if (!address || typeof address === "string") throw new Error("Expected an IPv4 test server");
@@ -103,9 +107,13 @@ beforeAll(async () => {
     ipv6Requests += 1;
     response.end("ipv6-ok");
   });
+  const declaredIpv6Origin = process.env.PROOFLINE_EGRESS_IPV6_TEST_ORIGIN;
+  const declaredIpv6Url = declaredIpv6Origin ? new URL(declaredIpv6Origin) : undefined;
+  if (declaredIpv6Url && declaredIpv6Url.hostname !== "[::1]")
+    throw new Error("Canonical egress fixture requires an IPv6 loopback origin.");
   await new Promise<void>((resolve, reject) => {
     ipv6Server.once("error", reject);
-    ipv6Server.listen(0, "::1", () => resolve());
+    ipv6Server.listen(declaredIpv6Url ? Number(declaredIpv6Url.port) : 0, "::1", () => resolve());
   });
   const ipv6Address = ipv6Server.address();
   if (!ipv6Address || typeof ipv6Address === "string") throw new Error("Expected an IPv6 server");
@@ -233,6 +241,55 @@ describe("Proofline egress guard", () => {
       commit: 0,
       override: expect.stringContaining("unsafe git configuration is denied"),
     });
+    expect(existsSync(marker)).toBe(false);
+  });
+
+  test("rejects_git_external_diff_helpers_before_native_dispatch", async () => {
+    const marker = path.join(temporaryRoot, "git-external-diff-ran");
+    const helper = path.join(temporaryRoot, "hostile-external-diff");
+    writeFileSync(helper, `#!/bin/sh\nprintf ran > ${JSON.stringify(marker)}\n`, "utf8");
+    chmodSync(helper, 0o755);
+    const file = script(
+      "safe-git-external-diff.mjs",
+      `
+        import { spawnSync } from "node:child_process";
+        import { mkdtempSync, writeFileSync } from "node:fs";
+        import { tmpdir } from "node:os";
+        import path from "node:path";
+        const cwd = mkdtempSync(path.join(tmpdir(), "proofline-safe-git-diff-"));
+        const left = path.join(cwd, "left.txt");
+        const right = path.join(cwd, "right.txt");
+        writeFileSync(left, "left\\n", "utf8");
+        writeFileSync(right, "right\\n", "utf8");
+        const attempts = [
+          {
+            argv: ["diff", "--no-index", "--ext-diff", left, right],
+            env: { ...process.env, GIT_EXTERNAL_DIFF: process.env.TEST_EXTERNAL_DIFF },
+          },
+          { argv: ["diff", "--no-index", "--textconv", left, right] },
+          { argv: ["-c", "alias.status=!" + process.env.TEST_EXTERNAL_DIFF, "status"] },
+          { argv: ["--config-env=alias.status=TEST_EXTERNAL_DIFF", "status"] },
+          { argv: ["--paginate", "status"] },
+          { argv: ["status"], env: { ...process.env, GIT_SSH_COMMAND: process.env.TEST_EXTERNAL_DIFF } },
+        ];
+        const denied = attempts.map(({ argv, env }) => {
+          try { spawnSync("git", argv, { env, stdio: "pipe" }); }
+          catch (error) { return String(error.message); }
+          return "dispatched";
+        });
+        console.log(JSON.stringify({ denied }));
+      `,
+    );
+    const result = await withProoflineGuard([process.execPath, file], {
+      allowedOrigins: [allowedOrigin],
+      allowedChildCapabilities: [{ executable: executableOnPath("git"), purpose: "git-local" }],
+      cwd: temporaryRoot,
+      env: { TEST_EXTERNAL_DIFF: helper },
+    });
+    expect(result.code, result.stderr).toBe(0);
+    const output = JSON.parse(result.stdout.trim()) as { denied: string[] };
+    expect(output.denied).toHaveLength(6);
+    for (const denial of output.denied) expect(denial).toContain("unsupported-child-plane");
     expect(existsSync(marker)).toBe(false);
   });
 

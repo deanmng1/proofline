@@ -107,6 +107,16 @@ export const guardImportOption = `--import=${guardPreloadUrl}`;
 // executable) without honoring environment overrides from ordinary child_process calls.
 export const prooflineDelegatedPolicy = Symbol.for("proofline.egress-guard.delegated-policy");
 
+const safeGitIdentityEnvironment = new Set([
+  "GIT_AUTHOR_EMAIL",
+  "GIT_AUTHOR_NAME",
+  "GIT_COMMITTER_EMAIL",
+  "GIT_COMMITTER_NAME",
+]);
+
+export const unsafeGitEnvironmentKey = (key) =>
+  key.startsWith("GIT_") && !safeGitIdentityEnvironment.has(key);
+
 const unsafePreload = /(?:^|\s)(?:--require|-r|--import|--loader|--experimental-loader)(?:=|\s)/;
 
 export const mergeGuardNodeOptions = (value = "") => {
@@ -121,7 +131,7 @@ export const mergeGuardNodeOptions = (value = "") => {
 export const guardedEnvironment = ({ env = {}, allowedOrigins, allowedChildCapabilities = [] }) => {
   const normalized = normalizeAllowedOrigins(allowedOrigins);
   const childCapabilities = normalizeAllowedChildCapabilities(allowedChildCapabilities);
-  return {
+  const guarded = {
     ...process.env,
     ...env,
     PROOFLINE_ALLOWED_ORIGINS: JSON.stringify(normalized),
@@ -129,6 +139,8 @@ export const guardedEnvironment = ({ env = {}, allowedOrigins, allowedChildCapab
     PROOFLINE_GUARD_PRELOAD: guardPreloadUrl,
     NODE_OPTIONS: mergeGuardNodeOptions(env.NODE_OPTIONS ?? process.env.NODE_OPTIONS ?? ""),
   };
+  for (const key of Object.keys(guarded)) if (unsafeGitEnvironmentKey(key)) delete guarded[key];
+  return guarded;
 };
 
 export const assertSafeNodeArgv = (argv = []) => {

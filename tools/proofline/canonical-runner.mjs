@@ -1,8 +1,13 @@
 import { spawnSync } from "node:child_process";
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
+import { createServer } from "node:net";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { chromium, firefox, webkit } from "@playwright/test";
+import {
+  parseAllowedChildCapabilitiesEnvironment,
+  parseAllowedOriginsEnvironment,
+} from "./guard-policy.mjs";
 import { withProoflineGuard } from "./run-guarded.mjs";
 
 const repositoryRoot = path.resolve(import.meta.dirname, "../..");
@@ -125,32 +130,81 @@ const transformChildren = () => {
   return files.map((executable) => ({ executable, purpose: "esbuild-service" }));
 };
 
+const reserveLoopbackOrigin = (host) =>
+  new Promise((resolve, reject) => {
+    const server = createServer();
+    server.once("error", reject);
+    server.listen(0, host, () => {
+      const address = server.address();
+      if (!address || typeof address === "string") {
+        server.close();
+        reject(new Error(`Canonical runner could not reserve ${host}.`));
+        return;
+      }
+      const origin = `http://${host.includes(":") ? `[${host}]` : host}:${address.port}`;
+      server.close((error) => (error ? reject(error) : resolve(origin)));
+    });
+  });
+
 const guarded = async (runner, args) => {
+  const inheritedGuard = globalThis[Symbol.for("proofline.egress-guard.installed")] === true;
+  const reservedOrigins = inheritedGuard
+    ? []
+    : await Promise.all([
+        reserveLoopbackOrigin("127.0.0.1"),
+        reserveLoopbackOrigin("::1"),
+        reserveLoopbackOrigin("127.0.0.1"),
+        reserveLoopbackOrigin("127.0.0.1"),
+      ]);
+  const [egressOrigin, egressIpv6Origin, productionOriginOne, productionOriginTwo] =
+    reservedOrigins;
+  const initialCapabilities = [
+    { executable: executableOnPath("git"), purpose: "git-local" },
+    { executable: executableOnPath("pnpm"), purpose: "pnpm-runner" },
+    {
+      executable: path.join(repositoryRoot, "node_modules/.bin/nx"),
+      purpose: "nx-build",
+    },
+    {
+      executable: path.join(repositoryRoot, "node_modules/.bin/playwright"),
+      purpose: "playwright-cli",
+    },
+    {
+      executable: path.join(repositoryRoot, "node_modules/.bin/vitest"),
+      purpose: "vitest-cli",
+    },
+    ...transformChildren(),
+    ...playwrightChildren(),
+  ];
+  const allowedOrigins = inheritedGuard
+    ? parseAllowedOriginsEnvironment(process.env.PROOFLINE_ALLOWED_ORIGINS)
+    : [
+        deniedRunnerOrigin,
+        "http://127.0.0.1",
+        egressOrigin,
+        egressIpv6Origin,
+        productionOriginOne,
+        productionOriginTwo,
+      ];
+  const allowedChildCapabilities = inheritedGuard
+    ? parseAllowedChildCapabilitiesEnvironment(process.env.PROOFLINE_ALLOWED_CHILD_CAPABILITIES)
+    : initialCapabilities;
   const command =
     runner === "vitest"
       ? [process.execPath, vitestCli, ...args]
       : [process.execPath, playwrightCli, ...args];
   const result = await withProoflineGuard(command, {
     cwd: repositoryRoot,
-    allowedOrigins: [deniedRunnerOrigin],
-    allowedChildCapabilities: [
-      { executable: executableOnPath("git"), purpose: "git-local" },
-      { executable: executableOnPath("pnpm"), purpose: "pnpm-runner" },
-      {
-        executable: path.join(repositoryRoot, "node_modules/.bin/nx"),
-        purpose: "nx-build",
-      },
-      {
-        executable: path.join(repositoryRoot, "node_modules/.bin/playwright"),
-        purpose: "playwright-cli",
-      },
-      {
-        executable: path.join(repositoryRoot, "node_modules/.bin/vitest"),
-        purpose: "vitest-cli",
-      },
-      ...transformChildren(),
-      ...(runner === "playwright" ? playwrightChildren() : []),
-    ],
+    allowedOrigins,
+    env: inheritedGuard
+      ? undefined
+      : {
+          PROOFLINE_EGRESS_TEST_ORIGIN: egressOrigin,
+          PROOFLINE_EGRESS_IPV6_TEST_ORIGIN: egressIpv6Origin,
+          PROOFLINE_PRODUCTION_TEST_ORIGIN_ONE: productionOriginOne,
+          PROOFLINE_PRODUCTION_TEST_ORIGIN_TWO: productionOriginTwo,
+        },
+    allowedChildCapabilities,
     onStdout: (chunk) => process.stdout.write(chunk),
     onStderr: (chunk) => process.stderr.write(chunk),
   });

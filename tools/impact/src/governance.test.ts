@@ -34,19 +34,21 @@ afterEach(() => {
 });
 
 const runGit = (cwd: string, args: string[]) =>
-  execFileSync("git", args, { cwd, encoding: "utf8" }).trim();
+  execFileSync("git", args, {
+    cwd,
+    encoding: "utf8",
+    env: {
+      ...process.env,
+      GIT_AUTHOR_NAME: "Proofline Test",
+      GIT_AUTHOR_EMAIL: "proofline@example.invalid",
+      GIT_COMMITTER_NAME: "Proofline Test",
+      GIT_COMMITTER_EMAIL: "proofline@example.invalid",
+    },
+  }).trim();
 
 const commitAll = (cwd: string, message: string) => {
   runGit(cwd, ["add", "."]);
-  runGit(cwd, [
-    "-c",
-    "user.name=Proofline Test",
-    "-c",
-    "user.email=proofline@example.invalid",
-    "commit",
-    "-qm",
-    message,
-  ]);
+  runGit(cwd, ["commit", "-qm", message]);
   return runGit(cwd, ["rev-parse", "HEAD"]);
 };
 
@@ -445,7 +447,7 @@ describe("verified merge base", () => {
     ).toMatch(/checkout.*head/i);
 
     const shallow = temporaryDirectory("proofline-shallow-");
-    runGit(tmpdir(), ["clone", "-q", "--depth=1", `file://${cwd}`, shallow]);
+    runGit(tmpdir(), ["clone", "-q", "--depth=1", "--no-checkout", `file://${cwd}`, shallow]);
     expect(
       readVerifiedMergeBase({ cwd: shallow, base: "HEAD", head: "HEAD" }).errors.join(" "),
     ).toMatch(/shallow/i);

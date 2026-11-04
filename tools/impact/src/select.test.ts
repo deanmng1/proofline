@@ -8,6 +8,13 @@ import { selectImpact } from "./select.ts";
 import type { ChangeManifest, DiscoveredTests, HarnessManifest } from "./types.ts";
 
 const source = "modules/orders/src/value.ts";
+const fixtureGitEnvironment = {
+  ...process.env,
+  GIT_AUTHOR_NAME: "Fixture",
+  GIT_AUTHOR_EMAIL: "test@example.test",
+  GIT_COMMITTER_NAME: "Fixture",
+  GIT_COMMITTER_EMAIL: "test@example.test",
+};
 const unit = { file: "modules/orders/src/value.test.ts", title: "value", line: 2 };
 const browser = {
   path: "checks/browser/value.spec.ts",
@@ -141,18 +148,9 @@ describe("manifest-owned selection", () => {
     try {
       for (const args of [
         ["init", "-q"],
-        [
-          "-c",
-          "user.name=Fixture",
-          "-c",
-          "user.email=test@example.test",
-          "commit",
-          "--allow-empty",
-          "-qm",
-          "initial",
-        ],
+        ["commit", "--allow-empty", "-qm", "initial"],
       ])
-        execFileSync("git", args, { cwd });
+        execFileSync("git", args, { cwd, env: fixtureGitEnvironment });
       writeFileSync(path.join(cwd, "new.ts"), "export {};");
       for (const env of [
         { IMPACT_BASE: "HEAD", IMPACT_HEAD: "missing-head" },
@@ -273,28 +271,10 @@ test("requires_full_history_and_a_checked_out_discovery_head", () => {
   try {
     for (const args of [
       ["init", "-q"],
-      [
-        "-c",
-        "user.name=Fixture",
-        "-c",
-        "user.email=test@example.test",
-        "commit",
-        "--allow-empty",
-        "-qm",
-        "initial",
-      ],
-      [
-        "-c",
-        "user.name=Fixture",
-        "-c",
-        "user.email=test@example.test",
-        "commit",
-        "--allow-empty",
-        "-qm",
-        "second",
-      ],
+      ["commit", "--allow-empty", "-qm", "initial"],
+      ["commit", "--allow-empty", "-qm", "second"],
     ])
-      execFileSync("git", args, { cwd });
+      execFileSync("git", args, { cwd, env: fixtureGitEnvironment });
     expect(
       readChangedFiles({
         cwd,

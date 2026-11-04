@@ -4,6 +4,12 @@ import { describe, expect, test } from "vitest";
 import { validateHarness } from "../../impact/src/harness-manifest.ts";
 
 describe("Proofline product E2E boundary", () => {
+  test("canonical_wrapper_descendant_retains_egress_guard", async () => {
+    const origin = process.env.PROOFLINE_PROBE_ORIGIN;
+    if (!origin) return;
+    await fetch(`${origin}/vitest`);
+  });
+
   test("product_e2e_specs_delegate_transport_and_storage_to_fixtures", async () => {
     const sourceRoot = path.resolve("apps/crm-e2e/src");
     const files = (await readdir(sourceRoot, { recursive: true }))

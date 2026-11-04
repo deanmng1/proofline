@@ -19,6 +19,13 @@ import { renderRules } from "./validate.ts";
 vi.mock("node:child_process", { spy: true });
 const repositoryVitestCli = path.join(process.cwd(), "node_modules/vitest/vitest.mjs");
 const repositoryPlaywrightCli = path.join(process.cwd(), "node_modules/@playwright/test/cli.js");
+const fixtureGitEnvironment = {
+  ...process.env,
+  GIT_AUTHOR_NAME: "Fixture",
+  GIT_AUTHOR_EMAIL: "fixture@example.test",
+  GIT_COMMITTER_NAME: "Fixture",
+  GIT_COMMITTER_EMAIL: "fixture@example.test",
+};
 
 const linkFixtureDependency = (cwd: string, packageName: string) => {
   const destination = path.join(cwd, "node_modules", packageName);
@@ -259,17 +266,9 @@ process.stdout.write(result.stdout || ""); process.stderr.write(result.stderr ||
     for (const args of [
       ["init", "-q"],
       ["add", "."],
-      [
-        "-c",
-        "user.name=Fixture",
-        "-c",
-        "user.email=fixture@example.test",
-        "commit",
-        "-qm",
-        "fixture",
-      ],
+      ["commit", "-qm", "fixture"],
     ])
-      execFileSync("git", args, { cwd });
+      execFileSync("git", args, { cwd, env: fixtureGitEnvironment });
     vi.stubEnv("IMPACT_BASE", "HEAD");
     vi.stubEnv("IMPACT_HEAD", "HEAD");
     const validManifestText = readFileSync(path.join(cwd, "proofline.harness.json"), "utf8");
@@ -359,20 +358,11 @@ process.stdout.write(result.stdout || ""); process.stderr.write(result.stderr ||
       "libraries/value/src/foo.test.ts.backup.test.ts",
       'import { test } from "vitest"; import fs from "node:fs";\ntest("unbound importing identity", () => { fs.writeFileSync("unexpected-targeted", "bad"); });',
     );
-    execFileSync("git", ["add", "."], { cwd });
-    execFileSync(
-      "git",
-      [
-        "-c",
-        "user.name=Fixture",
-        "-c",
-        "user.email=fixture@example.test",
-        "commit",
-        "-qm",
-        "collision fixture",
-      ],
-      { cwd },
-    );
+    execFileSync("git", ["add", "."], { cwd, env: fixtureGitEnvironment });
+    execFileSync("git", ["commit", "-qm", "collision fixture"], {
+      cwd,
+      env: fixtureGitEnvironment,
+    });
     write(source, "export const version = 3;\n");
     main(cwd, []);
     const collision = JSON.parse(

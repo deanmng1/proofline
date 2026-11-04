@@ -368,8 +368,21 @@ describe("Proofline production boundary", () => {
     const callerCapability = "Proofline_Caller_8pQ4sT7vW2xY6zA9bC3dE5fG";
     const canonical = harness.commands.testEntrypoint;
     const [binary, ...args] = canonical.argv;
+    const declaredOrigins = [
+      process.env.PROOFLINE_PRODUCTION_TEST_ORIGIN_ONE,
+      process.env.PROOFLINE_PRODUCTION_TEST_ORIGIN_TWO,
+    ].filter((value): value is string => Boolean(value));
+    let launchIndex = 0;
     const launch = () => {
-      const child = spawn(binary === "node" ? process.execPath : binary, args, {
+      const launchArgs = [...args];
+      const declaredOrigin = declaredOrigins[launchIndex++];
+      if (declaredOrigin) {
+        const portIndex = launchArgs.indexOf("--port") + 1;
+        if (portIndex <= 0 || launchArgs[portIndex] !== "0")
+          throw new Error("Canonical test entrypoint must retain its ephemeral --port 0 contract.");
+        launchArgs[portIndex] = new URL(declaredOrigin).port;
+      }
+      const child = spawn(binary === "node" ? process.execPath : binary, launchArgs, {
         cwd: path.resolve(repositoryRoot, canonical.cwd),
         env: { ...process.env, PROOFLINE_TEST_CAPABILITY: callerCapability },
         stdio: ["ignore", "pipe", "pipe"],

@@ -11,6 +11,7 @@ import {
   parseAllowedChildCapabilitiesEnvironment,
   parseAllowedOriginsEnvironment,
   prooflineDelegatedPolicy,
+  unsafeGitEnvironmentKey,
 } from "./guard-policy.mjs";
 
 const installKey = Symbol.for("proofline.egress-guard.installed");
@@ -28,6 +29,9 @@ function installGuard() {
     process.env.PROOFLINE_ALLOWED_CHILD_CAPABILITIES,
   );
   const immutableAllowedChildCapabilities = JSON.stringify(allowedChildCapabilities);
+  const allowedChildCapabilityIdentities = new Set(
+    allowedChildCapabilities.map(({ executable, purpose }) => `${executable}\0${purpose}`),
+  );
   const immutablePreload = process.env.PROOFLINE_GUARD_PRELOAD;
   const immutableNodeOptions = mergeGuardNodeOptions(process.env.NODE_OPTIONS ?? guardImportOption);
 
@@ -239,23 +243,57 @@ function installGuard() {
     };
   }
 
-  const forcedChildEnvironment = (provided = {}, delegated = false) => ({
-    ...process.env,
-    ...provided,
-    PROOFLINE_ALLOWED_ORIGINS: delegated
-      ? JSON.stringify(parseAllowedOriginsEnvironment(provided.PROOFLINE_ALLOWED_ORIGINS))
-      : immutableAllowedOrigins,
-    PROOFLINE_ALLOWED_CHILD_CAPABILITIES: delegated
-      ? JSON.stringify(
-          parseAllowedChildCapabilitiesEnvironment(provided.PROOFLINE_ALLOWED_CHILD_CAPABILITIES),
-        )
-      : immutableAllowedChildCapabilities,
-    PROOFLINE_GUARD_PRELOAD: immutablePreload,
-    NODE_OPTIONS: mergeGuardNodeOptions(provided.NODE_OPTIONS ?? immutableNodeOptions),
-    GIT_CONFIG_COUNT: "1",
-    GIT_CONFIG_KEY_0: "core.hooksPath",
-    GIT_CONFIG_VALUE_0: "/dev/null",
-  });
+  const delegatedPolicy = (provided) => {
+    const delegatedOrigins = parseAllowedOriginsEnvironment(provided.PROOFLINE_ALLOWED_ORIGINS);
+    const delegatedCapabilities = parseAllowedChildCapabilitiesEnvironment(
+      provided.PROOFLINE_ALLOWED_CHILD_CAPABILITIES,
+    );
+    if (
+      delegatedOrigins.some((origin) => !allowedOrigins.has(origin)) ||
+      delegatedCapabilities.some(
+        ({ executable, purpose }) =>
+          !allowedChildCapabilityIdentities.has(`${executable}\0${purpose}`),
+      )
+    )
+      throw new Error(
+        "Proofline delegated policy cannot broaden installed origins or child capabilities.",
+      );
+    return {
+      origins: JSON.stringify(delegatedOrigins),
+      capabilities: JSON.stringify(delegatedCapabilities),
+    };
+  };
+  const forcedChildEnvironment = (provided = {}, delegated = false) => {
+    const policy = delegated
+      ? delegatedPolicy(provided)
+      : {
+          origins: immutableAllowedOrigins,
+          capabilities: immutableAllowedChildCapabilities,
+        };
+    return {
+      ...process.env,
+      ...provided,
+      PROOFLINE_ALLOWED_ORIGINS: policy.origins,
+      PROOFLINE_ALLOWED_CHILD_CAPABILITIES: policy.capabilities,
+      PROOFLINE_GUARD_PRELOAD: immutablePreload,
+      NODE_OPTIONS: mergeGuardNodeOptions(provided.NODE_OPTIONS ?? immutableNodeOptions),
+      GIT_CONFIG_COUNT: "5",
+      GIT_CONFIG_KEY_0: "core.hooksPath",
+      GIT_CONFIG_VALUE_0: "/dev/null",
+      GIT_CONFIG_KEY_1: "commit.gpgSign",
+      GIT_CONFIG_VALUE_1: "false",
+      GIT_CONFIG_KEY_2: "tag.gpgSign",
+      GIT_CONFIG_VALUE_2: "false",
+      GIT_CONFIG_KEY_3: "core.pager",
+      GIT_CONFIG_VALUE_3: "",
+      GIT_CONFIG_KEY_4: "core.fsmonitor",
+      GIT_CONFIG_VALUE_4: "false",
+      GIT_AUTHOR_NAME: "Proofline Guarded",
+      GIT_AUTHOR_EMAIL: "proofline@example.invalid",
+      GIT_COMMITTER_NAME: "Proofline Guarded",
+      GIT_COMMITTER_EMAIL: "proofline@example.invalid",
+    };
+  };
   const resolveExecutable = (command, environment = process.env) => {
     const value = String(command);
     const candidates = value.includes(path.sep)
@@ -275,37 +313,125 @@ function installGuard() {
       `Proofline unsupported-child-plane: child executable ${path.basename(value)} cannot be resolved to an exact reviewed file.`,
     );
   };
-  const assertSafeGitArgv = (argv) => {
-    let index = 0;
-    while (argv[index] === "-c") {
-      const setting = argv[index + 1] ?? "";
-      if (!/^(?:user\.name|user\.email)=/.test(setting) && setting !== "core.hooksPath=/dev/null")
-        throw new Error("Proofline unsupported-child-plane: unsafe git configuration is denied.");
-      index += 2;
+  const safeGitRevision = (value) =>
+    typeof value === "string" &&
+    /^(?:HEAD|[0-9a-f]{7,64}|(?:refs\/(?:heads|remotes)\/)?[A-Za-z0-9][A-Za-z0-9._/-]*)(?:[~^][0-9]*)?(?:\^\{commit\})?$/.test(
+      value,
+    );
+  const safeGitRevisionOrRange = (value) => {
+    const revisions = value.split("...");
+    return revisions.length === 1
+      ? safeGitRevision(value)
+      : revisions.length === 2 && revisions.every(safeGitRevision);
+  };
+  const safeGitPath = (value) =>
+    typeof value === "string" &&
+    value.length > 0 &&
+    !value.startsWith("-") &&
+    !path.isAbsolute(value) &&
+    !value.split(/[\\/]/).includes("..") &&
+    !/[\0\r\n]/.test(value);
+  const unsafeGitEnvironment = (environment = {}) => {
+    const fixedGuardConfig = {
+      GIT_CONFIG_COUNT: "5",
+      GIT_CONFIG_KEY_0: "core.hooksPath",
+      GIT_CONFIG_VALUE_0: "/dev/null",
+      GIT_CONFIG_KEY_1: "commit.gpgSign",
+      GIT_CONFIG_VALUE_1: "false",
+      GIT_CONFIG_KEY_2: "tag.gpgSign",
+      GIT_CONFIG_VALUE_2: "false",
+      GIT_CONFIG_KEY_3: "core.pager",
+      GIT_CONFIG_VALUE_3: "",
+      GIT_CONFIG_KEY_4: "core.fsmonitor",
+      GIT_CONFIG_VALUE_4: "false",
+    };
+    for (const [key, value] of Object.entries(environment)) {
+      if (key in fixedGuardConfig && String(value) === fixedGuardConfig[key]) continue;
+      if (unsafeGitEnvironmentKey(key)) return key;
     }
-    const subcommand = argv[index];
-    const localOnly = new Set([
-      "add",
-      "commit",
-      "diff",
-      "init",
-      "ls-files",
-      "ls-tree",
-      "merge-base",
-      "rev-parse",
-      "rm",
-      "show",
-      "status",
-      "update-ref",
-    ]);
-    if (subcommand === "clone") {
-      const source = argv.slice(index + 1).find((argument) => !argument.startsWith("-"));
-      if (source?.startsWith("file://")) return;
-    }
-    if (!localOnly.has(subcommand))
+    return undefined;
+  };
+  const assertSafeGitArgv = (argv, environment) => {
+    const unsafeEnvironment = unsafeGitEnvironment(environment);
+    if (unsafeEnvironment)
       throw new Error(
-        "Proofline unsupported-child-plane: network-capable git arguments are denied.",
+        `Proofline unsupported-child-plane: unsafe git environment ${unsafeEnvironment} is denied.`,
       );
+    const [subcommand, ...args] = argv;
+    const exact = (...expected) =>
+      args.length === expected.length && expected.every((value, index) => args[index] === value);
+    const safeCommit =
+      (args.length === 2 && ["-m", "-qm"].includes(args[0]) && Boolean(args[1])) ||
+      (args.length === 3 && args[0] === "--allow-empty" && args[1] === "-qm" && Boolean(args[2]));
+    const safeDiff = (() => {
+      const candidate = [...args];
+      if (candidate[0] === "--cached") candidate.shift();
+      if (
+        candidate[0] !== "--name-status" ||
+        candidate[1] !== "-z" ||
+        candidate[2] !== "--find-renames"
+      )
+        return false;
+      return (
+        candidate.length === 3 || (candidate.length === 4 && safeGitRevisionOrRange(candidate[3]))
+      );
+    })();
+    const safeShow =
+      args.length === 1 &&
+      (() => {
+        const separator = args[0].indexOf(":");
+        return (
+          separator > 0 &&
+          safeGitRevision(args[0].slice(0, separator)) &&
+          safeGitPath(args[0].slice(separator + 1))
+        );
+      })();
+    const safeClone =
+      args.length === 5 &&
+      exact("-q", "--depth=1", "--no-checkout", args[3], args[4]) &&
+      args[3].startsWith("file://") &&
+      path.isAbsolute(args[3].slice("file://".length)) &&
+      path.isAbsolute(args[4]);
+    const accepted =
+      (subcommand === "init" && exact("-q")) ||
+      (subcommand === "add" && args.length === 1 && (args[0] === "." || safeGitPath(args[0]))) ||
+      (subcommand === "commit" && safeCommit) ||
+      (subcommand === "diff" && safeDiff) ||
+      (subcommand === "ls-files" && exact("--others", "--exclude-standard", "-z")) ||
+      (subcommand === "ls-tree" &&
+        args.length === 4 &&
+        args[0] === "-r" &&
+        args[1] === "--name-only" &&
+        args[2] === "-z" &&
+        safeGitRevision(args[3])) ||
+      (subcommand === "merge-base" &&
+        args.length === 3 &&
+        args[0] === "--all" &&
+        safeGitRevision(args[1]) &&
+        safeGitRevision(args[2])) ||
+      (subcommand === "rev-parse" &&
+        (exact("--is-shallow-repository") ||
+          (args.length === 1 && safeGitRevision(args[0])) ||
+          (args.length === 2 && args[0] === "--verify" && safeGitRevision(args[1])))) ||
+      (subcommand === "rm" && args.length === 1 && safeGitPath(args[0])) ||
+      (subcommand === "show" && safeShow) ||
+      (subcommand === "status" && args.length === 0) ||
+      (subcommand === "update-ref" &&
+        args.length === 2 &&
+        /^refs\/remotes\/[A-Za-z0-9._/-]+$/.test(args[0]) &&
+        safeGitRevision(args[1])) ||
+      (subcommand === "clone" && safeClone);
+    if (!accepted) {
+      if (subcommand?.startsWith("-") || args.some((argument) => argument.startsWith("--config")))
+        throw new Error("Proofline unsupported-child-plane: unsafe git configuration is denied.");
+      if (["fetch", "ls-remote", "pull", "push", "remote", "send-pack"].includes(subcommand))
+        throw new Error(
+          "Proofline unsupported-child-plane: network-capable git arguments are denied.",
+        );
+      throw new Error(
+        "Proofline unsupported-child-plane: unsafe git argv is denied; only exact reviewed repository commands are allowed.",
+      );
+    }
   };
   const assertSafePnpmArgv = (argv) => {
     const runner = argv.slice(0, 3).join(" ");
@@ -515,8 +641,8 @@ function installGuard() {
       "Proofline unsupported-child-plane: ffmpeg is limited to Playwright's reviewed WebM recording argv.",
     );
   };
-  const assertCapabilityArgv = (capability, argv) => {
-    if (capability.purpose === "git-local") return assertSafeGitArgv(argv);
+  const assertCapabilityArgv = (capability, argv, environment) => {
+    if (capability.purpose === "git-local") return assertSafeGitArgv(argv, environment);
     if (capability.purpose === "pnpm-runner") return assertSafePnpmArgv(argv);
     if (capability.purpose === "nx-build") return assertSafeNxArgv(argv);
     if (capability.purpose === "vitest-cli") return assertRunnerArgv(argv, "Vitest", "run");
@@ -549,7 +675,7 @@ function installGuard() {
     let capabilityError;
     for (const capability of capabilities) {
       try {
-        assertCapabilityArgv(capability, argv);
+        assertCapabilityArgv(capability, argv, options.env ?? process.env);
         return capability;
       } catch (error) {
         capabilityError ??= error;

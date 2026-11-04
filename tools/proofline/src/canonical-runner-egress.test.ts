@@ -123,21 +123,66 @@ test("canonical_unit_runner_rejects_package_manager_wrapper_escape_with_stripped
     expect(attempt.status, attempt.output).not.toBe(0);
     expect(attempt.output).toContain("Proofline unsupported-child-plane");
   }
-  const guardedTest = path.resolve("tools/proofline/src/canonical-wrapper-egress-probe.test.mjs");
-  writeFileSync(guardedTest, "await fetch(process.env.PROOFLINE_PROBE_ORIGIN + '/vitest');\n");
-  let guardedWrapper: { status: number | null; output: string };
-  try {
-    guardedWrapper = await runAttempt("pnpm", [
-      "exec",
-      "vitest",
-      "run",
-      guardedTest,
-      "--reporter=dot",
-    ]);
-  } finally {
-    rmSync(guardedTest, { force: true });
-  }
+  const guardedTest = path.resolve("tools/proofline/src/product-e2e-boundary.test.ts");
+  const guardedWrapper = await runAttempt("pnpm", [
+    "exec",
+    "vitest",
+    "run",
+    guardedTest,
+    "-t",
+    "canonical_wrapper_descendant_retains_egress_guard",
+    "--reporter=dot",
+  ]);
   expect(hits).toBe(0);
   expect(guardedWrapper.status, guardedWrapper.output).not.toBe(0);
   expect(guardedWrapper.output).toContain("Proofline egress denied");
+});
+
+test("canonical_unit_runner_rejects_forged_delegated_policy_broadening", async () => {
+  const child = path.join(temporary, "delegated-policy-child.mjs");
+  writeFileSync(child, "await fetch(process.env.PROOFLINE_PROBE_ORIGIN + '/delegated');\n");
+  const runDelegated = (env: NodeJS.ProcessEnv) =>
+    new Promise<{ status: number | null; output: string }>((resolve) => {
+      let spawned: ReturnType<typeof spawn>;
+      try {
+        spawned = spawn(process.execPath, [child], {
+          env,
+          stdio: ["ignore", "ignore", "pipe"],
+          [Symbol.for("proofline.egress-guard.delegated-policy")]: true,
+        });
+      } catch (error) {
+        resolve({ status: null, output: String(error) });
+        return;
+      }
+      if (!spawned.stderr) {
+        resolve({ status: null, output: "Proofline delegated probe did not expose stderr." });
+        return;
+      }
+      let output = "";
+      spawned.stderr.setEncoding("utf8");
+      spawned.stderr.on("data", (chunk) => (output += chunk));
+      spawned.on("close", (status) => resolve({ status, output }));
+    });
+  const originBroadening = await runDelegated({
+    ...process.env,
+    PROOFLINE_ALLOWED_ORIGINS: JSON.stringify([origin]),
+    PROOFLINE_ALLOWED_CHILD_CAPABILITIES: "[]",
+    PROOFLINE_PROBE_ORIGIN: origin,
+  });
+  const installedCapabilities = JSON.parse(
+    process.env.PROOFLINE_ALLOWED_CHILD_CAPABILITIES ?? "[]",
+  ) as unknown[];
+  const capabilityBroadening = await runDelegated({
+    ...process.env,
+    PROOFLINE_ALLOWED_CHILD_CAPABILITIES: JSON.stringify([
+      ...installedCapabilities,
+      { executable: "/bin/echo", purpose: "git-local" },
+    ]),
+    PROOFLINE_PROBE_ORIGIN: origin,
+  });
+  for (const result of [originBroadening, capabilityBroadening]) {
+    expect(result.status, result.output).not.toBe(0);
+    expect(result.output).toMatch(/delegated policy|Proofline egress denied/i);
+  }
+  expect(hits).toBe(0);
 });

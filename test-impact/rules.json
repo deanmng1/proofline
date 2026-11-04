@@ -475,7 +475,7 @@
         {
           "file": "tools/impact/src/main-selection.test.ts",
           "title": "runs_only_one_declared_vitest_and_playwright_identity",
-          "line": 38
+          "line": 45
         }
       ],
       "playwright": []
@@ -597,12 +597,22 @@
         {
           "file": "tools/proofline/src/egress-guard.test.ts",
           "title": "Proofline egress guard > denies_fetch_http_https_websocket_and_inherited_child_egress",
-          "line": 361
+          "line": 418
         },
         {
           "file": "tools/proofline/src/canonical-runner-egress.test.ts",
           "title": "canonical_unit_runner_rejects_package_manager_wrapper_escape_with_stripped_env",
           "line": 86
+        },
+        {
+          "file": "tools/proofline/src/canonical-runner-egress.test.ts",
+          "title": "canonical_unit_runner_rejects_forged_delegated_policy_broadening",
+          "line": 141
+        },
+        {
+          "file": "tools/proofline/src/egress-guard.test.ts",
+          "title": "Proofline egress guard > rejects_git_external_diff_helpers_before_native_dispatch",
+          "line": 247
         },
         {
           "file": "tools/proofline/src/production-negative.test.ts",
@@ -617,7 +627,7 @@
         {
           "file": "tools/proofline/src/product-e2e-boundary.test.ts",
           "title": "Proofline product E2E boundary > product_e2e_specs_delegate_transport_and_storage_to_fixtures",
-          "line": 7
+          "line": 13
         }
       ],
       "playwright": [
@@ -714,7 +724,7 @@
         {
           "file": "tools/proofline/src/product-e2e-boundary.test.ts",
           "title": "Proofline product E2E boundary > scenario_fixture_declares_context_install_cleanup_and_retry_lifecycle",
-          "line": 104
+          "line": 110
         }
       ],
       "playwright": [
@@ -771,7 +781,7 @@
         {
           "file": "tools/proofline/src/product-e2e-boundary.test.ts",
           "title": "Proofline product E2E boundary > scenario_fixture_declares_every_reviewed_browser_egress_plane",
-          "line": 113
+          "line": 119
         }
       ],
       "playwright": [
@@ -828,7 +838,7 @@
         {
           "file": "tools/proofline/src/product-e2e-boundary.test.ts",
           "title": "Proofline product E2E boundary > scenario_commands_preserve_multi_worker_and_both_shard_isolation_gates",
-          "line": 121
+          "line": 127
         }
       ],
       "playwright": [
