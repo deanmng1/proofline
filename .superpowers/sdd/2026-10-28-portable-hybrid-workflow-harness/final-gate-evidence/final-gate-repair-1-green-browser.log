@@ -1,0 +1,72 @@
+$ node tools/proofline/canonical-runner.mjs browser
+$ pnpm nx run crm-web:build-test
+
+ NX   1 task: 1 succeeded
+
+
+Re-run with --output-style=static to inline logs.
+
+  Run duration:      8.9s
+  Cache:             0/1 hit (0%)
+  Critical path:     8.9s (1 task)
+  Recoverable time:  <1ms
+
+Running 43 tests using 5 workers
+
+(node:5828) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:5826) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:5825) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:5827) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:5824) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   4 [chromium] › apps/crm-e2e/src/auth.spec.ts:12:1 › signs in through the password form (1.0s)
+  ✓   1 [chromium] › apps/crm-e2e/src/fixtures/compatibility-egress.spec.ts:3:1 › compatibility_document_fakes_fonts_and_denies_every_browser_egress_plane @egress (1.0s)
+  ✓   2 [chromium] › apps/crm-e2e/src/auth.spec.ts:4:1 › signs in through the routed auth flow (1.1s)
+  ✓   8 [chromium] › apps/crm-e2e/src/fixtures/scenario-contract.spec.ts:181:1 › fails_an_undeclared_browser_request_with_scenario_context @egress (180ms)
+  ✓   7 [chromium] › apps/crm-e2e/src/fixtures/scenario-contract.spec.ts:129:1 › rotates_access_tokens_and_revokes_the_context_on_logout @authority (267ms)
+  ✓   9 [chromium] › apps/crm-e2e/src/fixtures/scenario-contract.spec.ts:201:1 › denies_an_undeclared_worker_request_with_scenario_context @egress (277ms)
+  ✓  10 [chromium] › apps/crm-e2e/src/fixtures/scenario-contract.spec.ts:226:1 › blocks_service_worker_registration_and_cleans_registrations @egress (280ms)
+  ✓   5 [chromium] › apps/crm-e2e/src/features/commission-refund.spec.ts:38:3 › commission corrections › @commission @finance @refund allocations reverse only selected settled premium commission (1.6s)
+  ✓  11 [chromium] › apps/crm-e2e/src/fixtures/scenario-contract.spec.ts:243:1 › denies_browser_websockets_with_deterministic_context @egress (367ms)
+  ✓  13 [chromium] › apps/crm-e2e/src/fixtures/scenario-contract.spec.ts:291:1 › shares_one_runtime_only_across_explicit_contexts @isolation (607ms)
+  ✓  12 [chromium] › apps/crm-e2e/src/fixtures/scenario-contract.spec.ts:262:1 › separate_scenarios_receive_distinct_runtime_ids_and_state @isolation (637ms)
+  ✓   3 [chromium] › apps/crm-e2e/src/features/isolation.spec.ts:22:1 › @policy isolates concurrent guarded browser journeys (2.3s)
+  ✓   6 [chromium] › apps/crm-e2e/src/fixtures/scenario-contract.spec.ts:115:1 › starts_unauthenticated_and_logs_in_through_routed_auth @scenario (1.3s)
+  ✓  14 [chromium] › apps/crm-e2e/src/fixtures/scenario-contract.spec.ts:325:1 › cleans_up_after_a_failed_scenario_assertion @scenario (456ms)
+  ✓  16 [chromium] › apps/crm-e2e/src/fixtures/scenario-contract.spec.ts:368:1 › keeps_context_contract_authority_faults_and_tenant_inspection_inside_the_adapter @authority (199ms)
+  ✓  15 [chromium] › apps/crm-e2e/src/fixtures/scenario-contract.spec.ts:341:1 › honors_declared_roles_and_one_shot_route_faults @scenario (312ms)
+  ✓  21 [chromium] › apps/crm-e2e/src/fixtures/scenario-contract.spec.ts:654:1 › rolls_back_a_new_identity_after_context_setup_failure @authority (61ms)
+  ✓  22 [chromium] › apps/crm-e2e/src/fixtures/scenario-contract.spec.ts:689:1 › reserves_pending_identity_claims_until_concurrent_context_setup_commits @authority (18ms)
+  ✓  23 [chromium] › apps/crm-e2e/src/fixtures/scenario-contract.spec.ts:737:1 › scenario_reset_retains_failed_contexts_for_a_deterministic_retry @scenario (26ms)
+  ✓  19 [chromium] › apps/crm-e2e/src/fixtures/scenario-contract.spec.ts:528:1 › rejects_role_and_cross_tenant_mutations_through_the_test_api @authority (428ms)
+  ✓  20 [chromium] › apps/crm-e2e/src/fixtures/scenario-contract.spec.ts:600:1 › copies_identity_claims_and_rejects_conflicting_redefinitions @authority (365ms)
+  ✓  18 [chromium] › apps/crm-e2e/src/fixtures/scenario-contract.spec.ts:450:1 › matches_an_operation_fault_once_to_an_opaque_ui_created_bind @scenario (494ms)
+  ✓  17 [chromium] › apps/crm-e2e/src/fixtures/scenario-contract.spec.ts:386:1 › binds_contract_requests_to_context_tokens_and_revokes_them_after_logout @authority (649ms)
+  ✘  25 [chromium] › apps/crm-e2e/src/fixtures/scenario-contract.spec.ts:785:1 › factory_teardown_rejects_an_unacknowledged_caught_denial @egress (258ms)
+  ✓  24 [chromium] › apps/crm-e2e/src/fixtures/scenario-contract.spec.ts:758:1 › worker_setup_stops_the_server_when_bootstrap_close_fails @scenario (407ms)
+  ✓  27 [chromium] › apps/crm-e2e/src/fixtures/scenario-contract.spec.ts:803:1 › shard_b_isolates_runtime_and_storage @isolation (735ms)
+  ✓  26 [chromium] › apps/crm-e2e/src/fixtures/scenario-contract.spec.ts:795:1 › shard_a_isolates_runtime_and_storage @isolation (739ms)
+  ✓  28 [chromium] › apps/crm-e2e/src/fixtures/scenario-contract.spec.ts:811:1 › shard_a_uses_an_os_assigned_worker_port @isolation (773ms)
+  ✓  29 [chromium] › apps/crm-e2e/src/fixtures/scenario-contract.spec.ts:819:1 › shard_b_uses_an_os_assigned_worker_port @isolation (738ms)
+  ✓  30 [chromium] › apps/crm-e2e/src/mobile.spec.ts:7:3 › mobile continuity › navigates through the grouped mobile nav (1.5s)
+  ✓  32 [chromium] › apps/crm-e2e/src/mobile.spec.ts:43:3 › mobile continuity › command palette is reachable from the compact search button (1.4s)
+  ✓  34 [chromium] › apps/crm-e2e/src/navigation.spec.ts:4:1 › navigates between module pages (1.4s)
+  ✓  33 [chromium] › apps/crm-e2e/src/mobile.spec.ts:53:3 › mobile continuity › switches the workspace from the mobile navigation dialog (1.5s)
+  ✓  31 [chromium] › apps/crm-e2e/src/mobile.spec.ts:24:3 › mobile continuity › renders roster cards and opens invite dialog (1.9s)
+  ✓  35 [chromium] › apps/crm-e2e/src/navigation.spec.ts:15:1 › switches the active workspace (1.3s)
+  ✓  36 [chromium] › apps/crm-e2e/src/navigation.spec.ts:28:1 › switches the UI language from user settings (1.8s)
+  ✓  38 [chromium] › apps/crm-e2e/src/proofline/cross-browser-smoke.spec.ts:5:1 › runs_the_cross_browser_invariant_smoke @proofline-smoke (1.5s)
+  ✓  37 [chromium] › apps/crm-e2e/src/navigation.spec.ts:36:1 › selects a palette from user settings (1.7s)
+(node:6001) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  40 [chromium] › apps/crm-e2e/src/proofline/recovery-and-authority.spec.ts:12:1 › recovers_an_accepted_bind_without_duplicate_policy_or_ledger @proofline-recovery (1.6s)
+  ✓  42 [chromium] › apps/crm-e2e/src/proofline/recovery-and-authority.spec.ts:132:1 › denies_crm_navigation_and_direct_routes_for_viewer @proofline-authority (790ms)
+  ✓  43 [chromium] › apps/crm-e2e/src/proofline/runner-egress.spec.ts:34:1 › canonical_browser_runner_denies_fetch_http_https_websocket_and_inherited_child_egress (68ms)
+  ✓  39 [chromium] › apps/crm-e2e/src/proofline/golden-workflow.spec.ts:6:1 › completes_the_unauthenticated_deep_link_to_policy_finance_logout_journey @proofline-golden (2.5s)
+  ✓  41 [chromium] › apps/crm-e2e/src/proofline/recovery-and-authority.spec.ts:52:1 › denies_cross_tenant_read_and_mutation_in_a_shared_runtime @proofline-authority (5.4s)
+
+  43 passed (14.2s)

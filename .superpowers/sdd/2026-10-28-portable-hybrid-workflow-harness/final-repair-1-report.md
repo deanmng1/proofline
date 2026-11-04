@@ -269,7 +269,6 @@ The global delegation symbol remains reproducible by test code, but it conveys n
 
 The independent broad re-review and controller-owned final two-pass completion gate remain pending by instruction.
 
-
 ---
 
 # Broad final repair round 4
@@ -359,3 +358,53 @@ All commands below used `PATH=/opt/homebrew/bin:$PATH`; every command exited 0. 
 The append-only event `2026-11-04.final-repair-1-round-4` scopes every governed changed path and records the implementation, RED/GREEN behavior, exact-selection proof, complete gates, and cleanup. Existing JSONL bytes were not rewritten. New retained logs preserve substantive output with trailing terminal whitespace and extra final blank lines removed for the repository diff gate; raw captures remain under local generated artifacts.
 
 Implementation and evidence are committed separately. The remaining review is the controller's scoped re-review of this repair and its final two-pass completion gate, neither of which this implementer ran. The previously deferred loopback bind-race Minor is unchanged. No push was performed.
+
+---
+
+# Final-gate repair round 1
+
+Repair base: `94d79dde9bb4a0348b8846c07f802bb80b6a57ce`
+Implementation commit: `48ce13bea213cd855f02a8c466b61612aba30dad` — `fix: build canonical unit artifacts from manifest`
+Pinned governance base: `31b63c305eb37ab11c117a42445a5b0c9b1695e0`
+
+## Failure and repair
+
+The controller's retained fresh-state pass-one log selected all five canonical commands and then stopped in the unit command. The unit runner had established only `dist/crm-web-test`; `tools/proofline/src/production-negative.test.ts` audits `dist/crm-web`, so its first filesystem read failed with `ENOENT`. No command after that failed unit phase is credited.
+
+The canonical unit runner now reads the checked-in harness manifest and runs its exact `buildProduction` then `buildTest` command definitions before it starts any Vitest target. Manifest command shape and repository-contained working directories are validated before dispatch, and a nonzero build stops the unit command. The browser command continues to establish the manifest's test build before Playwright. The production-negative audit is unchanged and remains part of the Proofline unit target.
+
+SAFE-001 now owns the permanent regression `canonical_unit_runner_establishes_manifest_artifacts_before_vitest`. It binds both exact manifest build definitions and proves the unit branch schedules both before `unitArguments()`. The real fresh-state executions below then prove those commands create both artifacts before the unchanged production audit runs.
+
+## TDD evidence
+
+The RED command was:
+
+```sh
+node tools/proofline/canonical-runner.mjs vitest run tools/proofline/src/canonical-runner-egress.test.ts -t canonical_unit_runner_establishes_manifest_artifacts_before_vitest
+```
+
+`final-gate-repair-1-red.log` exited 1 because the runner had no manifest-owned production prerequisite. The identical command in `final-gate-repair-1-green-focused.log` exited 0 with one test passed. `final-gate-repair-1-failed-focused-stale-bindings.log` is retained as a failed intermediate run; it is not GREEN evidence.
+
+`pass-1.log` retains the controller's actual failing fresh-state gate. It records canonical-full selection, the test-only build, and the production audit's `dist/crm-web` `ENOENT`.
+
+## Fresh-state and regression verification
+
+All commands used `PATH=/opt/homebrew/bin:$PATH`. Before each fresh-state command, `dist`, `artifacts`, `coverage`, `playwright-report`, and `test-results` were removed through Node filesystem APIs.
+
+| Exact command | Result | Evidence |
+| --- | --- | --- |
+| `pnpm test` | Exit 0. The runner visibly completed `pnpm nx run crm-web:build`, then `pnpm nx run crm-web:build-test`, then all eleven unit targets. Proofline passed 4 files/38 tests, including production-negative 4/4. | `final-gate-repair-1-green-fresh-test.log` |
+| `IMPACT_BASE=31b63c305eb37ab11c117a42445a5b0c9b1695e0 IMPACT_HEAD=HEAD pnpm test:impacted` | Exit 0 from a second empty generated state. Canonical-full selected and executed `unit`, `browser`, `browserScenario`, `browserScenarioShard1`, and `browserScenarioShard2`; the production audit, 43-test browser command, 24-test two-worker scenario, and both 12-test shards passed. | `final-gate-repair-1-green-fresh-impacted.log` |
+| `pnpm e2e` | Exit 0; 43 Chromium tests passed. | `final-gate-repair-1-green-browser.log` |
+| `pnpm coverage` | Exit 0; all eleven coverage targets completed, including Proofline 4 files/38 tests. | `final-gate-repair-1-green-coverage.log` |
+| `pnpm coverage:check -- --base 31b63c305eb37ab11c117a42445a5b0c9b1695e0 --head HEAD` | Eight manifest source-group ratchets passed. | `final-gate-repair-1-green-coverage-check.log` |
+| `pnpm rules:generate && pnpm harness:validate` | Generated rule catalog and harness validation passed with the new SAFE-001 identity and shifted exact lines. | `final-gate-repair-1-green-governance.log` |
+| `pnpm lint` | 279 files checked with no fixes. | `final-gate-repair-1-green-lint.log` |
+| `pnpm typecheck` | All eleven targets succeeded. | `final-gate-repair-1-green-typecheck.log` |
+| `pnpm build && pnpm proofline:check-production` | Production build passed and the artifact remained free of test-only capabilities. | `final-gate-repair-1-green-production.log` |
+
+The append-only execution event `2026-11-04.final-gate-repair-round-1` records the failed controller gate, the dependency repair, and these exact fresh-state results. `pnpm record:check -- --base 31b63c305eb37ab11c117a42445a5b0c9b1695e0 --head HEAD` and the final diff checks pass after that append.
+
+`final-gate-repair-1-process-cleanup.log` records `matches=0` for Chrome-for-Testing/headless-shell, Playwright, canonical-runner, and test-app server processes after the browser and coverage gates.
+
+This implementer did not run the controller's official two-pass completion gate or an independent review. No push was performed.

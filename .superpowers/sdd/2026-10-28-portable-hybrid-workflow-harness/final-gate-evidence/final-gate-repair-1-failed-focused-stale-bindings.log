@@ -1,0 +1,78 @@
+
+ RUN  v3.2.7 /Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed
+
+ ❯ tools/proofline/src/product-e2e-boundary.test.ts (11 tests | 1 failed) 213ms
+   ✓ Proofline product E2E boundary > canonical_wrapper_descendant_retains_egress_guard 0ms
+   ✓ Proofline product E2E boundary > product_e2e_specs_delegate_transport_and_storage_to_fixtures 6ms
+   ✓ Proofline product E2E boundary > rejects_forbidden_crm_screen_to_screen_goto in features/direct-customer-to-quotes.spec.ts 0ms
+   ✓ Proofline product E2E boundary > rejects_forbidden_crm_screen_to_screen_goto in proofline/direct-quotes-to-policy.spec.ts 0ms
+   ✓ Proofline product E2E boundary > allows_declared_initial_and_guard_navigation_helpers 0ms
+   ✓ Proofline product E2E boundary > rejects_undeclared_navigation_even_inside_the_shared_helper_module 0ms
+   × Proofline product E2E boundary > canonical_test_commands_cannot_bypass_the_declared_runner_egress_adapter 203ms
+     → expected [ …(5) ] to deeply equal []
+   ✓ Proofline product E2E boundary > canonical_runner_child_authority_is_structured_and_forces_guard_policy_on_every_child 1ms
+   ✓ Proofline product E2E boundary > scenario_fixture_declares_context_install_cleanup_and_retry_lifecycle 0ms
+   ✓ Proofline product E2E boundary > scenario_fixture_declares_every_reviewed_browser_egress_plane 0ms
+   ✓ Proofline product E2E boundary > scenario_commands_preserve_multi_worker_and_both_shard_isolation_gates 1ms
+ ✓ tools/impact/src/harness-manifest.test.ts (22 tests) 440ms
+fatal: git cat-file HEAD:tracked.txt: bad file
+ ✓ tools/proofline/src/canonical-runner-egress.test.ts (7 tests) 1256ms
+   ✓ canonical_unit_runner_rejects_package_manager_wrapper_escape_with_stripped_env  1094ms
+ ❯ tools/proofline/src/production-negative.test.ts (4 tests | 1 failed) 1905ms
+   × Proofline production boundary > rejects_test_markers_in_a_production_bundle 942ms
+     → expected [Function] to not throw an error but 'Error: ENOENT: no such file or direct…' was thrown
+   ✓ Proofline production boundary > refuses_test_entry_without_a_launcher_capability 1ms
+   ✓ Proofline production boundary > builds_the_test_entry_only_with_a_launcher_supplied_capability  577ms
+   ✓ Proofline production boundary > launches_the_test_artifact_only_after_one_server_side_capability_proof  384ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tools/proofline/src/product-e2e-boundary.test.ts > Proofline product E2E boundary > canonical_test_commands_cannot_bypass_the_declared_runner_egress_adapter
+AssertionError: expected [ …(5) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "Stale or ambiguous test identity binding-d8cf68f6b1ea3041cba7: tools/proofline/src/canonical-runner-egress.test.ts:94 canonical_unit_runner_rejects_package_manager_wrapper_escape_with_stripped_env",
++   "Stale or ambiguous test identity binding-safe-delegated-policy-monotonicity: tools/proofline/src/canonical-runner-egress.test.ts:149 canonical_unit_runner_rejects_forged_delegated_policy_broadening",
++   "Stale or ambiguous test identity binding-safe-native-git-config-1: tools/proofline/src/canonical-runner-egress.test.ts:198 canonical_unit_runner_rejects_repository_clean_filters_before_native_dispatch",
++   "Stale or ambiguous test identity binding-safe-native-git-config-2: tools/proofline/src/canonical-runner-egress.test.ts:224 canonical_unit_runner_ignores_HOME_and_XDG_git_configuration",
++   "Stale or ambiguous test identity binding-safe-native-git-config-3: tools/proofline/src/canonical-runner-egress.test.ts:245 canonical_unit_runner_limits_git_to_filter_free_object_and_metadata_operations",
++ ]
+
+ ❯ tools/proofline/src/product-e2e-boundary.test.ts:78:70
+     76|     const manifest = JSON.parse(await readFile("proofline.harness.json…
+     77|     expect(manifest.adapters.runnerEgress).toBe("tools/proofline/canon…
+     78|     expect(validateHarness({ cwd: process.cwd(), manifest }).errors).t…
+       |                                                                      ^
+     79|     manifest.commands.browser = {
+     80|       argv: ["pnpm", "exec", "playwright", "test"],
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tools/proofline/src/production-negative.test.ts > Proofline production boundary > rejects_test_markers_in_a_production_bundle
+AssertionError: expected [Function] to not throw an error but 'Error: ENOENT: no such file or direct…' was thrown
+
+- Expected:
+undefined
+
++ Received:
+"Error: ENOENT: no such file or directory, lstat '/Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed/dist/crm-web'"
+
+ ❯ tools/proofline/src/production-negative.test.ts:120:11
+    118|         forbiddenMarkers: referenceForbiddenMarkers,
+    119|       }),
+    120|     ).not.toThrow();
+       |           ^
+    121|
+    122|     const positive = temporaryDirectory();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  2 failed | 2 passed (4)
+      Tests  2 failed | 42 passed (44)
+   Start at  14:41:48
+   Duration  2.21s (transform 176ms, setup 0ms, collect 887ms, tests 3.81s, environment 0ms, prepare 150ms)
