@@ -1,0 +1,2366 @@
+{
+  "schemaVersion": 1,
+  "purpose": "Verified source data for Proofline showcase documents; observations are not a benchmark or a speedup comparison.",
+  "snapshot": {
+    "testedHead": "4dc77a6ec005c710bd992b771a1c984b94b4e6a1",
+    "pinnedImpactBase": "31b63c305eb37ab11c117a42445a5b0c9b1695e0",
+    "pinnedMergeBase": "31b63c305eb37ab11c117a42445a5b0c9b1695e0",
+    "documentationRelation": "These measurements describe the tested implementation snapshot; later documentation commits are distinct and are not claimed to have passed the official gate.",
+    "coverageArtifactRevisions": {
+      "requestedBase": "31b63c305eb37ab11c117a42445a5b0c9b1695e0",
+      "requestedHead": "HEAD",
+      "resolvedBase": "31b63c305eb37ab11c117a42445a5b0c9b1695e0",
+      "resolvedHead": "4dc77a6ec005c710bd992b771a1c984b94b4e6a1",
+      "mergeBase": "31b63c305eb37ab11c117a42445a5b0c9b1695e0",
+      "checkoutHead": "4dc77a6ec005c710bd992b771a1c984b94b4e6a1",
+      "historyComplete": true,
+      "errors": []
+    },
+    "officialGateStatus": "Both official completion passes passed. Pass 2 is recorded in the ignored progress ledger so the final validated tracked head remains unchanged.",
+    "officialGateStatusSource": {
+      "path": ".superpowers/sdd/2026-10-28-portable-hybrid-workflow-harness/progress.md",
+      "line": 118
+    },
+    "ledgerProvenance": {
+      "path": "test-impact/execution-record.jsonl",
+      "records": 135,
+      "uniqueEventIds": 135,
+      "lastEventId": "2026-11-04.final-completion-gate-pass-1",
+      "note": "The append-only tracked ledger ends with official Pass 1. Pass 2 is recorded in progress.md and its retained log."
+    }
+  },
+  "inventory": {
+    "registeredWorkspaces": {
+      "count": 12,
+      "paths": [
+        "apps/crm-e2e",
+        "apps/crm-web",
+        "packages/api-contracts",
+        "packages/domain",
+        "packages/finance-service",
+        "packages/insurance-runtime",
+        "packages/policy-service",
+        "packages/policy-state-service",
+        "packages/service-bus",
+        "packages/test-kit",
+        "tools/impact",
+        "tools/proofline"
+      ],
+      "unitCapableCount": 11,
+      "browserOwningCount": 2,
+      "source": {
+        "path": "proofline.harness.json",
+        "line": 110
+      }
+    },
+    "canonicalCommandDefinitions": {
+      "count": 14,
+      "commands": {
+        "lint": {
+          "argv": ["pnpm", "lint"],
+          "cwd": "."
+        },
+        "typecheck": {
+          "argv": ["pnpm", "typecheck"],
+          "cwd": "."
+        },
+        "unit": {
+          "argv": ["pnpm", "test"],
+          "cwd": "."
+        },
+        "browser": {
+          "argv": ["pnpm", "e2e"],
+          "cwd": "."
+        },
+        "coverage": {
+          "argv": ["pnpm", "coverage"],
+          "cwd": "."
+        },
+        "coverageCheck": {
+          "argv": ["pnpm", "coverage:check"],
+          "cwd": "."
+        },
+        "recordCheck": {
+          "argv": ["pnpm", "record:check"],
+          "cwd": "."
+        },
+        "buildProduction": {
+          "argv": ["pnpm", "build"],
+          "cwd": "."
+        },
+        "buildTest": {
+          "argv": ["pnpm", "build:test"],
+          "cwd": "."
+        },
+        "checkProduction": {
+          "argv": ["pnpm", "proofline:check-production"],
+          "cwd": "."
+        },
+        "testEntrypoint": {
+          "argv": [
+            "node",
+            "tools/proofline/run-guarded.mjs",
+            "--test-app",
+            "--allow-origin",
+            "http://127.0.0.1",
+            "--",
+            "node",
+            "tools/proofline/serve-test-app.mjs",
+            "--directory",
+            "dist/crm-web-test",
+            "--port",
+            "0"
+          ],
+          "cwd": "."
+        },
+        "browserScenario": {
+          "argv": [
+            "node",
+            "tools/proofline/canonical-runner.mjs",
+            "playwright",
+            "test",
+            "--config",
+            "apps/crm-e2e/playwright.config.ts",
+            "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+            "--project",
+            "chromium",
+            "--workers=2"
+          ],
+          "cwd": ".",
+          "runner": "playwright"
+        },
+        "browserScenarioShard1": {
+          "argv": [
+            "node",
+            "tools/proofline/canonical-runner.mjs",
+            "playwright",
+            "test",
+            "--config",
+            "apps/crm-e2e/playwright.config.ts",
+            "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+            "--project",
+            "chromium",
+            "--shard=1/2"
+          ],
+          "cwd": ".",
+          "runner": "playwright"
+        },
+        "browserScenarioShard2": {
+          "argv": [
+            "node",
+            "tools/proofline/canonical-runner.mjs",
+            "playwright",
+            "test",
+            "--config",
+            "apps/crm-e2e/playwright.config.ts",
+            "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+            "--project",
+            "chromium",
+            "--shard=2/2"
+          ],
+          "cwd": ".",
+          "runner": "playwright"
+        }
+      },
+      "selectedCanonicalFullCommandKeys": [
+        "unit",
+        "browser",
+        "browserScenario",
+        "browserScenarioShard1",
+        "browserScenarioShard2"
+      ],
+      "definition": "14 registered command definitions; canonical-full selects five execution command keys. The full completion gate also executes governance, builds/audits and direct verification commands.",
+      "source": {
+        "path": "proofline.harness.json",
+        "line": 3
+      }
+    },
+    "criticalRules": {
+      "count": 32,
+      "criticalityCounts": {
+        "critical": 32
+      },
+      "ids": [
+        "POL-001",
+        "POL-002",
+        "POL-003",
+        "COM-001",
+        "COM-002",
+        "COM-003",
+        "COM-004",
+        "COM-005",
+        "FIN-001",
+        "FIN-002",
+        "FIN-003",
+        "FIN-004",
+        "BUS-001",
+        "BUS-002",
+        "BUS-003",
+        "PST-001",
+        "PST-002",
+        "TEN-001",
+        "API-001",
+        "API-002",
+        "REG-001",
+        "BUS-004",
+        "TIME-001",
+        "REG-002",
+        "UI-001",
+        "AUTH-001",
+        "INT-001",
+        "SAFE-001",
+        "AUTH-002",
+        "SCN-001",
+        "SCN-002",
+        "SCN-003"
+      ],
+      "source": {
+        "path": "test-impact/rules.json"
+      }
+    },
+    "ownershipBindings": {
+      "scopes": 20,
+      "bindingOccurrences": 145,
+      "uniqueBindingIds": 145,
+      "uniqueExecutionIdentities": 86,
+      "executionIdentityDefinition": ["runner", "commandKey", "file", "title"],
+      "bindingOccurrencesByRunner": {
+        "vitest": 93,
+        "playwright": 52
+      },
+      "uniqueExecutionIdentitiesByRunner": {
+        "vitest": 56,
+        "playwright": 30
+      },
+      "bindingOccurrencesByLayer": {
+        "contract": 25,
+        "playwright": 52,
+        "ui": 11,
+        "service": 29,
+        "runtime": 21,
+        "domain": 7
+      },
+      "bindingOccurrencesByCommand": {
+        "unit": 93,
+        "browserScenario": 24,
+        "browser": 28
+      },
+      "definition": "Each manifest binding ties a rule and layer to an exact executable test identity. Several bindings may point to the same test; binding counts are not test counts.",
+      "source": {
+        "path": "proofline.harness.json",
+        "line": 596
+      }
+    },
+    "goldenWorkflowRows": {
+      "count": 7,
+      "statusCounts": {
+        "implemented": 6,
+        "excluded": 1
+      },
+      "tenantIsolationMode": "authenticated-contexts",
+      "rows": [
+        {
+          "id": "protected-intake-bind-finance-logout",
+          "status": "implemented",
+          "ruleIds": ["AUTH-001", "POL-001", "API-002", "FIN-001"],
+          "exclusions": [],
+          "source": {
+            "path": "test-impact/workflows/crm-golden.json",
+            "line": 6
+          }
+        },
+        {
+          "id": "recoverable-bind",
+          "status": "implemented",
+          "ruleIds": ["UI-001", "POL-001", "API-002"],
+          "exclusions": [],
+          "source": {
+            "path": "test-impact/workflows/crm-golden.json",
+            "line": 45
+          }
+        },
+        {
+          "id": "role-denied-navigation",
+          "status": "implemented",
+          "ruleIds": ["AUTH-001", "API-001"],
+          "exclusions": [],
+          "source": {
+            "path": "test-impact/workflows/crm-golden.json",
+            "line": 77
+          }
+        },
+        {
+          "id": "tenant-isolation",
+          "status": "implemented",
+          "ruleIds": ["TEN-001", "API-001"],
+          "exclusions": [],
+          "source": {
+            "path": "test-impact/workflows/crm-golden.json",
+            "line": 105
+          }
+        },
+        {
+          "id": "visible-refund-correction",
+          "status": "implemented",
+          "ruleIds": ["COM-002", "COM-003", "FIN-003", "FIN-004"],
+          "exclusions": [],
+          "source": {
+            "path": "test-impact/workflows/crm-golden.json",
+            "line": 140
+          }
+        },
+        {
+          "id": "cross-browser-smoke",
+          "status": "implemented",
+          "ruleIds": ["AUTH-001"],
+          "exclusions": [],
+          "source": {
+            "path": "test-impact/workflows/crm-golden.json",
+            "line": 170
+          }
+        },
+        {
+          "id": "cancellation-and-commission-payment",
+          "status": "excluded",
+          "ruleIds": ["POL-003", "COM-005"],
+          "exclusions": [
+            {
+              "operation": "cancellation",
+              "reason": "No user-visible reference control exists; add a browser workflow when the UI exposes this operation.",
+              "ownerLayer": "service",
+              "ruleIds": ["POL-003"]
+            },
+            {
+              "operation": "commission-payment",
+              "reason": "No user-visible reference control exists; add a browser workflow when the UI exposes this operation.",
+              "ownerLayer": "service",
+              "ruleIds": ["COM-005"]
+            }
+          ],
+          "source": {
+            "path": "test-impact/workflows/crm-golden.json",
+            "line": 200
+          }
+        }
+      ],
+      "definition": "Six implemented rows include one cross-browser smoke row. One excluded row names two operations without visible reference controls: cancellation and commission payment. Their deterministic service/runtime evidence remains in scope.",
+      "source": {
+        "path": "test-impact/workflows/crm-golden.json"
+      }
+    },
+    "coverage": {
+      "producedWorkspaceReports": 11,
+      "producedReportFileEntries": 152,
+      "governanceSourceGroups": 8,
+      "governanceSelectedFiles": 12,
+      "resolvedGovernanceExclusions": 43,
+      "source": {
+        "path": "artifacts/coverage/ratchet.json"
+      }
+    },
+    "canonicalUnitCycle": {
+      "targets": 11,
+      "nonemptyTargets": 10,
+      "testFilesPassed": 45,
+      "testsPassed": 404,
+      "noTestFilesTarget": "packages/test-kit",
+      "definition": "Totals sum the ten top-level Vitest workspace summaries once per canonical unit invocation. Nested subprocess browser summaries are not added. These totals repeat in canonical-full and direct invocations."
+    },
+    "browserScope": {
+      "registeredProjects": ["chromium", "firefox", "webkit"],
+      "defaultProject": "chromium",
+      "officialGateExecutedProjects": ["chromium"],
+      "optionalSmokeProjects": ["firefox", "webkit"],
+      "optionalSmokeEnvironment": "PROOFLINE_CROSS_BROWSER=1",
+      "optionalSmokeFilter": "@proofline-smoke",
+      "optionalSmokeStatus": "Firefox and WebKit are registered, but the progress ledger records missing local browser binaries; the official gate logs verify Chromium only.",
+      "canonicalBrowserTests": 43,
+      "scenarioContractTestsAlreadyIncludedInCanonicalBrowser": 24,
+      "additionalScenarioRunTests": 24,
+      "scenarioShardTests": [12, 12],
+      "uniqueCountingRule": "The separate 24-test scenario run and two 12-test shards repeat tests already included in the 43-test canonical browser suite. Do not sum these counts into a unique-test total. The 43-test suite includes fixture/containment tests and legacy checks, not only visible product workflows.",
+      "sources": [
+        {
+          "path": "proofline.harness.json",
+          "line": 16
+        },
+        {
+          "path": "apps/crm-e2e/playwright.config.ts"
+        },
+        {
+          "path": ".superpowers/sdd/2026-10-28-portable-hybrid-workflow-harness/progress.md",
+          "line": 98
+        }
+      ]
+    }
+  },
+  "timingMethodology": {
+    "classification": "Observed reporter durations for two local validation passes; not a controlled performance benchmark.",
+    "fullCompletionGateDuration": null,
+    "fullCompletionGateDurationNote": "No complete-chain wall-clock duration is retained in these logs. Do not infer one by summing overlapping or partial reporter timings.",
+    "browserBoundary": "Playwright suite duration as printed in its final passed summary. The manifest prerequisite test artifact build is separately reported by Nx and is excluded from this duration.",
+    "unitBoundary": "Vitest workspace Duration summaries; no complete canonical-unit command elapsed duration is claimed. Transform/setup/collect/test/environment subtimings may overlap and are not additive wall-clock components.",
+    "coverageBoundary": "Nx duration for the eleven instrumented coverage targets. This is coverage collection cost, separate from ordinary test execution timing; coverage percentages measure exercised source, not runtime performance.",
+    "conditions": "Fresh generated-state completion runs are documented in progress.md. Nx reports 0 cache hits for the recorded typecheck, build and coverage target runs. Chromium suite and shard runs use five local workers; scenario-contract verification uses two. CI config uses two workers and retries, so these local timings are not CI projections.",
+    "excludedClaims": [
+      "No before/after baseline is available.",
+      "No speedup, time saved, cost saved or comparison with an LLM-based testing baseline is established.",
+      "The two passes are observations, not a statistically meaningful timing distribution.",
+      "No Firefox/WebKit runtime result is implied by their registration."
+    ],
+    "sources": [
+      {
+        "path": ".superpowers/sdd/2026-10-28-portable-hybrid-workflow-harness/progress.md",
+        "line": 118
+      },
+      {
+        "path": "apps/crm-e2e/playwright.config.ts"
+      }
+    ]
+  },
+  "officialPassMeasurements": [
+    {
+      "pass": 1,
+      "validatedHead": "f49ee4050615a14bbe341ed6efb2a06f6a183e93",
+      "log": {
+        "path": ".superpowers/sdd/2026-10-28-portable-hybrid-workflow-harness/final-gate-evidence/official-pass-1.log",
+        "sha256": "d0055cdc757cdeeaa3574e5ab66f73efc8444e1115dd2ff265780542c8fce01b"
+      },
+      "browserReporterRuns": [
+        {
+          "role": "canonical-full-browser",
+          "testsPassed": 43,
+          "workers": 5,
+          "shard": null,
+          "durationReported": "14.1s",
+          "durationSeconds": 14.1,
+          "measurement": "Playwright reporter suite elapsed duration",
+          "source": {
+            "path": ".superpowers/sdd/2026-10-28-portable-hybrid-workflow-harness/final-gate-evidence/official-pass-1.log",
+            "startLine": 3154,
+            "resultLine": 3212
+          }
+        },
+        {
+          "role": "canonical-full-two-worker-scenario",
+          "testsPassed": 24,
+          "workers": 2,
+          "shard": null,
+          "durationReported": "3.9s",
+          "durationSeconds": 3.9,
+          "measurement": "Playwright reporter suite elapsed duration",
+          "source": {
+            "path": ".superpowers/sdd/2026-10-28-portable-hybrid-workflow-harness/final-gate-evidence/official-pass-1.log",
+            "startLine": 3214,
+            "resultLine": 3245
+          }
+        },
+        {
+          "role": "canonical-full-scenario-shard-1",
+          "testsPassed": 12,
+          "workers": 5,
+          "shard": {
+            "index": 1,
+            "total": 2
+          },
+          "durationReported": "2.5s",
+          "durationSeconds": 2.5,
+          "measurement": "Playwright reporter suite elapsed duration",
+          "source": {
+            "path": ".superpowers/sdd/2026-10-28-portable-hybrid-workflow-harness/final-gate-evidence/official-pass-1.log",
+            "startLine": 3247,
+            "resultLine": 3272
+          }
+        },
+        {
+          "role": "canonical-full-scenario-shard-2",
+          "testsPassed": 12,
+          "workers": 5,
+          "shard": {
+            "index": 2,
+            "total": 2
+          },
+          "durationReported": "2.4s",
+          "durationSeconds": 2.4,
+          "measurement": "Playwright reporter suite elapsed duration",
+          "source": {
+            "path": ".superpowers/sdd/2026-10-28-portable-hybrid-workflow-harness/final-gate-evidence/official-pass-1.log",
+            "startLine": 3274,
+            "resultLine": 3299
+          }
+        },
+        {
+          "role": "direct-browser",
+          "testsPassed": 43,
+          "workers": 5,
+          "shard": null,
+          "durationReported": "13.8s",
+          "durationSeconds": 13.8,
+          "measurement": "Playwright reporter suite elapsed duration",
+          "source": {
+            "path": ".superpowers/sdd/2026-10-28-portable-hybrid-workflow-harness/final-gate-evidence/official-pass-1.log",
+            "startLine": 6414,
+            "resultLine": 6472
+          }
+        }
+      ],
+      "unitReporterCycles": [
+        {
+          "role": "canonical-full-unit",
+          "targets": 11,
+          "nonemptyTargets": 10,
+          "testFilesPassed": 45,
+          "testsPassed": 404,
+          "noTestFilesTarget": "packages/test-kit",
+          "source": {
+            "path": ".superpowers/sdd/2026-10-28-portable-hybrid-workflow-harness/final-gate-evidence/official-pass-1.log",
+            "startLine": 43,
+            "endLine": 3140
+          },
+          "workspaceReporterSummaries": [
+            {
+              "workspace": "apps/crm-web",
+              "testFilesPassed": 22,
+              "testsPassed": 110,
+              "durationReported": "57.81s",
+              "durationSeconds": 57.81,
+              "source": {
+                "path": ".superpowers/sdd/2026-10-28-portable-hybrid-workflow-harness/final-gate-evidence/official-pass-1.log",
+                "testResultLine": 2939,
+                "durationLine": 2941
+              }
+            },
+            {
+              "workspace": "packages/api-contracts",
+              "testFilesPassed": 1,
+              "testsPassed": 18,
+              "durationReported": "327ms",
+              "durationSeconds": 0.327,
+              "source": {
+                "path": ".superpowers/sdd/2026-10-28-portable-hybrid-workflow-harness/final-gate-evidence/official-pass-1.log",
+                "testResultLine": 2949,
+                "durationLine": 2951
+              }
+            },
+            {
+              "workspace": "packages/domain",
+              "testFilesPassed": 2,
+              "testsPassed": 21,
+              "durationReported": "199ms",
+              "durationSeconds": 0.199,
+              "source": {
+                "path": ".superpowers/sdd/2026-10-28-portable-hybrid-workflow-harness/final-gate-evidence/official-pass-1.log",
+                "testResultLine": 2960,
+                "durationLine": 2962
+              }
+            },
+            {
+              "workspace": "packages/finance-service",
+              "testFilesPassed": 1,
+              "testsPassed": 24,
+              "durationReported": "228ms",
+              "durationSeconds": 0.228,
+              "source": {
+                "path": ".superpowers/sdd/2026-10-28-portable-hybrid-workflow-harness/final-gate-evidence/official-pass-1.log",
+                "testResultLine": 2970,
+                "durationLine": 2972
+              }
+            },
+            {
+              "workspace": "packages/insurance-runtime",
+              "testFilesPassed": 2,
+              "testsPassed": 32,
+              "durationReported": "279ms",
+              "durationSeconds": 0.279,
+              "source": {
+                "path": ".superpowers/sdd/2026-10-28-portable-hybrid-workflow-harness/final-gate-evidence/official-pass-1.log",
+                "testResultLine": 2981,
+                "durationLine": 2983
+              }
+            },
+            {
+              "workspace": "packages/policy-service",
+              "testFilesPassed": 1,
+              "testsPassed": 11,
+              "durationReported": "224ms",
+              "durationSeconds": 0.224,
+              "source": {
+                "path": ".superpowers/sdd/2026-10-28-portable-hybrid-workflow-harness/final-gate-evidence/official-pass-1.log",
+                "testResultLine": 2991,
+                "durationLine": 2993
+              }
+            },
+            {
+              "workspace": "packages/policy-state-service",
+              "testFilesPassed": 1,
+              "testsPassed": 8,
+              "durationReported": "209ms",
+              "durationSeconds": 0.209,
+              "source": {
+                "path": ".superpowers/sdd/2026-10-28-portable-hybrid-workflow-harness/final-gate-evidence/official-pass-1.log",
+                "testResultLine": 3001,
+                "durationLine": 3003
+              }
+            },
+            {
+              "workspace": "packages/service-bus",
+              "testFilesPassed": 2,
+              "testsPassed": 11,
+              "durationReported": "206ms",
+              "durationSeconds": 0.206,
+              "source": {
+                "path": ".superpowers/sdd/2026-10-28-portable-hybrid-workflow-harness/final-gate-evidence/official-pass-1.log",
+                "testResultLine": 3012,
+                "durationLine": 3014
+              }
+            },
+            {
+              "workspace": "tools/impact",
+              "testFilesPassed": 9,
+              "testsPassed": 131,
+              "durationReported": "43.73s",
+              "durationSeconds": 43.73,
+              "source": {
+                "path": ".superpowers/sdd/2026-10-28-portable-hybrid-workflow-harness/final-gate-evidence/official-pass-1.log",
+                "testResultLine": 3118,
+                "durationLine": 3120
+              }
+            },
+            {
+              "workspace": "tools/proofline",
+              "testFilesPassed": 4,
+              "testsPassed": 38,
+              "durationReported": "2.33s",
+              "durationSeconds": 2.33,
+              "source": {
+                "path": ".superpowers/sdd/2026-10-28-portable-hybrid-workflow-harness/final-gate-evidence/official-pass-1.log",
+                "testResultLine": 3137,
+                "durationLine": 3139
+              }
+            }
+          ]
+        },
+        {
+          "role": "direct-unit",
+          "targets": 11,
+          "nonemptyTargets": 10,
+          "testFilesPassed": 45,
+          "testsPassed": 404,
+          "noTestFilesTarget": "packages/test-kit",
+          "source": {
+            "path": ".superpowers/sdd/2026-10-28-portable-hybrid-workflow-harness/final-gate-evidence/official-pass-1.log",
+            "startLine": 3300,
+            "endLine": 6400
+          },
+          "workspaceReporterSummaries": [
+            {
+              "workspace": "apps/crm-web",
+              "testFilesPassed": 22,
+              "testsPassed": 110,
+              "durationReported": "57.89s",
+              "durationSeconds": 57.89,
+              "source": {
+                "path": ".superpowers/sdd/2026-10-28-portable-hybrid-workflow-harness/final-gate-evidence/official-pass-1.log",
+                "testResultLine": 6198,
+                "durationLine": 6200
+              }
+            },
+            {
+              "workspace": "packages/api-contracts",
+              "testFilesPassed": 1,
+              "testsPassed": 18,
+              "durationReported": "331ms",
+              "durationSeconds": 0.331,
+              "source": {
+                "path": ".superpowers/sdd/2026-10-28-portable-hybrid-workflow-harness/final-gate-evidence/official-pass-1.log",
+                "testResultLine": 6208,
+                "durationLine": 6210
+              }
+            },
+            {
+              "workspace": "packages/domain",
+              "testFilesPassed": 2,
+              "testsPassed": 21,
+              "durationReported": "196ms",
+              "durationSeconds": 0.196,
+              "source": {
+                "path": ".superpowers/sdd/2026-10-28-portable-hybrid-workflow-harness/final-gate-evidence/official-pass-1.log",
+                "testResultLine": 6219,
+                "durationLine": 6221
+              }
+            },
+            {
+              "workspace": "packages/finance-service",
+              "testFilesPassed": 1,
+              "testsPassed": 24,
+              "durationReported": "225ms",
+              "durationSeconds": 0.225,
+              "source": {
+                "path": ".superpowers/sdd/2026-10-28-portable-hybrid-workflow-harness/final-gate-evidence/official-pass-1.log",
+                "testResultLine": 6229,
+                "durationLine": 6231
+              }
+            },
+            {
+              "workspace": "packages/insurance-runtime",
+              "testFilesPassed": 2,
+              "testsPassed": 32,
+              "durationReported": "275ms",
+              "durationSeconds": 0.275,
+              "source": {
+                "path": ".superpowers/sdd/2026-10-28-portable-hybrid-workflow-harness/final-gate-evidence/official-pass-1.log",
+                "testResultLine": 6240,
+                "durationLine": 6242
+              }
+            },
+            {
+              "workspace": "packages/policy-service",
+              "testFilesPassed": 1,
+              "testsPassed": 11,
+              "durationReported": "220ms",
+              "durationSeconds": 0.22,
+              "source": {
+                "path": ".superpowers/sdd/2026-10-28-portable-hybrid-workflow-harness/final-gate-evidence/official-pass-1.log",
+                "testResultLine": 6250,
+                "durationLine": 6252
+              }
+            },
+            {
+              "workspace": "packages/policy-state-service",
+              "testFilesPassed": 1,
+              "testsPassed": 8,
+              "durationReported": "213ms",
+              "durationSeconds": 0.213,
+              "source": {
+                "path": ".superpowers/sdd/2026-10-28-portable-hybrid-workflow-harness/final-gate-evidence/official-pass-1.log",
+                "testResultLine": 6260,
+                "durationLine": 6262
+              }
+            },
+            {
+              "workspace": "packages/service-bus",
+              "testFilesPassed": 2,
+              "testsPassed": 11,
+              "durationReported": "207ms",
+              "durationSeconds": 0.207,
+              "source": {
+                "path": ".superpowers/sdd/2026-10-28-portable-hybrid-workflow-harness/final-gate-evidence/official-pass-1.log",
+                "testResultLine": 6271,
+                "durationLine": 6273
+              }
+            },
+            {
+              "workspace": "tools/impact",
+              "testFilesPassed": 9,
+              "testsPassed": 131,
+              "durationReported": "44.26s",
+              "durationSeconds": 44.26,
+              "source": {
+                "path": ".superpowers/sdd/2026-10-28-portable-hybrid-workflow-harness/final-gate-evidence/official-pass-1.log",
+                "testResultLine": 6378,
+                "durationLine": 6380
+              }
+            },
+            {
+              "workspace": "tools/proofline",
+              "testFilesPassed": 4,
+              "testsPassed": 38,
+              "durationReported": "2.34s",
+              "durationSeconds": 2.34,
+              "source": {
+                "path": ".superpowers/sdd/2026-10-28-portable-hybrid-workflow-harness/final-gate-evidence/official-pass-1.log",
+                "testResultLine": 6397,
+                "durationLine": 6399
+              }
+            }
+          ]
+        }
+      ],
+      "coverageInstrumentedRun": {
+        "targetsSucceeded": 11,
+        "durationReported": "1m 59s",
+        "durationSeconds": 119.0,
+        "cacheHits": 0,
+        "cacheTotal": 11,
+        "measurement": "Nx coverage-target run duration, including instrumentation",
+        "source": {
+          "path": ".superpowers/sdd/2026-10-28-portable-hybrid-workflow-harness/final-gate-evidence/official-pass-1.log",
+          "resultLine": 10217,
+          "durationLine": 10220
+        }
+      },
+      "typecheckRun": {
+        "targetsSucceeded": 11,
+        "durationReported": "8.9s",
+        "durationSeconds": 8.9,
+        "cacheHits": 0,
+        "cacheTotal": 11,
+        "source": {
+          "path": ".superpowers/sdd/2026-10-28-portable-hybrid-workflow-harness/final-gate-evidence/official-pass-1.log",
+          "durationLine": 10
+        }
+      }
+    },
+    {
+      "pass": 2,
+      "validatedHead": "4dc77a6ec005c710bd992b771a1c984b94b4e6a1",
+      "log": {
+        "path": ".superpowers/sdd/2026-10-28-portable-hybrid-workflow-harness/final-gate-evidence/official-pass-2.log",
+        "sha256": "6c95089b6faa17edfa0d51fc50fa3dd4acf861fbae52eabb8368227608653565"
+      },
+      "browserReporterRuns": [
+        {
+          "role": "canonical-full-browser",
+          "testsPassed": 43,
+          "workers": 5,
+          "shard": null,
+          "durationReported": "14.5s",
+          "durationSeconds": 14.5,
+          "measurement": "Playwright reporter suite elapsed duration",
+          "source": {
+            "path": ".superpowers/sdd/2026-10-28-portable-hybrid-workflow-harness/final-gate-evidence/official-pass-2.log",
+            "startLine": 3153,
+            "resultLine": 3211
+          }
+        },
+        {
+          "role": "canonical-full-two-worker-scenario",
+          "testsPassed": 24,
+          "workers": 2,
+          "shard": null,
+          "durationReported": "4.0s",
+          "durationSeconds": 4.0,
+          "measurement": "Playwright reporter suite elapsed duration",
+          "source": {
+            "path": ".superpowers/sdd/2026-10-28-portable-hybrid-workflow-harness/final-gate-evidence/official-pass-2.log",
+            "startLine": 3213,
+            "resultLine": 3244
+          }
+        },
+        {
+          "role": "canonical-full-scenario-shard-1",
+          "testsPassed": 12,
+          "workers": 5,
+          "shard": {
+            "index": 1,
+            "total": 2
+          },
+          "durationReported": "2.5s",
+          "durationSeconds": 2.5,
+          "measurement": "Playwright reporter suite elapsed duration",
+          "source": {
+            "path": ".superpowers/sdd/2026-10-28-portable-hybrid-workflow-harness/final-gate-evidence/official-pass-2.log",
+            "startLine": 3246,
+            "resultLine": 3271
+          }
+        },
+        {
+          "role": "canonical-full-scenario-shard-2",
+          "testsPassed": 12,
+          "workers": 5,
+          "shard": {
+            "index": 2,
+            "total": 2
+          },
+          "durationReported": "2.4s",
+          "durationSeconds": 2.4,
+          "measurement": "Playwright reporter suite elapsed duration",
+          "source": {
+            "path": ".superpowers/sdd/2026-10-28-portable-hybrid-workflow-harness/final-gate-evidence/official-pass-2.log",
+            "startLine": 3273,
+            "resultLine": 3298
+          }
+        },
+        {
+          "role": "direct-browser",
+          "testsPassed": 43,
+          "workers": 5,
+          "shard": null,
+          "durationReported": "16.7s",
+          "durationSeconds": 16.7,
+          "measurement": "Playwright reporter suite elapsed duration",
+          "source": {
+            "path": ".superpowers/sdd/2026-10-28-portable-hybrid-workflow-harness/final-gate-evidence/official-pass-2.log",
+            "startLine": 6417,
+            "resultLine": 6475
+          }
+        }
+      ],
+      "unitReporterCycles": [
+        {
+          "role": "canonical-full-unit",
+          "targets": 11,
+          "nonemptyTargets": 10,
+          "testFilesPassed": 45,
+          "testsPassed": 404,
+          "noTestFilesTarget": "packages/test-kit",
+          "source": {
+            "path": ".superpowers/sdd/2026-10-28-portable-hybrid-workflow-harness/final-gate-evidence/official-pass-2.log",
+            "startLine": 43,
+            "endLine": 3139
+          },
+          "workspaceReporterSummaries": [
+            {
+              "workspace": "apps/crm-web",
+              "testFilesPassed": 22,
+              "testsPassed": 110,
+              "durationReported": "57.37s",
+              "durationSeconds": 57.37,
+              "source": {
+                "path": ".superpowers/sdd/2026-10-28-portable-hybrid-workflow-harness/final-gate-evidence/official-pass-2.log",
+                "testResultLine": 2938,
+                "durationLine": 2940
+              }
+            },
+            {
+              "workspace": "packages/api-contracts",
+              "testFilesPassed": 1,
+              "testsPassed": 18,
+              "durationReported": "332ms",
+              "durationSeconds": 0.332,
+              "source": {
+                "path": ".superpowers/sdd/2026-10-28-portable-hybrid-workflow-harness/final-gate-evidence/official-pass-2.log",
+                "testResultLine": 2948,
+                "durationLine": 2950
+              }
+            },
+            {
+              "workspace": "packages/domain",
+              "testFilesPassed": 2,
+              "testsPassed": 21,
+              "durationReported": "194ms",
+              "durationSeconds": 0.194,
+              "source": {
+                "path": ".superpowers/sdd/2026-10-28-portable-hybrid-workflow-harness/final-gate-evidence/official-pass-2.log",
+                "testResultLine": 2959,
+                "durationLine": 2961
+              }
+            },
+            {
+              "workspace": "packages/finance-service",
+              "testFilesPassed": 1,
+              "testsPassed": 24,
+              "durationReported": "247ms",
+              "durationSeconds": 0.247,
+              "source": {
+                "path": ".superpowers/sdd/2026-10-28-portable-hybrid-workflow-harness/final-gate-evidence/official-pass-2.log",
+                "testResultLine": 2969,
+                "durationLine": 2971
+              }
+            },
+            {
+              "workspace": "packages/insurance-runtime",
+              "testFilesPassed": 2,
+              "testsPassed": 32,
+              "durationReported": "281ms",
+              "durationSeconds": 0.281,
+              "source": {
+                "path": ".superpowers/sdd/2026-10-28-portable-hybrid-workflow-harness/final-gate-evidence/official-pass-2.log",
+                "testResultLine": 2980,
+                "durationLine": 2982
+              }
+            },
+            {
+              "workspace": "packages/policy-service",
+              "testFilesPassed": 1,
+              "testsPassed": 11,
+              "durationReported": "219ms",
+              "durationSeconds": 0.219,
+              "source": {
+                "path": ".superpowers/sdd/2026-10-28-portable-hybrid-workflow-harness/final-gate-evidence/official-pass-2.log",
+                "testResultLine": 2990,
+                "durationLine": 2992
+              }
+            },
+            {
+              "workspace": "packages/policy-state-service",
+              "testFilesPassed": 1,
+              "testsPassed": 8,
+              "durationReported": "208ms",
+              "durationSeconds": 0.208,
+              "source": {
+                "path": ".superpowers/sdd/2026-10-28-portable-hybrid-workflow-harness/final-gate-evidence/official-pass-2.log",
+                "testResultLine": 3000,
+                "durationLine": 3002
+              }
+            },
+            {
+              "workspace": "packages/service-bus",
+              "testFilesPassed": 2,
+              "testsPassed": 11,
+              "durationReported": "214ms",
+              "durationSeconds": 0.214,
+              "source": {
+                "path": ".superpowers/sdd/2026-10-28-portable-hybrid-workflow-harness/final-gate-evidence/official-pass-2.log",
+                "testResultLine": 3011,
+                "durationLine": 3013
+              }
+            },
+            {
+              "workspace": "tools/impact",
+              "testFilesPassed": 9,
+              "testsPassed": 131,
+              "durationReported": "43.81s",
+              "durationSeconds": 43.81,
+              "source": {
+                "path": ".superpowers/sdd/2026-10-28-portable-hybrid-workflow-harness/final-gate-evidence/official-pass-2.log",
+                "testResultLine": 3117,
+                "durationLine": 3119
+              }
+            },
+            {
+              "workspace": "tools/proofline",
+              "testFilesPassed": 4,
+              "testsPassed": 38,
+              "durationReported": "2.37s",
+              "durationSeconds": 2.37,
+              "source": {
+                "path": ".superpowers/sdd/2026-10-28-portable-hybrid-workflow-harness/final-gate-evidence/official-pass-2.log",
+                "testResultLine": 3136,
+                "durationLine": 3138
+              }
+            }
+          ]
+        },
+        {
+          "role": "direct-unit",
+          "targets": 11,
+          "nonemptyTargets": 10,
+          "testFilesPassed": 45,
+          "testsPassed": 404,
+          "noTestFilesTarget": "packages/test-kit",
+          "source": {
+            "path": ".superpowers/sdd/2026-10-28-portable-hybrid-workflow-harness/final-gate-evidence/official-pass-2.log",
+            "startLine": 3299,
+            "endLine": 6403
+          },
+          "workspaceReporterSummaries": [
+            {
+              "workspace": "apps/crm-web",
+              "testFilesPassed": 22,
+              "testsPassed": 110,
+              "durationReported": "58.25s",
+              "durationSeconds": 58.25,
+              "source": {
+                "path": ".superpowers/sdd/2026-10-28-portable-hybrid-workflow-harness/final-gate-evidence/official-pass-2.log",
+                "testResultLine": 6197,
+                "durationLine": 6199
+              }
+            },
+            {
+              "workspace": "packages/api-contracts",
+              "testFilesPassed": 1,
+              "testsPassed": 18,
+              "durationReported": "355ms",
+              "durationSeconds": 0.355,
+              "source": {
+                "path": ".superpowers/sdd/2026-10-28-portable-hybrid-workflow-harness/final-gate-evidence/official-pass-2.log",
+                "testResultLine": 6207,
+                "durationLine": 6209
+              }
+            },
+            {
+              "workspace": "packages/domain",
+              "testFilesPassed": 2,
+              "testsPassed": 21,
+              "durationReported": "201ms",
+              "durationSeconds": 0.201,
+              "source": {
+                "path": ".superpowers/sdd/2026-10-28-portable-hybrid-workflow-harness/final-gate-evidence/official-pass-2.log",
+                "testResultLine": 6218,
+                "durationLine": 6220
+              }
+            },
+            {
+              "workspace": "packages/finance-service",
+              "testFilesPassed": 1,
+              "testsPassed": 24,
+              "durationReported": "234ms",
+              "durationSeconds": 0.234,
+              "source": {
+                "path": ".superpowers/sdd/2026-10-28-portable-hybrid-workflow-harness/final-gate-evidence/official-pass-2.log",
+                "testResultLine": 6228,
+                "durationLine": 6230
+              }
+            },
+            {
+              "workspace": "packages/insurance-runtime",
+              "testFilesPassed": 2,
+              "testsPassed": 32,
+              "durationReported": "304ms",
+              "durationSeconds": 0.304,
+              "source": {
+                "path": ".superpowers/sdd/2026-10-28-portable-hybrid-workflow-harness/final-gate-evidence/official-pass-2.log",
+                "testResultLine": 6239,
+                "durationLine": 6241
+              }
+            },
+            {
+              "workspace": "packages/policy-service",
+              "testFilesPassed": 1,
+              "testsPassed": 11,
+              "durationReported": "238ms",
+              "durationSeconds": 0.238,
+              "source": {
+                "path": ".superpowers/sdd/2026-10-28-portable-hybrid-workflow-harness/final-gate-evidence/official-pass-2.log",
+                "testResultLine": 6249,
+                "durationLine": 6251
+              }
+            },
+            {
+              "workspace": "packages/policy-state-service",
+              "testFilesPassed": 1,
+              "testsPassed": 8,
+              "durationReported": "226ms",
+              "durationSeconds": 0.226,
+              "source": {
+                "path": ".superpowers/sdd/2026-10-28-portable-hybrid-workflow-harness/final-gate-evidence/official-pass-2.log",
+                "testResultLine": 6259,
+                "durationLine": 6261
+              }
+            },
+            {
+              "workspace": "packages/service-bus",
+              "testFilesPassed": 2,
+              "testsPassed": 11,
+              "durationReported": "230ms",
+              "durationSeconds": 0.23,
+              "source": {
+                "path": ".superpowers/sdd/2026-10-28-portable-hybrid-workflow-harness/final-gate-evidence/official-pass-2.log",
+                "testResultLine": 6270,
+                "durationLine": 6272
+              }
+            },
+            {
+              "workspace": "tools/impact",
+              "testFilesPassed": 9,
+              "testsPassed": 131,
+              "durationReported": "48.60s",
+              "durationSeconds": 48.6,
+              "source": {
+                "path": ".superpowers/sdd/2026-10-28-portable-hybrid-workflow-harness/final-gate-evidence/official-pass-2.log",
+                "testResultLine": 6380,
+                "durationLine": 6382
+              }
+            },
+            {
+              "workspace": "tools/proofline",
+              "testFilesPassed": 4,
+              "testsPassed": 38,
+              "durationReported": "2.70s",
+              "durationSeconds": 2.7,
+              "source": {
+                "path": ".superpowers/sdd/2026-10-28-portable-hybrid-workflow-harness/final-gate-evidence/official-pass-2.log",
+                "testResultLine": 6400,
+                "durationLine": 6402
+              }
+            }
+          ]
+        }
+      ],
+      "coverageInstrumentedRun": {
+        "targetsSucceeded": 11,
+        "durationReported": "2m 15s",
+        "durationSeconds": 135.0,
+        "cacheHits": 0,
+        "cacheTotal": 11,
+        "measurement": "Nx coverage-target run duration, including instrumentation",
+        "source": {
+          "path": ".superpowers/sdd/2026-10-28-portable-hybrid-workflow-harness/final-gate-evidence/official-pass-2.log",
+          "resultLine": 10227,
+          "durationLine": 10230
+        }
+      },
+      "typecheckRun": {
+        "targetsSucceeded": 11,
+        "durationReported": "8.9s",
+        "durationSeconds": 8.9,
+        "cacheHits": 0,
+        "cacheTotal": 11,
+        "source": {
+          "path": ".superpowers/sdd/2026-10-28-portable-hybrid-workflow-harness/final-gate-evidence/official-pass-2.log",
+          "durationLine": 10
+        }
+      }
+    }
+  ],
+  "coverageMethodology": {
+    "provider": "v8",
+    "providerVersion": "3.2.7",
+    "reportFormat": "istanbul-json-summary",
+    "gateAggregation": "per-file",
+    "governanceDefinition": "The gate ratchets manifest-selected source files, with explicit resolved exclusions and checked producer provenance. It is narrower than the complete set of coverage reports.",
+    "aggregateDefinition": "For descriptive aggregate percentages, sum covered units and total units over the selected disjoint files, then divide covered by total. Do not average rounded file/workspace percentages. Aggregate figures are descriptive and do not replace the per-file ratchet.",
+    "exclusionSummary": "Explicit exclusions include test sources, barrels/type declarations, noncritical legacy wiring, deterministic test fixtures, and selected real child-process implementations whose V8 coverage is not merged. See each group for exact files and reasons.",
+    "limitations": [
+      "tools/proofline/canonical-runner.mjs is included in governance and currently reports 0/263 covered lines. Real child-process integration tests exercise this runner, while this V8 report records no attributed line coverage; the zero result is retained, not removed.",
+      "packages/test-kit has no local test files and its separate full report retains 0/124 covered lines.",
+      "Coverage is not proof that every behavior or risk is tested; deterministic behavior evidence and visible workflow evidence serve separate purposes."
+    ],
+    "source": {
+      "path": "artifacts/coverage/ratchet.json"
+    }
+  },
+  "governanceCoverageGroups": [
+    {
+      "workspace": "packages/service-bus",
+      "provider": "v8",
+      "providerVersion": "3.2.7",
+      "report": "artifacts/coverage/service-bus/coverage-summary.json",
+      "reportSha256": "50ac25bcc6b81425998368821bcbcb09ae83b551d98da4016b1203111e7031be",
+      "sourceGlobs": ["packages/service-bus/src/*.ts"],
+      "exclusions": [
+        {
+          "glob": "packages/service-bus/src/immutable-delivery.test.ts",
+          "reason": "Test sources are not instrumented production sources."
+        },
+        {
+          "glob": "packages/service-bus/src/service-bus.test.ts",
+          "reason": "Test sources are not instrumented production sources."
+        },
+        {
+          "glob": "packages/service-bus/src/index.ts",
+          "reason": "Barrel exports contain no service behavior."
+        }
+      ],
+      "resolvedExcludedFiles": [
+        "packages/service-bus/src/immutable-delivery.test.ts",
+        "packages/service-bus/src/index.ts",
+        "packages/service-bus/src/service-bus.test.ts"
+      ],
+      "aggregationEnforcedByGate": "per-file",
+      "files": [
+        {
+          "file": "packages/service-bus/src/service-bus.ts",
+          "metrics": {
+            "lines": {
+              "total": 163,
+              "covered": 163,
+              "skipped": 0,
+              "pct": 100
+            },
+            "functions": {
+              "total": 12,
+              "covered": 12,
+              "skipped": 0,
+              "pct": 100
+            },
+            "branches": {
+              "total": 63,
+              "covered": 62,
+              "skipped": 0,
+              "pct": 98.41
+            },
+            "statements": {
+              "total": 163,
+              "covered": 163,
+              "skipped": 0,
+              "pct": 100
+            }
+          },
+          "source": {
+            "path": "artifacts/coverage/service-bus/coverage-summary.json",
+            "line": 1
+          }
+        }
+      ],
+      "errors": []
+    },
+    {
+      "workspace": "packages/policy-service",
+      "provider": "v8",
+      "providerVersion": "3.2.7",
+      "report": "artifacts/coverage/policy-service/coverage-summary.json",
+      "reportSha256": "6a5dee3cf10aed6baecab5c152852225af44f39bd828846990f19e554f05d669",
+      "sourceGlobs": ["packages/policy-service/src/*.ts"],
+      "exclusions": [
+        {
+          "glob": "packages/policy-service/src/policy-service.test.ts",
+          "reason": "Test sources are not instrumented production sources."
+        },
+        {
+          "glob": "packages/policy-service/src/index.ts",
+          "reason": "Barrel exports contain no policy behavior."
+        }
+      ],
+      "resolvedExcludedFiles": [
+        "packages/policy-service/src/index.ts",
+        "packages/policy-service/src/policy-service.test.ts"
+      ],
+      "aggregationEnforcedByGate": "per-file",
+      "files": [
+        {
+          "file": "packages/policy-service/src/policy-service.ts",
+          "metrics": {
+            "lines": {
+              "total": 354,
+              "covered": 349,
+              "skipped": 0,
+              "pct": 98.58
+            },
+            "functions": {
+              "total": 17,
+              "covered": 17,
+              "skipped": 0,
+              "pct": 100
+            },
+            "branches": {
+              "total": 100,
+              "covered": 83,
+              "skipped": 0,
+              "pct": 83
+            },
+            "statements": {
+              "total": 354,
+              "covered": 349,
+              "skipped": 0,
+              "pct": 98.58
+            }
+          },
+          "source": {
+            "path": "artifacts/coverage/policy-service/coverage-summary.json",
+            "line": 1
+          }
+        }
+      ],
+      "errors": []
+    },
+    {
+      "workspace": "packages/policy-state-service",
+      "provider": "v8",
+      "providerVersion": "3.2.7",
+      "report": "artifacts/coverage/policy-state-service/coverage-summary.json",
+      "reportSha256": "850c5431865a337056b09266c2e9df72d92b693956ce78468d301ce72e5ce1cb",
+      "sourceGlobs": ["packages/policy-state-service/src/*.ts"],
+      "exclusions": [
+        {
+          "glob": "packages/policy-state-service/src/policy-state-service.test.ts",
+          "reason": "Test sources are not instrumented production sources."
+        },
+        {
+          "glob": "packages/policy-state-service/src/index.ts",
+          "reason": "Barrel exports contain no projection behavior."
+        }
+      ],
+      "resolvedExcludedFiles": [
+        "packages/policy-state-service/src/index.ts",
+        "packages/policy-state-service/src/policy-state-service.test.ts"
+      ],
+      "aggregationEnforcedByGate": "per-file",
+      "files": [
+        {
+          "file": "packages/policy-state-service/src/policy-state-service.ts",
+          "metrics": {
+            "lines": {
+              "total": 166,
+              "covered": 153,
+              "skipped": 0,
+              "pct": 92.16
+            },
+            "functions": {
+              "total": 11,
+              "covered": 11,
+              "skipped": 0,
+              "pct": 100
+            },
+            "branches": {
+              "total": 57,
+              "covered": 46,
+              "skipped": 0,
+              "pct": 80.7
+            },
+            "statements": {
+              "total": 166,
+              "covered": 153,
+              "skipped": 0,
+              "pct": 92.16
+            }
+          },
+          "source": {
+            "path": "artifacts/coverage/policy-state-service/coverage-summary.json",
+            "line": 1
+          }
+        }
+      ],
+      "errors": []
+    },
+    {
+      "workspace": "packages/finance-service",
+      "provider": "v8",
+      "providerVersion": "3.2.7",
+      "report": "artifacts/coverage/finance-service/coverage-summary.json",
+      "reportSha256": "553bfcac034b87b115f3bd338dde19460b63e9f8f342892674cd8ce2a626bad8",
+      "sourceGlobs": ["packages/finance-service/src/*.ts"],
+      "exclusions": [
+        {
+          "glob": "packages/finance-service/src/finance-service.test.ts",
+          "reason": "Test sources are not instrumented production sources."
+        },
+        {
+          "glob": "packages/finance-service/src/index.ts",
+          "reason": "Barrel exports contain no finance behavior."
+        }
+      ],
+      "resolvedExcludedFiles": [
+        "packages/finance-service/src/finance-service.test.ts",
+        "packages/finance-service/src/index.ts"
+      ],
+      "aggregationEnforcedByGate": "per-file",
+      "files": [
+        {
+          "file": "packages/finance-service/src/finance-service.ts",
+          "metrics": {
+            "lines": {
+              "total": 479,
+              "covered": 479,
+              "skipped": 0,
+              "pct": 100
+            },
+            "functions": {
+              "total": 22,
+              "covered": 22,
+              "skipped": 0,
+              "pct": 100
+            },
+            "branches": {
+              "total": 212,
+              "covered": 199,
+              "skipped": 0,
+              "pct": 93.86
+            },
+            "statements": {
+              "total": 479,
+              "covered": 479,
+              "skipped": 0,
+              "pct": 100
+            }
+          },
+          "source": {
+            "path": "artifacts/coverage/finance-service/coverage-summary.json",
+            "line": 1
+          }
+        }
+      ],
+      "errors": []
+    },
+    {
+      "workspace": "packages/insurance-runtime",
+      "provider": "v8",
+      "providerVersion": "3.2.7",
+      "report": "artifacts/coverage/insurance-runtime/coverage-summary.json",
+      "reportSha256": "bd57a3ad6dba1b335df7ba1154096f2e16f1187a5d775257bf01baea20abb584",
+      "sourceGlobs": ["packages/insurance-runtime/src/*.ts"],
+      "exclusions": [
+        {
+          "glob": "packages/insurance-runtime/src/runtime.test.ts",
+          "reason": "Test sources are not instrumented production sources."
+        },
+        {
+          "glob": "packages/insurance-runtime/src/timestamps.test.ts",
+          "reason": "Test sources are not instrumented production sources."
+        },
+        {
+          "glob": "packages/insurance-runtime/src/index.ts",
+          "reason": "Barrel exports contain no runtime behavior."
+        },
+        {
+          "glob": "packages/insurance-runtime/src/test-fixtures.ts",
+          "reason": "Deterministic test fixtures are validated by behavior tests rather than production coverage."
+        }
+      ],
+      "resolvedExcludedFiles": [
+        "packages/insurance-runtime/src/index.ts",
+        "packages/insurance-runtime/src/runtime.test.ts",
+        "packages/insurance-runtime/src/test-fixtures.ts",
+        "packages/insurance-runtime/src/timestamps.test.ts"
+      ],
+      "aggregationEnforcedByGate": "per-file",
+      "files": [
+        {
+          "file": "packages/insurance-runtime/src/runtime.ts",
+          "metrics": {
+            "lines": {
+              "total": 1238,
+              "covered": 1191,
+              "skipped": 0,
+              "pct": 96.2
+            },
+            "functions": {
+              "total": 43,
+              "covered": 42,
+              "skipped": 0,
+              "pct": 97.67
+            },
+            "branches": {
+              "total": 537,
+              "covered": 450,
+              "skipped": 0,
+              "pct": 83.79
+            },
+            "statements": {
+              "total": 1238,
+              "covered": 1191,
+              "skipped": 0,
+              "pct": 96.2
+            }
+          },
+          "source": {
+            "path": "artifacts/coverage/insurance-runtime/coverage-summary.json",
+            "line": 1
+          }
+        }
+      ],
+      "errors": []
+    },
+    {
+      "workspace": "packages/api-contracts",
+      "provider": "v8",
+      "providerVersion": "3.2.7",
+      "report": "artifacts/coverage/api-contracts/coverage-summary.json",
+      "reportSha256": "7694c3f6d265a7e62629843ba7e71906137f7eb0ca10bf35ae53a9e7caec3ed8",
+      "sourceGlobs": ["packages/api-contracts/src/*.ts"],
+      "exclusions": [
+        {
+          "glob": "packages/api-contracts/src/test-api.test.ts",
+          "reason": "Test sources are not instrumented production sources."
+        },
+        {
+          "glob": "packages/api-contracts/src/contracts.ts",
+          "reason": "Declarative contract types remain outside the critical Test API ratchet."
+        },
+        {
+          "glob": "packages/api-contracts/src/handlers.ts",
+          "reason": "HTTP handler wiring remains outside the critical Test API ratchet."
+        },
+        {
+          "glob": "packages/api-contracts/src/index.ts",
+          "reason": "Barrel exports contain no Test API behavior."
+        }
+      ],
+      "resolvedExcludedFiles": [
+        "packages/api-contracts/src/contracts.ts",
+        "packages/api-contracts/src/handlers.ts",
+        "packages/api-contracts/src/index.ts",
+        "packages/api-contracts/src/test-api.test.ts"
+      ],
+      "aggregationEnforcedByGate": "per-file",
+      "files": [
+        {
+          "file": "packages/api-contracts/src/test-api.ts",
+          "metrics": {
+            "lines": {
+              "total": 285,
+              "covered": 264,
+              "skipped": 0,
+              "pct": 92.63
+            },
+            "functions": {
+              "total": 10,
+              "covered": 10,
+              "skipped": 0,
+              "pct": 100
+            },
+            "branches": {
+              "total": 130,
+              "covered": 102,
+              "skipped": 0,
+              "pct": 78.46
+            },
+            "statements": {
+              "total": 285,
+              "covered": 264,
+              "skipped": 0,
+              "pct": 92.63
+            }
+          },
+          "source": {
+            "path": "artifacts/coverage/api-contracts/coverage-summary.json",
+            "line": 1
+          }
+        }
+      ],
+      "errors": []
+    },
+    {
+      "workspace": "tools/impact",
+      "provider": "v8",
+      "providerVersion": "3.2.7",
+      "report": "artifacts/coverage/impact-tools/coverage-summary.json",
+      "reportSha256": "dd21d6f615a9fd23cd8b04dfa6876f6ff24ff993da7a703093c35d0c0e7a17ab",
+      "sourceGlobs": ["tools/impact/src/*.ts"],
+      "exclusions": [
+        {
+          "glob": "tools/impact/src/contract.test.ts",
+          "reason": "Test sources are not instrumented production sources."
+        },
+        {
+          "glob": "tools/impact/src/governance.test.ts",
+          "reason": "Test sources are not instrumented production sources."
+        },
+        {
+          "glob": "tools/impact/src/harness-manifest.test.ts",
+          "reason": "Test sources are not instrumented production sources."
+        },
+        {
+          "glob": "tools/impact/src/main-selection.test.ts",
+          "reason": "Test sources are not instrumented production sources."
+        },
+        {
+          "glob": "tools/impact/src/playwright-discovery.test.ts",
+          "reason": "Test sources are not instrumented production sources."
+        },
+        {
+          "glob": "tools/impact/src/policy.test.ts",
+          "reason": "Test sources are not instrumented production sources."
+        },
+        {
+          "glob": "tools/impact/src/select.test.ts",
+          "reason": "Test sources are not instrumented production sources."
+        },
+        {
+          "glob": "tools/impact/src/validate.test.ts",
+          "reason": "Test sources are not instrumented production sources."
+        },
+        {
+          "glob": "tools/impact/src/changed-files.ts",
+          "reason": "Revision discovery is covered by focused governance tests outside the validator ratchet."
+        },
+        {
+          "glob": "tools/impact/src/coverage-policy.ts",
+          "reason": "Coverage governance is protected by adversarial policy tests outside the validator ratchet."
+        },
+        {
+          "glob": "tools/impact/src/harness-manifest.ts",
+          "reason": "Manifest validation has focused tests outside the legacy validator ratchet."
+        },
+        {
+          "glob": "tools/impact/src/main.ts",
+          "reason": "CLI orchestration is covered by integration tests outside the validator ratchet."
+        },
+        {
+          "glob": "tools/impact/src/playwright-discovery.ts",
+          "reason": "Playwright discovery has focused tests outside the validator ratchet."
+        },
+        {
+          "glob": "tools/impact/src/record-check.ts",
+          "reason": "Record governance is protected by adversarial tests outside the validator ratchet."
+        },
+        {
+          "glob": "tools/impact/src/select.ts",
+          "reason": "Impact selection has focused tests outside the validator ratchet."
+        },
+        {
+          "glob": "tools/impact/src/types.ts",
+          "reason": "Type-only declarations emit no runtime behavior."
+        },
+        {
+          "glob": "tools/impact/src/workspaces.ts",
+          "reason": "Workspace discovery has integration coverage outside the validator ratchet."
+        },
+        {
+          "glob": "tools/impact/src/real-manifest-selection.test.ts",
+          "reason": "Repository-level real-runner integration test sources are not instrumented production sources."
+        }
+      ],
+      "resolvedExcludedFiles": [
+        "tools/impact/src/changed-files.ts",
+        "tools/impact/src/contract.test.ts",
+        "tools/impact/src/coverage-policy.ts",
+        "tools/impact/src/governance.test.ts",
+        "tools/impact/src/harness-manifest.test.ts",
+        "tools/impact/src/harness-manifest.ts",
+        "tools/impact/src/main-selection.test.ts",
+        "tools/impact/src/main.ts",
+        "tools/impact/src/playwright-discovery.test.ts",
+        "tools/impact/src/playwright-discovery.ts",
+        "tools/impact/src/policy.test.ts",
+        "tools/impact/src/real-manifest-selection.test.ts",
+        "tools/impact/src/record-check.ts",
+        "tools/impact/src/select.test.ts",
+        "tools/impact/src/select.ts",
+        "tools/impact/src/types.ts",
+        "tools/impact/src/validate.test.ts",
+        "tools/impact/src/workspaces.ts"
+      ],
+      "aggregationEnforcedByGate": "per-file",
+      "files": [
+        {
+          "file": "tools/impact/src/governance.ts",
+          "metrics": {
+            "lines": {
+              "total": 375,
+              "covered": 360,
+              "skipped": 0,
+              "pct": 96
+            },
+            "functions": {
+              "total": 24,
+              "covered": 24,
+              "skipped": 0,
+              "pct": 100
+            },
+            "branches": {
+              "total": 167,
+              "covered": 149,
+              "skipped": 0,
+              "pct": 89.22
+            },
+            "statements": {
+              "total": 375,
+              "covered": 360,
+              "skipped": 0,
+              "pct": 96
+            }
+          },
+          "source": {
+            "path": "artifacts/coverage/impact-tools/coverage-summary.json",
+            "line": 1
+          }
+        },
+        {
+          "file": "tools/impact/src/validate.ts",
+          "metrics": {
+            "lines": {
+              "total": 173,
+              "covered": 171,
+              "skipped": 0,
+              "pct": 98.84
+            },
+            "functions": {
+              "total": 4,
+              "covered": 4,
+              "skipped": 0,
+              "pct": 100
+            },
+            "branches": {
+              "total": 60,
+              "covered": 58,
+              "skipped": 0,
+              "pct": 96.66
+            },
+            "statements": {
+              "total": 173,
+              "covered": 171,
+              "skipped": 0,
+              "pct": 98.84
+            }
+          },
+          "source": {
+            "path": "artifacts/coverage/impact-tools/coverage-summary.json",
+            "line": 1
+          }
+        }
+      ],
+      "errors": []
+    },
+    {
+      "workspace": "tools/proofline",
+      "provider": "v8",
+      "providerVersion": "3.2.7",
+      "report": "artifacts/coverage/proofline-tools/coverage-summary.json",
+      "reportSha256": "17a76ceb3c0881fbdbdcbac34a2ce729cafc3675c9c41ba57ec6dde55ecaf6a9",
+      "sourceGlobs": [
+        "tools/proofline/**/*.ts",
+        "tools/proofline/**/*.mts",
+        "tools/proofline/**/*.mjs"
+      ],
+      "exclusions": [
+        {
+          "glob": "tools/proofline/src/egress-guard.test.ts",
+          "reason": "Test sources are not instrumented production sources."
+        },
+        {
+          "glob": "tools/proofline/src/production-negative.test.ts",
+          "reason": "Test sources are not instrumented production sources."
+        },
+        {
+          "glob": "tools/proofline/run-guarded.d.mts",
+          "reason": "Type-only declarations emit no runtime behavior."
+        },
+        {
+          "glob": "tools/proofline/check-production.mjs",
+          "reason": "The repository adapter CLI is exercised by the canonical production build-and-audit integration gate; Vitest V8 cannot attribute its separate Node process."
+        },
+        {
+          "glob": "tools/proofline/egress-guard.mjs",
+          "reason": "The preload must execute in isolated real child processes; Vitest V8 does not merge child-process instrumentation, so focused process tests own every enabled plane and bypass regression."
+        },
+        {
+          "glob": "tools/proofline/serve-test-app.mjs",
+          "reason": "The real loopback server is exercised in a separate Node process for missing, wrong, accepted, and replayed capability behavior; Vitest V8 cannot attribute that child process."
+        },
+        {
+          "glob": "tools/proofline/src/product-e2e-boundary.test.ts",
+          "reason": "Static regression test sources are not instrumented production sources."
+        },
+        {
+          "glob": "tools/proofline/src/canonical-runner-egress.test.ts",
+          "reason": "Canonical runner integration test sources are not instrumented production sources."
+        }
+      ],
+      "resolvedExcludedFiles": [
+        "tools/proofline/check-production.mjs",
+        "tools/proofline/egress-guard.mjs",
+        "tools/proofline/run-guarded.d.mts",
+        "tools/proofline/serve-test-app.mjs",
+        "tools/proofline/src/canonical-runner-egress.test.ts",
+        "tools/proofline/src/egress-guard.test.ts",
+        "tools/proofline/src/product-e2e-boundary.test.ts",
+        "tools/proofline/src/production-negative.test.ts"
+      ],
+      "aggregationEnforcedByGate": "per-file",
+      "files": [
+        {
+          "file": "tools/proofline/canonical-runner.mjs",
+          "metrics": {
+            "lines": {
+              "total": 263,
+              "covered": 0,
+              "skipped": 0,
+              "pct": 0
+            },
+            "functions": {
+              "total": 1,
+              "covered": 0,
+              "skipped": 0,
+              "pct": 0
+            },
+            "branches": {
+              "total": 1,
+              "covered": 0,
+              "skipped": 0,
+              "pct": 0
+            },
+            "statements": {
+              "total": 263,
+              "covered": 0,
+              "skipped": 0,
+              "pct": 0
+            }
+          },
+          "source": {
+            "path": "artifacts/coverage/proofline-tools/coverage-summary.json",
+            "line": 1
+          }
+        },
+        {
+          "file": "tools/proofline/guard-policy.mjs",
+          "metrics": {
+            "lines": {
+              "total": 146,
+              "covered": 135,
+              "skipped": 0,
+              "pct": 92.46
+            },
+            "functions": {
+              "total": 14,
+              "covered": 13,
+              "skipped": 0,
+              "pct": 92.85
+            },
+            "branches": {
+              "total": 78,
+              "covered": 66,
+              "skipped": 0,
+              "pct": 84.61
+            },
+            "statements": {
+              "total": 146,
+              "covered": 135,
+              "skipped": 0,
+              "pct": 92.46
+            }
+          },
+          "source": {
+            "path": "artifacts/coverage/proofline-tools/coverage-summary.json",
+            "line": 1
+          }
+        },
+        {
+          "file": "tools/proofline/run-guarded.mjs",
+          "metrics": {
+            "lines": {
+              "total": 178,
+              "covered": 125,
+              "skipped": 0,
+              "pct": 70.22
+            },
+            "functions": {
+              "total": 7,
+              "covered": 6,
+              "skipped": 0,
+              "pct": 85.71
+            },
+            "branches": {
+              "total": 48,
+              "covered": 40,
+              "skipped": 0,
+              "pct": 83.33
+            },
+            "statements": {
+              "total": 178,
+              "covered": 125,
+              "skipped": 0,
+              "pct": 70.22
+            }
+          },
+          "source": {
+            "path": "artifacts/coverage/proofline-tools/coverage-summary.json",
+            "line": 1
+          }
+        },
+        {
+          "file": "tools/proofline/src/production-negative.ts",
+          "metrics": {
+            "lines": {
+              "total": 184,
+              "covered": 183,
+              "skipped": 0,
+              "pct": 99.45
+            },
+            "functions": {
+              "total": 5,
+              "covered": 5,
+              "skipped": 0,
+              "pct": 100
+            },
+            "branches": {
+              "total": 84,
+              "covered": 70,
+              "skipped": 0,
+              "pct": 83.33
+            },
+            "statements": {
+              "total": 184,
+              "covered": 183,
+              "skipped": 0,
+              "pct": 99.45
+            }
+          },
+          "source": {
+            "path": "artifacts/coverage/proofline-tools/coverage-summary.json",
+            "line": 1
+          }
+        }
+      ],
+      "errors": []
+    }
+  ],
+  "coverageAggregates": {
+    "governanceSelectedFiles": {
+      "groups": 8,
+      "files": 12,
+      "metrics": {
+        "lines": {
+          "covered": 3573,
+          "total": 4004,
+          "percentComputedFromCounts": 89.23576423576424,
+          "displayPercent": "89.24"
+        },
+        "functions": {
+          "covered": 166,
+          "total": 170,
+          "percentComputedFromCounts": 97.6470588235294,
+          "displayPercent": "97.65"
+        },
+        "branches": {
+          "covered": 1325,
+          "total": 1537,
+          "percentComputedFromCounts": 86.20689655172414,
+          "displayPercent": "86.21"
+        },
+        "statements": {
+          "covered": 3573,
+          "total": 4004,
+          "percentComputedFromCounts": 89.23576423576424,
+          "displayPercent": "89.24"
+        }
+      },
+      "source": {
+        "path": "artifacts/coverage/ratchet.json"
+      }
+    },
+    "allProducedWorkspaceReports": {
+      "reports": [
+        {
+          "path": "artifacts/coverage/api-contracts/coverage-summary.json",
+          "sha256": "7694c3f6d265a7e62629843ba7e71906137f7eb0ca10bf35ae53a9e7caec3ed8",
+          "fileEntries": 4,
+          "metrics": {
+            "lines": {
+              "total": 298,
+              "covered": 275,
+              "skipped": 0,
+              "pct": 92.28
+            },
+            "functions": {
+              "total": 14,
+              "covered": 14,
+              "skipped": 0,
+              "pct": 100
+            },
+            "branches": {
+              "total": 135,
+              "covered": 107,
+              "skipped": 0,
+              "pct": 79.25
+            },
+            "statements": {
+              "total": 298,
+              "covered": 275,
+              "skipped": 0,
+              "pct": 92.28
+            }
+          }
+        },
+        {
+          "path": "artifacts/coverage/crm-web/coverage-summary.json",
+          "sha256": "a9e97f673baca0227cc1ddb93caf20833a711e118e13f9ca8f91c6310f775dd1",
+          "fileEntries": 111,
+          "metrics": {
+            "lines": {
+              "total": 7624,
+              "covered": 6537,
+              "skipped": 0,
+              "pct": 85.74
+            },
+            "functions": {
+              "total": 474,
+              "covered": 267,
+              "skipped": 0,
+              "pct": 56.32
+            },
+            "branches": {
+              "total": 1143,
+              "covered": 954,
+              "skipped": 0,
+              "pct": 83.46
+            },
+            "statements": {
+              "total": 7624,
+              "covered": 6537,
+              "skipped": 0,
+              "pct": 85.74
+            }
+          }
+        },
+        {
+          "path": "artifacts/coverage/domain/coverage-summary.json",
+          "sha256": "c7fb96a570c49835cbab34644a241df147eb55e42cc11743ce1ad11fe975a721",
+          "fileEntries": 7,
+          "metrics": {
+            "lines": {
+              "total": 167,
+              "covered": 137,
+              "skipped": 0,
+              "pct": 82.03
+            },
+            "functions": {
+              "total": 16,
+              "covered": 14,
+              "skipped": 0,
+              "pct": 87.5
+            },
+            "branches": {
+              "total": 50,
+              "covered": 41,
+              "skipped": 0,
+              "pct": 82
+            },
+            "statements": {
+              "total": 167,
+              "covered": 137,
+              "skipped": 0,
+              "pct": 82.03
+            }
+          }
+        },
+        {
+          "path": "artifacts/coverage/finance-service/coverage-summary.json",
+          "sha256": "553bfcac034b87b115f3bd338dde19460b63e9f8f342892674cd8ce2a626bad8",
+          "fileEntries": 2,
+          "metrics": {
+            "lines": {
+              "total": 480,
+              "covered": 479,
+              "skipped": 0,
+              "pct": 99.79
+            },
+            "functions": {
+              "total": 23,
+              "covered": 22,
+              "skipped": 0,
+              "pct": 95.65
+            },
+            "branches": {
+              "total": 213,
+              "covered": 199,
+              "skipped": 0,
+              "pct": 93.42
+            },
+            "statements": {
+              "total": 480,
+              "covered": 479,
+              "skipped": 0,
+              "pct": 99.79
+            }
+          }
+        },
+        {
+          "path": "artifacts/coverage/impact-tools/coverage-summary.json",
+          "sha256": "dd21d6f615a9fd23cd8b04dfa6876f6ff24ff993da7a703093c35d0c0e7a17ab",
+          "fileEntries": 11,
+          "metrics": {
+            "lines": {
+              "total": 3329,
+              "covered": 3160,
+              "skipped": 0,
+              "pct": 94.92
+            },
+            "functions": {
+              "total": 111,
+              "covered": 108,
+              "skipped": 0,
+              "pct": 97.29
+            },
+            "branches": {
+              "total": 1259,
+              "covered": 1065,
+              "skipped": 0,
+              "pct": 84.59
+            },
+            "statements": {
+              "total": 3329,
+              "covered": 3160,
+              "skipped": 0,
+              "pct": 94.92
+            }
+          }
+        },
+        {
+          "path": "artifacts/coverage/insurance-runtime/coverage-summary.json",
+          "sha256": "bd57a3ad6dba1b335df7ba1154096f2e16f1187a5d775257bf01baea20abb584",
+          "fileEntries": 3,
+          "metrics": {
+            "lines": {
+              "total": 1296,
+              "covered": 1248,
+              "skipped": 0,
+              "pct": 96.29
+            },
+            "functions": {
+              "total": 46,
+              "covered": 44,
+              "skipped": 0,
+              "pct": 95.65
+            },
+            "branches": {
+              "total": 544,
+              "covered": 456,
+              "skipped": 0,
+              "pct": 83.82
+            },
+            "statements": {
+              "total": 1296,
+              "covered": 1248,
+              "skipped": 0,
+              "pct": 96.29
+            }
+          }
+        },
+        {
+          "path": "artifacts/coverage/policy-service/coverage-summary.json",
+          "sha256": "6a5dee3cf10aed6baecab5c152852225af44f39bd828846990f19e554f05d669",
+          "fileEntries": 2,
+          "metrics": {
+            "lines": {
+              "total": 355,
+              "covered": 349,
+              "skipped": 0,
+              "pct": 98.3
+            },
+            "functions": {
+              "total": 18,
+              "covered": 18,
+              "skipped": 0,
+              "pct": 100
+            },
+            "branches": {
+              "total": 101,
+              "covered": 84,
+              "skipped": 0,
+              "pct": 83.16
+            },
+            "statements": {
+              "total": 355,
+              "covered": 349,
+              "skipped": 0,
+              "pct": 98.3
+            }
+          }
+        },
+        {
+          "path": "artifacts/coverage/policy-state-service/coverage-summary.json",
+          "sha256": "850c5431865a337056b09266c2e9df72d92b693956ce78468d301ce72e5ce1cb",
+          "fileEntries": 2,
+          "metrics": {
+            "lines": {
+              "total": 167,
+              "covered": 153,
+              "skipped": 0,
+              "pct": 91.61
+            },
+            "functions": {
+              "total": 12,
+              "covered": 12,
+              "skipped": 0,
+              "pct": 100
+            },
+            "branches": {
+              "total": 58,
+              "covered": 47,
+              "skipped": 0,
+              "pct": 81.03
+            },
+            "statements": {
+              "total": 167,
+              "covered": 153,
+              "skipped": 0,
+              "pct": 91.61
+            }
+          }
+        },
+        {
+          "path": "artifacts/coverage/proofline-tools/coverage-summary.json",
+          "sha256": "17a76ceb3c0881fbdbdcbac34a2ce729cafc3675c9c41ba57ec6dde55ecaf6a9",
+          "fileEntries": 4,
+          "metrics": {
+            "lines": {
+              "total": 771,
+              "covered": 443,
+              "skipped": 0,
+              "pct": 57.45
+            },
+            "functions": {
+              "total": 27,
+              "covered": 24,
+              "skipped": 0,
+              "pct": 88.88
+            },
+            "branches": {
+              "total": 211,
+              "covered": 176,
+              "skipped": 0,
+              "pct": 83.41
+            },
+            "statements": {
+              "total": 771,
+              "covered": 443,
+              "skipped": 0,
+              "pct": 57.45
+            }
+          }
+        },
+        {
+          "path": "artifacts/coverage/service-bus/coverage-summary.json",
+          "sha256": "50ac25bcc6b81425998368821bcbcb09ae83b551d98da4016b1203111e7031be",
+          "fileEntries": 2,
+          "metrics": {
+            "lines": {
+              "total": 164,
+              "covered": 163,
+              "skipped": 0,
+              "pct": 99.39
+            },
+            "functions": {
+              "total": 13,
+              "covered": 13,
+              "skipped": 0,
+              "pct": 100
+            },
+            "branches": {
+              "total": 64,
+              "covered": 63,
+              "skipped": 0,
+              "pct": 98.43
+            },
+            "statements": {
+              "total": 164,
+              "covered": 163,
+              "skipped": 0,
+              "pct": 99.39
+            }
+          }
+        },
+        {
+          "path": "artifacts/coverage/test-kit/coverage-summary.json",
+          "sha256": "84bc4e5e566f64ad0c9682fea370163c7f38b984e1d05ba0d40348925682ae2a",
+          "fileEntries": 4,
+          "metrics": {
+            "lines": {
+              "total": 124,
+              "covered": 0,
+              "skipped": 0,
+              "pct": 0
+            },
+            "functions": {
+              "total": 4,
+              "covered": 2,
+              "skipped": 0,
+              "pct": 50
+            },
+            "branches": {
+              "total": 4,
+              "covered": 2,
+              "skipped": 0,
+              "pct": 50
+            },
+            "statements": {
+              "total": 124,
+              "covered": 0,
+              "skipped": 0,
+              "pct": 0
+            }
+          }
+        }
+      ],
+      "fileEntries": 152,
+      "metrics": {
+        "lines": {
+          "covered": 12944,
+          "total": 14775,
+          "percentComputedFromCounts": 87.60744500846023,
+          "displayPercent": "87.61"
+        },
+        "functions": {
+          "covered": 538,
+          "total": 758,
+          "percentComputedFromCounts": 70.97625329815304,
+          "displayPercent": "70.98"
+        },
+        "branches": {
+          "covered": 3194,
+          "total": 3782,
+          "percentComputedFromCounts": 84.45267054468535,
+          "displayPercent": "84.45"
+        },
+        "statements": {
+          "covered": 12944,
+          "total": 14775,
+          "percentComputedFromCounts": 87.60744500846023,
+          "displayPercent": "87.61"
+        }
+      },
+      "definition": "All eleven produced report totals, including sources outside the eight governance groups. Source file entries are disjoint across these reports.",
+      "reportCount": 11
+    }
+  },
+  "qaNotes": [
+    "The authoritative golden path is test-impact/workflows/crm-golden.json; workflows/crm-golden.json does not exist.",
+    "Use 145 unique manifest binding IDs, not the stale 96-binding figure from an earlier brief.",
+    "Use 12 registered workspaces versus 11 unit/typecheck/coverage targets; crm-e2e is browser-only.",
+    "Use six implemented golden rows plus one excluded row; the excluded row contains two explicitly excluded browser operations.",
+    "Pass 2 success is supported by its complete retained log plus ignored progress.md; the tracked JSONL deliberately ends at Pass 1.",
+    "This file was generated by reading retained evidence only. No tests, commits or pushes were run for this data audit."
+  ]
+}

@@ -49,6 +49,10 @@ The selector retains exact ownership and dynamic-import edge reasons and falls b
 
 Chromium runs the full visible matrix: authenticated deep-link restoration, sidebar customer/property/quote/bind/finance/logout, response-loss recovery, role denial, tenant isolation, and refund/correction. Firefox and WebKit are opt-in and run only the `@proofline-smoke` invariant. The fixture rotates access tokens; its `refreshToken` value is a refresh-capability marker, while an independent refresh-credential protocol remains outside this harness delivery.
 
+## Visual guides
+
+Start with the [eight-page visual introduction](docs/showcase/proofline-overview.pdf) for a plain-language overview, workflow diagrams, capabilities, and measured charts. Read the [technical companion](docs/showcase/TECHNICAL_GUIDE.md) for editable architecture diagrams, execution contracts, adaptation steps, and measurement sources.
+
 ## Key Features
 
 - **20 routed pages** across a strict 3-level information architecture — Overview, Analytics, Mail (Inbox/Sent), Calendar, Notifications, Support, Integrations, Users, Team, Billing, Transactions, Profile, UI Kit, Tables & Charts galleries, Settings, User Settings, Login and 404 — all lazy-loaded behind a protected shell.
