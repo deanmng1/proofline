@@ -5,6 +5,7 @@ import {
   existsSync,
   mkdirSync,
   mkdtempSync,
+  readFileSync,
   rmSync,
   writeFileSync,
 } from "node:fs";
@@ -327,4 +328,19 @@ test("canonical_unit_runner_limits_git_to_filter_free_object_and_metadata_operat
   rmSync(path.join(cwd, ".git/objects", blob.slice(0, 2), blob.slice(2)));
   expect(() => git(["cat-file", "blob", "HEAD:tracked.txt"])).toThrow();
   expect(existsSync(marker)).toBe(false);
+});
+
+test("canonical_unit_runner_establishes_manifest_artifacts_before_vitest", () => {
+  const runner = readFileSync("tools/proofline/canonical-runner.mjs", "utf8");
+  const manifest = JSON.parse(readFileSync("proofline.harness.json", "utf8")) as {
+    commands: Record<string, { argv: string[]; cwd: string }>;
+  };
+  expect(manifest.commands.buildProduction).toEqual({ argv: ["pnpm", "build"], cwd: "." });
+  expect(manifest.commands.buildTest).toEqual({ argv: ["pnpm", "build:test"], cwd: "." });
+  expect(runner).toContain('const unitBuildCommandKeys = ["buildProduction", "buildTest"]');
+  const unitBranch = runner.slice(runner.indexOf('if (mode === "unit")'));
+  const buildIndex = unitBranch.indexOf("runManifestCommands(unitBuildCommandKeys)");
+  const testIndex = unitBranch.indexOf("unitArguments()");
+  expect(buildIndex).toBeGreaterThanOrEqual(0);
+  expect(testIndex).toBeGreaterThan(buildIndex);
 });

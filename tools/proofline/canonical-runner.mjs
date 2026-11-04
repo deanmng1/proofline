@@ -14,6 +14,10 @@ const repositoryRoot = path.resolve(import.meta.dirname, "../..");
 const deniedRunnerOrigin = "http://127.0.0.1:1";
 const vitestCli = path.join(repositoryRoot, "node_modules/vitest/vitest.mjs");
 const playwrightCli = path.join(repositoryRoot, "node_modules/@playwright/test/cli.js");
+const harness = JSON.parse(
+  readFileSync(path.join(repositoryRoot, "proofline.harness.json"), "utf8"),
+);
+const unitBuildCommandKeys = ["buildProduction", "buildTest"];
 const executableOnPath = (name) => {
   for (const directory of (process.env.PATH ?? "").split(path.delimiter)) {
     const candidate = path.join(directory, name);
@@ -22,15 +26,35 @@ const executableOnPath = (name) => {
   throw new Error(`Canonical runner cannot resolve required executable: ${name}`);
 };
 
-const runVisible = (command) => {
+const runVisible = (command, cwd = repositoryRoot) => {
   const result = spawnSync(command[0], command.slice(1), {
-    cwd: repositoryRoot,
+    cwd,
     env: process.env,
     stdio: "inherit",
     shell: false,
   });
   if (result.error) throw result.error;
   return result.status ?? 1;
+};
+
+const runManifestCommands = (keys) => {
+  for (const key of keys) {
+    const command = harness.commands?.[key];
+    if (
+      !command ||
+      !Array.isArray(command.argv) ||
+      command.argv.length === 0 ||
+      typeof command.cwd !== "string"
+    )
+      throw new Error(`Canonical runner requires manifest command ${key}.`);
+    const cwd = path.resolve(repositoryRoot, command.cwd);
+    const relative = path.relative(repositoryRoot, cwd);
+    if (relative.startsWith("..") || path.isAbsolute(relative))
+      throw new Error(`Canonical runner manifest command ${key} escapes the repository.`);
+    const code = runVisible(command.argv, cwd);
+    if (code !== 0) return code;
+  }
+  return 0;
 };
 
 const projectFiles = (directory = repositoryRoot) =>
@@ -216,7 +240,7 @@ export const main = async (args = process.argv.slice(2)) => {
   if (mode === "vitest") return guarded("vitest", rest);
   if (mode === "playwright") return guarded("playwright", rest);
   if (mode === "unit") {
-    const build = runVisible(["pnpm", "build:test"]);
+    const build = runManifestCommands(unitBuildCommandKeys);
     if (build !== 0) return build;
     const failures = [];
     for (const target of unitArguments()) {
@@ -227,7 +251,7 @@ export const main = async (args = process.argv.slice(2)) => {
     return 0;
   }
   if (mode === "browser") {
-    const build = runVisible(["pnpm", "build:test"]);
+    const build = runManifestCommands(["buildTest"]);
     if (build !== 0) return build;
     return guarded("playwright", [
       "test",

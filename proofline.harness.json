@@ -623,7 +623,7 @@
           "runner": "vitest",
           "file": "tools/proofline/src/canonical-runner-egress.test.ts",
           "title": "canonical_unit_runner_rejects_package_manager_wrapper_escape_with_stripped_env",
-          "line": 94
+          "line": 95
         },
         {
           "ruleId": "SAFE-001",
@@ -633,7 +633,7 @@
           "runner": "vitest",
           "file": "tools/proofline/src/canonical-runner-egress.test.ts",
           "title": "canonical_unit_runner_rejects_forged_delegated_policy_broadening",
-          "line": 149
+          "line": 150
         },
         {
           "ruleId": "SAFE-001",
@@ -684,7 +684,7 @@
           "runner": "vitest",
           "file": "tools/proofline/src/canonical-runner-egress.test.ts",
           "title": "canonical_unit_runner_rejects_repository_clean_filters_before_native_dispatch",
-          "line": 198
+          "line": 199
         },
         {
           "ruleId": "SAFE-001",
@@ -694,7 +694,7 @@
           "runner": "vitest",
           "file": "tools/proofline/src/canonical-runner-egress.test.ts",
           "title": "canonical_unit_runner_ignores_HOME_and_XDG_git_configuration",
-          "line": 224
+          "line": 225
         },
         {
           "ruleId": "SAFE-001",
@@ -704,7 +704,17 @@
           "runner": "vitest",
           "file": "tools/proofline/src/canonical-runner-egress.test.ts",
           "title": "canonical_unit_runner_limits_git_to_filter_free_object_and_metadata_operations",
-          "line": 245
+          "line": 246
+        },
+        {
+          "ruleId": "SAFE-001",
+          "layer": "contract",
+          "testId": "binding-safe-canonical-artifact-prerequisites",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/canonical-runner-egress.test.ts",
+          "title": "canonical_unit_runner_establishes_manifest_artifacts_before_vitest",
+          "line": 333
         }
       ],
       "ruleLayers": [
