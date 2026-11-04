@@ -1,0 +1,67 @@
+
+ RUN  v3.2.7 /Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed
+
+ ❯ tools/proofline/src/canonical-runner-egress.test.ts (3 tests | 1 failed | 2 skipped) 50ms
+   ↓ canonical_unit_runner_denies_fetch_http_https_websocket_and_inherited_child_egress
+   ↓ canonical_unit_runner_rejects_package_manager_wrapper_escape_with_stripped_env
+   × canonical_unit_runner_rejects_forged_delegated_policy_broadening 47ms
+     → expected +0 not to be +0 // Object.is equality
+ ❯ tools/proofline/src/egress-guard.test.ts (16 tests | 1 failed | 15 skipped) 156ms
+   ↓ Proofline egress guard > validates_exact_child_executable_policy_and_node_preload_argv
+   ↓ Proofline egress guard > resolves_an_exact_PATH_child_but_rejects_network_capable_git_arguments
+   ↓ Proofline egress guard > disables_repository_git_hooks_and_rejects_hook_path_overrides
+   × Proofline egress guard > rejects_git_external_diff_helpers_before_native_dispatch 150ms
+     → expected {} to deeply equal { denied: StringContaining{…} }
+   ↓ Proofline egress guard > allows_only_declared_loopback_runner_requests
+   ↓ Proofline egress guard > normalizes_ipv6_default_ports_precedence_credentials_and_malformed_requests
+   ↓ Proofline egress guard > denies_fetch_http_https_websocket_and_inherited_child_egress
+   ↓ Proofline egress guard > denies_direct_client_request_construction_in_root_and_inherited_children
+   ↓ Proofline egress guard > preserves_allowed_fetch_redirect_modes_and_followed_response_metadata
+   ↓ Proofline egress guard > denies_redirect_proxy_tunnel_and_child_override_bypasses
+   ↓ Proofline egress guard > guards_or_rejects_every_spawn_fork_exec_and_execfile_child_plane
+   ↓ Proofline egress guard > installs_the_preload_before_actual_server_runtime_startup
+   ↓ Proofline egress guard > rejects_malformed_or_non_loopback_allowlists_before_target_code
+   ↓ Proofline egress guard > generates_private_distinct_capabilities_for_programmatic_test_app_launches
+   ↓ Proofline egress guard > preserves_structured_argv_exit_signal_stdout_and_stderr
+   ↓ Proofline egress guard > rejects_unstructured_or_extensible_child_capabilities
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tools/proofline/src/canonical-runner-egress.test.ts > canonical_unit_runner_rejects_forged_delegated_policy_broadening
+AssertionError: expected +0 not to be +0 // Object.is equality
+ ❯ tools/proofline/src/canonical-runner-egress.test.ts:174:44
+    172|     spawned.on("close", (status) => resolve({ status, output }));
+    173|   });
+    174|   expect(result.status, result.output).not.toBe(0);
+       |                                            ^
+    175|   expect(result.output).toMatch(/delegated policy|Proofline egress den…
+    176|   expect(hits).toBe(0);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tools/proofline/src/egress-guard.test.ts > Proofline egress guard > rejects_git_external_diff_helpers_before_native_dispatch
+AssertionError: expected {} to deeply equal { denied: StringContaining{…} }
+
+- Expected
++ Received
+
+- {
+-   "denied": StringContaining "unsafe git",
+- }
++ {}
+
+ ❯ tools/proofline/src/egress-guard.test.ts:273:46
+    271|     });
+    272|     expect(result.code, result.stderr).toBe(0);
+    273|     expect(JSON.parse(result.stdout.trim())).toEqual({
+       |                                              ^
+    274|       denied: expect.stringContaining("unsafe git"),
+    275|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  2 failed | 17 skipped (19)
+   Start at  00:07:28
+   Duration  353ms (transform 43ms, setup 0ms, collect 65ms, tests 206ms, environment 0ms, prepare 72ms)

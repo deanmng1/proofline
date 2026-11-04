@@ -1,0 +1,47 @@
+
+ RUN  v3.2.7 /Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed
+
+ ✓ tools/impact/src/harness-manifest.test.ts (22 tests) 590ms
+ ✓ tools/proofline/src/product-e2e-boundary.test.ts (10 tests) 680ms
+   ✓ Proofline product E2E boundary > canonical_test_commands_cannot_bypass_the_declared_runner_egress_adapter  653ms
+ ✓ tools/proofline/src/canonical-runner-egress.test.ts (3 tests) 1185ms
+   ✓ canonical_unit_runner_rejects_package_manager_wrapper_escape_with_stripped_env  1139ms
+ ✓ tools/proofline/src/egress-guard.test.ts (16 tests) 1912ms
+ ✓ tools/proofline/src/production-negative.test.ts (4 tests) 2440ms
+   ✓ Proofline production boundary > rejects_test_markers_in_a_production_bundle  1392ms
+   ✓ Proofline production boundary > builds_the_test_entry_only_with_a_launcher_supplied_capability  649ms
+   ✓ Proofline production boundary > launches_the_test_artifact_only_after_one_server_side_capability_proof  389ms
+
+Running 1 test using 1 worker
+
+(node:35654) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [chromium] › apps/crm-e2e/src/proofline/recovery-and-authority.spec.ts:12:1 › recovers_an_accepted_bind_without_duplicate_policy_or_ledger @proofline-recovery (1.8s)
+
+  1 passed (4.0s)
+ ❯ tools/impact/src/real-manifest-selection.test.ts (2 tests | 1 failed) 41383ms
+   × real_manifest_discovers_and_selects_exact_vitest_and_playwright_identities 18318ms
+     → Undiscovered test file:tools/proofline/src/canonical-wrapper-egress-probe.test.mjs
+   ✓ real_manifest_executes_its_selected_vitest_and_playwright_identities  23064ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tools/impact/src/real-manifest-selection.test.ts > real_manifest_discovers_and_selects_exact_vitest_and_playwright_identities
+Error: Undiscovered test file:tools/proofline/src/canonical-wrapper-egress-probe.test.mjs
+ ❯ discoverCandidates tools/impact/src/main.ts:182:13
+    180|       !identities.playwright.some((test) => test.path === file)
+    181|     )
+    182|       throw new Error(`Undiscovered test file:${file}`);
+       |             ^
+    183|   }
+    184|   for (const test of identities.vitest)
+ ❯ loadSelection tools/impact/src/real-manifest-selection.test.ts:13:21
+ ❯ tools/impact/src/real-manifest-selection.test.ts:54:3
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 5 passed (6)
+      Tests  1 failed | 56 passed (57)
+   Start at  13:42:08
+   Duration  42.04s (transform 266ms, setup 0ms, collect 1.58s, tests 48.19s, environment 0ms, prepare 248ms)

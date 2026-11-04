@@ -1,0 +1,112 @@
+
+ RUN  v3.2.7 /Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed
+
+ ✓ tools/proofline/src/product-e2e-boundary.test.ts (10 tests) 568ms
+   ✓ Proofline product E2E boundary > canonical_test_commands_cannot_bypass_the_declared_runner_egress_adapter  550ms
+ ✓ tools/impact/src/harness-manifest.test.ts (22 tests) 589ms
+ ✓ tools/proofline/src/canonical-runner-egress.test.ts (3 tests) 1063ms
+   ✓ canonical_unit_runner_rejects_package_manager_wrapper_escape_with_stripped_env  1018ms
+ ❯ tools/impact/src/real-manifest-selection.test.ts (2 tests | 2 failed) 773ms
+   × real_manifest_discovers_and_selects_exact_vitest_and_playwright_identities 451ms
+     → Command failed (1): /opt/homebrew/Cellar/node/24.7.0/bin/node tools/proofline/canonical-runner.mjs playwright test --config apps/crm-e2e/playwright.config.ts --project=chromium --list --reporter=json
+Error: Proofline delegated policy cannot broaden installed origins or child capabilities.
+    at delegatedPolicy (file:///Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed/tools/proofline/egress-guard.mjs:258:13)
+    at forcedChildEnvironment (file:///Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed/tools/proofline/egress-guard.mjs:268:9)
+    at guardedSpawn (file:///Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed/tools/proofline/egress-guard.mjs:700:14)
+    at file:///Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed/tools/proofline/run-guarded.mjs:38:19
+    at new Promise (<anonymous>)
+    at withProoflineGuard (file:///Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed/tools/proofline/run-guarded.mjs:37:10)
+    at guarded (file:///Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed/tools/proofline/canonical-runner.mjs:157:24)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+
+
+   × real_manifest_executes_its_selected_vitest_and_playwright_identities 321ms
+     → Command failed (1): /opt/homebrew/Cellar/node/24.7.0/bin/node tools/proofline/canonical-runner.mjs playwright test --config apps/crm-e2e/playwright.config.ts --project=chromium --list --reporter=json
+Error: Proofline delegated policy cannot broaden installed origins or child capabilities.
+    at delegatedPolicy (file:///Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed/tools/proofline/egress-guard.mjs:258:13)
+    at forcedChildEnvironment (file:///Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed/tools/proofline/egress-guard.mjs:268:9)
+    at guardedSpawn (file:///Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed/tools/proofline/egress-guard.mjs:700:14)
+    at file:///Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed/tools/proofline/run-guarded.mjs:38:19
+    at new Promise (<anonymous>)
+    at withProoflineGuard (file:///Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed/tools/proofline/run-guarded.mjs:37:10)
+    at guarded (file:///Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed/tools/proofline/canonical-runner.mjs:157:24)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+
+
+ ✓ tools/proofline/src/egress-guard.test.ts (16 tests) 1750ms
+ ✓ tools/proofline/src/production-negative.test.ts (4 tests) 2216ms
+   ✓ Proofline production boundary > rejects_test_markers_in_a_production_bundle  1308ms
+   ✓ Proofline production boundary > builds_the_test_entry_only_with_a_launcher_supplied_capability  535ms
+   ✓ Proofline production boundary > launches_the_test_artifact_only_after_one_server_side_capability_proof  362ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tools/impact/src/real-manifest-selection.test.ts > real_manifest_discovers_and_selects_exact_vitest_and_playwright_identities
+Error: Command failed (1): /opt/homebrew/Cellar/node/24.7.0/bin/node tools/proofline/canonical-runner.mjs playwright test --config apps/crm-e2e/playwright.config.ts --project=chromium --list --reporter=json
+Error: Proofline delegated policy cannot broaden installed origins or child capabilities.
+    at delegatedPolicy (file:///Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed/tools/proofline/egress-guard.mjs:258:13)
+    at forcedChildEnvironment (file:///Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed/tools/proofline/egress-guard.mjs:268:9)
+    at guardedSpawn (file:///Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed/tools/proofline/egress-guard.mjs:700:14)
+    at file:///Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed/tools/proofline/run-guarded.mjs:38:19
+    at new Promise (<anonymous>)
+    at withProoflineGuard (file:///Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed/tools/proofline/run-guarded.mjs:37:10)
+    at guarded (file:///Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed/tools/proofline/canonical-runner.mjs:157:24)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+
+
+ ❯ delegatedPolicy tools/proofline/egress-guard.mjs:258:13
+ ❯ forcedChildEnvironment tools/proofline/egress-guard.mjs:268:9
+ ❯ guardedSpawn tools/proofline/egress-guard.mjs:700:14
+ ❯ tools/proofline/run-guarded.mjs:38:19
+     36|
+     37|   return new Promise((resolve, reject) => {
+     38|     const child = spawn(executable, command.slice(1), {
+       |                   ^
+     39|       cwd: options.cwd,
+     40|       env,
+ ❯ withProoflineGuard tools/proofline/run-guarded.mjs:37:10
+ ❯ guarded tools/proofline/canonical-runner.mjs:157:24
+ ❯ invoke tools/impact/src/main.ts:111:11
+ ❯ discoverCandidates tools/impact/src/main.ts:136:20
+ ❯ loadSelection tools/impact/src/real-manifest-selection.test.ts:13:21
+ ❯ tools/impact/src/real-manifest-selection.test.ts:54:3
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tools/impact/src/real-manifest-selection.test.ts > real_manifest_executes_its_selected_vitest_and_playwright_identities
+Error: Command failed (1): /opt/homebrew/Cellar/node/24.7.0/bin/node tools/proofline/canonical-runner.mjs playwright test --config apps/crm-e2e/playwright.config.ts --project=chromium --list --reporter=json
+Error: Proofline delegated policy cannot broaden installed origins or child capabilities.
+    at delegatedPolicy (file:///Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed/tools/proofline/egress-guard.mjs:258:13)
+    at forcedChildEnvironment (file:///Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed/tools/proofline/egress-guard.mjs:268:9)
+    at guardedSpawn (file:///Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed/tools/proofline/egress-guard.mjs:700:14)
+    at file:///Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed/tools/proofline/run-guarded.mjs:38:19
+    at new Promise (<anonymous>)
+    at withProoflineGuard (file:///Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed/tools/proofline/run-guarded.mjs:37:10)
+    at guarded (file:///Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed/tools/proofline/canonical-runner.mjs:157:24)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+
+
+ ❯ delegatedPolicy tools/proofline/egress-guard.mjs:258:13
+ ❯ forcedChildEnvironment tools/proofline/egress-guard.mjs:268:9
+ ❯ guardedSpawn tools/proofline/egress-guard.mjs:700:14
+ ❯ tools/proofline/run-guarded.mjs:38:19
+     36|
+     37|   return new Promise((resolve, reject) => {
+     38|     const child = spawn(executable, command.slice(1), {
+       |                   ^
+     39|       cwd: options.cwd,
+     40|       env,
+ ❯ withProoflineGuard tools/proofline/run-guarded.mjs:37:10
+ ❯ guarded tools/proofline/canonical-runner.mjs:157:24
+ ❯ invoke tools/impact/src/main.ts:111:11
+ ❯ discoverCandidates tools/impact/src/main.ts:136:20
+ ❯ loadSelection tools/impact/src/real-manifest-selection.test.ts:13:21
+ ❯ tools/impact/src/real-manifest-selection.test.ts:58:41
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed | 5 passed (6)
+      Tests  2 failed | 55 passed (57)
+   Start at  13:41:24
+   Duration  2.55s (transform 389ms, setup 0ms, collect 1.69s, tests 6.96s, environment 0ms, prepare 277ms)

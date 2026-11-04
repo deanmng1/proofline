@@ -1,0 +1,83 @@
+
+> nx run proofline-tools:coverage
+
+> node tools/proofline/canonical-runner.mjs vitest run tools/proofline/src --coverage --coverage.all --coverage.provider=v8 --coverage.reportOnFailure --coverage.reportsDirectory=artifacts/coverage/proofline-tools --coverage.reporter=text --coverage.reporter=html --coverage.reporter=lcov --coverage.reporter=json-summary --coverage.include='tools/proofline/**/*.{ts,mjs}' --coverage.exclude='**/*.test.{ts,mjs}' --coverage.exclude='**/*.d.ts' --coverage.exclude='tools/proofline/check-production.mjs' --coverage.exclude='tools/proofline/egress-guard.mjs' --coverage.exclude='tools/proofline/serve-test-app.mjs'
+
+(node:50282) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:50283) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+ RUN  v3.2.7 /Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed
+      Coverage enabled with v8
+
+(node:50285) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:50290) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:50289) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:50292) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:50287) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:50284) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:50288) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:50291) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:50286) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ tools/proofline/src/canonical-wrapper-egress-probe.test.mjs (1 test) 1ms
+(node:50349) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ tools/proofline/src/canonical-runner-egress.test.ts (3 tests) 837ms
+   ✓ canonical_unit_runner_rejects_package_manager_wrapper_escape_with_stripped_env  784ms
+(node:50464) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ tools/proofline/src/product-e2e-boundary.test.ts (10 tests) 854ms
+   ✓ Proofline product E2E boundary > canonical_test_commands_cannot_bypass_the_declared_runner_egress_adapter  846ms
+(node:50514) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:50529) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:50530) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ tools/proofline/src/egress-guard.test.ts (16 tests) 1596ms
+(node:50533) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ tools/proofline/src/production-negative.test.ts (4 tests) 1885ms
+   ✓ Proofline production boundary > rejects_test_markers_in_a_production_bundle  930ms
+   ✓ Proofline production boundary > builds_the_test_entry_only_with_a_launcher_supplied_capability  564ms
+   ✓ Proofline production boundary > launches_the_test_artifact_only_after_one_server_side_capability_proof  381ms
+(node:50544) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+ Test Files  5 passed (5)
+      Tests  34 passed (34)
+   Start at  13:49:09
+   Duration  2.30s (transform 119ms, setup 0ms, collect 555ms, tests 5.17s, environment 0ms, prepare 271ms)
+
+ % Coverage report from v8
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s
+-------------------|---------|----------|---------|---------|-------------------
+[33;1mAll files         [0m | [33;1m  59.22[0m | [32;1m   83.25[0m | [32;1m  88.46[0m | [33;1m  59.22[0m | [31;1m                 [0m
+[31;1m proofline        [0m | [31;1m  46.09[0m | [32;1m    83.2[0m | [32;1m  85.71[0m | [31;1m  46.09[0m | [31;1m                 [0m
+[31;1m  ...al-runner.mjs[0m | [31;1m      0[0m | [31;1m       0[0m | [31;1m      0[0m | [31;1m      0[0m | [31;1m1-253            [0m
+[32;1m  guard-policy.mjs[0m | [32;1m  92.46[0m | [32;1m   84.21[0m | [32;1m   92.3[0m | [32;1m  92.46[0m | [31;1m41-48,101,126-127[0m
+[33;1m  run-guarded.mjs [0m | [33;1m  70.22[0m | [32;1m   83.33[0m | [32;1m  85.71[0m | [33;1m  70.22[0m | [31;1m133-180,183-187  [0m
+[32;1m proofline/src    [0m | [32;1m  99.45[0m | [32;1m   83.33[0m | [32;1m    100[0m | [32;1m  99.45[0m | [31;1m                 [0m
+[32;1m  ...n-negative.ts[0m | [32;1m  99.45[0m | [32;1m   83.33[0m | [32;1m    100[0m | [32;1m  99.45[0m | [31;1m70               [0m
+-------------------|---------|----------|---------|---------|-------------------
+
+
+
+ NX   Successfully ran target coverage for project proofline-tools
+
+
+  Run duration:      2.8s
+  Cache:             0/1 hit (0%)
+  Critical path:     2.8s (1 task)
+  Recoverable time:  <1ms

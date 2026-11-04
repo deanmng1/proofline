@@ -1,0 +1,33 @@
+
+Running 24 tests using 2 workers
+
+(node:40539) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:40540) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 [chromium] › apps/crm-e2e/src/fixtures/scenario-contract.spec.ts:129:1 › rotates_access_tokens_and_revokes_the_context_on_logout @authority (176ms)
+  ✓   3 [chromium] › apps/crm-e2e/src/fixtures/scenario-contract.spec.ts:181:1 › fails_an_undeclared_browser_request_with_scenario_context @egress (109ms)
+  ✓   4 [chromium] › apps/crm-e2e/src/fixtures/scenario-contract.spec.ts:201:1 › denies_an_undeclared_worker_request_with_scenario_context @egress (127ms)
+  ✓   5 [chromium] › apps/crm-e2e/src/fixtures/scenario-contract.spec.ts:226:1 › blocks_service_worker_registration_and_cleans_registrations @egress (102ms)
+  ✓   6 [chromium] › apps/crm-e2e/src/fixtures/scenario-contract.spec.ts:243:1 › denies_browser_websockets_with_deterministic_context @egress (115ms)
+  ✓   2 [chromium] › apps/crm-e2e/src/fixtures/scenario-contract.spec.ts:115:1 › starts_unauthenticated_and_logs_in_through_routed_auth @scenario (1.1s)
+  ✓   8 [chromium] › apps/crm-e2e/src/fixtures/scenario-contract.spec.ts:291:1 › shares_one_runtime_only_across_explicit_contexts @isolation (216ms)
+  ✓   7 [chromium] › apps/crm-e2e/src/fixtures/scenario-contract.spec.ts:262:1 › separate_scenarios_receive_distinct_runtime_ids_and_state @isolation (712ms)
+  ✓  10 [chromium] › apps/crm-e2e/src/fixtures/scenario-contract.spec.ts:341:1 › honors_declared_roles_and_one_shot_route_faults @scenario (135ms)
+  ✓   9 [chromium] › apps/crm-e2e/src/fixtures/scenario-contract.spec.ts:325:1 › cleans_up_after_a_failed_scenario_assertion @scenario (202ms)
+  ✓  11 [chromium] › apps/crm-e2e/src/fixtures/scenario-contract.spec.ts:368:1 › keeps_context_contract_authority_faults_and_tenant_inspection_inside_the_adapter @authority (103ms)
+  ✓  13 [chromium] › apps/crm-e2e/src/fixtures/scenario-contract.spec.ts:450:1 › matches_an_operation_fault_once_to_an_opaque_ui_created_bind @scenario (277ms)
+  ✓  12 [chromium] › apps/crm-e2e/src/fixtures/scenario-contract.spec.ts:386:1 › binds_contract_requests_to_context_tokens_and_revokes_them_after_logout @authority (365ms)
+  ✓  15 [chromium] › apps/crm-e2e/src/fixtures/scenario-contract.spec.ts:600:1 › copies_identity_claims_and_rejects_conflicting_redefinitions @authority (161ms)
+  ✓  16 [chromium] › apps/crm-e2e/src/fixtures/scenario-contract.spec.ts:654:1 › rolls_back_a_new_identity_after_context_setup_failure @authority (5ms)
+  ✓  14 [chromium] › apps/crm-e2e/src/fixtures/scenario-contract.spec.ts:528:1 › rejects_role_and_cross_tenant_mutations_through_the_test_api @authority (201ms)
+  ✓  17 [chromium] › apps/crm-e2e/src/fixtures/scenario-contract.spec.ts:689:1 › reserves_pending_identity_claims_until_concurrent_context_setup_commits @authority (5ms)
+  ✓  18 [chromium] › apps/crm-e2e/src/fixtures/scenario-contract.spec.ts:737:1 › scenario_reset_retains_failed_contexts_for_a_deterministic_retry @scenario (6ms)
+  ✘  20 [chromium] › apps/crm-e2e/src/fixtures/scenario-contract.spec.ts:785:1 › factory_teardown_rejects_an_unacknowledged_caught_denial @egress (117ms)
+  ✓  19 [chromium] › apps/crm-e2e/src/fixtures/scenario-contract.spec.ts:758:1 › worker_setup_stops_the_server_when_bootstrap_close_fails @scenario (213ms)
+  ✓  21 [chromium] › apps/crm-e2e/src/fixtures/scenario-contract.spec.ts:795:1 › shard_a_isolates_runtime_and_storage @isolation (290ms)
+  ✓  22 [chromium] › apps/crm-e2e/src/fixtures/scenario-contract.spec.ts:803:1 › shard_b_isolates_runtime_and_storage @isolation (331ms)
+  ✓  23 [chromium] › apps/crm-e2e/src/fixtures/scenario-contract.spec.ts:811:1 › shard_a_uses_an_os_assigned_worker_port @isolation (299ms)
+  ✓  24 [chromium] › apps/crm-e2e/src/fixtures/scenario-contract.spec.ts:819:1 › shard_b_uses_an_os_assigned_worker_port @isolation (271ms)
+
+  24 passed (3.8s)

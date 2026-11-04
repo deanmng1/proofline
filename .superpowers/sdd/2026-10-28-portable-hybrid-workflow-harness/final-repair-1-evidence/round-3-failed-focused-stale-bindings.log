@@ -1,0 +1,114 @@
+
+ RUN  v3.2.7 /Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed
+
+ ❯ tools/proofline/src/product-e2e-boundary.test.ts (11 tests | 1 failed) 232ms
+   ✓ Proofline product E2E boundary > canonical_wrapper_descendant_retains_egress_guard 1ms
+   ✓ Proofline product E2E boundary > product_e2e_specs_delegate_transport_and_storage_to_fixtures 5ms
+   ✓ Proofline product E2E boundary > rejects_forbidden_crm_screen_to_screen_goto in features/direct-customer-to-quotes.spec.ts 0ms
+   ✓ Proofline product E2E boundary > rejects_forbidden_crm_screen_to_screen_goto in proofline/direct-quotes-to-policy.spec.ts 0ms
+   ✓ Proofline product E2E boundary > allows_declared_initial_and_guard_navigation_helpers 0ms
+   ✓ Proofline product E2E boundary > rejects_undeclared_navigation_even_inside_the_shared_helper_module 0ms
+   × Proofline product E2E boundary > canonical_test_commands_cannot_bypass_the_declared_runner_egress_adapter 218ms
+     → expected [ …(5) ] to deeply equal []
+   ✓ Proofline product E2E boundary > canonical_runner_child_authority_is_structured_and_forces_guard_policy_on_every_child 2ms
+   ✓ Proofline product E2E boundary > scenario_fixture_declares_context_install_cleanup_and_retry_lifecycle 1ms
+   ✓ Proofline product E2E boundary > scenario_fixture_declares_every_reviewed_browser_egress_plane 1ms
+   ✓ Proofline product E2E boundary > scenario_commands_preserve_multi_worker_and_both_shard_isolation_gates 1ms
+ ✓ tools/impact/src/harness-manifest.test.ts (22 tests) 517ms
+ ✓ tools/proofline/src/canonical-runner-egress.test.ts (3 tests) 1393ms
+   ✓ canonical_unit_runner_rejects_package_manager_wrapper_escape_with_stripped_env  1346ms
+ ✓ tools/proofline/src/egress-guard.test.ts (16 tests) 1757ms
+ ✓ tools/proofline/src/production-negative.test.ts (4 tests) 2114ms
+   ✓ Proofline production boundary > rejects_test_markers_in_a_production_bundle  1071ms
+   ✓ Proofline production boundary > builds_the_test_entry_only_with_a_launcher_supplied_capability  638ms
+   ✓ Proofline production boundary > launches_the_test_artifact_only_after_one_server_side_capability_proof  394ms
+ ❯ tools/impact/src/real-manifest-selection.test.ts (2 tests | 2 failed) 35696ms
+   × real_manifest_discovers_and_selects_exact_vitest_and_playwright_identities 18182ms
+     → expected [ …(5) ] to deeply equal []
+   × real_manifest_executes_its_selected_vitest_and_playwright_identities 17514ms
+     → expected [ …(5) ] to deeply equal []
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tools/proofline/src/product-e2e-boundary.test.ts > Proofline product E2E boundary > canonical_test_commands_cannot_bypass_the_declared_runner_egress_adapter
+AssertionError: expected [ …(5) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "Stale or ambiguous test identity binding-safe-delegated-policy-monotonicity: tools/proofline/src/canonical-runner-egress.test.ts:139 canonical_unit_runner_rejects_forged_delegated_policy_broadening",
++   "Stale or ambiguous test identity binding-b589c5c439336c4fc99f: tools/proofline/src/product-e2e-boundary.test.ts:7 Proofline product E2E boundary > product_e2e_specs_delegate_transport_and_storage_to_fixtures",
++   "Stale or ambiguous test identity binding-scn001-vitest-governance: tools/proofline/src/product-e2e-boundary.test.ts:104 Proofline product E2E boundary > scenario_fixture_declares_context_install_cleanup_and_retry_lifecycle",
++   "Stale or ambiguous test identity binding-scn002-vitest-governance: tools/proofline/src/product-e2e-boundary.test.ts:113 Proofline product E2E boundary > scenario_fixture_declares_every_reviewed_browser_egress_plane",
++   "Stale or ambiguous test identity binding-scn003-vitest-governance: tools/proofline/src/product-e2e-boundary.test.ts:121 Proofline product E2E boundary > scenario_commands_preserve_multi_worker_and_both_shard_isolation_gates",
++ ]
+
+ ❯ tools/proofline/src/product-e2e-boundary.test.ts:78:70
+     76|     const manifest = JSON.parse(await readFile("proofline.harness.json…
+     77|     expect(manifest.adapters.runnerEgress).toBe("tools/proofline/canon…
+     78|     expect(validateHarness({ cwd: process.cwd(), manifest }).errors).t…
+       |                                                                      ^
+     79|     manifest.commands.browser = {
+     80|       argv: ["pnpm", "exec", "playwright", "test"],
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  tools/impact/src/real-manifest-selection.test.ts > real_manifest_discovers_and_selects_exact_vitest_and_playwright_identities
+AssertionError: expected [ …(5) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "Stale or ambiguous test identity binding-safe-delegated-policy-monotonicity: tools/proofline/src/canonical-runner-egress.test.ts:139 canonical_unit_runner_rejects_forged_delegated_policy_broadening",
++   "Stale or ambiguous test identity binding-b589c5c439336c4fc99f: tools/proofline/src/product-e2e-boundary.test.ts:7 Proofline product E2E boundary > product_e2e_specs_delegate_transport_and_storage_to_fixtures",
++   "Stale or ambiguous test identity binding-scn001-vitest-governance: tools/proofline/src/product-e2e-boundary.test.ts:104 Proofline product E2E boundary > scenario_fixture_declares_context_install_cleanup_and_retry_lifecycle",
++   "Stale or ambiguous test identity binding-scn002-vitest-governance: tools/proofline/src/product-e2e-boundary.test.ts:113 Proofline product E2E boundary > scenario_fixture_declares_every_reviewed_browser_egress_plane",
++   "Stale or ambiguous test identity binding-scn003-vitest-governance: tools/proofline/src/product-e2e-boundary.test.ts:121 Proofline product E2E boundary > scenario_commands_preserve_multi_worker_and_both_shard_isolation_gates",
++ ]
+
+ ❯ loadSelection tools/impact/src/real-manifest-selection.test.ts:24:87
+     22|   expect(discovery.identities.vitest.length).toBeGreaterThan(300);
+     23|   expect(discovery.identities.playwright.length).toBeGreaterThan(30);
+     24|   expect(validateHarness({ cwd, manifest, discovered: discovery.identi…
+       |                                                                                       ^
+     25|
+     26|   const source = "apps/crm-web/src/features/quotes/quote-form.tsx";
+ ❯ tools/impact/src/real-manifest-selection.test.ts:54:3
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  tools/impact/src/real-manifest-selection.test.ts > real_manifest_executes_its_selected_vitest_and_playwright_identities
+AssertionError: expected [ …(5) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "Stale or ambiguous test identity binding-safe-delegated-policy-monotonicity: tools/proofline/src/canonical-runner-egress.test.ts:139 canonical_unit_runner_rejects_forged_delegated_policy_broadening",
++   "Stale or ambiguous test identity binding-b589c5c439336c4fc99f: tools/proofline/src/product-e2e-boundary.test.ts:7 Proofline product E2E boundary > product_e2e_specs_delegate_transport_and_storage_to_fixtures",
++   "Stale or ambiguous test identity binding-scn001-vitest-governance: tools/proofline/src/product-e2e-boundary.test.ts:104 Proofline product E2E boundary > scenario_fixture_declares_context_install_cleanup_and_retry_lifecycle",
++   "Stale or ambiguous test identity binding-scn002-vitest-governance: tools/proofline/src/product-e2e-boundary.test.ts:113 Proofline product E2E boundary > scenario_fixture_declares_every_reviewed_browser_egress_plane",
++   "Stale or ambiguous test identity binding-scn003-vitest-governance: tools/proofline/src/product-e2e-boundary.test.ts:121 Proofline product E2E boundary > scenario_commands_preserve_multi_worker_and_both_shard_isolation_gates",
++ ]
+
+ ❯ loadSelection tools/impact/src/real-manifest-selection.test.ts:24:87
+     22|   expect(discovery.identities.vitest.length).toBeGreaterThan(300);
+     23|   expect(discovery.identities.playwright.length).toBeGreaterThan(30);
+     24|   expect(validateHarness({ cwd, manifest, discovered: discovery.identi…
+       |                                                                                       ^
+     25|
+     26|   const source = "apps/crm-web/src/features/quotes/quote-form.tsx";
+ ❯ tools/impact/src/real-manifest-selection.test.ts:58:41
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  2 failed | 4 passed (6)
+      Tests  3 failed | 55 passed (58)
+   Start at  13:50:36
+   Duration  36.29s (transform 320ms, setup 0ms, collect 1.41s, tests 41.71s, environment 0ms, prepare 277ms)

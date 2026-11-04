@@ -1,0 +1,21 @@
+
+Running 12 tests using 2 workers, shard 2 of 2
+
+(node:65815) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:65816) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 [chromium] › apps/crm-e2e/src/fixtures/scenario-contract.spec.ts:528:1 › rejects_role_and_cross_tenant_mutations_through_the_test_api @authority (271ms)
+  ✓   2 [chromium] › apps/crm-e2e/src/fixtures/scenario-contract.spec.ts:450:1 › matches_an_operation_fault_once_to_an_opaque_ui_created_bind @scenario (282ms)
+  ✓   4 [chromium] › apps/crm-e2e/src/fixtures/scenario-contract.spec.ts:654:1 › rolls_back_a_new_identity_after_context_setup_failure @authority (5ms)
+  ✓   5 [chromium] › apps/crm-e2e/src/fixtures/scenario-contract.spec.ts:689:1 › reserves_pending_identity_claims_until_concurrent_context_setup_commits @authority (6ms)
+  ✓   6 [chromium] › apps/crm-e2e/src/fixtures/scenario-contract.spec.ts:737:1 › scenario_reset_retains_failed_contexts_for_a_deterministic_retry @scenario (15ms)
+  ✓   3 [chromium] › apps/crm-e2e/src/fixtures/scenario-contract.spec.ts:600:1 › copies_identity_claims_and_rejects_conflicting_redefinitions @authority (153ms)
+  ✘   8 [chromium] › apps/crm-e2e/src/fixtures/scenario-contract.spec.ts:785:1 › factory_teardown_rejects_an_unacknowledged_caught_denial @egress (114ms)
+  ✓   7 [chromium] › apps/crm-e2e/src/fixtures/scenario-contract.spec.ts:758:1 › worker_setup_stops_the_server_when_bootstrap_close_fails @scenario (259ms)
+  ✓  10 [chromium] › apps/crm-e2e/src/fixtures/scenario-contract.spec.ts:803:1 › shard_b_isolates_runtime_and_storage @isolation (342ms)
+  ✓   9 [chromium] › apps/crm-e2e/src/fixtures/scenario-contract.spec.ts:795:1 › shard_a_isolates_runtime_and_storage @isolation (406ms)
+  ✓  11 [chromium] › apps/crm-e2e/src/fixtures/scenario-contract.spec.ts:811:1 › shard_a_uses_an_os_assigned_worker_port @isolation (356ms)
+  ✓  12 [chromium] › apps/crm-e2e/src/fixtures/scenario-contract.spec.ts:819:1 › shard_b_uses_an_os_assigned_worker_port @isolation (357ms)
+
+  12 passed (2.2s)

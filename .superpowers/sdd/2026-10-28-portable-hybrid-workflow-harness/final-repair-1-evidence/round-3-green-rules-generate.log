@@ -1,0 +1,1 @@
+$ node --experimental-strip-types tools/impact/src/main.ts --generate-rules

@@ -1,0 +1,14 @@
+$ node --experimental-strip-types tools/impact/src/main.ts -- --dry-run --base HEAD --head HEAD
+{
+  "fallback": "canonical-full",
+  "commandKeys": [
+    "unit",
+    "browser",
+    "browserScenario",
+    "browserScenarioShard1",
+    "browserScenarioShard2"
+  ],
+  "vitest": 0,
+  "playwright": 0,
+  "artifacts": "artifacts/impact"
+}

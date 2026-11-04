@@ -1,0 +1,2 @@
+$ node --experimental-strip-types tools/impact/src/record-check.ts -- --base 3f7e1e4d4f74c4ec796601766a730ae0ac394b51 --head HEAD
+Execution record governance passed.
