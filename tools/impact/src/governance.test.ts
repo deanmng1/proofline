@@ -1,8 +1,13 @@
 import { execFileSync } from "node:child_process";
-import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, test } from "vitest";
+import {
+  commitGitFixture as commitAll,
+  initializeGitFixture,
+  runFixtureGit as runGit,
+} from "../test-fixtures/git.ts";
 import {
   baselineSchema,
   coverageMain,
@@ -32,25 +37,6 @@ afterEach(() => {
     if (directory) rmSync(directory, { recursive: true, force: true });
   }
 });
-
-const runGit = (cwd: string, args: string[]) =>
-  execFileSync("git", args, {
-    cwd,
-    encoding: "utf8",
-    env: {
-      ...process.env,
-      GIT_AUTHOR_NAME: "Proofline Test",
-      GIT_AUTHOR_EMAIL: "proofline@example.invalid",
-      GIT_COMMITTER_NAME: "Proofline Test",
-      GIT_COMMITTER_EMAIL: "proofline@example.invalid",
-    },
-  }).trim();
-
-const commitAll = (cwd: string, message: string) => {
-  runGit(cwd, ["add", "."]);
-  runGit(cwd, ["commit", "-qm", message]);
-  return runGit(cwd, ["rev-parse", "HEAD"]);
-};
 
 const record = (eventId: string, scope: string[] = []) => ({
   schemaVersion: 1,
@@ -229,7 +215,7 @@ const writeFixture = (cwd: string) => {
 
 const initializedFixture = () => {
   const cwd = temporaryDirectory("proofline-governance-");
-  runGit(cwd, ["init", "-q"]);
+  initializeGitFixture(cwd);
   writeFixture(cwd);
   const base = commitAll(cwd, "base");
   return { cwd, base };
@@ -447,7 +433,8 @@ describe("verified merge base", () => {
     ).toMatch(/checkout.*head/i);
 
     const shallow = temporaryDirectory("proofline-shallow-");
-    runGit(tmpdir(), ["clone", "-q", "--depth=1", "--no-checkout", `file://${cwd}`, shallow]);
+    cpSync(cwd, shallow, { recursive: true });
+    writeFileSync(path.join(shallow, ".git/shallow"), `${next}\n`);
     expect(
       readVerifiedMergeBase({ cwd: shallow, base: "HEAD", head: "HEAD" }).errors.join(" "),
     ).toMatch(/shallow/i);
@@ -638,7 +625,7 @@ describe("coverage and record governance entrypoints", () => {
 
   test("accepts a manifest-command browser-compatible Istanbul summary producer", () => {
     const cwd = temporaryDirectory("proofline-browser-coverage-");
-    runGit(cwd, ["init", "-q"]);
+    initializeGitFixture(cwd);
     writeFixture(cwd);
     const browserManifest = {
       ...structuredClone(manifest),
@@ -896,7 +883,7 @@ describe("coverage and record governance entrypoints", () => {
     }
   });
 
-  test("retains invalid revisions and git-show failures as gate errors", () => {
+  test("retains invalid revisions and missing Git blob failures as gate errors", () => {
     const { cwd } = initializedFixture();
     expect(() => coverageMain(cwd, { base: "missing", head: "HEAD" })).toThrow(/unresolved/i);
     const ratchet = JSON.parse(
@@ -904,9 +891,11 @@ describe("coverage and record governance entrypoints", () => {
     );
     expect(ratchet.errors.join(" ")).toMatch(/unresolved.*base/i);
 
-    runGit(cwd, ["rm", "test-impact/coverage-baseline.json"]);
+    rmSync(path.join(cwd, "test-impact/coverage-baseline.json"));
     const withoutBaseline = commitAll(cwd, "remove baseline");
-    expect(() => coverageMain(cwd, { base: withoutBaseline, head: "HEAD" })).toThrow(/git show/i);
+    expect(() => coverageMain(cwd, { base: withoutBaseline, head: "HEAD" })).toThrow(
+      /git cat-file blob/i,
+    );
   });
 
   test("recordMain verifies merge-base bytes and changed-path scopes", () => {

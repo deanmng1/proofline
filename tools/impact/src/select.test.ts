@@ -1,20 +1,21 @@
-import { execFileSync } from "node:child_process";
-import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import {
+  chmodSync,
+  existsSync,
+  mkdtempSync,
+  renameSync,
+  rmSync,
+  symlinkSync,
+  writeFileSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { describe, expect, test } from "vitest";
+import { commitGitFixture, initializeGitFixture, runFixtureGit } from "../test-fixtures/git.ts";
 import { readChangedFiles } from "./changed-files.ts";
 import { selectImpact } from "./select.ts";
 import type { ChangeManifest, DiscoveredTests, HarnessManifest } from "./types.ts";
 
 const source = "modules/orders/src/value.ts";
-const fixtureGitEnvironment = {
-  ...process.env,
-  GIT_AUTHOR_NAME: "Fixture",
-  GIT_AUTHOR_EMAIL: "test@example.test",
-  GIT_COMMITTER_NAME: "Fixture",
-  GIT_COMMITTER_EMAIL: "test@example.test",
-};
 const unit = { file: "modules/orders/src/value.test.ts", title: "value", line: 2 };
 const browser = {
   path: "checks/browser/value.spec.ts",
@@ -146,11 +147,8 @@ describe("manifest-owned selection", () => {
   test("fails_closed_for_unresolvable_revisions_dynamic_dependencies_and_unmapped_workspaces", () => {
     const cwd = mkdtempSync(path.join(tmpdir(), "impact-revisions-"));
     try {
-      for (const args of [
-        ["init", "-q"],
-        ["commit", "--allow-empty", "-qm", "initial"],
-      ])
-        execFileSync("git", args, { cwd, env: fixtureGitEnvironment });
+      initializeGitFixture(cwd);
+      commitGitFixture(cwd, "initial");
       writeFileSync(path.join(cwd, "new.ts"), "export {};");
       for (const env of [
         { IMPACT_BASE: "HEAD", IMPACT_HEAD: "missing-head" },
@@ -269,12 +267,9 @@ test("retains_path_reasons_and_registered_workspace_fallback_commands", () => {
 test("requires_full_history_and_a_checked_out_discovery_head", () => {
   const cwd = mkdtempSync(path.join(tmpdir(), "impact-history-"));
   try {
-    for (const args of [
-      ["init", "-q"],
-      ["commit", "--allow-empty", "-qm", "initial"],
-      ["commit", "--allow-empty", "-qm", "second"],
-    ])
-      execFileSync("git", args, { cwd, env: fixtureGitEnvironment });
+    initializeGitFixture(cwd);
+    commitGitFixture(cwd, "initial");
+    commitGitFixture(cwd, "second");
     expect(
       readChangedFiles({
         cwd,
@@ -284,10 +279,7 @@ test("requires_full_history_and_a_checked_out_discovery_head", () => {
     expect(
       readChangedFiles({ cwd, env: { CI: "1", IMPACT_HEAD: "HEAD" } }).uncertainty.join(" "),
     ).toMatch(/missing CI base/);
-    writeFileSync(
-      path.join(cwd, ".git/shallow"),
-      execFileSync("git", ["rev-parse", "HEAD"], { cwd }),
-    );
+    writeFileSync(path.join(cwd, ".git/shallow"), `${runFixtureGit(cwd, ["rev-parse", "HEAD"])}\n`);
     expect(
       readChangedFiles({ cwd, env: { IMPACT_BASE: "HEAD", IMPACT_HEAD: "HEAD" } }).uncertainty.join(
         " ",
@@ -391,4 +383,67 @@ test("attributes_additive_identities_to_the_most_specific_workspace", () => {
   expect(result.rationale[source].find((row) => row.identity.title === "nested")?.commandKey).toBe(
     "nested",
   );
+});
+
+test("detects_worktree_changes_without_running_repository_attribute_filters", () => {
+  const cwd = mkdtempSync(path.join(tmpdir(), "impact-hostile-filters-"));
+  try {
+    initializeGitFixture(cwd);
+    writeFileSync(path.join(cwd, "tracked.txt"), "before\n");
+    commitGitFixture(cwd, "initial");
+    const marker = path.join(cwd, "filter-ran");
+    const helper = path.join(cwd, "filter-helper");
+    writeFileSync(helper, `#!/bin/sh\nprintf ran > '${marker}'\ncat\n`);
+    chmodSync(helper, 0o755);
+    writeFileSync(
+      path.join(cwd, ".git/config"),
+      `[core]\n repositoryformatversion = 0\n[filter "hostile"]\n clean = ${helper}\n required = true\n`,
+    );
+    writeFileSync(path.join(cwd, ".gitattributes"), "tracked.txt filter=hostile\n");
+    writeFileSync(path.join(cwd, "tracked.txt"), "after!\n");
+    const changes = readChangedFiles({ cwd, env: { IMPACT_BASE: "HEAD", IMPACT_HEAD: "HEAD" } });
+    expect(changes.uncertainty).toEqual([]);
+    expect(changes.files).toContainEqual({ path: "tracked.txt", status: "modified" });
+    expect(existsSync(marker)).toBe(false);
+  } finally {
+    rmSync(cwd, { recursive: true, force: true });
+  }
+});
+
+test("retains_committed_staged_and_raw_worktree_change_evidence_without_Git_conversion", () => {
+  const cwd = mkdtempSync(path.join(tmpdir(), "impact-raw-metadata-"));
+  try {
+    initializeGitFixture(cwd);
+    for (const file of ["dirty.ts", "deleted.ts", "renamed.ts", "mode.ts"])
+      writeFileSync(path.join(cwd, file), "original\n");
+    symlinkSync("dirty.ts", path.join(cwd, "link"));
+    const base = commitGitFixture(cwd, "base");
+    renameSync(path.join(cwd, "renamed.ts"), path.join(cwd, "moved.ts"));
+    rmSync(path.join(cwd, "deleted.ts"));
+    chmodSync(path.join(cwd, "mode.ts"), 0o755);
+    rmSync(path.join(cwd, "link"));
+    symlinkSync("moved.ts", path.join(cwd, "link"));
+    const head = commitGitFixture(cwd, "next");
+    writeFileSync(path.join(cwd, "dirty.ts"), "modified\n");
+    writeFileSync(path.join(cwd, "untracked.ts"), "new\n");
+    const expected = [
+      { path: "deleted.ts", status: "deleted" },
+      { path: "dirty.ts", status: "modified" },
+      { path: "link", status: "modified" },
+      { path: "mode.ts", status: "modified" },
+      { path: "moved.ts", status: "added" },
+      { path: "renamed.ts", status: "deleted" },
+      { path: "untracked.ts", status: "untracked" },
+    ];
+    const committed = readChangedFiles({ cwd, env: { IMPACT_BASE: base, IMPACT_HEAD: head } });
+    expect(committed.uncertainty).toEqual([]);
+    expect(committed.files).toEqual(expected);
+    // Keep the next index staged while restoring the base ref: the same paths remain governed.
+    runFixtureGit(cwd, ["update-ref", "HEAD", base]);
+    const staged = readChangedFiles({ cwd, env: { IMPACT_BASE: base, IMPACT_HEAD: base } });
+    expect(staged.uncertainty).toEqual([]);
+    expect(staged.files).toEqual(expected);
+  } finally {
+    rmSync(cwd, { recursive: true, force: true });
+  }
 });

@@ -102,7 +102,12 @@ await revisitProtectedPath(page, policyPath);`,
       "esbuild-service",
     ])
       expect(`${runner}\n${policy}`).toContain(`"${purpose}"`);
-    expect(guard.match(/env: forcedChildEnvironment\(options\.env, delegated\)/g)).toHaveLength(3);
+    expect(
+      guard.match(
+        /nativeChildInvocation\(capability, (?:args \?\? \[\]|args), options, delegated\)/g,
+      ),
+    ).toHaveLength(3);
+    expect(guard).toContain("const env = forcedChildEnvironment(options.env, delegated)");
     expect(guard).toContain("pnpm is limited to reviewed Vitest, Playwright, and CRM build argv");
     expect(policy).toContain("must contain only executable and purpose");
   });

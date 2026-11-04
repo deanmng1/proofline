@@ -1,6 +1,7 @@
 import { isUtf8 } from "node:buffer";
 import { execFileSync } from "node:child_process";
 import path from "node:path";
+import { readRepositoryChanges } from "./changed-files.ts";
 import type { ChangedFile, CoverageGroup, HarnessManifest } from "./types.ts";
 import { relativePath } from "./validate.ts";
 
@@ -99,7 +100,7 @@ export const readVerifiedMergeBase = ({
 export const gitShowBytes = (cwd: string, revision: string, file: string) => {
   try {
     return {
-      bytes: execFileSync("git", ["show", `${revision}:${file}`], {
+      bytes: execFileSync("git", ["cat-file", "blob", `${revision}:${file}`], {
         cwd,
         stdio: ["ignore", "pipe", "pipe"],
       }),
@@ -108,7 +109,7 @@ export const gitShowBytes = (cwd: string, revision: string, file: string) => {
   } catch (error) {
     return {
       bytes: undefined,
-      error: `git show ${revision}:${file} failed: ${error instanceof Error ? error.message : String(error)}`,
+      error: `git cat-file blob ${revision}:${file} failed: ${error instanceof Error ? error.message : String(error)}`,
     };
   }
 };
@@ -445,59 +446,5 @@ export const readGovernedChanges = ({
   cwd: string;
   revisions: VerifiedMergeBase;
 }) => {
-  const errors: string[] = [];
-  const parse = (output: Buffer) => {
-    const values = output.toString().split("\0").filter(Boolean);
-    const changes: ChangedFile[] = [];
-    for (let index = 0; index < values.length; ) {
-      const raw = values[index++] ?? "";
-      const kind = raw[0];
-      if (kind === "R" || kind === "C") {
-        const previousPath = values[index++];
-        const file = values[index++];
-        if (previousPath && file)
-          changes.push({ path: file, previousPath, status: kind === "R" ? "renamed" : "added" });
-      } else {
-        const file = values[index++];
-        if (file)
-          changes.push({
-            path: file,
-            status: kind === "A" ? "added" : kind === "D" ? "deleted" : "modified",
-          });
-      }
-    }
-    return changes;
-  };
-  const invoke = (args: string[]) => {
-    try {
-      return execFileSync("git", args, { cwd, stdio: ["ignore", "pipe", "pipe"] });
-    } catch (error) {
-      errors.push(
-        `Unable to read changed paths: ${error instanceof Error ? error.message : String(error)}`,
-      );
-      return Buffer.alloc(0);
-    }
-  };
-  const committed =
-    revisions.mergeBase && revisions.resolvedHead
-      ? parse(
-          invoke([
-            "diff",
-            "--name-status",
-            "-z",
-            "--find-renames",
-            `${revisions.mergeBase}...${revisions.resolvedHead}`,
-          ]),
-        )
-      : [];
-  const working = parse(invoke(["diff", "--name-status", "-z", "--find-renames", "HEAD"]));
-  const untracked: ChangedFile[] = invoke(["ls-files", "--others", "--exclude-standard", "-z"])
-    .toString()
-    .split("\0")
-    .filter(Boolean)
-    .map((file) => ({ path: file, status: "untracked" as const }));
-  const byIdentity = new Map<string, ChangedFile>();
-  for (const change of [...committed, ...working, ...untracked])
-    byIdentity.set(`${change.previousPath ?? ""}\0${change.path}`, change);
-  return { files: [...byIdentity.values()], errors };
+  return readRepositoryChanges({ cwd, base: revisions.mergeBase, head: revisions.resolvedHead });
 };

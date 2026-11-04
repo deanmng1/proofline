@@ -1,5 +1,5 @@
 import childProcess from "node:child_process";
-import { accessSync, constants, realpathSync } from "node:fs";
+import { accessSync, constants, realpathSync, statSync } from "node:fs";
 import http from "node:http";
 import https from "node:https";
 import { syncBuiltinESMExports } from "node:module";
@@ -263,6 +263,38 @@ function installGuard() {
       capabilities: JSON.stringify(delegatedCapabilities),
     };
   };
+  // These command-scope values override repository/worktree includes. No admitted operation
+  // reads worktree content through Git: attributes, filters, diff drivers and converters never run.
+  const gitConfig = {
+    "core.hooksPath": "/dev/null",
+    "commit.gpgSign": "false",
+    "tag.gpgSign": "false",
+    "core.pager": "",
+    "core.fsmonitor": "false",
+    "core.attributesFile": "/dev/null",
+    "core.excludesFile": "/dev/null",
+    "maintenance.auto": "false",
+    "gc.auto": "0",
+    "protocol.allow": "never",
+  };
+  const fixedGitEnvironment = {
+    GIT_CONFIG_NOSYSTEM: "1",
+    GIT_CONFIG_SYSTEM: "/dev/null",
+    GIT_CONFIG_GLOBAL: "/dev/null",
+    GIT_ATTR_NOSYSTEM: "1",
+    GIT_NO_LAZY_FETCH: "1",
+    GIT_NO_REPLACE_OBJECTS: "1",
+    GIT_PAGER: "",
+    GIT_TERMINAL_PROMPT: "0",
+    GIT_OPTIONAL_LOCKS: "0",
+    GIT_CONFIG_COUNT: String(Object.keys(gitConfig).length),
+    ...Object.fromEntries(
+      Object.entries(gitConfig).flatMap(([key, value], index) => [
+        [`GIT_CONFIG_KEY_${index}`, key],
+        [`GIT_CONFIG_VALUE_${index}`, value],
+      ]),
+    ),
+  };
   const forcedChildEnvironment = (provided = {}, delegated = false) => {
     const policy = delegated
       ? delegatedPolicy(provided)
@@ -277,17 +309,7 @@ function installGuard() {
       PROOFLINE_ALLOWED_CHILD_CAPABILITIES: policy.capabilities,
       PROOFLINE_GUARD_PRELOAD: immutablePreload,
       NODE_OPTIONS: mergeGuardNodeOptions(provided.NODE_OPTIONS ?? immutableNodeOptions),
-      GIT_CONFIG_COUNT: "5",
-      GIT_CONFIG_KEY_0: "core.hooksPath",
-      GIT_CONFIG_VALUE_0: "/dev/null",
-      GIT_CONFIG_KEY_1: "commit.gpgSign",
-      GIT_CONFIG_VALUE_1: "false",
-      GIT_CONFIG_KEY_2: "tag.gpgSign",
-      GIT_CONFIG_VALUE_2: "false",
-      GIT_CONFIG_KEY_3: "core.pager",
-      GIT_CONFIG_VALUE_3: "",
-      GIT_CONFIG_KEY_4: "core.fsmonitor",
-      GIT_CONFIG_VALUE_4: "false",
+      ...fixedGitEnvironment,
       GIT_AUTHOR_NAME: "Proofline Guarded",
       GIT_AUTHOR_EMAIL: "proofline@example.invalid",
       GIT_COMMITTER_NAME: "Proofline Guarded",
@@ -317,36 +339,23 @@ function installGuard() {
     typeof value === "string" &&
     /^(?:HEAD|[0-9a-f]{7,64}|(?:refs\/(?:heads|remotes)\/)?[A-Za-z0-9][A-Za-z0-9._/-]*)(?:[~^][0-9]*)?(?:\^\{commit\})?$/.test(
       value,
-    );
-  const safeGitRevisionOrRange = (value) => {
-    const revisions = value.split("...");
-    return revisions.length === 1
-      ? safeGitRevision(value)
-      : revisions.length === 2 && revisions.every(safeGitRevision);
-  };
+    ) &&
+    !value.includes("..") &&
+    !value.includes("//") &&
+    !value.includes("@{");
+  const safeGitObject = (value) =>
+    typeof value === "string" && /^(?:[0-9a-f]{40}|[0-9a-f]{64})$/.test(value);
   const safeGitPath = (value) =>
     typeof value === "string" &&
     value.length > 0 &&
     !value.startsWith("-") &&
+    !value.startsWith(":") &&
     !path.isAbsolute(value) &&
-    !value.split(/[\\/]/).includes("..") &&
+    !value.split(/[\\/]/).some((part) => part === ".." || part === "." || !part) &&
     !/[\0\r\n]/.test(value);
   const unsafeGitEnvironment = (environment = {}) => {
-    const fixedGuardConfig = {
-      GIT_CONFIG_COUNT: "5",
-      GIT_CONFIG_KEY_0: "core.hooksPath",
-      GIT_CONFIG_VALUE_0: "/dev/null",
-      GIT_CONFIG_KEY_1: "commit.gpgSign",
-      GIT_CONFIG_VALUE_1: "false",
-      GIT_CONFIG_KEY_2: "tag.gpgSign",
-      GIT_CONFIG_VALUE_2: "false",
-      GIT_CONFIG_KEY_3: "core.pager",
-      GIT_CONFIG_VALUE_3: "",
-      GIT_CONFIG_KEY_4: "core.fsmonitor",
-      GIT_CONFIG_VALUE_4: "false",
-    };
     for (const [key, value] of Object.entries(environment)) {
-      if (key in fixedGuardConfig && String(value) === fixedGuardConfig[key]) continue;
+      if (key in fixedGitEnvironment && String(value) === fixedGitEnvironment[key]) continue;
       if (unsafeGitEnvironmentKey(key)) return key;
     }
     return undefined;
@@ -360,50 +369,34 @@ function installGuard() {
     const [subcommand, ...args] = argv;
     const exact = (...expected) =>
       args.length === expected.length && expected.every((value, index) => args[index] === value);
-    const safeCommit =
-      (args.length === 2 && ["-m", "-qm"].includes(args[0]) && Boolean(args[1])) ||
-      (args.length === 3 && args[0] === "--allow-empty" && args[1] === "-qm" && Boolean(args[2]));
-    const safeDiff = (() => {
-      const candidate = [...args];
-      if (candidate[0] === "--cached") candidate.shift();
-      if (
-        candidate[0] !== "--name-status" ||
-        candidate[1] !== "-z" ||
-        candidate[2] !== "--find-renames"
-      )
-        return false;
-      return (
-        candidate.length === 3 || (candidate.length === 4 && safeGitRevisionOrRange(candidate[3]))
-      );
-    })();
-    const safeShow =
-      args.length === 1 &&
-      (() => {
-        const separator = args[0].indexOf(":");
-        return (
-          separator > 0 &&
-          safeGitRevision(args[0].slice(0, separator)) &&
-          safeGitPath(args[0].slice(separator + 1))
-        );
-      })();
-    const safeClone =
-      args.length === 5 &&
-      exact("-q", "--depth=1", "--no-checkout", args[3], args[4]) &&
-      args[3].startsWith("file://") &&
-      path.isAbsolute(args[3].slice("file://".length)) &&
-      path.isAbsolute(args[4]);
+    const blob = args[1];
+    const separator = typeof blob === "string" ? blob.indexOf(":") : -1;
     const accepted =
       (subcommand === "init" && exact("-q")) ||
-      (subcommand === "add" && args.length === 1 && (args[0] === "." || safeGitPath(args[0]))) ||
-      (subcommand === "commit" && safeCommit) ||
-      (subcommand === "diff" && safeDiff) ||
-      (subcommand === "ls-files" && exact("--others", "--exclude-standard", "-z")) ||
+      (subcommand === "hash-object" && exact("-w", "--stdin", "--no-filters")) ||
+      (subcommand === "mktree" && exact("-z")) ||
+      (subcommand === "commit-tree" &&
+        ((args.length === 3 && safeGitObject(args[0]) && args[1] === "-m" && Boolean(args[2])) ||
+          (args.length === 5 &&
+            safeGitObject(args[0]) &&
+            args[1] === "-p" &&
+            safeGitObject(args[2]) &&
+            args[3] === "-m" &&
+            Boolean(args[4])))) ||
+      (subcommand === "ls-files" &&
+        (exact("--others", "--exclude-standard", "-z") ||
+          exact("--stage", "-z") ||
+          exact("--cached", "--others", "--exclude-standard", "-z"))) ||
       (subcommand === "ls-tree" &&
-        args.length === 4 &&
-        args[0] === "-r" &&
-        args[1] === "--name-only" &&
-        args[2] === "-z" &&
-        safeGitRevision(args[3])) ||
+        ((args.length === 4 &&
+          args[0] === "-r" &&
+          args[1] === "--name-only" &&
+          args[2] === "-z" &&
+          safeGitRevision(args[3])) ||
+          (args.length === 3 &&
+            args[0] === "-r" &&
+            args[1] === "-z" &&
+            safeGitRevision(args[2])))) ||
       (subcommand === "merge-base" &&
         args.length === 3 &&
         args[0] === "--all" &&
@@ -413,14 +406,19 @@ function installGuard() {
         (exact("--is-shallow-repository") ||
           (args.length === 1 && safeGitRevision(args[0])) ||
           (args.length === 2 && args[0] === "--verify" && safeGitRevision(args[1])))) ||
-      (subcommand === "rm" && args.length === 1 && safeGitPath(args[0])) ||
-      (subcommand === "show" && safeShow) ||
-      (subcommand === "status" && args.length === 0) ||
+      (subcommand === "cat-file" &&
+        args.length === 2 &&
+        args[0] === "blob" &&
+        separator > 0 &&
+        safeGitRevision(blob.slice(0, separator)) &&
+        safeGitPath(blob.slice(separator + 1))) ||
       (subcommand === "update-ref" &&
         args.length === 2 &&
-        /^refs\/remotes\/[A-Za-z0-9._/-]+$/.test(args[0]) &&
-        safeGitRevision(args[1])) ||
-      (subcommand === "clone" && safeClone);
+        (args[0] === "HEAD" ||
+          /^refs\/(?:heads|remotes)\/[A-Za-z0-9][A-Za-z0-9._/-]*$/.test(args[0])) &&
+        !args[0].includes("..") &&
+        !args[0].includes("//") &&
+        safeGitObject(args[1]));
     if (!accepted) {
       if (subcommand?.startsWith("-") || args.some((argument) => argument.startsWith("--config")))
         throw new Error("Proofline unsupported-child-plane: unsafe git configuration is denied.");
@@ -432,6 +430,46 @@ function installGuard() {
         "Proofline unsupported-child-plane: unsafe git argv is denied; only exact reviewed repository commands are allowed.",
       );
     }
+  };
+  const nativeChildInvocation = (capability, argv, options, delegated) => {
+    const env = forcedChildEnvironment(options.env, delegated);
+    if (capability.purpose !== "git-local") return { argv, options: { ...options, env } };
+    // Never inherit loader/library, HOME/XDG, executable search, config or helper authority.
+    const cwd = options.cwd ?? process.cwd();
+    if (
+      typeof cwd !== "string" ||
+      !path.isAbsolute(cwd) ||
+      !statSync(cwd).isDirectory() ||
+      options.argv0 !== undefined
+    )
+      throw new Error(
+        "Proofline unsupported-child-plane: git requires an absolute directory and its reviewed argv0.",
+      );
+    const policy = Object.fromEntries(
+      Object.entries(env).filter(
+        ([key]) => key.startsWith("PROOFLINE_") || key === "NODE_OPTIONS" || key.startsWith("GIT_"),
+      ),
+    );
+    for (const key of Object.keys(policy))
+      if (unsafeGitEnvironmentKey(key) && !(key in fixedGitEnvironment)) delete policy[key];
+    return {
+      argv: [
+        "--no-pager",
+        "--no-lazy-fetch",
+        "--no-replace-objects",
+        "--literal-pathspecs",
+        ...argv,
+        ...(argv[0] === "init"
+          ? ["--template=", "--initial-branch=main", "--object-format=sha1", "--ref-format=files"]
+          : []),
+        ...(argv[0] === "commit-tree" ? ["--no-gpg-sign"] : []),
+      ],
+      options: {
+        ...options,
+        cwd: realpathSync(cwd),
+        env: { PATH: "/usr/bin:/bin", LANG: "C", LC_ALL: "C", ...policy },
+      },
+    };
   };
   const assertSafePnpmArgv = (argv) => {
     const runner = argv.slice(0, 3).join(" ");
@@ -693,15 +731,10 @@ function installGuard() {
       const hasArgs = Array.isArray(argsOrOptions);
       const args = hasArgs ? argsOrOptions : undefined;
       const options = (hasArgs ? maybeOptions : argsOrOptions) ?? {};
-      supportedChild(command, options, args ?? []);
+      const capability = supportedChild(command, options, args ?? []);
       const delegated = options[prooflineDelegatedPolicy] === true;
-      const guardedOptions = {
-        ...options,
-        env: forcedChildEnvironment(options.env, delegated),
-      };
-      return args
-        ? original.call(this, command, args, guardedOptions)
-        : original.call(this, command, guardedOptions);
+      const invocation = nativeChildInvocation(capability, args ?? [], options, delegated);
+      return original.call(this, capability.executable, invocation.argv, invocation.options);
     };
   };
   patchSpawn("spawn");
@@ -728,27 +761,33 @@ function installGuard() {
           : typeof argsOrOptions === "function"
             ? argsOrOptions
             : undefined;
-    supportedChild(file, options, args);
+    const capability = supportedChild(file, options, args);
     const delegated = options[prooflineDelegatedPolicy] === true;
-    const guardedOptions = {
-      ...options,
-      env: forcedChildEnvironment(options.env, delegated),
-    };
+    const invocation = nativeChildInvocation(capability, args, options, delegated);
     return done
-      ? originalExecFile.call(this, file, args, guardedOptions, done)
-      : originalExecFile.call(this, file, args, guardedOptions);
+      ? originalExecFile.call(
+          this,
+          capability.executable,
+          invocation.argv,
+          invocation.options,
+          done,
+        )
+      : originalExecFile.call(this, capability.executable, invocation.argv, invocation.options);
   };
   const originalExecFileSync = childProcess.execFileSync;
   childProcess.execFileSync = function guardedExecFileSync(file, argsOrOptions, maybeOptions) {
     const hasArgs = Array.isArray(argsOrOptions);
     const args = hasArgs ? argsOrOptions : [];
     const options = (hasArgs ? maybeOptions : argsOrOptions) ?? {};
-    supportedChild(file, options, args);
+    const capability = supportedChild(file, options, args);
     const delegated = options[prooflineDelegatedPolicy] === true;
-    return originalExecFileSync.call(this, file, args, {
-      ...options,
-      env: forcedChildEnvironment(options.env, delegated),
-    });
+    const invocation = nativeChildInvocation(capability, args, options, delegated);
+    return originalExecFileSync.call(
+      this,
+      capability.executable,
+      invocation.argv,
+      invocation.options,
+    );
   };
   const originalFork = childProcess.fork;
   childProcess.fork = function guardedFork(modulePath, argsOrOptions, maybeOptions) {

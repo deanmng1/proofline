@@ -1,4 +1,7 @@
 import { execFileSync } from "node:child_process";
+import { createHash } from "node:crypto";
+import { lstatSync, readFileSync, readlinkSync, realpathSync, type Stats } from "node:fs";
+import path from "node:path";
 
 import type { ChangedFile, ChangeManifest, ChangeStatus } from "./types.ts";
 
@@ -82,28 +85,119 @@ const mergeFiles = (...groups: ChangedFile[][]) => {
   return [...files.values()].sort((left, right) => left.path.localeCompare(right.path));
 };
 
-const worktreeFiles = (cwd: string) => {
-  const unstaged = git(cwd, ["diff", "--name-status", "-z", "--find-renames"]);
-  const staged = git(cwd, ["diff", "--cached", "--name-status", "-z", "--find-renames"]);
-  const untracked = git(cwd, ["ls-files", "--others", "--exclude-standard", "-z"]);
-  const uncertainty = [unstaged, staged, untracked]
-    .filter((result): result is Extract<GitResult, { ok: false }> => !result.ok)
-    .map((result) => `unable to read working tree: ${result.error}`);
+type GitEntry = { mode: string; oid: string };
+const parseEntries = (output: Buffer, index: boolean): Map<string, GitEntry> => {
+  const entries = new Map<string, GitEntry>();
+  for (const record of output.toString().split("\0").filter(Boolean)) {
+    const separator = record.indexOf("\t");
+    const metadata = record.slice(0, separator).split(" ");
+    const file = record.slice(separator + 1);
+    const [mode, typeOrOid, oidOrStage] = metadata;
+    const oid = index ? typeOrOid : oidOrStage;
+    if (
+      separator < 0 ||
+      metadata.length !== 3 ||
+      !/^(?:[0-9a-f]{40}|[0-9a-f]{64})$/.test(oid) ||
+      (index && oidOrStage !== "0") ||
+      !["100644", "100755", "120000"].includes(mode) ||
+      (!index && typeOrOid !== "blob") ||
+      path.isAbsolute(file) ||
+      file.split("/").some((part) => !part || part === "." || part === "..") ||
+      entries.has(file)
+    )
+      throw new Error("unsupported or ambiguous Git index/tree entry");
+    entries.set(file, { mode, oid });
+  }
+  return entries;
+};
+const requiredGit = (cwd: string, argv: string[]) => {
+  const result = git(cwd, argv);
+  if (!result.ok) throw new Error(result.error);
+  return result.stdout;
+};
+const entryChanges = (
+  before: Map<string, GitEntry>,
+  after: Map<string, GitEntry>,
+): ChangedFile[] => {
+  const changes: ChangedFile[] = [];
+  for (const [file, entry] of before) {
+    const next = after.get(file);
+    if (!next) changes.push({ path: file, status: "deleted" });
+    else if (next.oid !== entry.oid || next.mode !== entry.mode)
+      changes.push({ path: file, status: "modified" });
+  }
+  for (const file of after.keys())
+    if (!before.has(file)) changes.push({ path: file, status: "added" });
+  // Renames deliberately retain both paths as deletion/addition. This conservative evidence
+  // cannot conceal either former or current ownership and requires no content conversion.
+  return changes;
+};
+const treeEntries = (cwd: string, revision: string) =>
+  parseEntries(requiredGit(cwd, ["ls-tree", "-r", "-z", revision]), false);
 
-  return {
-    files: mergeFiles(
-      unstaged.ok ? parseNameStatus(unstaged.stdout) : [],
-      staged.ok ? parseNameStatus(staged.stdout) : [],
-      untracked.ok
-        ? untracked.stdout
-            .toString()
-            .split("\0")
-            .filter(Boolean)
-            .map((path) => ({ path, status: "untracked" as const }))
-        : [],
-    ),
-    uncertainty,
+export const readRepositoryChanges = ({
+  cwd,
+  base,
+  head,
+}: {
+  cwd: string;
+  base?: string | null;
+  head?: string | null;
+}) => {
+  const files: ChangedFile[][] = [];
+  const errors: string[] = [];
+  const inspect = (label: string, read: () => ChangedFile[]) => {
+    try {
+      files.push(read());
+    } catch (error) {
+      errors.push(
+        `unable to read ${label}: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
   };
+  if (base && head)
+    inspect("commit range", () => entryChanges(treeEntries(cwd, base), treeEntries(cwd, head)));
+  inspect("working tree", () => {
+    const index = parseEntries(requiredGit(cwd, ["ls-files", "--stage", "-z"]), true);
+    const working = new Map<string, GitEntry>();
+    const root = realpathSync(cwd);
+    for (const [file, entry] of index) {
+      const absolute = path.join(root, file);
+      let stat: Stats;
+      try {
+        stat = lstatSync(absolute);
+      } catch (error) {
+        if ((error as NodeJS.ErrnoException).code === "ENOENT") continue;
+        throw error;
+      }
+      const parent = realpathSync(path.dirname(absolute));
+      if (parent !== root && !parent.startsWith(`${root}${path.sep}`))
+        throw new Error("tracked path escapes repository");
+      if (!stat.isSymbolicLink() && !stat.isFile())
+        throw new Error("unsupported tracked file kind");
+      const bytes = stat.isSymbolicLink()
+        ? readlinkSync(absolute, { encoding: "buffer" })
+        : readFileSync(absolute);
+      const mode = stat.isSymbolicLink() ? "120000" : stat.mode & 0o111 ? "100755" : "100644";
+      // Hash the bytes ourselves: git diff/add/update-index may execute clean/process filters
+      // even for name-only comparisons or racily clean index entries. Raw comparisons can
+      // conservatively report transformed content as modified, never silently omit it.
+      const oid = createHash(entry.oid.length === 64 ? "sha256" : "sha1")
+        .update(`blob ${bytes.length}\0`)
+        .update(bytes)
+        .digest("hex");
+      working.set(file, { mode, oid });
+    }
+    return mergeFiles(entryChanges(treeEntries(cwd, "HEAD"), index), entryChanges(index, working));
+  });
+  inspect("untracked files", () =>
+    requiredGit(cwd, ["ls-files", "--others", "--exclude-standard", "-z"])
+      .toString()
+      .split("\0")
+      .filter(Boolean)
+      .map((file) => ({ path: file, status: "untracked" as const })),
+  );
+  return { files: mergeFiles(...files), errors };
 };
 
 export const readChangedFiles = ({
@@ -155,14 +249,7 @@ export const readChangedFiles = ({
           : "missing local merge base",
     );
 
-  const committed = base
-    ? git(cwd, ["diff", "--name-status", "-z", "--find-renames", `${base}...${head}`])
-    : undefined;
-  if (committed && !committed.ok) {
-    uncertainty.push(`unable to read commit range: ${committed.error}`);
-  }
-
-  const workingTree = worktreeFiles(cwd);
+  const changes = readRepositoryChanges({ cwd, base, head });
   return {
     revisions: {
       requestedBase: suppliedBase ?? null,
@@ -175,7 +262,7 @@ export const readChangedFiles = ({
     },
     base: base ?? null,
     head,
-    files: mergeFiles(committed?.ok ? parseNameStatus(committed.stdout) : [], workingTree.files),
-    uncertainty: [...uncertainty, ...workingTree.uncertainty],
+    files: changes.files,
+    uncertainty: [...uncertainty, ...changes.errors],
   };
 };

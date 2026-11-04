@@ -216,9 +216,11 @@ describe("Proofline egress guard", () => {
           "  email = proofline@example.invalid",
           "",
         ].join("\\n"), "utf8");
-        writeFileSync(path.join(cwd, "tracked.txt"), "tracked\\n", "utf8");
-        spawnSync("git", ["add", "tracked.txt"], { cwd });
-        const commit = spawnSync("git", ["commit", "-m", "guarded"], { cwd, encoding: "utf8" });
+        const tree = spawnSync("git", ["mktree", "-z"], { cwd, input: "", encoding: "utf8" });
+        const commit = spawnSync("git", ["commit-tree", tree.stdout.trim(), "-m", "guarded"], { cwd, encoding: "utf8" });
+        if (commit.status !== 0) throw new Error(commit.stderr);
+        const update = spawnSync("git", ["update-ref", "HEAD", commit.stdout.trim()], { cwd });
+        if (update.status !== 0) throw new Error("ref update failed");
         let override;
         try {
           spawnSync("git", ["-c", "core.hooksPath=" + process.env.TEST_HOOKS, "status"], { cwd });
@@ -226,7 +228,7 @@ describe("Proofline egress guard", () => {
         console.log(JSON.stringify({ commit: commit.status, override }));
       `,
     );
-    const hook = path.join(hooks, "pre-commit");
+    const hook = path.join(hooks, "reference-transaction");
     mkdirSync(hooks);
     writeFileSync(hook, `#!/bin/sh\nprintf ran > ${JSON.stringify(marker)}\n`, "utf8");
     chmodSync(hook, 0o755);
