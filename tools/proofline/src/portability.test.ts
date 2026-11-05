@@ -498,4 +498,101 @@ describe("Proofline standalone portability", () => {
       fixture.close();
     }
   });
+  it("verifies_relocated_local_evidence_without_inheriting_CI_checkout_identity", () => {
+    const beforeRepository = process.env.GITHUB_REPOSITORY;
+    const beforeWorkflow = process.env.GITHUB_WORKFLOW_REF;
+    delete process.env.GITHUB_REPOSITORY;
+    delete process.env.GITHUB_WORKFLOW_REF;
+    let fixture: ReturnType<typeof nativeFixture> | undefined;
+    try {
+      fixture = nativeFixture();
+      const { record, artifactRoot } = fixture;
+      expect(record.repository).toBeNull();
+      expect(record.workflow).toBeNull();
+      expect(() =>
+        validatePortabilityResult(record, {
+          artifactRoot,
+          checkLogs: false,
+        }),
+      ).not.toThrow();
+    } finally {
+      fixture?.close();
+      if (beforeRepository === undefined) delete process.env.GITHUB_REPOSITORY;
+      else process.env.GITHUB_REPOSITORY = beforeRepository;
+      if (beforeWorkflow === undefined) delete process.env.GITHUB_WORKFLOW_REF;
+      else process.env.GITHUB_WORKFLOW_REF = beforeWorkflow;
+    }
+  });
+
+  it("rejects_incomplete_runtime_compatibility_and_missing_relocation_destination", () => {
+    for (const missing of ["node", "react", "artifactRoot"]) {
+      const fixture = nativeFixture();
+      try {
+        const options = { artifactRoot: fixture.artifactRoot, checkLogs: false };
+        expect(() => validatePortabilityResult(fixture.record, options)).not.toThrow();
+        if (missing === "artifactRoot") {
+          delete fixture.record.artifacts;
+          expect(() => validatePortabilityResult(fixture.record, { checkLogs: false })).toThrow(
+            /retained target evidence/,
+          );
+        } else {
+          delete fixture.record.compatibility[missing];
+          expect(() => validatePortabilityResult(fixture.record, options)).toThrow(
+            /unsupported portability evidence/,
+          );
+        }
+      } finally {
+        fixture.close();
+      }
+    }
+  });
+
+  it("rejects_a_rehashed_failed_coverage_diagnostic_despite_passing_gate_summaries", () => {
+    const fixture = nativeFixture();
+    try {
+      const options = { artifactRoot: fixture.artifactRoot, checkLogs: false };
+      expect(() => validatePortabilityResult(fixture.record, options)).not.toThrow();
+      const report = "artifacts/coverage/ratchet.json";
+      const diagnostic = JSON.parse(readFileSync(path.join(fixture.artifactRoot, report), "utf8"));
+      diagnostic.errors = ["Required coverage baseline is missing"];
+      fixture.write(report, JSON.stringify(diagnostic));
+      fixture.record.evidenceHashes[report] = fixture.hash(report);
+      expect(() => validatePortabilityResult(fixture.record, options)).toThrow(
+        /Failed target evidence artifacts\/coverage\/ratchet\.json/,
+      );
+    } finally {
+      fixture.close();
+    }
+  });
+
+  it("requires_original_invocation_logs_when_local_path_validation_is_requested", () => {
+    const fixture = nativeFixture();
+    try {
+      for (const gate of fixture.record.gates)
+        gate.log = path.join(fixture.artifactRoot, gate.logPath);
+      expect(() => validatePortabilityResult(fixture.record)).not.toThrow();
+      rmSync(path.join(fixture.artifactRoot, "unit.log"));
+      expect(() => validatePortabilityResult(fixture.record)).toThrow(/retained target evidence/);
+    } finally {
+      fixture.close();
+    }
+  });
+
+  it("rejects_rehashed_type_confusion_in_aggregate_project_identity", () => {
+    const fixture = nativeFixture();
+    try {
+      const options = { artifactRoot: fixture.artifactRoot, checkLogs: false };
+      expect(() => validatePortabilityResult(fixture.record, options)).not.toThrow();
+      const aggregate = fixture.records.find(
+        (item: { runner: string }) => item.runner === "aggregate",
+      );
+      aggregate.expected[0].project = 42;
+      fixture.seal();
+      expect(() => validatePortabilityResult(fixture.record, options)).toThrow(
+        /identity.*contract/,
+      );
+    } finally {
+      fixture.close();
+    }
+  });
 });
