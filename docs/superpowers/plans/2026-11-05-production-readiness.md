@@ -85,7 +85,7 @@
 
 **Interfaces:** Public onboarding/portable/support docs and immutable core source only. No work-orders bootstrap or v1 count/path substitution. Retain assistance log and baseline/adapted/core commit/hash references. Call it an agent trial throughout.
 
-- [ ] Dispatch fresh agent with `fork_turns: none`, the frozen app, public docs and immutable core reference; require inventory and rule/seam declaration before test authorship. Record host baseline snapshot and separate Roomboard-only initial commit.
+- [x] Dispatch fresh agent with `fork_turns: none`, the frozen app, public docs and immutable core reference; require inventory and rule/seam declaration before test authorship. Record host baseline snapshot and separate Roomboard-only initial commit.
 - [ ] Run genuine fresh public install and target typecheck/discovery/exact selection/full fallback/unit/browser/coverage/record/production gates; preserve RED/GREEN and unexpected failures. No host dependency links.
 - [ ] Verify visible reserve/cancel cross-screen workflow, worker isolation, egress and unchanged core; record actual runtime and all assistance. Never claim human onboarding proof.
 - [ ] Obtain independent spec/quality review of adaptation and evidence. Retain baseline and adapted artifacts and import a repeatable fixture only after the discovery trial.
@@ -118,3 +118,7 @@
 ## Self-review and preflight
 
 The spec's three milestones map to Tasks 1–3 and 6–7, with independent discovery in Tasks 4–5 and final review in Task 8. Boundary fixes do not overlap release/compatibility worker files; the controller owns every shared governance file. New operational helpers remain in the dynamic copied core inventory, and work-orders v1 stays unchanged. Offline fixtures, genuine local execution and actual hosted/provider observations are separate evidence classes. External prerequisites cannot be checked off as implemented code.
+
+## Recorded execution adjustment: truthful absent-tenancy declaration
+
+The blind pilot stopped on a real upstream schema constraint at frozen core `d262c0c`, after independently installing and retaining ordinary app checks. Preserve its report and blocked result. A separately authored and reviewed additive schema repair permits an explicit explained `not-applicable` mode; see the design clarification. A later retry is assisted and must retain both source references and interventions. Root integration uses one full two-cell matrix job rather than duplicating its sixteen gates in two YAML jobs. Both declared cells remain required for workflow success.

@@ -11,6 +11,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { afterEach, expect, test } from "vitest";
 import {
+  goldenWorkflowMatrixSchema,
   harnessManifestSchema,
   validateHarness,
   validateHarnessAuthority,
@@ -743,4 +744,96 @@ test("execution metadata cannot direct coverage cleanup over retained evidence",
         },
       }).errors.join(" "),
     ).toMatch(/protected execution evidence/);
+});
+
+test("accepts_explicit_absent_tenancy_without_fabricated_security_workflows", () => {
+  const { cwd, manifest, golden, write } = fixture();
+  const target = {
+    ...golden,
+    tenantIsolationMode: "not-applicable",
+    tenantIsolationReason: "Reservations are local to one page; the application has no tenants.",
+    rows: [
+      {
+        ...golden.rows[0],
+        status: "implemented",
+        adapterSetup: ["fresh empty reservation state"],
+        userActions: ["reserve a room", "navigate to reservations", "cancel the reservation"],
+        urlTransitions: ["/rooms", "/reservations"],
+        visibleAssertions: ["reservation listed", "reservation cancelled"],
+        persistedInvariants: ["no active reservation remains"],
+        evidence: [
+          {
+            rowId: "journey",
+            commandKey: "browser",
+            file: "app/src/value.spec.ts",
+            title: "@smoke visible",
+            line: 2,
+            tag: "@smoke",
+            ruleIds: ["RULE-001"],
+          },
+        ],
+      },
+    ],
+  };
+  write("golden.json", target);
+  expect(validateHarness({ cwd, manifest: { ...manifest, lifecycleMatrix: null } }).errors).toEqual(
+    [],
+  );
+  target.rows[0].evidence = [];
+  write("golden.json", target);
+  expect(validateHarness({ cwd, manifest }).errors.join(" ")).toMatch(/exact browser evidence/i);
+});
+
+test("parses_explicit_absent_tenancy_with_its_reason_preserved", () => {
+  const { golden } = fixture();
+  const parsed = goldenWorkflowMatrixSchema.safeParse({
+    ...golden,
+    tenantIsolationMode: "not-applicable",
+    tenantIsolationReason: "The application has no tenant or workspace boundary.",
+  });
+  expect(parsed.success).toBe(true);
+  if (!parsed.success) throw parsed.error;
+  expect(parsed.data).toMatchObject({
+    tenantIsolationMode: "not-applicable",
+    tenantIsolationReason: "The application has no tenant or workspace boundary.",
+  });
+});
+
+test("preserves_both_existing_tenant_isolation_modes_without_absence_reasons", () => {
+  const { cwd, manifest, golden, write } = fixture();
+  for (const tenantIsolationMode of ["visible-switch", "authenticated-contexts"]) {
+    const matrix = { ...golden, tenantIsolationMode };
+    expect(goldenWorkflowMatrixSchema.safeParse(matrix).success).toBe(true);
+    write("golden.json", matrix);
+    expect(validateHarness({ cwd, manifest }).errors).toEqual([]);
+    for (const tenantIsolationReason of ["No tenants", "", " ", null, undefined]) {
+      expect(
+        goldenWorkflowMatrixSchema.safeParse({ ...matrix, tenantIsolationReason }).success,
+      ).toBe(false);
+      if (tenantIsolationReason === undefined) continue;
+      write("golden.json", { ...matrix, tenantIsolationReason });
+      expect(validateHarness({ cwd, manifest }).errors.join(" ")).toMatch(/golden workflow/i);
+    }
+  }
+});
+
+test("rejects_missing_or_ambiguous_absent_tenancy_declarations", () => {
+  const { cwd, manifest, golden, write } = fixture();
+  const { tenantIsolationMode: _mode, ...matrix } = golden;
+  for (const declaration of [
+    {},
+    { tenantIsolationReason: "No tenants" },
+    { tenantIsolationMode: null, tenantIsolationReason: "No tenants" },
+    { tenantIsolationMode: "unknown", tenantIsolationReason: "No tenants" },
+    { tenantIsolationMode: "not-applicable" },
+    { tenantIsolationMode: "not-applicable", tenantIsolationReason: null },
+    { tenantIsolationMode: "not-applicable", tenantIsolationReason: "" },
+    { tenantIsolationMode: "not-applicable", tenantIsolationReason: " \n\t " },
+    { tenantIsolationMode: "not-applicable", tenantIsolationReason: 1 },
+  ]) {
+    const invalid = { ...matrix, ...declaration };
+    expect(goldenWorkflowMatrixSchema.safeParse(invalid).success).toBe(false);
+    write("golden.json", invalid);
+    expect(validateHarness({ cwd, manifest }).errors.join(" ")).toMatch(/golden workflow/i);
+  }
 });

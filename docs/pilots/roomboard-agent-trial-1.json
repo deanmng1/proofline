@@ -1,0 +1,50 @@
+{
+  "version": 1,
+  "kind": "independent-existing-application-agent-adoption",
+  "application": "Roomboard",
+  "status": "blocked-upstream-core",
+  "humanEvidence": false,
+  "baselineCommit": "91ded2ab018324357e7457486b2bc6292fb8c386",
+  "adaptedCommit": "06ab1e7d803bc73556428930f2ac2b18b02b2272",
+  "prooflineSourceCommit": "d262c0c617193a1aa9988af26d2dde21ac512ba1",
+  "coreFiles": 36,
+  "allCoreHashesUnchanged": true,
+  "setupMode": "independent-public-registry-frozen-install",
+  "checks": {
+    "originalSixDomainTests": "passed",
+    "focusedUiTest": "passed",
+    "bootstrapTargetedGreen": "passed (one intentionally filtered egress test not counted)",
+    "typecheck": "passed",
+    "productionCompilation": "passed",
+    "testCompilation": "passed but wrong entry; draft incomplete",
+    "diffCheck": "passed",
+    "schemaReproduction": "three truthful absent-tenant inputs rejected"
+  },
+  "notRun": [
+    "canonical manifest validation",
+    "exact diagnostic selection",
+    "unknown/unmapped full fallback",
+    "canonical guarded unit aggregate",
+    "canonical browser workflow or isolation",
+    "coverage measurement and ratchet",
+    "append-only merge-base record gate",
+    "production-negative audit",
+    "independent review"
+  ],
+  "blocker": {
+    "file": "tools/impact/src/harness-manifest.ts",
+    "export": "goldenWorkflowMatrixSchema",
+    "field": "tenantIsolationMode",
+    "allowed": ["visible-switch", "authenticated-contexts"],
+    "targetContract": "no tenants or product auth",
+    "evidence": "evidence/golden-schema-blocker.json"
+  },
+  "draftLimitations": [
+    "Test HTML transform runs after Vite graph selection; test entry not included in compiled draft artifact.",
+    "Browser drafts and egress assertion not canonically executed.",
+    "No governed bootstrap baseline or controlled source-change commit exists because schema validation is blocked."
+  ],
+  "artifacts": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/evidence",
+  "target": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard",
+  "setup": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/setup"
+}

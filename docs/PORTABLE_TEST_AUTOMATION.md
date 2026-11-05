@@ -109,3 +109,18 @@ CI retains harness, impact, record, coverage, production module manifests, full-
 ## Measurement scope
 
 The existing critical coverage thresholds are unchanged. New helper thresholds start at the whole-percent floor of their measured V8 counters. The native execution shim and reporter execute in child processes and remain zero in the parent coverage report; real child-process regressions separately prove their behavior. These explicit measurement limits do not imply whole-product or browser coverage. The standalone lifecycle runtime has its own fixed 100% four-metric baseline.
+
+## Applications without tenancy
+
+A version 1 golden workflow matrix for an application with no tenant/workspace boundary must explicitly declare `"tenantIsolationMode": "not-applicable"` and a nonempty `tenantIsolationReason` explaining that absence. For example, include these fields alongside the matrix's normal `version` and `rows`:
+
+```json
+{
+  "tenantIsolationMode": "not-applicable",
+  "tenantIsolationReason": "Reservations are local to one page; the application has no tenants."
+}
+```
+
+Golden rows still require the normal setup, user actions, URL transitions, visible assertions, persisted invariants and owned rule IDs. Implemented rows still need exact discovered browser evidence. This declaration records an absent contract and establishes no tested tenant-isolation guarantee. It must not replace a real application's tenant boundary or its required tests.
+
+The existing `visible-switch` and `authenticated-contexts` modes retain their version 1 requirements and reject `tenantIsolationReason`. An omitted, null or unknown mode fails validation; `not-applicable` without a reason, or with a blank reason, also fails. Neither absent tenancy nor absent authentication is inferred or silently defaulted. CRM and work-orders continue to use their existing authenticated-context isolation contracts.

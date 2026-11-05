@@ -69,3 +69,9 @@ Run narrowly targeted harmless mutation proofs in disposable copies: reverting t
 4. The third-target pilot and maintenance/reliability drills retain provenance and failures, and do not impersonate real human experience.
 5. A new independent reviewer, separate from implementers and task reviewers, checks integrated code and actual results using the same weighted rubric. Its score is judgment, not a target. Human onboarding, support history, missing platform/hosted/deployment proof and external settings remain honestly reported.
 6. Update tracked current status/plan/handoff, append evidence, commit small local changes, validate the committed closeout and preserve preexisting `.codex/`, presentation assets/server and all prior evidence.
+
+## Pilot-discovered portability clarification
+
+The first blind Roomboard trial at core `d262c0c` stopped because the v1 golden matrix only accepted tenant switching or authenticated contexts. Roomboard has neither. Preserve that blocked report and the immutable baseline. Add the explicit `tenantIsolationMode: "not-applicable"` alternative with a required nonblank `tenantIsolationReason`; reject omitted/null/unknown modes, missing reasons, and a reason on either existing tenant mode. This is an additive v1 target declaration, not tenant-isolation evidence. The CRM's original tenant scenarios and acceptance requirements remain binding. Retry the trial only from a new immutable core and label the retry assisted; do not rewrite the blind trial as successful.
+
+Canonical compatibility runs use one required matrix job containing both complete declared cells, with fail-fast disabled and distinct observation artifacts. Only the Linux cell may upload the existing exact release name. GitHub's overall workflow conclusion includes both cells; the existing API verifier rejects the artifact unless that whole workflow succeeds. No matrix observation substitutes for the sixteen authoritative gates.
