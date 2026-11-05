@@ -97,9 +97,9 @@
 **Interfaces:** One canonical workflow with Linux full verify and a required macOS compatibility job; overall workflow success includes both. Preserve original 16 release-gate keys/native semantics. Distinct cell artifacts; actual source/run provenance. Preview source version may advance without claiming publication.
 
 - [ ] Integrate exact new bindings, ownership and new-source measured coverage; preserve all 24 current baseline entries and full JSONL prefix. Validate real report production/provenance before the long gate.
-- [ ] Integrate preflight/script aliases, declared matrix and full macOS job without weakening the Linux/release workflow. Retain exact impact-preview runtime/output fixture RED for the existing quoting failure, repair it and verify the expected output. Validate literal workflow shell blocks as a supplemental check; local Bash syntax-only acceptance does not prove runtime success. Independently review complete shared integration.
-- [ ] Add actual-maintainer best-effort support/security/upgrade/recovery instructions and unpublished candidate notes; report remote protection/private-reporting settings honestly without changing them.
-- [ ] Rehearse a compatible old/new harness upgrade in a disposable target. Run harmless targeted argv/native-outcome mutation proofs and repeated genuine scenario runs; retain exact mutations, source, outcome and runtime without universal flake/benchmark claims.
+- [x] Integrate preflight/script aliases, declared matrix and full macOS job without weakening the Linux/release workflow. Retain exact impact-preview runtime/output fixture RED for the existing quoting failure, repair it and verify the expected output. Validate literal workflow shell blocks as a supplemental check; local Bash syntax-only acceptance does not prove runtime success. Independently review complete shared integration.
+- [x] Add actual-maintainer best-effort support/security/upgrade/recovery instructions and unpublished candidate notes; report remote protection/private-reporting settings honestly without changing them.
+- [x] Rehearse a compatible old/new harness upgrade in a disposable target. Run harmless targeted argv/native-outcome mutation proofs and repeated genuine scenario runs; retain exact mutations, source, outcome and runtime without universal flake/benchmark claims.
 - [ ] Obtain independent spec/quality review and commit integrated source before fresh verification.
 
 ### Task 7: Fresh source and hosted verification
