@@ -18,6 +18,11 @@
       "outputs": ["{workspaceRoot}/dist/crm-web-test"],
       "cache": false
     },
+    "build-demo": {
+      "command": "pnpm exec tsc -b apps/crm-web/tsconfig.json && pnpm exec vite build --mode proofline-demo --config apps/crm-web/vite.config.ts",
+      "outputs": ["{workspaceRoot}/dist/crm-web-demo"],
+      "cache": false
+    },
     "test": {
       "command": "pnpm exec vitest run --config apps/crm-web/vite.config.ts"
     },

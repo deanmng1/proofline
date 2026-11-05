@@ -4,7 +4,8 @@ import react from "@vitejs/plugin-react";
 import { defineConfig } from "vitest/config";
 
 export default defineConfig(({ mode }) => {
-  const testEntry = mode === "proofline-test";
+  const demo = mode === "proofline-demo";
+  const testEntry = mode === "proofline-test" || demo;
   const repositoryRoot = path.resolve(__dirname, "../..");
   const normalizeModuleId = (raw: string) => {
     const withoutVirtualPrefix = raw.replace(/^\0+/, "");
@@ -27,7 +28,18 @@ export default defineConfig(({ mode }) => {
         transformIndexHtml: {
           order: "pre",
           handler(html) {
-            return testEntry ? html.replace("/src/main.tsx", "/src/test-entry.tsx") : html;
+            const entry = testEntry ? html.replace("/src/main.tsx", "/src/test-entry.tsx") : html;
+            if (!demo) return entry;
+            const localOnly = entry.replace(
+              /\s*<link\b[^>]*https:\/\/fonts\.(?:googleapis|gstatic)\.com[^>]*>/g,
+              "",
+            );
+            const policy =
+              "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self'; img-src 'self' data:; font-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'";
+            return localOnly.replace(
+              "<head>",
+              `<head><meta http-equiv="Content-Security-Policy" content="${policy}" />`,
+            );
           },
         },
       },
@@ -59,7 +71,14 @@ export default defineConfig(({ mode }) => {
       },
     },
     build: {
-      outDir: path.resolve(__dirname, testEntry ? "../../dist/crm-web-test" : "../../dist/crm-web"),
+      outDir: path.resolve(
+        __dirname,
+        demo
+          ? "../../dist/crm-web-demo"
+          : testEntry
+            ? "../../dist/crm-web-test"
+            : "../../dist/crm-web",
+      ),
       emptyOutDir: true,
       sourcemap: false,
       manifest: true,
@@ -86,7 +105,7 @@ export default defineConfig(({ mode }) => {
         reportOnFailure: true,
         reportsDirectory: "../../artifacts/coverage/crm-web",
         reporter: ["text", "html", "lcov", "json-summary"],
-        include: ["src/**/*.{ts,tsx}"],
+        include: ["src/**/*.{ts,tsx}", "scripts/*.mjs"],
         exclude: [
           "src/**/*.test.{ts,tsx}",
           "src/test/**",
