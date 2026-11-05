@@ -1,203 +1,100 @@
 # Proofline
 
-A deterministic, agent-authored regression harness for React/Vite apps—Vitest service and UI tests, Playwright end-to-end journeys, coverage ratchets, change-aware test selection, and portable execution evidence.
-
-## Reference implementation
-
-A production-shaped **React 19 + Vite 6 + TypeScript** insurance CRM reference application and regression-testing harness. It models Risk Secure and Risk Secure Plus quoting, binding, finance events, and commission timing without requiring a live backend or provider account.
-
-**Purpose:** build product rules once, exercise them at the domain/API/UI/browser
-layers, and keep future changes from consuming agent time on rediscovering old
-regressions.
+A portable regression-testing harness for React/Vite applications. Proofline runs deterministic Vitest and Playwright checks, verifies that required tests actually pass, preserves failure evidence, and checks the exact build before release.
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-2563eb)](LICENSE)
-[![Version](https://img.shields.io/badge/version-0.8.0-2563eb)](CHANGELOG.md)
-[![React](https://img.shields.io/badge/React-19-087ea4?logo=react&logoColor=white)](https://react.dev)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.8_strict-3178c6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
-[![Vite](https://img.shields.io/badge/Vite-6-646cff?logo=vite&logoColor=white)](https://vite.dev)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06b6d4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
+[![Source preview](https://img.shields.io/badge/preview-0.9.0--preview.1-2563eb)](CHANGELOG.md)
 
-![Admin Dashboard Template — Overview page with KPI cards, revenue chart, and category breakdown](docs/images/dashboard-overview.png)
+**Distribution:** unpublished source preview `0.9.0-preview.1`, manifest schema 1. The historical dashboard `v0.8.0` tag predates Proofline. Use the source commit shown by `git rev-parse HEAD`; do not treat that old tag as a harness release. See [project status](docs/PROJECT_STATUS.md) and [preview support](.github/SUPPORT.md).
 
-## About
+## What it provides
 
-Standing up an insurance CRM usually means weeks of plumbing before the first real feature: session handling, tenant scoping, data tables, finance transitions, commissions, audit history, accessibility, and a test pipeline. This reference app makes those decisions concrete — and proves the business rules with unit, contract, UI, and end-to-end tests.
+- Business-rule, service, API and UI tests in Vitest, plus genuine browser workflows in Playwright.
+- Exact ownership and test bindings, conservative change-based selection, and mandatory full gates.
+- Native outcome reconciliation: missing, skipped or expected-failure results cannot satisfy required checks.
+- Separate invocation logs, native reports, traces, screenshots and video, including failed runs.
+- Deny-by-default test egress, isolated scenarios, and production builds audited to exclude test adapters.
+- Per-file coverage ratchets, append-only execution history and source-bound verified release artifacts.
 
-The CRM journeys use a fresh in-memory Test API per browser test. A separate capability-gated test build listens only on loopback, while canonical Vitest/Playwright runners and browser/runtime planes deny undeclared egress. Exact reviewed browser and transform executables retain Playwright control without opening network origins. The production artifact is audited to exclude every test-only entrypoint.
+The insurance CRM is a reference implementation. The unrelated [work-orders example](examples/work-orders/README.md) demonstrates adaptation; its pages and rules are independent. Normal CI execution never calls an agent or model. Adaptation is checked-in source/configuration, not an npm package or hosted service.
 
-## Regression harness
+## Install from source
 
-The test strategy is intentionally layered: pure insurance rules first,
-contract and UI behavior next, and browser journeys only where a real workflow
-crosses screens. The conservative selector explains why each test ran and
-falls back to the entire suite when it cannot safely narrow scope.
+| Prerequisite | Supported preview setup |
+| --- | --- |
+| Node.js | `24.22.1` selected by `.nvmrc`; supported range `>=24.22.1 <25` |
+| pnpm | Exactly `11.24.0` (`packageManager` in package.json) |
+| Git | `2.48+`, full history for revision-sensitive commands |
+| Browser | Matching Playwright Chromium installation |
 
-```bash
-pnpm test:impacted -- --dry-run  # inspect the conservative selection and reasons
-pnpm test:impacted               # run selected project tests and browser journeys
-pnpm test                        # every Vitest project
-pnpm e2e                         # complete Chromium regression suite
+Install Node with your normal version manager, then install the pinned package manager if needed: `npm install --global pnpm@11.24.0`. Confirm `node --version`, `pnpm --version` and `git --version`; all child commands must resolve the same selected Node.
+
+```sh
+git clone https://github.com/deanmng1/proofline.git
+cd proofline
+pnpm install --frozen-lockfile
+pnpm exec playwright install chromium
+pnpm harness:validate
 ```
 
-See [the testing guide](docs/TESTING.md) for the rule-to-regression workflow and [portable automation guide](docs/PORTABLE_TEST_AUTOMATION.md) for the adaptation sequence, exact manifest command contract, append-only evidence, and CI boundary.
+On Linux CI, install browser system dependencies with `pnpm exec playwright install --with-deps chromium`. Both the full unit gate and browser gate need Chromium: a harness unit regression deliberately executes a real browser identity. A custom `PLAYWRIGHT_BROWSERS_PATH` is supported; install and run using the same value.
 
-## Portable adaptation
+## Try the CRM without a backend
 
-Proofline is the reusable harness; the insurance CRM is its reference proof. Adapt another React/Vite repository by inventorying routes, roles, tenants, APIs, providers, rules, transitions, and runners; declaring structured commands, ownership, coverage, lifecycle, and golden-workflow contracts; implementing an isolated scenario adapter; then writing deterministic rule tests and a small set of navigated workflows. Stateless targets set the lifecycle matrix to `null`; state-model generation is intentionally parked for targets whose transition matrix later outgrows hand-authored service tests.
-
-The selector retains exact ownership and dynamic-import edge reasons and falls back to canonical full commands on uncertainty. Each browser workspace names one discovery/exact adapter while worker and shard commands remain required canonical-full gates. Implemented workflow rows bind exact discovered Playwright identities and rule IDs, and their specs consume those contracts through a shared runtime helper. Coverage baselines rise monotonically, execution history is byte-exact append-only JSONL, and README/manifest/docs/CI changes require fresh scoped evidence. Normal CI runs deterministic Node/shell/JSON commands and never calls an agent or model. Future Codex or Cursor integrations consume the same checked-in contracts rather than becoming an execution dependency.
-
-Chromium runs the full visible matrix: authenticated deep-link restoration, sidebar customer/property/quote/bind/finance/logout, response-loss recovery, role denial, tenant isolation, and refund/correction. Firefox and WebKit are opt-in and run only the `@proofline-smoke` invariant. The fixture rotates access tokens; its `refreshToken` value is a refresh-capability marker, while an independent refresh-credential protocol remains outside this harness delivery.
-
-## Execution confidence and portability
-
-Proofline checks actual required test outcomes and retains separate diagnostics for each invocation. The release workflow verifies the exact tested artifact before deployment. Run `pnpm proofline:validate-portability` to exercise the reusable core against the independent work-order application; see the [execution, portability and release contracts](docs/PORTABLE_TEST_AUTOMATION.md#required-execution-and-preserved-diagnostics).
-
-## Visual guides
-
-Start with the [13-slide browser presentation](docs/showcase/proofline-overview.html) for a plain-language introduction, a real test catching a controlled regression and passing after the fix, recorded CRM and second-app workflows, the four verification safeguards, and current test results. A [PDF copy](docs/showcase/proofline-overview.pdf) is available for reading and sharing. Read the [technical companion](docs/showcase/TECHNICAL_GUIDE.md) for editable architecture diagrams, execution contracts, adaptation steps, and measurement sources.
-
-## Key Features
-
-- **20 routed pages** across a strict 3-level information architecture — Overview, Analytics, Mail (Inbox/Sent), Calendar, Notifications, Support, Integrations, Users, Team, Billing, Transactions, Profile, UI Kit, Tables & Charts galleries, Settings, User Settings, Login and 404 — all lazy-loaded behind a protected shell.
-- **Three-level sidebar** (Group › Section › Subsection) with collapsible sections, RBAC-aware subtrees, and route-driven **breadcrumbs** above every page.
-- **Multi-tenancy built in** — every request is scoped with an `X-Tenant-Id` header; a branded workspace switcher lives at the top of the sidebar and mobile nav.
-- **Production-shaped auth** — access-bearer rotation with a refresh-capability marker, automatic `401 → refresh → retry`, silent refresh on load, and redirect-to-login on failure. The login screen mirrors modern SaaS re-auth flows: a continue-as card for the remembered account, an email/password form, and mock Google/Apple providers.
-- **Role-based access control** — nav visibility and route guards gated by Owner / Admin / Manager through a single `canAccess()` source of truth.
-- **Four theme presets** (Core Light, Midnight Ops, Sunset Ember, Forest Deep) driven by CSS variables, honoring `prefers-color-scheme` by default.
-- **Internationalized** — English, Spanish, and French bundles via `react-i18next`, switchable per user.
-- **Resilient UX contract** — skeleton-first loading (no spinner page-swaps), retryable error panels, confirm dialogs with **Undo** toasts, and zero decorative buttons.
-- **Dashboard hierarchy done right** — KPI cards with sparklines on top, interactive charts in the middle, operational tables at the bottom (inverted pyramid).
-- **Accessible to WCAG 2.2 AA** — skip link, focus management on navigation, keyboard-operable tables, sr-only chart data tables, AA-contrast tokens, `prefers-reduced-motion`; enforced by jest-axe in CI.
-- **Observability-ready** — Sentry error reporting activates lazily when `VITE_SENTRY_DSN` is set; console fallback otherwise.
-- **Quality pipeline** — domain, contract, UI, and Playwright regression suites; conservative impact selection; Biome lint/format; and a GitHub Actions safety gate.
-- **⌘K command palette** — fuzzy navigation across every routable page (auto-flattened from the nav tree), theme switching, and account actions.
-
-## Getting Started
-
-### Prerequisites
-
-| Tool   | Version |
-| ------ | ------- |
-| Node.js | ≥ 22 |
-| pnpm    | ≥ 11 |
-
-### Installation
-
-```bash
-# 1. Get the code (or click "Use this template" on GitHub)
-git clone <your-repo-url> admin-dashboard
-cd admin-dashboard
-
-# 2. Install dependencies
-pnpm install
+```sh
+pnpm demo
 ```
 
-### Quickstart — running in under 2 minutes
+Open the **fresh numeric-loopback URL printed by the command**, including its one-time launch capability. Click **Continue as Avery Stone**, then use visible navigation to explore Customers, Quotes and Finance. Logout and reopening a protected route must require authentication again. Stop the demo with Ctrl+C.
 
-```bash
-pnpm dev
+This command builds a separate capability-gated demo artifact with deterministic local adapters. The capability URL is a temporary local credential; do not share it or expose the server publicly. The demo requires no provider account or backend. Test adapters remain absent from the production build.
+
+`pnpm dev` is the Vite development mode for integration with a real backend; it does not automatically start mocks. Set `VITE_API_BASE_URL` in `.env.local` for that mode. `pnpm build` produces `dist/crm-web`, and `pnpm preview` serves those production bytes. An unconfigured production deployment is not a no-backend demo. Authentication and authorization in a real deployment belong to its backend.
+
+## Run checks
+
+```sh
+pnpm test                    # complete unit aggregate, with declared builds
+pnpm e2e                     # complete Chromium matrix, with declared builds
+pnpm test:impacted -- --dry-run --base <trusted-base> --head HEAD
+pnpm test:impacted -- --base <trusted-base> --head HEAD
+pnpm coverage
+pnpm coverage:check -- --base <trusted-base> --head HEAD
+pnpm record:check -- --base <trusted-base> --head HEAD
+pnpm proofline:check-production
 ```
 
-Then:
+For one app test, preserve its config and guarded runner:
 
-1. Open **http://localhost:5173** — unauthenticated visits redirect to `/login`.
-2. Click **Continue as Avery Stone** — or switch to the password form or a mock Google/Apple button — every sign-in path issues an access-token session with a refresh-capability marker (no real credentials needed).
-3. You land on the Overview. Press **⌘K / Ctrl+K** to explore the command palette, or switch workspaces from the top of the sidebar.
-
-The MSW worker starts automatically unless a real backend is configured via `VITE_API_BASE_URL`, so all data, invites, and mutations work immediately against seeded fixtures.
-
-## Usage & Examples
-
-### Everyday commands
-
-```bash
-pnpm dev          # Vite dev server + MSW worker
-pnpm build        # tsc -b typecheck + vite build -> dist/
-pnpm preview      # serve the production build
-pnpm test         # every Vitest project (domain, contract, UI, selector)
-pnpm e2e          # isolated Chromium CRM/browser suite
-pnpm test:impacted -- --dry-run  # explain the conservative test selection
-pnpm typecheck    # typecheck all projects that own a typecheck target
-pnpm lint         # Biome check
-pnpm format       # Biome format --write .
+```sh
+node tools/proofline/canonical-runner.mjs vitest run \
+  --config apps/crm-web/vite.config.ts apps/crm-web/src/test/app-router.test.tsx
 ```
 
-### Point it at a real backend
+Missing or ambiguous ownership/revision metadata broadens selection to the registered complete suite. Diagnostic selection does not replace full CI gates. [Testing](docs/TESTING.md) documents the complete fresh-state command.
 
-```bash
-cp .env.example .env.local
+## Adapt another application
+
+Start with [the adaptation contract](docs/PORTABLE_TEST_AUTOMATION.md) and [independently installed work-orders recipe](examples/work-orders/README.md). Supply your routes, roles, tenant boundaries, business rules, auth/API/provider adapters, tests and manifest. Keep the portable core unchanged.
+
+```sh
+pnpm proofline:validate-portability -- --independent-install
 ```
 
-```dotenv
-VITE_API_BASE_URL=https://api.example.com
-VITE_SENTRY_DSN=            # optional: enables Sentry error reporting
-VITE_APP_ENV=production     # optional: tags Sentry events
-```
+This explicitly provisions a disposable external repository with its own package store, dependency tree and browser cache, then runs all ten target gates. Downloads are setup; test execution still denies undeclared network access. The default command without that flag is the distinct offline dependency-reuse check.
 
-Build and deploy `dist/` to any static host (Vercel, Netlify, S3 + CloudFront…). As soon as `VITE_API_BASE_URL` is set at build time, the MSW mock layer stays off and all requests go straight to your backend — just implement the same `/api/*` paths defined in [`src/mocks/handlers.ts`](src/mocks/handlers.ts). Without it (as on the live demo), the app runs fully interactive against the seeded mocks.
+## Verification and release boundaries
 
-### Restrict a feature by role
+The single complete workflow is [Verify Proofline regression harness](.github/workflows/verify.yml), job `verify`. Chromium installation precedes browser-dependent unit execution. The obsolete duplicate `CI` workflow has been retired. Repository maintainers should update any remote required-check configuration still naming its old jobs; source changes do not update remote branch protection.
 
-RBAC is wired in two places, both backed by [`src/lib/rbac.ts`](src/lib/rbac.ts):
+Release packaging requires complete current-run gates and audited production output. Deployment verifies trusted source/run/attempt, archive digest, inventory and native evidence before deploying the same prebuilt bytes. [The release contract](docs/PORTABLE_TEST_AUTOMATION.md#release-verification) explains the 14-day artifact window and recovery. Local verification does not establish an actual hosted run or deployment.
 
-```ts
-// src/components/layout/nav-items.ts — hide the nav entry
-{ title: "Audit Log", href: "/app/audit", icon: "scroll-text", roles: ["Owner", "Admin"] }
-```
+The recorded compatibility is the stated Node/React/Vite/Vitest/Playwright stack on Darwin arm64 with Chromium. Other OSes, versions, Firefox/WebKit beyond optional smoke, live providers and production database durability need their own validation. The guard is an execution boundary, not a hostile-code OS sandbox.
 
-```tsx
-// src/app/router.tsx — guard the route itself
-<RoleRoute roles={["Owner", "Admin"]}>
-  <Suspense>{/* <AuditPage /> */}</Suspense>
-</RoleRoute>
-```
+## Guides and contributing
 
-Unauthorized roles are redirected to `/app/overview`. Note this is client-side gating only — enforce authorization on your backend.
+- [13-slide browser presentation](docs/showcase/proofline-overview.html) and [PDF](docs/showcase/proofline-overview.pdf): an introduction, a caught regression and recordings of both apps. Their dated measurements are captured snapshots.
+- [Technical companion](docs/showcase/TECHNICAL_GUIDE.md): diagrams, contracts and measurement sources.
+- [Current project status](docs/PROJECT_STATUS.md), [contributor setup](CONTRIBUTING.md), [support](.github/SUPPORT.md), and [security reporting](.github/SECURITY.md).
 
-## Project Structure
-
-```text
-apps/
-├── crm-web/        # Vite React application and CRM UI/component tests
-└── crm-e2e/        # Playwright journeys and isolated Test API fixture
-packages/
-├── domain/         # Deterministic policy, finance, commission, and audit rules
-├── api-contracts/  # HTTP contract and in-memory Test API
-└── test-kit/       # Shared deterministic fixtures and rendering helpers
-test-impact/        # Reviewed feature map and business-rule catalog
-tools/impact/       # Changed-file manifest and conservative test selector
-docs/TESTING.md     # Rule-to-regression and CI workflow guide
-```
-
-Imports always use the `@/` path alias (mapped to `src/`).
-
-## Roadmap / Status
-
-**Status:** actively developed, pre-1.0. Releases are cut locally with [Commitizen](https://commitizen-tools.github.io/commitizen/) (`czg bump`) and documented in the [changelog](CHANGELOG.md); publishing a release also deploys the live demo to Vercel.
-
-Recently shipped (v0.3–v0.4): tenancy scoping, token refresh lifecycle, i18n, Sentry foundation, and a full UX/a11y overhaul (skeletons, undo flows, command palette, keyboard-accessible tables).
-
-Candidate milestones toward **v1.0**:
-
-- Hardened production auth story (server-issued sessions instead of `localStorage` tokens)
-- Documented server-side authorization contract alongside the client RBAC
-- Coverage reporting wired into CI
-- Additional themes and locale bundles
-
-## Community & Ecosystem
-
-| Resource | Description |
-| -------- | ----------- |
-| [Architecture guide](ARCHITECTURE.md) | Full architectural reference — components, data flow, security notes, and the recipe for adding new modules |
-| [Contributing guide](CONTRIBUTING.md) | Setup, branch/commit conventions, testing expectations, PR checklist |
-| [Security policy](.github/SECURITY.md) | How to report vulnerabilities privately |
-| [Code of conduct](.github/CODE_OF_CONDUCT.md) | Contributor Covenant 2.1 |
-| [Changelog](CHANGELOG.md) | Release history, generated from Conventional Commits |
-| [Environment variables](.env.example) | Backend URL, Sentry DSN, environment label |
-
-**Contributing** — see the [contributing guide](CONTRIBUTING.md) for setup and conventions. In short: commits follow [Conventional Commits](https://www.conventionalcommits.org/), a Husky pre-commit hook runs Biome on staged files, and PRs must pass conservative impact selection plus the complete lint, typecheck, Vitest, and Chromium safety gates.
-
-**Support** — please open a GitHub issue for bugs and feature requests.
-
-**License** — released under the [MIT License](LICENSE).
+MIT licensed; see [LICENSE](LICENSE). The reference UI retains the original admin dashboard template's attribution and historical changelog.

@@ -1,11 +1,11 @@
 {
-  "name": "insurance-crm-testbed",
+  "name": "proofline",
   "private": true,
-  "version": "0.8.0",
+  "version": "0.9.0-preview.1",
   "type": "module",
   "packageManager": "pnpm@11.24.0",
   "engines": {
-    "node": ">=22"
+    "node": ">=24.22.1 <25"
   },
   "scripts": {
     "dev": "pnpm nx run crm-web:serve",
@@ -33,7 +33,9 @@
     "record:check": "node --experimental-strip-types tools/impact/src/record-check.ts",
     "rules:generate": "node --experimental-strip-types tools/impact/src/main.ts --generate-rules",
     "harness:validate": "node --experimental-strip-types tools/impact/src/main.ts --validate-harness",
-    "proofline:validate-portability": "node tools/proofline/validate-portability.mjs"
+    "proofline:validate-portability": "node tools/proofline/validate-portability.mjs",
+    "demo": "node apps/crm-web/scripts/demo.mjs",
+    "build:demo": "pnpm nx run crm-web:build-demo"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx,json,css,html,svg}": [

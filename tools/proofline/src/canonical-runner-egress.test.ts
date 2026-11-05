@@ -338,7 +338,11 @@ test("canonical_unit_runner_establishes_manifest_artifacts_before_vitest", () =>
   };
   expect(manifest.commands.buildProduction).toEqual({ argv: ["pnpm", "build"], cwd: "." });
   expect(manifest.commands.buildTest).toEqual({ argv: ["pnpm", "build:test"], cwd: "." });
-  expect(manifest.execution.unitBuildCommands).toEqual(["buildProduction", "buildTest"]);
+  expect(manifest.execution.unitBuildCommands).toEqual([
+    "buildProduction",
+    "buildTest",
+    "buildDemo",
+  ]);
   expect(manifest.execution.unitTargets.length).toBeGreaterThan(0);
   const unitBranch = runner.slice(runner.indexOf('if (mode === "unit")'));
   const buildIndex = unitBranch.indexOf("runManifestCommands(execution.unitBuildCommands)");

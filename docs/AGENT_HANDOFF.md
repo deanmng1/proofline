@@ -1,55 +1,51 @@
-# Proofline project handoff
+# Proofline agent handoff
 
-## Current objective
+## Read current status first
 
-Complete the approved portable hybrid regression harness so an agent can adapt it to another React/Vite application, author deterministic automated tests up front, and leave a CI pipeline that repeatedly runs those tests without model or token cost.
+[PROJECT_STATUS.md](PROJECT_STATUS.md) is the clone-visible recovery map. It names the active tracked design and execution checklist; resume from that checklist's first unchecked item. Do not infer unfinished work from historical plans or require an ignored `.superpowers/` directory or prior chat.
 
-The portable default is hybrid:
+The current increment fixes the seven independent adoption findings under the [2026-11-05 design](superpowers/specs/2026-11-05-adoption-readiness-design.md) and [plan](superpowers/plans/2026-11-05-adoption-readiness.md). The user authorized parallel implementation, fresh independent installs of the CRM and work-orders targets, and a fresh independent rating. That verification and review remain in progress until the tracked plan/status say otherwise.
 
-- Vitest owns domain rules, services, API contracts, event delivery, idempotency, tenant and role boundaries, and focused UI behavior.
-- Playwright owns a small set of real browser workflows covering authentication, protected routes, visible navigation, cross-screen state, recovery, and guard behavior.
-- Manifest-owned impact selection provides fast diagnostics and fails closed on uncertainty.
-- Canonical full unit and browser suites remain the correctness authority in CI.
-- Coverage ratchets and an append-only JSONL execution record prevent silent weakening.
-- Optional state-machine generation is parked for target applications whose lifecycle complexity justifies it.
+## Product and boundaries
 
-## Current hardening increment
+Proofline is portable regression-testing tooling for React/Vite applications. The insurance CRM is a reference proof, not product code to copy into the reusable core. Target rules, pages, adapters and tests belong to their application.
 
-The original eight-task portable harness implementation completed its fresh-state gate at `4dc77a6`. The user subsequently authorized four additional priorities: required-test execution verification, preserved invocation failure artifacts, verified release artifacts and standalone second-app validation. The active design is [enterprise verification](superpowers/specs/2026-11-04-enterprise-verification-design.md), with its [execution plan](superpowers/plans/2026-11-04-enterprise-verification.md) and recovery ledger at `.superpowers/sdd/2026-11-04-enterprise-verification/progress.md`. The original design remains binding. This increment starts at `cfe5f11`; no push or deployment is authorized.
+- Deterministic Vitest tests own business rules, services, API contracts, event delivery, idempotency, tenant/role boundaries and focused UI behavior.
+- Playwright owns a small set of real workflows through visible navigation.
+- Manifest-owned impact selection gives diagnostics; full unit/browser gates remain authoritative.
+- Required native outcomes, coverage ratchets, manifests and authored evidence fail closed.
+- Tests use deterministic fakes and never call live providers, models or agents.
+- Test/demo entrypoints are capability-gated and numeric-loopback only. Production auditing rejects test adapters and markers.
 
-This four-priority increment is complete at implementation head `4feb057`: required runtime outcomes, preserved failure artifacts, immutable verified release output and a standalone unrelated work-orders app. All task spec/quality reviews and the whole-change/final-evidence reviews are approved. The cleared-state full completion chain, explicit multiworker/shards, ten standalone gates and real local release ZIP verification passed on 2026-11-05 UTC. Evidence and recovery history are retained in the increment ledger; the final authored record documents exact provenance. These are local results under synthetic CI identity, with no hosted workflow, push or deployment performed.
+## Durable authorities
 
-## Durable source of truth
+1. [AGENTS.md](../AGENTS.md).
+2. [Current status](PROJECT_STATUS.md), active design/plan linked there.
+3. [Original portable design](superpowers/specs/2026-10-28-portable-hybrid-workflow-harness-design.md).
+4. [Enterprise verification design](superpowers/specs/2026-11-04-enterprise-verification-design.md).
+5. [Append-only execution record](../test-impact/execution-record.jsonl).
+6. [Portable contract](PORTABLE_TEST_AUTOMATION.md) and [testing guide](TESTING.md).
 
-- Design: `docs/superpowers/specs/2026-10-28-portable-hybrid-workflow-harness-design.md`
-- Implementation plan: `docs/superpowers/plans/2026-10-28-portable-hybrid-workflow-harness.md`
-- Execution evidence: `test-impact/execution-record.jsonl`
-- Active recovery ledger: `.superpowers/sdd/2026-10-28-portable-hybrid-workflow-harness/progress.md`
-- Original shared conversation: `https://chatgpt.com/s/cx_6ae2878b2bc081919a2bc892df74148c`
+Ignored native logs and working ledgers supplement these checked-in sources. They are not mandatory recovery inputs. Dated showcase evidence remains a snapshot of its named source commit, not a new completion claim.
 
-## Repository state at handoff
+## Completed historical milestones
 
-- Repository: `https://github.com/deanmng1/proofline`
-- Local checkout: `/Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed`
-- Branch: `main`
-- Approved-plan commit: `f4f10c7 docs: approve portable hybrid harness design`
-- The design and implementation plan completed their requested review iterations and were approved.
-- The implementation ledger lists eight sequential tasks; none is complete yet.
-- A clean pre-Task-1 `pnpm test` baseline passed all 10 Nx test targets.
-- Task 1's generated brief already exists in the SDD workspace.
+| Milestone | Verified implementation | Closeout |
+| --- | --- | --- |
+| Original eight-task portable harness | `4dc77a6` | Full fresh-state gate recorded in authored history |
+| Genuine required outcomes, preserved failure artifacts, verified release output, unrelated work-orders app | `4feb057` | Local 18-step gate; authored final evidence at `6324ffc` |
+| Browser/PDF showcase refresh and second-app recording | `d8fef71` | Scoped playback/layout/evidence checks and independent review |
 
-## Why this project exists
+The original implementation plan and its early handoff statements are historical execution records. The original eight tasks are complete; they are not the active action queue. The later adoption audit identified additional external-user gaps rather than reversing those scoped acceptance results.
 
-The insurance CRM is a testbed for the future workflow: receive business rules, implement behavior, author durable regression tests, map nearby code changes to relevant tests, and run those tests in CI without an agent. The CRM itself and its tests are not intended to be copied into a target application. The reusable value is the manifest, validators, adapters, impact-selection logic, coverage/evidence governance, adaptation protocol, and browser-workflow pattern.
+## Execution rules
 
-## Acceptance outcome
+Use the existing suitable checkout. Direct local work on main is authorized for this project; make small commits explaining why changes are needed. Do not push, tag, publish or deploy without explicit task authorization. Preserve preexisting local tooling and user files.
 
-Completion means all design acceptance criteria are machine-verifiable, including a navigated unauthenticated-to-finance golden journey, role and tenant denial, recoverable command behavior, capability-gated test entrypoints, production-negative builds, deny-by-default egress tests, durable checkpoint/replay tests, exact ownership/test bindings, monotonic coverage, append-only evidence, canonical full fallback, and the full Task 8 verification command passing.
+Write failing tests before behavior changes, retain RED/GREEN evidence and run the task's checks. Each implementation task needs independent spec-compliance and code-quality review. Preserve original coverage minima and append JSONL; never rewrite earlier records. The full original Task 8 gate must pass from cleared generated state at a committed implementation head before a completed portable-core increment is claimed.
 
-## Execution rules carried from the conversation
+Fresh-install checks must use separate external repositories, actual declared dependencies and browser binaries rather than host dependency links. Pin Node/pnpm in child PATH as well as the outer command. Distinguish real local testing under synthetic CI identity from a hosted workflow/API/deployment result.
 
-- Work directly on `main` with small, reasoned commits; the user does not want epics or issues for this two-person project.
-- Review implementation tasks independently and iterate on Critical/Important findings before advancing.
-- Record meaningful design, implementation, failure, repair, review, and verification evidence.
-- Continue until the acceptance criteria are genuinely complete rather than stopping at a partial scaffold.
-- Cloud execution is desirable because it survives laptop shutdown, but a local Codex subagent inherits the local host. This handoff exists so the same goal can resume safely in a published Codex Cloud environment later.
+## Preview identity
+
+The package is unpublished source preview `0.9.0-preview.1`, manifest schema 1. It is distinct from the original dashboard 0.8.0 history/tag. [Support](../.github/SUPPORT.md) and [security reporting](../.github/SECURITY.md) state compatibility, scope and upgrade/release-evidence requirements. No remote publication is implied.

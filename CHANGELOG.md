@@ -1,3 +1,15 @@
+# Proofline source history
+
+## 0.9.0-preview.1 — Unpublished source preview (2026-11-05)
+
+- Introduces the Proofline identity for the portable React/Vite regression harness, manifest schema 1, guarded native-outcome verification, preserved invocation evidence, coverage/record governance and verified prebuilt release tooling.
+- Repairs external-adoption setup: browser cache discovery, independent target installation, an isolated no-backend CRM demo, one complete CI workflow and consistent runtime/contributor instructions.
+- Tracks current project status and scoped preview support without requiring ignored local ledgers or claiming a hosted release/deployment. Current repair verification and independent rating are recorded in [project status](docs/PROJECT_STATUS.md) and the append-only execution record.
+
+## Original dashboard template history
+
+The entries below are retained attribution/history. Their tags and version numbers predate Proofline and must not be used to identify a harness distribution.
+
 ## v0.8.0 (2026-08-25)
 
 ### Feat

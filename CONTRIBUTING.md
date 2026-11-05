@@ -1,78 +1,47 @@
-# Contributing to Admin Dashboard Template
+# Contributing to Proofline
 
-Thanks for your interest in improving this template! This document covers everything you need to get productive quickly.
+Proofline is a portable harness; the insurance CRM is its reference application. Keep product-specific behavior in the target app and adapters. [Project status](docs/PROJECT_STATUS.md) identifies the active tracked plan and verified milestones; no local chat or ignored recovery file is required.
 
-## Prerequisites
+## Set up a checkout
 
-| Tool    | Version |
-| ------- | ------- |
-| Node.js | ≥ 22 |
-| pnpm    | ≥ 11 |
+Use Node `24.22.1` (`.nvmrc`), pnpm `11.24.0` and Git `2.48+`. The supported Node range is `>=24.22.1 <25`; other combinations need their own verification. If pnpm is absent, install it with `npm install --global pnpm@11.24.0` using the selected Node.
 
-## Getting started
-
-```bash
-git clone https://github.com/tomtapia/admin-dashboard-template.git
-cd admin-dashboard-template
-pnpm install
-pnpm dev          # http://localhost:5173 (MSW mock API starts automatically)
+```sh
+git clone https://github.com/deanmng1/proofline.git
+cd proofline
+pnpm install --frozen-lockfile
+pnpm exec playwright install chromium
+pnpm harness:validate
+pnpm demo
 ```
 
-Run a single test file with `pnpm vitest run src/test/app-router.test.tsx`.
+Use the fresh capability URL printed by `pnpm demo`. It supplies an isolated no-backend CRM. `pnpm dev` instead requires a compatible backend configured with `VITE_API_BASE_URL`. Production builds never include the demo/test adapters.
 
-## Project scripts
+On Linux CI use `pnpm exec playwright install --with-deps chromium`. Chromium is also needed by a real-browser harness regression in the unit suite. If you configure `PLAYWRIGHT_BROWSERS_PATH`, use the same value for browser installation and execution.
 
-| Command           | Purpose                                          |
-| ----------------- | ------------------------------------------------ |
-| `pnpm dev`        | Vite dev server + MSW worker                     |
-| `pnpm build`      | `tsc -b` typecheck + production build to `dist/` |
-| `pnpm test`       | Vitest suite (unit/integration, jsdom)           |
-| `pnpm e2e`        | Playwright suite (boots `pnpm dev` itself)       |
-| `pnpm typecheck`  | `tsc -b` alone                                   |
-| `pnpm lint`       | Biome check                                      |
-| `pnpm lint:fix`   | Biome autofix                                    |
-| `pnpm format`     | Biome format write                               |
+## Tests and ownership
 
-For architecture conventions and the recipe for adding new modules, see [ARCHITECTURE.md](ARCHITECTURE.md).
-
-## Branching
-
-Name branches by change type:
-
-- `feat/<feature-name>`
-- `fix/<fix-name>`
-- `refactor/<description>`
-
-## Commit messages
-
-This repo follows [Conventional Commits](https://www.conventionalcommits.org/). The commit type drives release versioning (`feat` → minor, `fix` → patch):
-
-```text
-feat(users): add CSV export to the roster table
-fix(theme): raise muted-foreground contrast on dark palettes
-docs(readme): document the demo deployment pipeline
-chore(deps): bump vite to 6.4.3
+```sh
+node tools/proofline/canonical-runner.mjs vitest run \
+  --config apps/crm-web/vite.config.ts apps/crm-web/src/test/app-router.test.tsx
+pnpm test
+pnpm e2e
 ```
 
-A Husky pre-commit hook runs Biome (lint + format) on staged files via lint-staged — if it rewrites anything, restage and re-commit.
+Vitest owns rules, services, APIs, events, retries, permissions and focused UI behavior. Playwright owns a small genuine multi-screen workflow matrix through visible controls. Browser specs delegate transport, storage and scenario setup to fixtures. Never contact live providers from tests or add an LLM/agent to test execution.
 
-## Testing expectations
+Before changing behavior, add a failing regression and retain RED/GREEN evidence. Update exact ownership/rule bindings, generated rules and measured coverage metadata as required. Do not lower existing coverage minima or rewrite prior authored JSONL bytes. Append a fresh scoped event to `test-impact/execution-record.jsonl`. See [testing](docs/TESTING.md), [adaptation](docs/PORTABLE_TEST_AUTOMATION.md) and [AGENTS](AGENTS.md).
 
-- **Every mock endpoint must be covered.** Test setup fails on unhandled fetches (`onUnhandledRequest: "error"`), so any feature that fetches needs an MSW handler in `src/mocks/handlers.ts`.
-- Unit/integration tests live in `src/test/`; E2E specs in `e2e/`.
-- Accessibility is part of the contract (WCAG 2.2 AA): extend `src/test/a11y.test.tsx` when adding routes.
-- Run `pnpm test && pnpm e2e` locally before opening a PR.
+## Full verification and pull requests
 
-## Submitting a pull request
+Use trusted base/head revisions and run the complete [fresh-state gate](docs/TESTING.md#completion-gate). Full unit/browser checks remain mandatory after impact diagnostics. Independently review both spec compliance and code quality. The single complete CI workflow is `.github/workflows/verify.yml`; its `verify` job installs Chromium before tests. Do not revive the obsolete duplicate workflow without matching prerequisites.
 
-1. Fork / branch from `main`.
-2. Keep the PR focused; separate unrelated changes into separate PRs.
-3. Fill out the PR template checklist.
-4. CI must pass: typecheck → Biome → unit tests → build → Playwright E2E.
-5. PR titles must follow Conventional Commits (they become changelog entries).
+Use a focused branch/PR for shared contributions and a commit subject explaining the reason for the change. This repository's current agent work has explicit direct-to-main local authorization; that does not authorize pushing or publishing. Husky runs Biome through lint-staged. Preserve binary/raw evidence bytes; retained native JSON commonly uses `.json.txt` to avoid formatter rewriting.
 
-Releases are cut by maintainers with Commitizen: `pnpm dlx czg bump`, then `git push origin main --follow-tags`, then create the GitHub release from the regenerated `CHANGELOG.md`. Publishing a release also deploys the live demo to Vercel.
+## Source preview and upgrades
 
-## License
+`0.9.0-preview.1` identifies the unpublished Proofline source preview; the old dashboard `v0.8.0` tag is historical. Record an immutable source commit with every issue and verification result. No command in this guide tags, pushes, deploys or claims a published release.
 
-By contributing, you agree that your contributions will be licensed under the [MIT License](LICENSE).
+Before changing runner/dependency versions, review package APIs and capability paths, regenerate compatible reports, preserve ratchets/history, repeat fresh independent installs of the CRM and work-orders targets, and run the complete gates. A coverage-provider/history migration requires a separately reviewed change. [Support and release policy](.github/SUPPORT.md) describes compatibility, artifact expiry and preview support. [Security reporting](.github/SECURITY.md) covers potential harness-boundary failures.
+
+Contributions remain under the [MIT License](LICENSE); preserve the original template attribution.

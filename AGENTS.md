@@ -11,7 +11,7 @@ Read these before changing the portable harness:
 3. `docs/superpowers/plans/2026-10-28-portable-hybrid-workflow-harness.md`
 4. `test-impact/execution-record.jsonl`
 
-The design is the authority. The implementation plan is the reviewed execution sequence. Resume from the first incomplete task recorded in `.superpowers/sdd/2026-10-28-portable-hybrid-workflow-harness/progress.md`.
+The designs are authoritative. Read `docs/PROJECT_STATUS.md` for the current milestone and active tracked plan. Resume from the first unchecked item in that plan. The original plan is historical completion evidence; ignored `.superpowers/` working ledgers may supplement it but are never required to recover status from a clean clone.
 
 ## Working rules
 

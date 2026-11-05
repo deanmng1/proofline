@@ -109,6 +109,10 @@
     "portability": {
       "argv": ["node", "tools/proofline/validate-portability.mjs"],
       "cwd": "."
+    },
+    "buildDemo": {
+      "argv": ["pnpm", "build:demo"],
+      "cwd": "."
     }
   },
   "workspaces": [
@@ -591,9 +595,43 @@
         {
           "glob": "tools/proofline/src/required-execution.test.ts",
           "reason": "Test sources are not instrumented production sources."
+        },
+        {
+          "glob": "tools/proofline/src/playwright-cache.test.ts",
+          "reason": "Test sources are not instrumented production sources."
         }
       ],
       "report": "artifacts/coverage/proofline-tools/coverage-summary.json",
+      "reportFormat": "istanbul-json-summary",
+      "metrics": ["lines", "functions", "branches", "statements"],
+      "aggregation": "per-file",
+      "producer": {
+        "command": {
+          "kind": "nx-target",
+          "target": "coverage"
+        },
+        "adapter": {
+          "kind": "vitest",
+          "implementation": "vitest-v8",
+          "version": {
+            "kind": "package-json",
+            "package": "@vitest/coverage-v8"
+          }
+        }
+      }
+    },
+    {
+      "workspace": "apps/crm-web",
+      "provider": "v8",
+      "providerVersion": "3.2.7",
+      "sourceGlobs": ["apps/crm-web/scripts/*.mjs"],
+      "exclusions": [
+        {
+          "glob": "apps/crm-web/src/bootstrap.test.tsx",
+          "reason": "Test sources are not instrumented production sources."
+        }
+      ],
+      "report": "artifacts/coverage/crm-web/coverage-summary.json",
       "reportFormat": "istanbul-json-summary",
       "metrics": ["lines", "functions", "branches", "statements"],
       "aggregation": "per-file",
@@ -805,7 +843,7 @@
           "runner": "vitest",
           "file": "tools/proofline/src/portability.test.ts",
           "title": "Proofline standalone portability > copies_a_standalone_target_with_byte_identical_core_and_no_CRM_product",
-          "line": 154
+          "line": 233
         },
         {
           "ruleId": "EXEC-001",
@@ -836,6 +874,116 @@
           "file": "tools/proofline/src/execution-artifacts.test.ts",
           "title": "coverage CLI config and environment destinations cannot erase finalized evidence",
           "line": 58
+        },
+        {
+          "ruleId": "SAFE-001",
+          "layer": "contract",
+          "testId": "binding-adoption-cache-1",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/playwright-cache.test.ts",
+          "title": "authorizes_exact_browser_and_video_companions_in_arbitrary_cache",
+          "line": 60
+        },
+        {
+          "ruleId": "SAFE-001",
+          "layer": "contract",
+          "testId": "binding-adoption-cache-2",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/playwright-cache.test.ts",
+          "title": "authorizes_exact_browser_and_video_companions_in_hermetic_package_cache",
+          "line": 64
+        },
+        {
+          "ruleId": "SAFE-001",
+          "layer": "contract",
+          "testId": "binding-adoption-cache-3",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/playwright-cache.test.ts",
+          "title": "does_not_authorize_unrelated_or_wrong_revision_cache_executables",
+          "line": 68
+        },
+        {
+          "ruleId": "SAFE-001",
+          "layer": "contract",
+          "testId": "binding-adoption-cache-4",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/playwright-cache.test.ts",
+          "title": "missing_optional_browsers_and_missing_companions_receive_no_authority",
+          "line": 81
+        },
+        {
+          "ruleId": "SAFE-001",
+          "layer": "contract",
+          "testId": "binding-adoption-cache-5",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/playwright-cache.test.ts",
+          "title": "rejects_an_executable_symlink_outside_its_package_selected_installation",
+          "line": 92
+        },
+        {
+          "ruleId": "SAFE-001",
+          "layer": "contract",
+          "testId": "binding-adoption-cache-6",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/playwright-cache.test.ts",
+          "title": "rejects_directory_substitution_at_an_exact_executable_path",
+          "line": 102
+        },
+        {
+          "ruleId": "SAFE-001",
+          "layer": "contract",
+          "testId": "binding-adoption-cache-7",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/playwright-cache.test.ts",
+          "title": "rejects_an_installation_directory_symlink_outside_the_selected_cache",
+          "line": 108
+        },
+        {
+          "ruleId": "SAFE-001",
+          "layer": "contract",
+          "testId": "binding-adoption-cache-8",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/playwright-cache.test.ts",
+          "title": "fails_closed_with_actionable_unsupported_registry_metadata",
+          "line": 118
+        },
+        {
+          "ruleId": "PORT-001",
+          "layer": "contract",
+          "testId": "binding-adoption-install-1",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/portability.test.ts",
+          "title": "Proofline standalone portability > prepares_independent_dependencies_without_copying_or_linking_host_modules",
+          "line": 254
+        },
+        {
+          "ruleId": "PORT-001",
+          "layer": "contract",
+          "testId": "binding-adoption-install-2",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/portability.test.ts",
+          "title": "Proofline standalone portability > requires_explicit_network_setup_and_initializes_clone_complete_target_history",
+          "line": 338
+        },
+        {
+          "ruleId": "PORT-001",
+          "layer": "contract",
+          "testId": "binding-adoption-install-3",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/portability.test.ts",
+          "title": "Proofline standalone portability > validates_relocated_independent_setup_and_rejects_rehashed_false_installation_claims",
+          "line": 388
         }
       ],
       "ruleLayers": [
@@ -2866,13 +3014,97 @@
           "layer": "ui"
         }
       ]
+    },
+    {
+      "glob": "apps/crm-web/scripts/**",
+      "entrypoints": ["apps/crm-web/scripts/demo.mjs"],
+      "ruleIds": ["SAFE-001", "AUTH-001"],
+      "layers": ["contract", "playwright"],
+      "testBindings": [
+        {
+          "ruleId": "SAFE-001",
+          "layer": "contract",
+          "testId": "binding-adoption-demo-unit-1",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "apps/crm-web/scripts/demo.test.ts",
+          "title": "launches_fresh_guarded_loopback_sessions_and_closes_the_listener",
+          "line": 11
+        },
+        {
+          "ruleId": "SAFE-001",
+          "layer": "contract",
+          "testId": "binding-adoption-demo-unit-2",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "apps/crm-web/scripts/demo.test.ts",
+          "title": "preserves_context_adapter_network_semantics_in_the_existing_test_artifact",
+          "line": 35
+        },
+        {
+          "ruleId": "SAFE-001",
+          "layer": "contract",
+          "testId": "binding-adoption-demo-unit-3",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "apps/crm-web/scripts/demo.test.ts",
+          "title": "rejects_host_port_and_other_unreviewed_demo_arguments",
+          "line": 41
+        },
+        {
+          "ruleId": "SAFE-001",
+          "layer": "contract",
+          "testId": "binding-adoption-demo-unit-4",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "apps/crm-web/scripts/demo.test.ts",
+          "title": "keeps_demo_policy_and_seeded_adapters_out_of_the_production_document",
+          "line": 61
+        },
+        {
+          "ruleId": "AUTH-001",
+          "layer": "playwright",
+          "testId": "binding-adoption-demo-browser-auth",
+          "commandKey": "browser",
+          "runner": "playwright",
+          "file": "apps/crm-e2e/src/proofline/reference-demo.spec.ts",
+          "title": "walks_the_isolated_reference_demo_through_login_crm_and_logout",
+          "line": 7,
+          "tag": "@proofline-demo"
+        },
+        {
+          "ruleId": "SAFE-001",
+          "layer": "playwright",
+          "testId": "binding-adoption-demo-browser-safe",
+          "commandKey": "browser",
+          "runner": "playwright",
+          "file": "apps/crm-e2e/src/proofline/reference-demo.spec.ts",
+          "title": "walks_the_isolated_reference_demo_through_login_crm_and_logout",
+          "line": 7,
+          "tag": "@proofline-demo"
+        }
+      ],
+      "ruleLayers": [
+        {
+          "ruleId": "SAFE-001",
+          "layer": "contract"
+        },
+        {
+          "ruleId": "SAFE-001",
+          "layer": "playwright"
+        },
+        {
+          "ruleId": "AUTH-001",
+          "layer": "playwright"
+        }
+      ]
     }
   ],
   "lifecycleMatrix": "test-impact/lifecycle-matrix.json",
   "goldenWorkflowMatrix": "test-impact/workflows/crm-golden.json",
   "ruleRegistry": "test-impact/rules.json",
   "execution": {
-    "unitBuildCommands": ["buildProduction", "buildTest"],
+    "unitBuildCommands": ["buildProduction", "buildTest", "buildDemo"],
     "unitTargets": [
       {
         "argv": ["run", "--config", "apps/crm-web/vite.config.ts"],
@@ -2919,7 +3151,7 @@
         "cwd": "."
       }
     ],
-    "browserBuildCommands": ["buildTest"],
+    "browserBuildCommands": ["buildTest", "buildDemo"],
     "browserArgs": ["test", "--config", "apps/crm-e2e/playwright.config.ts"]
   },
   "production": {

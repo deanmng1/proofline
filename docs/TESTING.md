@@ -61,10 +61,9 @@ Cancellation and commission payment have no reference UI controls and remain exp
 
 ## Completion gate
 
-Use the Homebrew Node path in this repository and pin the review-clean comparison base for the entire command:
+Select Node 24.22.1 with your normal version manager (`.nvmrc`), pnpm 11.24.0 and Git 2.48+. Install dependencies with `pnpm install --frozen-lockfile` and Chromium with `pnpm exec playwright install chromium` before the unit or browser gate. Pin the trusted comparison base for the entire command:
 
 ```bash
-export PATH=/opt/homebrew/bin:$PATH
 export IMPACT_BASE=<trusted-review-clean-base>
 export IMPACT_HEAD=HEAD
 pnpm lint && pnpm typecheck && pnpm harness:validate && pnpm test:impacted -- --dry-run && pnpm test:impacted && pnpm test && pnpm e2e && pnpm coverage && pnpm coverage:check && pnpm record:check && pnpm proofline:check-production && git diff --check
@@ -78,4 +77,4 @@ CI retains `artifacts/harness/`, `artifacts/impact/`, `artifacts/record/`, `arti
 
 Required outcomes are verified from native reports and Vitest task events, including runtime skip, expected-failure and retry semantics. Every invocation owns a unique `artifacts/proofline/runs/` directory; inspect `artifacts/proofline/execution-index.jsonl` to locate its native report, verification JSON and retained browser diagnostics. Preserve the whole directory when sharing a failed run.
 
-Run `pnpm proofline:validate-portability` for the independent work-order application. The [portable automation guide](PORTABLE_TEST_AUTOMATION.md#independent-application-validation) describes its isolated repository, copied-core checks and measured compatibility scope. The [release contract](PORTABLE_TEST_AUTOMATION.md#release-verification) binds deployable output to the exact successful verification run and source commit.
+Run `pnpm proofline:validate-portability -- --independent-install` to provision and validate work-orders with its own dependencies and browser cache. The default without the flag is the separate offline host-dependency-reuse path. The [portable automation guide](PORTABLE_TEST_AUTOMATION.md#independent-application-validation) describes its isolated repository, copied-core checks and measured compatibility scope. The [release contract](PORTABLE_TEST_AUTOMATION.md#release-verification) binds deployable output to the exact successful verification run and source commit.

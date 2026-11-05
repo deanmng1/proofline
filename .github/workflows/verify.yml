@@ -1,4 +1,4 @@
-name: Verify CRM regression harness
+name: Verify Proofline regression harness
 
 on:
   pull_request:
@@ -208,7 +208,7 @@ jobs:
         env:
           PROOFLINE_GATE_KEY: portability
           PROOFLINE_GATE_EXECUTION_ID: ${{ github.run_id }}-${{ github.run_attempt }}-portability
-        run: pnpm proofline:validate-portability
+        run: pnpm proofline:validate-portability -- --independent-install
 
       - name: Package audited immutable production release
         if: ${{ success() && github.event_name == 'push' && github.ref == 'refs/heads/main' }}

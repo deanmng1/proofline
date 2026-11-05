@@ -511,7 +511,8 @@
       "criticality": "critical",
       "paths": [
         "apps/crm-web/src/features/auth/**",
-        "apps/crm-web/src/{app/router.tsx,types/index.ts}"
+        "apps/crm-web/src/{app/router.tsx,types/index.ts}",
+        "apps/crm-web/scripts/**"
       ],
       "vitest": [
         {
@@ -543,6 +544,12 @@
           "title": "runs_the_cross_browser_invariant_smoke @proofline-smoke",
           "line": 5,
           "tag": "@proofline-smoke"
+        },
+        {
+          "path": "apps/crm-e2e/src/proofline/reference-demo.spec.ts",
+          "title": "walks_the_isolated_reference_demo_through_login_crm_and_logout",
+          "line": 7,
+          "tag": "@proofline-demo"
         }
       ]
     },
@@ -591,7 +598,8 @@
         "apps/crm-web/src/test-capability.ts",
         "apps/crm-web/src/test-entry.tsx",
         "apps/crm-web/vite.config.ts",
-        "apps/crm-e2e/src/fixtures/**"
+        "apps/crm-e2e/src/fixtures/**",
+        "apps/crm-web/scripts/**"
       ],
       "vitest": [
         {
@@ -648,6 +656,66 @@
           "file": "tools/proofline/src/canonical-runner-egress.test.ts",
           "title": "canonical_unit_runner_establishes_manifest_artifacts_before_vitest",
           "line": 333
+        },
+        {
+          "file": "tools/proofline/src/playwright-cache.test.ts",
+          "title": "authorizes_exact_browser_and_video_companions_in_arbitrary_cache",
+          "line": 60
+        },
+        {
+          "file": "tools/proofline/src/playwright-cache.test.ts",
+          "title": "authorizes_exact_browser_and_video_companions_in_hermetic_package_cache",
+          "line": 64
+        },
+        {
+          "file": "tools/proofline/src/playwright-cache.test.ts",
+          "title": "does_not_authorize_unrelated_or_wrong_revision_cache_executables",
+          "line": 68
+        },
+        {
+          "file": "tools/proofline/src/playwright-cache.test.ts",
+          "title": "missing_optional_browsers_and_missing_companions_receive_no_authority",
+          "line": 81
+        },
+        {
+          "file": "tools/proofline/src/playwright-cache.test.ts",
+          "title": "rejects_an_executable_symlink_outside_its_package_selected_installation",
+          "line": 92
+        },
+        {
+          "file": "tools/proofline/src/playwright-cache.test.ts",
+          "title": "rejects_directory_substitution_at_an_exact_executable_path",
+          "line": 102
+        },
+        {
+          "file": "tools/proofline/src/playwright-cache.test.ts",
+          "title": "rejects_an_installation_directory_symlink_outside_the_selected_cache",
+          "line": 108
+        },
+        {
+          "file": "tools/proofline/src/playwright-cache.test.ts",
+          "title": "fails_closed_with_actionable_unsupported_registry_metadata",
+          "line": 118
+        },
+        {
+          "file": "apps/crm-web/scripts/demo.test.ts",
+          "title": "launches_fresh_guarded_loopback_sessions_and_closes_the_listener",
+          "line": 11
+        },
+        {
+          "file": "apps/crm-web/scripts/demo.test.ts",
+          "title": "preserves_context_adapter_network_semantics_in_the_existing_test_artifact",
+          "line": 35
+        },
+        {
+          "file": "apps/crm-web/scripts/demo.test.ts",
+          "title": "rejects_host_port_and_other_unreviewed_demo_arguments",
+          "line": 41
+        },
+        {
+          "file": "apps/crm-web/scripts/demo.test.ts",
+          "title": "keeps_demo_policy_and_seeded_adapters_out_of_the_production_document",
+          "line": 61
         }
       ],
       "playwright": [
@@ -668,6 +736,12 @@
           "title": "@policy isolates concurrent guarded browser journeys",
           "line": 22,
           "tag": "@policy"
+        },
+        {
+          "path": "apps/crm-e2e/src/proofline/reference-demo.spec.ts",
+          "title": "walks_the_isolated_reference_demo_through_login_crm_and_logout",
+          "line": 7,
+          "tag": "@proofline-demo"
         }
       ]
     },
@@ -990,7 +1064,22 @@
         {
           "file": "tools/proofline/src/portability.test.ts",
           "title": "Proofline standalone portability > copies_a_standalone_target_with_byte_identical_core_and_no_CRM_product",
-          "line": 154
+          "line": 233
+        },
+        {
+          "file": "tools/proofline/src/portability.test.ts",
+          "title": "Proofline standalone portability > prepares_independent_dependencies_without_copying_or_linking_host_modules",
+          "line": 254
+        },
+        {
+          "file": "tools/proofline/src/portability.test.ts",
+          "title": "Proofline standalone portability > requires_explicit_network_setup_and_initializes_clone_complete_target_history",
+          "line": 338
+        },
+        {
+          "file": "tools/proofline/src/portability.test.ts",
+          "title": "Proofline standalone portability > validates_relocated_independent_setup_and_rejects_rehashed_false_installation_claims",
+          "line": 388
         }
       ],
       "playwright": []

@@ -1,3 +1,5 @@
+> Source preview `0.9.0-preview.1`, schema 1. Start with [current status](PROJECT_STATUS.md) and the supported Node 24.22.1/pnpm 11.24.0/Git 2.48+ setup in [README](../README.md#install-from-source).
+
 # Portable test automation
 
 Proofline is a repository-native Node/shell/JSON harness. Agents may author tests and review ownership before merge, but CI executes only deterministic commands. It never calls an agent, model, hosted prompt, or provider credential. A future Codex or Cursor skill/plugin can consume the same manifest, JSONL history, commands, and artifacts; that integration is not required to run the harness.
@@ -53,6 +55,7 @@ This table is generated from the final `proofline.harness.json` command map. `pn
 | browserScenarioShard1 | . | playwright | ["node","tools/proofline/canonical-runner.mjs","playwright","test","--config","apps/crm-e2e/playwright.config.ts","apps/crm-e2e/src/fixtures/scenario-contract.spec.ts","--project","chromium","--shard=1/2"] |
 | browserScenarioShard2 | . | playwright | ["node","tools/proofline/canonical-runner.mjs","playwright","test","--config","apps/crm-e2e/playwright.config.ts","apps/crm-e2e/src/fixtures/scenario-contract.spec.ts","--project","chromium","--shard=2/2"] |
 | portability | . |  | ["node","tools/proofline/validate-portability.mjs"] |
+| buildDemo | . |  | ["pnpm","build:demo"] |
 <!-- proofline-canonical-commands:end -->
 
 The selected-run entrypoints are `pnpm test:impacted -- --dry-run --base <base> --head <head>` and `pnpm test:impacted -- --base <base> --head <head>`. They are selector operations around the registered manifest commands rather than additional canonical command keys.
@@ -67,7 +70,9 @@ Verification binds source commit, execution session, repository/workflow, CI run
 
 ## Independent application validation
 
-`pnpm proofline:validate-portability` prepares an unrelated work-order application in a fresh Git repository outside the host checkout. It copies the reusable core byte-for-byte and supplies target-owned manifest, rules, auth/API seams, configs and tests. Dependencies are reused offline from the existing installation; the result records the actual tested versions.
+`pnpm proofline:validate-portability` prepares an unrelated work-order application in a fresh Git repository outside the host checkout. It copies the reusable core byte-for-byte and supplies target-owned manifest, rules, auth/API seams, configs and tests. The default dependency mode reuses the existing installation offline and records that mode explicitly. For an independent source-install check run `pnpm proofline:validate-portability -- --independent-install`: setup provisions pinned pnpm 11.24.0, a fresh HOME/store/browser cache and the target's own frozen dependency installation, then runs the same ten deterministic gates without a host dependency link. Registry/browser downloads happen during explicit setup, never as test-provider calls.
+
+For a source-only starting repository use `node tools/proofline/validate-portability.mjs --prepare-only --dependency-mode independent`. It prints the external target path after copying unchanged core and generating initial catalog/docs/Git/evidence state. Follow the [target recipe](../examples/work-orders/README.md) for installation and gate commands. Independent results retain setup argv/log hashes and preparation facts; complete historical v1 results remain readable without claiming an independent install.
 
 The target proves request-to-completed navigation, dispatcher/observer permissions and organization isolation, then runs exact discovery/selection, canonical full unit/browser, compatible coverage ratchets, append-only evidence and production-negative checks. Target files live in `examples/work-orders`; they import no CRM application code. Results are retained under `artifacts/portability`. This demonstrates the recorded compatibility scope, rather than every React/Vite version or deployment environment.
 
@@ -75,7 +80,7 @@ The target proves request-to-completed navigation, dispatcher/observer permissio
 
 The verification workflow publishes a deployable production bundle only after its complete required gate set passes, including standalone portability, multi-worker scenarios and both scenario shards. The bundle retains Vercel Build Output, a strict file inventory, source/run/attempt identity, gate outcomes and the referenced execution evidence.
 
-Published-release deployment uses verifier tooling from the trusted default branch and resolves the tag to an immutable commit. It requires the corresponding successful same-repository push/main verification run and exact non-expired artifact, verifies the archive digest before safe extraction, then checks every inventory member and current-run complete gate reference. Wrong commits, workflows, attempts, missing gates, stale evidence, unsafe paths, symlinks and tampered files fail closed. Deployment uses the verified prebuilt output; it does not rebuild application source. Deterministic tests validate this policy with offline fixtures; they never call the deployment provider.
+Published-release deployment uses verifier tooling from the trusted default branch and resolves the tag to an immutable commit. It requires the corresponding successful same-repository push/main verification run and exact non-expired artifact, verifies the archive digest before safe extraction, then checks every inventory member and current-run complete gate reference. Wrong commits, workflows, attempts, missing gates, stale evidence, unsafe paths, symlinks and tampered files fail closed. Deployment uses the verified prebuilt output; it does not rebuild application source. Deterministic tests validate this policy with offline fixtures; they never call the deployment provider. Artifacts expire after 14 days. Expired or unavailable evidence stops deployment; produce a new eligible trusted push/main run for the exact commit or verify a new reviewed commit through its normal release path. A manual dispatch is not a substitute for the current push/main authority. See [preview support and recovery](../.github/SUPPORT.md#upgrade-and-release-verification).
 
 ## Browser matrix and artifacts
 

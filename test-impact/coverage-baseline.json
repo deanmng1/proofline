@@ -161,6 +161,12 @@
       "branches": 0,
       "functions": 0,
       "statements": 0
+    },
+    "apps/crm-web/scripts/demo.mjs": {
+      "lines": 52,
+      "branches": 50,
+      "functions": 50,
+      "statements": 52
     }
   }
 }
