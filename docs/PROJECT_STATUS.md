@@ -2,11 +2,13 @@
 
 ## Current work
 
-The original portable harness, four enterprise verification improvements and all seven adoption-readiness repairs are complete. Fresh independent installations of both applications and the full completion gate passed at `b368d854fb4e3ffb8f0b4e7f65b3851ad7e48b0b`. The [independent reassessment](reviews/2026-11-05-adoption-readiness.md) closed A01–A07 and rated the unpublished source preview **8.0/10**, up from 6.0/10, with spec compliance and code/configuration quality approved.
+The original portable harness, four enterprise verification improvements and all seven adoption-readiness repairs are complete. Fresh independent installations and the full gate passed at `b368d854fb4e3ffb8f0b4e7f65b3851ad7e48b0b`; [independent reassessment](reviews/2026-11-05-adoption-readiness.md) rated that unpublished source preview **8.0/10**, up from 6.0/10.
 
-Active design: [adoption-readiness repair](superpowers/specs/2026-11-05-adoption-readiness-design.md).
-Active execution checklist: [adoption-readiness plan](superpowers/plans/2026-11-05-adoption-readiness.md).
-The tracked checklist is complete; there is no remaining authorized implementation task. Future work needs its own scope. No ignored local ledger or chat history is required to recover this status.
+The user has now authorized parallel work on hosted CI/release proof, declared compatibility and independent adoption, and reliability/security with maintenance evidence. This increment is in progress; its implementation, new full gate and fresh independent rating are not yet complete. The user chose to prepare/test staging workflows while leaving live staging pending.
+
+Active design: [production-readiness evidence](superpowers/specs/2026-11-05-production-readiness-design.md).
+Active execution checklist: [production-readiness plan](superpowers/plans/2026-11-05-production-readiness.md).
+Resume from the first unchecked item in that tracked checklist. No ignored local ledger or chat history is required to recover this status.
 
 | Milestone | Status | Evidence |
 | --- | --- | --- |
@@ -14,8 +16,9 @@ The tracked checklist is complete; there is no remaining authorized implementati
 | Required outcomes, failure artifacts, release verification, second app | Complete at `4feb057` | Fresh 18-step local gate; record closeout `6324ffc` |
 | Showcase and genuine second-app recording | Complete at `d8fef71` | Dated source snapshot in showcase measurements |
 | A01–A07 adoption-readiness repairs | Complete at verified implementation `b368d85` | Fresh 22-step local pass, independent command/evidence checks, [8.0/10 reassessment](reviews/2026-11-05-adoption-readiness.md) |
+| Hosted/compatibility/adoption/reliability readiness | Design/reconnaissance in progress from `024aa83` | Active design/plan; no new completion or rating claimed |
 
-## Latest verification
+## Latest completed verification
 
 - CRM: public frozen installation downloaded 464 packages with zero reuse; all 554 unit tests and 44 Chromium tests passed, satisfying 80 required unit and 31 required browser identities.
 - Work-orders: its separate public installation downloaded 127 packages with zero reuse; all ten adaptation gates passed. All 31 copied core files match, and all 11 direct dependencies resolve inside its own installation.
