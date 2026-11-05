@@ -133,6 +133,8 @@ The first fresh d3b80 gate failed its new optional-print fixture under NxFORCE_C
 
 ## Integrated final cohort checklist
 
+Fresh attempt 4 at `67d8366` passed impact/unit/browser, then rejected an unhandled Vitest worker RPC timeout during coverage. A separately reviewed test-only repair moves synchronous real-manifest probes to an awaited guarded child, preserves all original assertions and limits, and passes all 139 affected coverage cases without errors. No core or measurement policy changes; see `docs/verification/2026-11-05-impact-rpc-responsiveness.md`. The next complete committed fresh gate remains required.
+
 - [x] Complete one ordinary-API source audit and retain frozen6c R1–R5 findings.
 - [x] Implement NodeR1–R4 and generic browserR5 with independent task reviews; retain header-species P2 and Nx compatibility failure/fix evidence.
 - [x] Integrate exact identities, new100%helperfloor, production exclusions and exact generated-MSW ignore; preserve24oldfloors and232196baseauthoredbytes.
