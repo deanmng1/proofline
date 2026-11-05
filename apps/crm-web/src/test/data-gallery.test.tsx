@@ -1,13 +1,44 @@
 import { screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it } from "vitest";
-import { defaultSession } from "@/mocks/data";
+import { HttpResponse, http } from "msw";
+import { beforeEach, describe, expect, it } from "vitest";
+import {
+  analyticsPayload,
+  defaultSession,
+  overviewPayload,
+  transactionsPayload,
+} from "@/mocks/data";
+import { server } from "@/test/server";
 import { renderApp } from "@/test/test-app";
 
 const seed = () =>
   window.localStorage.setItem("admin-dashboard-template:session", JSON.stringify(defaultSession));
 
 describe("data gallery", () => {
+  beforeEach(() => {
+    // Keep these behavior checks independent of demo response delays.
+    server.use(
+      http.get("/api/transactions", ({ request }) => {
+        const query = new URL(request.url).searchParams;
+        const status = query.get("status")?.toLowerCase() ?? "";
+        const search = query.get("search")?.toLowerCase() ?? "";
+        return HttpResponse.json(
+          transactionsPayload.filter((txn) => {
+            const matchesStatus = !status || txn.status === status;
+            const matchesSearch =
+              !search ||
+              `${txn.customer} ${txn.email} ${txn.status} ${txn.method}`
+                .toLowerCase()
+                .includes(search);
+            return matchesStatus && matchesSearch;
+          }),
+        );
+      }),
+      http.get("/api/dashboard/overview", () => HttpResponse.json(overviewPayload)),
+      http.get("/api/analytics/summary", () => HttpResponse.json(analyticsPayload)),
+    );
+  });
+
   it("renders the transactions table with sorting and a detail drawer", async () => {
     const user = userEvent.setup();
     seed();
