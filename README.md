@@ -51,6 +51,8 @@ This command builds a separate capability-gated demo artifact with deterministic
 
 `pnpm dev` is the Vite development mode for integration with a real backend; it does not automatically start mocks. Set `VITE_API_BASE_URL` in `.env.local` for that mode. `pnpm build` produces `dist/crm-web`, and `pnpm preview` serves those production bytes. An unconfigured production deployment is not a no-backend demo. Authentication and authorization in a real deployment belong to its backend.
 
+The reference exercises access-bearer rotation and exposes a refresh-capability marker. An independent refresh-credential protocol remains outside this harness delivery; a real deployment supplies its own backend authentication and authorization.
+
 ## Run checks
 
 ```sh
