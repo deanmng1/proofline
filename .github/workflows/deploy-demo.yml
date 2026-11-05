@@ -16,6 +16,8 @@ concurrency:
 
 jobs:
   deploy:
+    if: github.event.release.prerelease == false && github.event.release.draft == false
+    environment: production
     runs-on: ubuntu-latest
     steps:
       - name: Checkout trusted default-branch verifier
@@ -41,4 +43,8 @@ jobs:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-        run: npm exec --yes --package=vercel@65.11.0 -- vercel deploy --prebuilt --prod --yes --token="$VERCEL_TOKEN"
+        run: |
+          : "${VERCEL_TOKEN:?Production project credentials are required}"
+          : "${VERCEL_ORG_ID:?Production project credentials are required}"
+          : "${VERCEL_PROJECT_ID:?Production project credentials are required}"
+          npm exec --yes --package=vercel@65.11.0 -- vercel deploy --prebuilt --prod --yes --token="$VERCEL_TOKEN"

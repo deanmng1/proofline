@@ -1,6 +1,7 @@
 import { existsSync, mkdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
+import { createGithubReleaseApi } from "./github-release-api.mjs";
 import { extractReleaseZip } from "./release-archive.mjs";
 import {
   filesBelow,
@@ -151,47 +152,34 @@ export function verifyReleaseArchive({ archiveBytes, digest, directory, authorit
   }
   return verifyReleaseDirectory({ directory, authority });
 }
-async function githubApi(repository, route, token, binary = false) {
-  requireCondition(/^[^/\s]+\/[^/\s]+$/.test(repository), "Invalid repository");
-  const response = await fetch(`https://api.github.com/repos/${repository}${route}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      Accept: "application/vnd.github+json",
-      "X-GitHub-Api-Version": "2022-11-28",
-    },
-  });
-  requireCondition(response.ok, `GitHub release authority request failed: ${response.status}`);
-  return binary ? Buffer.from(await response.arrayBuffer()) : response.json();
+function transportFor({ token, api, list }) {
+  // Legacy callers may replace either seam independently. Any mixed/custom pair
+  // remains fixture provenance in the observation API.
+  const defaults = !api || !list ? createGithubReleaseApi({ token }) : null;
+  return { api: api ?? defaults.api, list: list ?? defaults.list };
 }
-async function pages(repository, route, key, token) {
-  const values = [];
-  for (let page = 1; page <= 100; page++) {
-    const value = await githubApi(
-      repository,
-      `${route}${route.includes("?") ? "&" : "?"}per_page=100&page=${page}`,
-      token,
-    );
-    requireCondition(Array.isArray(value[key]), "Malformed GitHub collection");
-    values.push(...value[key]);
-    if (value[key].length < 100) return values;
-  }
-  throw new Error("GitHub collection exceeds verification bounds");
-}
-export async function resolveAndDownloadRelease({
-  repository,
-  tag,
-  token,
-  directory,
-  api = githubApi,
-  list = pages,
-}) {
+async function resolveTag({ repository, tag, token, api }) {
   requireCondition(
-    typeof tag === "string" && tag.length > 0 && typeof token === "string" && token.length > 0,
-    "Missing release tag or API token",
+    typeof tag === "string" &&
+      tag.length > 0 &&
+      tag.length <= 1024 &&
+      ![...tag].some(
+        (character) => character.charCodeAt(0) <= 32 || character.charCodeAt(0) === 127,
+      ) &&
+      !/[~^:?*[\\]/.test(tag) &&
+      !tag.includes("..") &&
+      !tag.includes("@{") &&
+      !tag.startsWith("/") &&
+      !tag.endsWith("/") &&
+      !tag.endsWith(".") &&
+      !tag.includes("//") &&
+      !tag.split("/").some((part) => part.startsWith(".") || part.endsWith(".lock")),
+    "Invalid release tag",
   );
   let target = (await api(repository, `/git/ref/tags/${encodeURIComponent(tag)}`, token)).object;
   const visited = new Set();
   for (let depth = 0; target?.type === "tag" && depth < 10; depth++) {
+    requireCondition(/^[a-f0-9]{40}$/.test(target.sha), "Invalid annotated tag identity");
     requireCondition(!visited.has(target.sha), "Cyclic release tag");
     visited.add(target.sha);
     target = (await api(repository, `/git/tags/${target.sha}`, token)).object;
@@ -200,15 +188,30 @@ export async function resolveAndDownloadRelease({
     target?.type === "commit" && /^[a-f0-9]{40}$/.test(target.sha),
     "Release tag does not resolve to a commit",
   );
+  return { sourceCommit: target.sha, chain: [...visited] };
+}
+export async function resolveAndDownloadVerification({
+  repository,
+  sourceCommit,
+  token,
+  directory,
+  api,
+  list,
+}) {
+  requireCondition(
+    /^[a-f0-9]{40}$/.test(sourceCommit) && typeof token === "string" && token.length > 0,
+    "Missing exact source commit or API token",
+  );
+  ({ api, list } = transportFor({ token, api, list }));
   const workflow = await api(repository, "/actions/workflows/verify.yml", token);
   const runs = await list(
     repository,
-    `/actions/workflows/${workflow.id}/runs?head_sha=${target.sha}&event=push&branch=main&status=success`,
+    `/actions/workflows/${workflow.id}/runs?head_sha=${sourceCommit}&event=push&branch=main&status=success`,
     "workflow_runs",
     token,
   );
   const matching = runs.filter(
-    (run) => run.head_sha === target.sha && run.conclusion === "success",
+    (run) => run.head_sha === sourceCommit && run.conclusion === "success",
   );
   requireCondition(matching.length === 1, "Missing or ambiguous release verification run");
   const artifacts = await list(
@@ -219,7 +222,7 @@ export async function resolveAndDownloadRelease({
   );
   const selected = selectTrustedVerification({
     repository,
-    sourceCommit: target.sha,
+    sourceCommit,
     workflow,
     runs,
     artifacts,
@@ -236,22 +239,66 @@ export async function resolveAndDownloadRelease({
     directory,
     authority: selected.authority,
   });
-  // Re-fetch authority after download: reruns/expiry/deletion during the download fail closed.
   const current = await api(repository, `/actions/runs/${selected.run.id}`, token);
   const artifact = await api(repository, `/actions/artifacts/${selected.artifact.id}`, token);
-  selectTrustedVerification({
+  const refreshed = selectTrustedVerification({
     repository,
-    sourceCommit: target.sha,
+    sourceCommit,
     workflow,
     runs: [current],
     artifacts: [artifact],
   });
   requireCondition(
-    current.run_attempt === selected.run.run_attempt &&
-      artifact.digest === selected.artifact.digest,
+    current.id === selected.run.id &&
+      artifact.id === selected.artifact.id &&
+      current.run_attempt === selected.run.run_attempt &&
+      artifact.digest === selected.artifact.digest &&
+      JSON.stringify(refreshed.authority) === JSON.stringify(selected.authority),
     "Release authority changed during download",
   );
-  return release;
+  return {
+    release,
+    observation: {
+      ...selected.authority,
+      workflowId: String(workflow.id),
+      artifactId: String(artifact.id),
+      artifactName: artifact.name,
+      archiveDigest: artifact.digest,
+      archiveBytes: archiveBytes.length,
+      releaseManifestDigest: `sha256:${sha256(readFileSync(path.join(directory, "release.json")))}`,
+      inventoryCount: Object.keys(release.inventory).length,
+      api: {
+        run: `https://api.github.com/repos/${repository}/actions/runs/${current.id}`,
+        artifact: `https://api.github.com/repos/${repository}/actions/artifacts/${artifact.id}`,
+      },
+      gates: release.gates,
+      gateOutcomes: release.gateOutcomes,
+      portability: release.portability,
+    },
+  };
+}
+export async function resolveAndDownloadTaggedVerification(options) {
+  const { repository, tag, token } = options;
+  requireCondition(
+    typeof token === "string" && token.length > 0,
+    "Missing release tag or API token",
+  );
+  const transport = transportFor(options);
+  const initial = await resolveTag({ repository, tag, token, api: transport.api });
+  const result = await resolveAndDownloadVerification({
+    ...options,
+    ...transport,
+    sourceCommit: initial.sourceCommit,
+  });
+  const final = await resolveTag({ repository, tag, token, api: transport.api });
+  requireCondition(
+    JSON.stringify(initial) === JSON.stringify(final),
+    "Release tag changed during download",
+  );
+  return { ...result, observation: { ...result.observation, tag } };
+}
+export async function resolveAndDownloadRelease(options) {
+  return (await resolveAndDownloadTaggedVerification(options)).release;
 }
 if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href) {
   const directory = path.resolve(process.cwd(), "verified-release");
