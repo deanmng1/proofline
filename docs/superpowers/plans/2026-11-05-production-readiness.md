@@ -86,9 +86,9 @@
 **Interfaces:** Public onboarding/portable/support docs and immutable core source only. No work-orders bootstrap or v1 count/path substitution. Retain assistance log and baseline/adapted/core commit/hash references. Call it an agent trial throughout.
 
 - [x] Dispatch fresh agent with `fork_turns: none`, the frozen app, public docs and immutable core reference; require inventory and rule/seam declaration before test authorship. Record host baseline snapshot and separate Roomboard-only initial commit.
-- [ ] Run genuine fresh public install and target typecheck/discovery/exact selection/full fallback/unit/browser/coverage/record/production gates; preserve RED/GREEN and unexpected failures. No host dependency links.
-- [ ] Verify visible reserve/cancel cross-screen workflow, worker isolation, egress and unchanged core; record actual runtime and all assistance. Never claim human onboarding proof.
-- [ ] Obtain independent spec/quality review of adaptation and evidence. Retain baseline and adapted artifacts and import a repeatable fixture only after the discovery trial.
+- [x] Run genuine fresh public install and target typecheck/discovery/exact selection/full fallback/unit/browser/coverage/record/production gates; preserve RED/GREEN and unexpected failures. No host dependency links.
+- [x] Verify visible reserve/cancel cross-screen workflow, worker isolation, egress and unchanged core; record actual runtime and all assistance. Never claim human onboarding proof.
+- [x] Obtain independent spec/quality review of adaptation and evidence. Retain baseline and adapted artifacts and import a repeatable fixture only after the discovery trial.
 
 ### Task 6: Integrate maintenance, compatibility CI and measured drills
 
@@ -96,11 +96,11 @@
 
 **Interfaces:** One canonical workflow with Linux full verify and a required macOS compatibility job; overall workflow success includes both. Preserve original 16 release-gate keys/native semantics. Distinct cell artifacts; actual source/run provenance. Preview source version may advance without claiming publication.
 
-- [ ] Integrate exact new bindings, ownership and new-source measured coverage; preserve all 24 current baseline entries and full JSONL prefix. Validate real report production/provenance before the long gate.
+- [x] Integrate exact new bindings, ownership and new-source measured coverage; preserve all 24 current baseline entries and full JSONL prefix. Validate real report production/provenance before the long gate.
 - [x] Integrate preflight/script aliases, declared matrix and full macOS job without weakening the Linux/release workflow. Retain exact impact-preview runtime/output fixture RED for the existing quoting failure, repair it and verify the expected output. Validate literal workflow shell blocks as a supplemental check; local Bash syntax-only acceptance does not prove runtime success. Independently review complete shared integration.
 - [x] Add actual-maintainer best-effort support/security/upgrade/recovery instructions and unpublished candidate notes; report remote protection/private-reporting settings honestly without changing them.
 - [x] Rehearse a compatible old/new harness upgrade in a disposable target. Run harmless targeted argv/native-outcome mutation proofs and repeated genuine scenario runs; retain exact mutations, source, outcome and runtime without universal flake/benchmark claims.
-- [ ] Obtain independent spec/quality review and commit integrated source before fresh verification.
+- [x] Obtain independent spec/quality review and commit integrated source before fresh verification.
 
 ### Task 7: Fresh source and hosted verification
 
@@ -122,3 +122,7 @@ The spec's three milestones map to Tasks 1–3 and 6–7, with independent disco
 ## Recorded execution adjustment: truthful absent-tenancy declaration
 
 The blind pilot stopped on a real upstream schema constraint at frozen core `d262c0c`, after independently installing and retaining ordinary app checks. Preserve its report and blocked result. A separately authored and reviewed additive schema repair permits an explicit explained `not-applicable` mode; see the design clarification. A later retry is assisted and must retain both source references and interventions. Root integration uses one full two-cell matrix job rather than duplicating its sixteen gates in two YAML jobs. Both declared cells remain required for workflow success.
+
+## Hosted bootstrap sequencing refinement
+
+Remote main f4f10c7 has no manifest, as actual record preflight confirms. The separately independently reviewed operational addendum preserves strict default comparison and specifies two full-matrix PRs: candidate against pinned reviewed024aa83 foundation, then documentation-only observation successor against bootstrapped main. Source and actual ref/head/check authority must be rechecked before each normal main advance. Preserve the first main migration's missing-manifest rejection; only a later complete actual main success and API/native artifact audit is eligible. See docs/verification/2026-11-05-hosted-bootstrap.md. This is an explicit bounded publication sequence, not a new metadata fallback or hosted success claim.

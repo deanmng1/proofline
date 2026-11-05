@@ -7,6 +7,8 @@ A portable regression-testing harness for React/Vite applications. Proofline run
 
 **Distribution:** unpublished source preview `0.9.0-preview.2`, manifest schema 1. The historical dashboard `v0.8.0` tag predates Proofline. Use the source commit shown by `git rev-parse HEAD`; do not treat that old tag as a harness release. See [project status](docs/PROJECT_STATUS.md) and [preview support](.github/SUPPORT.md).
 
+The [Roomboard agent-adoption trial](docs/pilots/roomboard-adoption.md) retains a third app’s own-history source bundle, reported onboarding gaps and the reviewed final-core upgrade. Its baseline is separate from the insurance CRM and work-orders reference.
+
 ## What it provides
 
 - Business-rule, service, API and UI tests in Vitest, plus genuine browser workflows in Playwright.

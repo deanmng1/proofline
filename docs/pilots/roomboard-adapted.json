@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "kind": "repeatable-assisted-agent-adaptation-fixture",
+  "humanEvidence": false,
+  "bundle": "docs/pilots/roomboard-adapted.bundle",
+  "targetHead": "e0c9fbd754e9a0665ba439c3974770f5673cae4d",
+  "baselineCommit": "91ded2ab018324357e7457486b2bc6292fb8c386",
+  "assistedTrialHead": "9102d0d14701777a97cfa15bff20f5fd5b37db61",
+  "prooflineSourceCommit": "d3b80ced47449ed0fa910de80faa2c3fd0351b26",
+  "coreFiles": 36,
+  "bundleBytes": 170039,
+  "bundleSha256": "45dcf716a59f4b14495f244534975ae06629e35ba2f8b49bac26319e63edaf8d",
+  "mode": "Local agent trial, separate assisted upgrade; original blocked trial retained. No human/hosted/deployment evidence."
+}
