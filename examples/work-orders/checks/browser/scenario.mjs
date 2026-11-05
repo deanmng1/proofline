@@ -3,6 +3,7 @@ import { rmSync } from "node:fs";
 import path from "node:path";
 import { test as base, expect } from "@playwright/test";
 import { createOrders } from "../../client/orders.mjs";
+import { blockUnsupportedBrowserWorkers } from "../../tools/proofline/browser-runtime-boundary.mjs";
 import { startTestAppServer } from "../../tools/proofline/serve-test-app.mjs";
 import { installApi } from "./api.mjs";
 
@@ -17,6 +18,7 @@ export const test = base.extend({
       let bootstrap;
       try {
         bootstrap = await browser.newContext({ serviceWorkers: "block" });
+        await bootstrap.addInitScript(blockUnsupportedBrowserWorkers);
         await bootstrap.route("**/*", (route) =>
           new URL(route.request().url()).origin === server.origin
             ? route.continue()
@@ -61,6 +63,7 @@ export const test = base.extend({
           recordVideo: { dir: testInfo.outputPath("videos") },
         });
         contexts.push(context);
+        await context.addInitScript(blockUnsupportedBrowserWorkers);
         await context.addCookies(workerServer.cookies);
         await context.route("**/*", (route) => {
           const request = route.request();

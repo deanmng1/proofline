@@ -623,6 +623,10 @@
         {
           "glob": "tools/proofline/src/release-recovery.test.ts",
           "reason": "Test sources are not instrumented production sources."
+        },
+        {
+          "glob": "tools/proofline/src/browser-runtime-boundary.test.ts",
+          "reason": "Test sources are not instrumented production sources."
         }
       ],
       "report": "artifacts/coverage/proofline-tools/coverage-summary.json",
@@ -698,7 +702,8 @@
         "tools/proofline/hosted-proof.mjs",
         "tools/proofline/release-recovery.mjs",
         "tools/proofline/compatibility.mjs",
-        "tools/proofline/doctor.mjs"
+        "tools/proofline/doctor.mjs",
+        "tools/proofline/browser-runtime-boundary.mjs"
       ],
       "ruleIds": [
         "SAFE-001",
@@ -719,7 +724,7 @@
           "runner": "vitest",
           "file": "tools/proofline/src/egress-guard.test.ts",
           "title": "Proofline egress guard > denies_fetch_http_https_websocket_and_inherited_child_egress",
-          "line": 422
+          "line": 436
         },
         {
           "ruleId": "SAFE-001",
@@ -749,7 +754,7 @@
           "runner": "vitest",
           "file": "tools/proofline/src/egress-guard.test.ts",
           "title": "Proofline egress guard > rejects_git_external_diff_helpers_before_native_dispatch",
-          "line": 251
+          "line": 265
         },
         {
           "ruleId": "SAFE-001",
@@ -1030,7 +1035,7 @@
           "runner": "vitest",
           "file": "tools/proofline/src/egress-guard.test.ts",
           "title": "Proofline egress guard > rejects_node_execution_overrides_after_supported_option_operands",
-          "line": 949
+          "line": 963
         },
         {
           "ruleId": "SAFE-001",
@@ -1040,7 +1045,7 @@
           "runner": "vitest",
           "file": "tools/proofline/src/egress-guard.test.ts",
           "title": "Proofline egress guard > preserves_supported_node_operands_and_true_script_boundaries",
-          "line": 999
+          "line": 1013
         },
         {
           "ruleId": "SAFE-001",
@@ -1050,7 +1055,7 @@
           "runner": "vitest",
           "file": "tools/proofline/src/egress-guard.test.ts",
           "title": "Proofline egress guard > rejects_direct_operand_hidden_preloads_before_sentinel_execution",
-          "line": 1046
+          "line": 1060
         },
         {
           "ruleId": "SAFE-001",
@@ -1090,7 +1095,7 @@
           "runner": "vitest",
           "file": "tools/proofline/src/egress-guard.test.ts",
           "title": "Proofline egress guard > preserves_optional_print_expressions_without_hiding_node_options",
-          "line": 1229
+          "line": 1832
         },
         {
           "ruleId": "REL-001",
@@ -1590,7 +1595,7 @@
           "runner": "vitest",
           "file": "tools/proofline/src/egress-guard.test.ts",
           "title": "Proofline egress guard > rejects_unreviewed_node_options_syntax_before_startup",
-          "line": 1083
+          "line": 1097
         },
         {
           "ruleId": "SAFE-001",
@@ -1600,7 +1605,7 @@
           "runner": "vitest",
           "file": "tools/proofline/src/egress-guard.test.ts",
           "title": "Proofline egress guard > rejects_direct_node_options_preloads_before_sentinel_execution",
-          "line": 1145
+          "line": 1159
         },
         {
           "ruleId": "SAFE-001",
@@ -1610,7 +1615,7 @@
           "runner": "vitest",
           "file": "tools/proofline/src/egress-guard.test.ts",
           "title": "Proofline egress guard > preserves_reviewed_node_options_and_exact_guard_inheritance",
-          "line": 1176
+          "line": 1190
         },
         {
           "ruleId": "SAFE-001",
@@ -1620,7 +1625,7 @@
           "runner": "vitest",
           "file": "tools/proofline/src/egress-guard.test.ts",
           "title": "Proofline egress guard > preserves_exact_guard_token_in_apostrophe_checkout_paths",
-          "line": 1201
+          "line": 1215
         },
         {
           "ruleId": "SAFE-001",
@@ -1631,6 +1636,279 @@
           "file": "tools/proofline/src/canonical-runner-egress.test.ts",
           "title": "canonical_unit_runner_rejects_node_options_preloads_before_all_child_dispatches",
           "line": 410
+        },
+        {
+          "ruleId": "SAFE-001",
+          "layer": "contract",
+          "testId": "binding-runtime-3a2efd878a27cf027bdf",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/egress-guard.test.ts",
+          "title": "Proofline egress guard > rejects_node_worker_threads_before_local_requests_or_target_execution",
+          "line": 1243
+        },
+        {
+          "ruleId": "SAFE-001",
+          "layer": "contract",
+          "testId": "binding-runtime-2cd5874fe35a3c8dcfca",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/egress-guard.test.ts",
+          "title": "Proofline egress guard > rejects_async_module_loader_threads_before_local_requests_or_target_execution",
+          "line": 1316
+        },
+        {
+          "ruleId": "SAFE-001",
+          "layer": "contract",
+          "testId": "binding-runtime-d12f5c3309f2205cd145",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/egress-guard.test.ts",
+          "title": "Proofline egress guard > preserves_synchronous_module_hooks_inside_the_guarded_runtime",
+          "line": 1368
+        },
+        {
+          "ruleId": "SAFE-001",
+          "layer": "contract",
+          "testId": "binding-runtime-75a07887b770d938f7f5",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/egress-guard.test.ts",
+          "title": "Proofline egress guard > snapshots_direct_launcher_argv_and_environment_before_validation",
+          "line": 1401
+        },
+        {
+          "ruleId": "SAFE-001",
+          "layer": "contract",
+          "testId": "binding-runtime-b4e0375999c63b31b26d",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/egress-guard.test.ts",
+          "title": "Proofline egress guard > binds_http_effective_options_and_public_constructors_to_the_guard",
+          "line": 1440
+        },
+        {
+          "ruleId": "SAFE-001",
+          "layer": "contract",
+          "testId": "binding-runtime-62e413e24a749bf7b15c",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/egress-guard.test.ts",
+          "title": "Proofline egress guard > snapshots_websocket_urls_and_denies_custom_transport_options",
+          "line": 1474
+        },
+        {
+          "ruleId": "SAFE-001",
+          "layer": "contract",
+          "testId": "binding-runtime-66e63c3c67f47ef7c794",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/egress-guard.test.ts",
+          "title": "Proofline egress guard > guards_socket_connect_aliases_and_preserves_allowed_numeric_loopback",
+          "line": 1510
+        },
+        {
+          "ruleId": "SAFE-001",
+          "layer": "contract",
+          "testId": "binding-runtime-608d6fd04cddb9f8cd4c",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/egress-guard.test.ts",
+          "title": "Proofline egress guard > rejects_unsupported_datagram_http2_and_dns_query_aliases_before_dispatch",
+          "line": 1545
+        },
+        {
+          "ruleId": "SAFE-001",
+          "layer": "contract",
+          "testId": "binding-runtime-b4d3d7da0e66da5abb4a",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/egress-guard.test.ts",
+          "title": "Proofline egress guard > resolves_only_synthetic_loopback_lookup_names_without_network_queries",
+          "line": 1581
+        },
+        {
+          "ruleId": "SAFE-001",
+          "layer": "contract",
+          "testId": "binding-runtime-ccc866cda71230d6f4bc",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/egress-guard.test.ts",
+          "title": "Proofline egress guard > uses_stable_fetch_options_and_effective_websocket_protocols",
+          "line": 1605
+        },
+        {
+          "ruleId": "SAFE-001",
+          "layer": "contract",
+          "testId": "binding-runtime-77a2cdf013bfd857ce4a",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/egress-guard.test.ts",
+          "title": "Proofline egress guard > rejects_unapproved_low_level_child_dispatch_before_native_execution",
+          "line": 1641
+        },
+        {
+          "ruleId": "SAFE-001",
+          "layer": "contract",
+          "testId": "binding-runtime-5135081a80b3eb5bcae4",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/egress-guard.test.ts",
+          "title": "Proofline egress guard > preserves_loopback_websocket_events_subclasses_and_static_constants",
+          "line": 1670
+        },
+        {
+          "ruleId": "SAFE-001",
+          "layer": "contract",
+          "testId": "binding-runtime-d996f5d15f2f49934e27",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/egress-guard.test.ts",
+          "title": "Proofline egress guard > coerces_fetch_method_values_once_before_constructing_the_request",
+          "line": 1705
+        },
+        {
+          "ruleId": "SAFE-001",
+          "layer": "contract",
+          "testId": "binding-runtime-c9b9e04bd1da2c46db3a",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/egress-guard.test.ts",
+          "title": "Proofline egress guard > copies_raw_http_header_array_members_without_calling_collection_overrides",
+          "line": 1720
+        },
+        {
+          "ruleId": "SAFE-001",
+          "layer": "contract",
+          "testId": "binding-runtime-5dcdfca726c2e02f3dfc",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/canonical-runner-egress.test.ts",
+          "title": "canonical_unit_runner_rejects_worker_threads_and_preserves_message_channels",
+          "line": 462
+        },
+        {
+          "ruleId": "SAFE-001",
+          "layer": "contract",
+          "testId": "binding-runtime-cdf9d6d9fa0e545f12d8",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/canonical-runner-egress.test.ts",
+          "title": "canonical_unit_runner_rejects_async_loader_registration_before_execution",
+          "line": 497
+        },
+        {
+          "ruleId": "SAFE-001",
+          "layer": "contract",
+          "testId": "binding-runtime-d9c0d52af9e41d4171b3",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/canonical-runner-egress.test.ts",
+          "title": "canonical_unit_runner_snapshots_child_argv_options_and_environment_once",
+          "line": 509
+        },
+        {
+          "ruleId": "SAFE-001",
+          "layer": "contract",
+          "testId": "binding-runtime-d67d90b37ee0eab7e785",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/browser-runtime-boundary.test.ts",
+          "title": "browser runtime boundary > denies_worker_construction_before_arguments_or_native_startup",
+          "line": 7
+        },
+        {
+          "ruleId": "SAFE-001",
+          "layer": "contract",
+          "testId": "binding-runtime-77e620c0fed2a9d2a8e9",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/browser-runtime-boundary.test.ts",
+          "title": "browser runtime boundary > repeated_installation_keeps_both_worker_globals_blocked",
+          "line": 38
+        },
+        {
+          "ruleId": "SAFE-001",
+          "layer": "contract",
+          "testId": "binding-runtime-a4221e504fba2474a35d",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/browser-runtime-boundary.test.ts",
+          "title": "browser runtime boundary > rejects_an_unreplaceable_native_worker_global",
+          "line": 51
+        },
+        {
+          "ruleId": "SAFE-001",
+          "layer": "contract",
+          "testId": "binding-runtime-09886b4fbb85a6cc000b",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/browser-runtime-boundary.test.ts",
+          "title": "browser runtime boundary > rejects_inconsistent_prior_installation_instead_of_accepting_an_open_plane",
+          "line": 58
+        },
+        {
+          "ruleId": "SAFE-001",
+          "layer": "contract",
+          "testId": "binding-runtime-3444c7319a2465e09b07",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/browser-runtime-boundary.test.ts",
+          "title": "browser runtime boundary > serializes_without_module_closures_and_preserves_supported_globals",
+          "line": 65
+        },
+        {
+          "ruleId": "SAFE-001",
+          "layer": "playwright",
+          "testId": "binding-runtime-d3f10574a483bbcc3aa2",
+          "commandKey": "browser",
+          "runner": "playwright",
+          "file": "apps/crm-e2e/src/fixtures/browser-runtime-boundary.spec.ts",
+          "title": "blocks_worker_startup_in_pages_and_nested_frames",
+          "line": 4,
+          "tag": "@egress"
+        },
+        {
+          "ruleId": "SAFE-001",
+          "layer": "playwright",
+          "testId": "binding-runtime-5ad11194fac6c1e79e98",
+          "commandKey": "browser",
+          "runner": "playwright",
+          "file": "apps/crm-e2e/src/fixtures/browser-runtime-boundary.spec.ts",
+          "title": "bootstrap_blocks_workers_before_its_first_page",
+          "line": 50,
+          "tag": "@egress"
+        },
+        {
+          "ruleId": "SAFE-001",
+          "layer": "playwright",
+          "testId": "binding-runtime-b638c8f6af14a8d77f93",
+          "commandKey": "browser",
+          "runner": "playwright",
+          "file": "apps/crm-e2e/src/fixtures/browser-runtime-boundary.spec.ts",
+          "title": "preserves_page_fetch_and_websocket_fake_and_denial_routes",
+          "line": 78,
+          "tag": "@egress"
+        },
+        {
+          "ruleId": "SAFE-001",
+          "layer": "contract",
+          "testId": "binding-runtime-967e3f25576bdf3c35b0",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/egress-guard.test.ts",
+          "title": "Proofline egress guard > preserves_raw_and_array_valued_headers_without_array_species_or_iterators",
+          "line": 1740
+        },
+        {
+          "ruleId": "SAFE-001",
+          "layer": "contract",
+          "testId": "binding-runtime-afa62719dfc6c4eeaae7",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/egress-guard.test.ts",
+          "title": "Proofline egress guard > protects_in_process_nx_environment_in_default_overridden_and_nested_launches",
+          "line": 1782
         }
       ],
       "ruleLayers": [
@@ -2921,7 +3199,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "rejects_role_and_cross_tenant_mutations_through_the_test_api",
-          "line": 528,
+          "line": 521,
           "tag": "@authority"
         },
         {
@@ -2952,7 +3230,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "keeps_context_contract_authority_faults_and_tenant_inspection_inside_the_adapter",
-          "line": 368,
+          "line": 361,
           "tag": "@authority"
         },
         {
@@ -2963,7 +3241,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "binds_contract_requests_to_context_tokens_and_revokes_them_after_logout",
-          "line": 386,
+          "line": 379,
           "tag": "@authority"
         }
       ],
@@ -3374,7 +3652,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "cleans_up_after_a_failed_scenario_assertion",
-          "line": 325,
+          "line": 318,
           "tag": "@scenario"
         },
         {
@@ -3396,7 +3674,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "rejects_role_and_cross_tenant_mutations_through_the_test_api",
-          "line": 528,
+          "line": 521,
           "tag": "@authority"
         },
         {
@@ -3429,7 +3707,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "blocks_service_worker_registration_and_cleans_registrations",
-          "line": 226,
+          "line": 219,
           "tag": "@egress"
         },
         {
@@ -3440,7 +3718,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "denies_browser_websockets_with_deterministic_context",
-          "line": 243,
+          "line": 236,
           "tag": "@egress"
         },
         {
@@ -3451,7 +3729,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "shares_one_runtime_only_across_explicit_contexts",
-          "line": 291,
+          "line": 284,
           "tag": "@isolation"
         },
         {
@@ -3462,7 +3740,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "separate_scenarios_receive_distinct_runtime_ids_and_state",
-          "line": 262,
+          "line": 255,
           "tag": "@isolation"
         },
         {
@@ -3473,7 +3751,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "shard_a_isolates_runtime_and_storage",
-          "line": 800,
+          "line": 793,
           "tag": "@isolation"
         },
         {
@@ -3484,7 +3762,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "shard_b_isolates_runtime_and_storage",
-          "line": 808,
+          "line": 801,
           "tag": "@isolation"
         },
         {
@@ -3495,7 +3773,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "shard_a_uses_an_os_assigned_worker_port",
-          "line": 816,
+          "line": 809,
           "tag": "@isolation"
         },
         {
@@ -3506,7 +3784,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "shard_b_uses_an_os_assigned_worker_port",
-          "line": 824,
+          "line": 817,
           "tag": "@isolation"
         },
         {
@@ -3517,7 +3795,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "honors_declared_roles_and_one_shot_route_faults",
-          "line": 341,
+          "line": 334,
           "tag": "@scenario"
         },
         {
@@ -3528,7 +3806,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "copies_identity_claims_and_rejects_conflicting_redefinitions",
-          "line": 600,
+          "line": 593,
           "tag": "@authority"
         },
         {
@@ -3539,7 +3817,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "scenario_reset_retains_failed_contexts_for_a_deterministic_retry",
-          "line": 737,
+          "line": 730,
           "tag": "@scenario"
         },
         {
@@ -3550,7 +3828,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "worker_setup_stops_the_server_when_bootstrap_close_fails",
-          "line": 758,
+          "line": 751,
           "tag": "@scenario"
         },
         {
@@ -3561,7 +3839,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "factory_teardown_rejects_an_unacknowledged_caught_denial",
-          "line": 785,
+          "line": 778,
           "tag": "@egress"
         },
         {
@@ -3583,7 +3861,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "factory_teardown_rejects_an_unacknowledged_caught_denial",
-          "line": 785,
+          "line": 778,
           "tag": "@egress"
         },
         {
@@ -3627,7 +3905,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "matches_an_operation_fault_once_to_an_opaque_ui_created_bind",
-          "line": 450,
+          "line": 443,
           "tag": "@scenario"
         },
         {
@@ -3659,6 +3937,39 @@
           "file": "tools/proofline/src/product-e2e-boundary.test.ts",
           "title": "Proofline product E2E boundary > scenario_commands_preserve_multi_worker_and_both_shard_isolation_gates",
           "line": 132
+        },
+        {
+          "ruleId": "SAFE-001",
+          "layer": "playwright",
+          "testId": "binding-runtime-0b1be3ca154209e72286",
+          "commandKey": "browser",
+          "runner": "playwright",
+          "file": "apps/crm-e2e/src/fixtures/browser-runtime-boundary.spec.ts",
+          "title": "blocks_worker_startup_in_pages_and_nested_frames",
+          "line": 4,
+          "tag": "@egress"
+        },
+        {
+          "ruleId": "SAFE-001",
+          "layer": "playwright",
+          "testId": "binding-runtime-acd2c242546429db6cb1",
+          "commandKey": "browser",
+          "runner": "playwright",
+          "file": "apps/crm-e2e/src/fixtures/browser-runtime-boundary.spec.ts",
+          "title": "bootstrap_blocks_workers_before_its_first_page",
+          "line": 50,
+          "tag": "@egress"
+        },
+        {
+          "ruleId": "SAFE-001",
+          "layer": "playwright",
+          "testId": "binding-runtime-bfa82008aa03068c5d88",
+          "commandKey": "browser",
+          "runner": "playwright",
+          "file": "apps/crm-e2e/src/fixtures/browser-runtime-boundary.spec.ts",
+          "title": "preserves_page_fetch_and_websocket_fake_and_denial_routes",
+          "line": 78,
+          "tag": "@egress"
         }
       ],
       "ruleLayers": [
@@ -3861,6 +4172,10 @@
   },
   "production": {
     "directory": "dist/crm-web",
-    "forbiddenModules": ["apps/crm-web/src/test-entry.tsx", "apps/crm-web/src/test-capability.ts"]
+    "forbiddenModules": [
+      "apps/crm-web/src/test-entry.tsx",
+      "apps/crm-web/src/test-capability.ts",
+      "tools/proofline/browser-runtime-boundary.mjs"
+    ]
   }
 }

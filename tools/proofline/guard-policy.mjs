@@ -2,6 +2,75 @@ import { realpathSync, statSync } from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 
+// Read caller-owned accessors once. Validation and native dispatch only consume
+// these plain snapshots, never the original arrays/options/environment again.
+export const snapshotStringArray = (value, label = "argv") => {
+  if (!Array.isArray(value)) throw new Error(`Proofline ${label} must be a string array.`);
+  const length = value.length;
+  const snapshot = [];
+  for (let index = 0; index < length; index += 1) {
+    const member = value[index];
+    if (typeof member !== "string" || member.includes("\0"))
+      throw new Error(`Proofline ${label} must contain only primitive strings.`);
+    snapshot.push(member);
+  }
+  return snapshot;
+};
+
+export const snapshotOptions = (value = {}, inheritedKeys = []) => {
+  if (value === null || typeof value !== "object" || Array.isArray(value))
+    throw new Error("Proofline options must be an object.");
+  const result = Object.create(null);
+  for (const key of new Set([...Reflect.ownKeys(value), ...inheritedKeys]))
+    if (key in value) result[key] = value[key];
+  return result;
+};
+
+export const snapshotEnvironment = (value = {}) => {
+  const values = snapshotOptions(value);
+  for (const key of Object.keys(values)) {
+    const member = values[key];
+    if (member !== undefined) values[key] = String(member);
+  }
+  return values;
+};
+
+export const snapshotChildOptions = (value = {}) => {
+  const options = snapshotOptions(value, [
+    "shell",
+    "env",
+    "cwd",
+    "execArgv",
+    "execPath",
+    "argv0",
+    "stdio",
+    "silent",
+    "encoding",
+    "detached",
+    "uid",
+    "gid",
+    "timeout",
+    "killSignal",
+    "maxBuffer",
+    "windowsHide",
+    "windowsVerbatimArguments",
+    "serialization",
+    "signal",
+    "input",
+  ]);
+  if (options.env !== undefined) options.env = snapshotEnvironment(options.env);
+  if (options.execArgv !== undefined)
+    options.execArgv = snapshotStringArray(options.execArgv, "execArgv");
+  for (const key of ["execPath", "argv0", "encoding"])
+    if (options[key] !== undefined && typeof options[key] !== "string")
+      throw new Error(`Proofline child ${key} must be a primitive string.`);
+  if (options.cwd instanceof URL) options.cwd = new URL(options.cwd.href);
+  else if (options.cwd !== undefined && typeof options.cwd !== "string")
+    throw new Error("Proofline child cwd must be a string or URL.");
+  if (Array.isArray(options.stdio)) options.stdio = Array.from(options.stdio);
+  return options;
+};
+
 const numericLoopback = (hostname) => {
   if (hostname === "[::1]") return true;
   const octets = hostname.split(".");
@@ -64,6 +133,7 @@ export const normalizeAllowedChildCapabilities = (capabilities = []) => {
   const normalized = capabilities.map((value, index) => {
     if (!value || typeof value !== "object" || Array.isArray(value))
       throw new Error(`Proofline child capability ${index} must be an object.`);
+    value = snapshotOptions(value);
     const keys = Object.keys(value).sort();
     if (keys.join(",") !== "executable,purpose")
       throw new Error(
@@ -156,7 +226,15 @@ export const mergeGuardNodeOptions = (value = "") => {
   return [...accepted, guardImportOption].join(" ");
 };
 
+// Nx's daemon/plugin isolation requires Unix sockets. Keep optional Nx work
+// inside the already guarded process rather than enabling an unreviewed plane.
+export const guardedToolEnvironment = Object.freeze({
+  NX_DAEMON: "false",
+  NX_ISOLATE_PLUGINS: "false",
+});
+
 export const guardedEnvironment = ({ env = {}, allowedOrigins, allowedChildCapabilities = [] }) => {
+  env = snapshotEnvironment(env);
   const normalized = normalizeAllowedOrigins(allowedOrigins);
   const childCapabilities = normalizeAllowedChildCapabilities(allowedChildCapabilities);
   const guarded = {
@@ -166,6 +244,7 @@ export const guardedEnvironment = ({ env = {}, allowedOrigins, allowedChildCapab
     PROOFLINE_ALLOWED_CHILD_CAPABILITIES: JSON.stringify(childCapabilities),
     PROOFLINE_GUARD_PRELOAD: guardPreloadUrl,
     NODE_OPTIONS: mergeGuardNodeOptions(env.NODE_OPTIONS ?? process.env.NODE_OPTIONS ?? ""),
+    ...guardedToolEnvironment,
   };
   for (const key of Object.keys(guarded)) if (unsafeGitEnvironmentKey(key)) delete guarded[key];
   return guarded;

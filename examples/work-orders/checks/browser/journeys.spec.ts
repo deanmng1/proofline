@@ -87,21 +87,13 @@ test("denies_undeclared_browser_egress_planes", { tag: "@desk-egress" }, async (
       () => false,
       () => true,
     );
-    const workerDenied = await new Promise((resolve) => {
-      const url = URL.createObjectURL(
-        new Blob(
-          [
-            'fetch("https://unconfigured.invalid/worker").then(() => postMessage(false), () => postMessage(true))',
-          ],
-          { type: "text/javascript" },
-        ),
-      );
-      const worker = new Worker(url);
-      worker.onmessage = (event) => {
-        resolve(event.data);
-        worker.terminate();
-        URL.revokeObjectURL(url);
-      };
+    const workerDenied = (["Worker", "SharedWorker"] as const).every((name) => {
+      try {
+        new globalThis[name]("/unsupported-worker.js");
+        return false;
+      } catch (error) {
+        return String(error).includes(`PROOFLINE_UNSUPPORTED_PLANE plane=${name}`);
+      }
     });
     const websocketDenied = await new Promise((resolve) => {
       const socket = new WebSocket("wss://unconfigured.invalid/socket");
@@ -123,6 +115,6 @@ test("denies_undeclared_browser_egress_planes", { tag: "@desk-egress" }, async (
     serviceWorkers: 0,
   });
   const denied = scenario.acknowledgeDenials();
-  expect(denied.map((entry) => entry.method).sort()).toEqual(["GET", "GET", "WEBSOCKET"]);
+  expect(denied.map((entry) => entry.method).sort()).toEqual(["GET", "WEBSOCKET"]);
   expect(denied.every((entry) => entry.scenario === scenario.id && entry.trace)).toBe(true);
 });

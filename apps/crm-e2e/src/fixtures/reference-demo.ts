@@ -1,4 +1,6 @@
 import { test as base, expect, type Page } from "@playwright/test";
+// @ts-expect-error Portable JavaScript init script.
+import { blockUnsupportedBrowserWorkers } from "../../../../tools/proofline/browser-runtime-boundary.mjs";
 // @ts-expect-error Reference-only Node launcher is measured by the app's unit coverage.
 import { launchBuiltDemo } from "../../../crm-web/scripts/demo.mjs";
 
@@ -69,6 +71,7 @@ export const test = base.extend<{ demo: Demo }>({
     });
     context.on("page", (page) => page.on("pageerror", (error) => pageErrors.push(error.message)));
     try {
+      await context.addInitScript(blockUnsupportedBrowserWorkers);
       await use(context);
       expect(
         (await context.cookies(demo.origin)).some(

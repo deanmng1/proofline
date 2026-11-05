@@ -49,3 +49,7 @@ Fresh-install checks must use separate external repositories, actual declared de
 ## Preview identity
 
 The package is unpublished source preview `0.9.0-preview.2`, manifest schema 1. It is distinct from the original dashboard 0.8.0 history/tag. [Support](../.github/SUPPORT.md) and [security reporting](../.github/SECURITY.md) state compatibility, scope and upgrade/release-evidence requirements. No remote publication is implied.
+
+## Current runtime follow-up
+
+Read the active plan's integrated final cohort checklist and [cohort report](verification/2026-11-05-runtime-boundary-cohort.md). R1–R5 task repairs and292-test tools coverage are reviewed, but require the original evaluator's one-commit replay, a new full fresh gate, updated37-file Roomboard fixture and actual hosted proof before closeout. Failed fresh attempts and scoped results remain separate. No remote source change has occurred yet.

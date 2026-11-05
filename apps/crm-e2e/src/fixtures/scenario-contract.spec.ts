@@ -203,24 +203,17 @@ test("denies_an_undeclared_worker_request_with_scenario_context", { tag: "@egres
 }) => {
   const page = await scenario.newPage();
   await page.goto("/login");
-  const result = await page.evaluate(
-    () =>
-      new Promise<string>((resolve) => {
-        const worker = new Worker(
-          URL.createObjectURL(
-            new Blob(
-              [
-                `fetch("https://worker.invalid/private", {headers:{"X-Proofline-Plane":"worker"}}).then(() => postMessage("ok")).catch(error => postMessage(String(error)))`,
-              ],
-              { type: "text/javascript" },
-            ),
-          ),
-        );
-        worker.onmessage = (event) => resolve(String(event.data));
-      }),
-  );
-  expect(result).toContain("Failed to fetch");
-  await expect(() => scenario.assertNoUnexpectedRequests()).rejects.toThrow(/plane=worker/);
+  const result = await page.evaluate(() => {
+    try {
+      new Worker("/unsupported-worker.js");
+      return "started";
+    } catch (error) {
+      return String(error);
+    }
+  });
+  expect(result).toContain("PROOFLINE_UNSUPPORTED_PLANE plane=Worker");
+  expect((await scenario.inspect()).unexpectedRequests).toEqual([]);
+  await scenario.assertNoUnexpectedRequests();
 });
 
 test("blocks_service_worker_registration_and_cleans_registrations", { tag: "@egress" }, async ({

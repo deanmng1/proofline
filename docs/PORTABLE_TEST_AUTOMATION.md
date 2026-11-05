@@ -128,3 +128,18 @@ The existing `visible-switch` and `authenticated-contexts` modes retain their ve
 ## Node startup environment
 
 The launcher accepts reviewed plain ASCII `NODE_OPTIONS` flags separated by literal spaces, such as `--trace-warnings` or `--max-old-space-size=4096`, and supplies its exact guard import automatically. Caller preloads, loaders, inspectors, literal quote/escape/control syntax, unknown options and ambiguous operands are rejected before launch. Shell quoting around an environment assignment is separate from literal quote characters inside its value. Generated guard URLs encode source paths safely, including spaces and apostrophes. See the finite reviewed option sets in [guard-policy.mjs](../tools/proofline/guard-policy.mjs); this boundary does not provide hostile-code OS isolation.
+
+## Runtime and browser conformance
+
+Guarded Node calls dispatch captured effective arguments, not a later read of caller-owned metadata. HTTP(S), fetch and WebSocket retain supported local behavior; raw Socket/TLS connections are limited to declared numeric address/port pairs. UDP, HTTP2, asynchronous module loaders, Node Worker execution and actual DNS queries are unsupported. Localhost/numeric DNS lookup metadata is synthesized for local tools without a resolver. Synchronous module.registerHooks and MessageChannel execute in the guarded runtime. Guarded Nx metadata plugins run in process with the daemon disabled so unapproved Unix-socket transport remains closed.
+
+Each target-owned browser context, including capability bootstrap contexts, installs the copied generic initializer before any page:
+
+```js
+import { blockUnsupportedBrowserWorkers } from "./tools/proofline/browser-runtime-boundary.mjs";
+const context = await browser.newContext({ serviceWorkers: "block" });
+await context.addInitScript(blockUnsupportedBrowserWorkers);
+// Register the target's page HTTP/WebSocket/API routes before creating pages.
+```
+
+This rejects unsupported in-page Worker/SharedWorker startup; Playwright's parallel test workers and shards remain supported. Keep page routes, service-worker policy and cleanup. Add the helper to production.forbiddenModules, and verify normal production output excludes test tooling. The [cohort report](verification/2026-11-05-runtime-boundary-cohort.md) records exact limits and evidence classes. New transport/runtime capabilities need their own guard and conformance proof before use.

@@ -458,3 +458,118 @@ test("canonical_unit_runner_rejects_node_options_preloads_before_all_child_dispa
     }
   }
 });
+
+test("canonical_unit_runner_rejects_worker_threads_and_preserves_message_channels", async () => {
+  const { Worker, MessageChannel } = await import("node:worker_threads");
+  expect(Object.getPrototypeOf(Worker)).toBe(Function.prototype);
+  expect(Object.getPrototypeOf(Worker.prototype)).toBe(Object.prototype);
+  expect(Worker.prototype.constructor).toBe(Worker);
+  const marker = path.join(temporary, "canonical-worker-ran");
+  const source = `require("node:fs").writeFileSync(${JSON.stringify(marker)}, "ran");`;
+  let denial = "dispatched";
+  let created = false;
+  try {
+    const worker = new Worker(source, { eval: true, execArgv: [], env: {} });
+    created = true;
+    await new Promise<void>((resolve) => {
+      worker.on("error", () => {});
+      worker.on("exit", () => resolve());
+    });
+  } catch (error) {
+    denial = String(error);
+  }
+  expect.soft({ denial, created, targetRan: existsSync(marker) }).toEqual({
+    denial: expect.stringContaining("unsupported-worker-plane"),
+    created: false,
+    targetRan: false,
+  });
+  const { port1, port2 } = new MessageChannel();
+  try {
+    const received = new Promise<string>((resolve) => port2.once("message", resolve));
+    port1.postMessage("message-channel-ok");
+    expect(await received).toBe("message-channel-ok");
+  } finally {
+    port1.close();
+    port2.close();
+  }
+});
+
+test("canonical_unit_runner_rejects_async_loader_registration_before_execution", async () => {
+  const { register } = await import("node:module");
+  const marker = path.join(temporary, "canonical-loader-ran");
+  const file = path.join(temporary, "canonical-loader.mjs");
+  writeFileSync(
+    file,
+    `import { writeFileSync } from "node:fs"; writeFileSync(${JSON.stringify(marker)}, "ran");`,
+  );
+  expect.soft(() => register(file)).toThrow(/unsupported-loader-plane/);
+  expect(existsSync(marker)).toBe(false);
+});
+
+test("canonical_unit_runner_snapshots_child_argv_options_and_environment_once", async () => {
+  const childFile = path.join(temporary, "child-snapshot-control.mjs");
+  writeFileSync(childFile, "console.log(process.env.SNAPSHOT_VALUE);");
+  const completed = (child: ReturnType<typeof spawn>) =>
+    new Promise<{ code: number | null; stdout: string }>((resolve, reject) => {
+      let stdout = "";
+      child.stdout?.on("data", (chunk) => {
+        stdout += chunk;
+      });
+      child.on("error", reject);
+      child.on("close", (code) => resolve({ code, stdout }));
+    });
+  for (const method of ["spawn", "spawnSync", "execFile", "execFileSync", "fork"]) {
+    let argvReads = 0,
+      shellReads = 0,
+      envReads = 0,
+      execArgvReads = 0,
+      execPathReads = 0;
+    const argv = [childFile];
+    Object.defineProperty(argv, "0", {
+      get() {
+        argvReads += 1;
+        return childFile;
+      },
+    });
+    const options = {
+      get shell() {
+        shellReads += 1;
+        return false as const;
+      },
+      encoding: "utf8" as const,
+      get execPath() {
+        execPathReads += 1;
+        return process.execPath;
+      },
+      get execArgv() {
+        execArgvReads += 1;
+        return [];
+      },
+      silent: true,
+      env: {
+        get SNAPSHOT_VALUE() {
+          envReads += 1;
+          return "snapshot-safe";
+        },
+      },
+    };
+    let result: { code: number | null; stdout: string };
+    if (method === "spawn") result = await completed(spawn(process.execPath, argv, options));
+    else if (method === "spawnSync") {
+      const child = spawnSync(process.execPath, argv, options);
+      result = { code: child.status, stdout: child.stdout };
+    } else if (method === "execFile")
+      result = await completed(execFile(process.execPath, argv, options));
+    else if (method === "execFileSync")
+      result = { code: 0, stdout: execFileSync(process.execPath, argv, options) };
+    else result = await completed(fork(childFile, [], options));
+    expect.soft(result, method).toEqual({ code: 0, stdout: "snapshot-safe\n" });
+    expect.soft({ argvReads, shellReads, envReads, execArgvReads, execPathReads }, method).toEqual({
+      argvReads: method === "fork" ? 0 : 1,
+      shellReads: 1,
+      envReads: 1,
+      execArgvReads: 1,
+      execPathReads: 1,
+    });
+  }
+});

@@ -1,16 +1,30 @@
 import childProcess from "node:child_process";
+import { randomBytes } from "node:crypto";
+import dgram from "node:dgram";
+import dns from "node:dns";
+import dnsPromises from "node:dns/promises";
 import { accessSync, constants, realpathSync, statSync } from "node:fs";
 import http from "node:http";
+import http2 from "node:http2";
 import https from "node:https";
-import { syncBuiltinESMExports } from "node:module";
+import nodeModule, { syncBuiltinESMExports } from "node:module";
+import net from "node:net";
 import path from "node:path";
+import tls from "node:tls";
+import { fileURLToPath, urlToHttpOptions } from "node:url";
+import { promisify } from "node:util";
+import workerThreads from "node:worker_threads";
 import {
   assertSafeNodeArgv,
+  guardedToolEnvironment,
   guardImportOption,
   mergeGuardNodeOptions,
   parseAllowedChildCapabilitiesEnvironment,
   parseAllowedOriginsEnvironment,
   prooflineDelegatedPolicy,
+  snapshotChildOptions,
+  snapshotOptions,
+  snapshotStringArray,
   unsafeGitEnvironmentKey,
 } from "./guard-policy.mjs";
 
@@ -21,6 +35,21 @@ if (!globalThis[installKey]) {
 }
 
 function installGuard() {
+  // Async loaders run in Node's internal thread, outside the public Worker API.
+  // Synchronous registerHooks stays in this guarded runtime (used by Playwright).
+  nodeModule.register = () => {
+    throw new Error(
+      "Proofline unsupported-loader-plane: asynchronous module loaders are not supported.",
+    );
+  };
+  // A Worker starts a separate JS runtime and can discard environment/execArgv.
+  // Threads are unsupported until they have their own reviewed startup guard.
+  // Do not inherit the original constructor or prototype: either would expose it.
+  workerThreads.Worker = class ProoflineUnsupportedWorker {
+    constructor() {
+      throw new Error("Proofline unsupported-worker-plane: Node Worker threads are not supported.");
+    }
+  };
   const allowedOrigins = new Set(
     parseAllowedOriginsEnvironment(process.env.PROOFLINE_ALLOWED_ORIGINS),
   );
@@ -61,9 +90,171 @@ function installGuard() {
     return url;
   };
 
+  // Enforce the actual public Socket connect boundary too: HTTP agents retain
+  // references to native createConnection functions, so module exports alone do
+  // not cover the eventual destination. Numeric addresses avoid resolver routing.
+  const socketOptions = (args, plane) => {
+    if (Array.isArray(args[0])) args = args[0]; // Node's normalized connect overload.
+    let options;
+    let callback;
+    if (args[0] && typeof args[0] === "object") {
+      options = snapshotOptions(args[0], ["host", "hostname", "port", "path", "lookup", "socket"]);
+      callback = args[1];
+    } else {
+      options = { port: args[0] };
+      if (typeof args[1] === "string") {
+        options.host = args[1];
+        callback = args[2];
+      } else callback = args[1];
+    }
+    if (options.path || options.lookup || options.socket)
+      throw new Error(`Proofline egress denied plane=${plane} reason=unsupported-socket-route`);
+    const host = String(options.host ?? options.hostname ?? "localhost");
+    const port = String(options.port ?? "");
+    const normalizedHost = host === "::1" ? "[::1]" : host;
+    if (
+      !/^\d+$/.test(port) ||
+      ![...allowedOrigins].some((origin) => {
+        const url = new URL(origin);
+        return (
+          url.hostname === normalizedHost &&
+          Number(url.port || (url.protocol === "https:" || url.protocol === "wss:" ? 443 : 80)) ===
+            Number(port)
+        );
+      })
+    )
+      throw new Error(
+        `Proofline egress denied plane=${plane} reason=undeclared-numeric-destination`,
+      );
+    return {
+      options: {
+        ...options,
+        host: host.replace(/^\[|\]$/g, ""),
+        hostname: undefined,
+        port: Number(port),
+      },
+      callback,
+    };
+  };
+  const originalSocketConnect = net.Socket.prototype.connect;
+  net.Socket.prototype.connect = function guardedSocketConnect(...args) {
+    const { options, callback } = socketOptions(args, "socket.connect");
+    return originalSocketConnect.call(this, options, callback);
+  };
+  const originalTlsConnect = tls.connect;
+  tls.connect = function guardedTlsConnect(...args) {
+    // TLS also permits (port, host, options, callback); collapse it once.
+    if (typeof args[0] !== "object") {
+      const values = [...args];
+      const port = values.shift();
+      const host = typeof values[0] === "string" ? values.shift() : undefined;
+      const supplied = values[0] && typeof values[0] === "object" ? values.shift() : {};
+      args = [
+        { ...snapshotOptions(supplied), port, ...(host === undefined ? {} : { host }) },
+        values[0],
+      ];
+    }
+    const { options, callback } = socketOptions(args, "tls.connect");
+    return originalTlsConnect.call(this, options, callback);
+  };
+  const unsupportedNetwork = (name) =>
+    function unsupportedNetworkOperation() {
+      throw new Error(`Proofline unsupported-network-plane: ${name} is not supported.`);
+    };
+  // These transports are not used by the supported harness. Deny before native
+  // validation/dispatch, including prototypes held by newly configured resolvers.
+  http2.connect = unsupportedNetwork("http2.connect");
+  const OriginalDatagram = dgram.Socket;
+  for (const key of ["send", "sendto", "connect"])
+    if (typeof OriginalDatagram.prototype[key] === "function")
+      OriginalDatagram.prototype[key] = unsupportedNetwork(`dgram.Socket.${key}`);
+  dgram.createSocket = unsupportedNetwork("dgram.createSocket");
+  dgram.Socket = unsupportedNetwork("dgram.Socket");
+  dgram.Socket.prototype = OriginalDatagram.prototype;
+  Object.defineProperty(OriginalDatagram.prototype, "constructor", {
+    value: dgram.Socket,
+    writable: true,
+    configurable: true,
+  });
+  for (const module of new Set([dns, dnsPromises, dns.promises])) {
+    for (const key of Object.keys(module))
+      if (
+        (key === "lookup" ||
+          key === "lookupService" ||
+          key === "reverse" ||
+          /^resolve/.test(key)) &&
+        typeof module[key] === "function"
+      )
+        module[key] = unsupportedNetwork(`dns.${key}`);
+    for (const key of Object.getOwnPropertyNames(module.Resolver.prototype))
+      if (key === "reverse" || /^resolve/.test(key))
+        module.Resolver.prototype[key] = unsupportedNetwork(`dns.Resolver.${key}`);
+  }
+
+  const syntheticLookup = (hostname, supplied = {}) => {
+    if (
+      typeof hostname !== "string" ||
+      !(
+        hostname === "localhost" ||
+        hostname === "::1" ||
+        /^127\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(hostname)
+      )
+    )
+      throw new Error(
+        "Proofline unsupported-network-plane: dns.lookup supports synthetic loopback names only.",
+      );
+    const options = typeof supplied === "number" ? { family: supplied } : snapshotOptions(supplied);
+    const family =
+      options.family === "IPv6" ? 6 : options.family === "IPv4" ? 4 : (options.family ?? 0);
+    if (![0, 4, 6].includes(family)) throw new TypeError("Unsupported lookup family.");
+    const result =
+      hostname === "localhost"
+        ? { address: family === 6 ? "::1" : "127.0.0.1", family: family === 6 ? 6 : 4 }
+        : { address: hostname, family: net.isIP(hostname) };
+    if (!result.family || (family && family !== result.family))
+      throw new Error("Proofline unsupported-network-plane: dns.lookup address family mismatch.");
+    return options.all ? [result] : result;
+  };
+  const promiseLookup = async (hostname, options) => syntheticLookup(hostname, options);
+  dnsPromises.lookup = promiseLookup;
+  dns.promises.lookup = promiseLookup;
+  dns.lookup = function guardedLookup(hostname, options, callback) {
+    if (typeof options === "function") {
+      callback = options;
+      options = undefined;
+    }
+    const result = syntheticLookup(hostname, options);
+    if (typeof callback !== "function") throw new TypeError("lookup requires a callback.");
+    process.nextTick(() =>
+      Array.isArray(result)
+        ? callback(null, result)
+        : callback(null, result.address, result.family),
+    );
+  };
+  Object.defineProperty(dns.lookup, promisify.custom, { value: promiseLookup });
+
   const originalFetch = globalThis.fetch?.bind(globalThis);
   if (originalFetch) {
     globalThis.fetch = async (input, init = {}) => {
+      init = snapshotOptions(init, [
+        "method",
+        "headers",
+        "body",
+        "signal",
+        "redirect",
+        "dispatcher",
+        "agent",
+        "credentials",
+        "mode",
+        "cache",
+        "referrer",
+        "referrerPolicy",
+        "integrity",
+        "keepalive",
+        "duplex",
+      ]);
+      if (!(input instanceof Request)) input = String(input);
+      if (init.method !== undefined) init.method = String(init.method);
       const method = String(
         init.method ?? (input instanceof Request ? input.method : "GET"),
       ).toUpperCase();
@@ -125,81 +316,147 @@ function installGuard() {
     };
   }
 
-  const optionHeaders = (options) => {
-    if (!options?.headers) return {};
-    if (Array.isArray(options.headers)) return Object.fromEntries(options.headers);
-    return Object.fromEntries(
-      Object.entries(options.headers).map(([name, value]) => [name.toLowerCase(), String(value)]),
-    );
+  const transportKeys = [
+    "_defaultAgent",
+    "defaultAgent",
+    "agent",
+    "createConnection",
+    "lookup",
+    "socketPath",
+    "proxy",
+    "dispatcher",
+    "socket",
+    "connection",
+    "connect",
+  ];
+  const captureHeaderArray = (values) => {
+    const length = values.length;
+    const captured = [];
+    // Indexed capture never consults caller collection helpers, constructor,
+    // Symbol.species or iterator, and always produces an ordinary array.
+    for (let index = 0; index < length; index += 1) captured.push(String(values[index]));
+    return captured;
+  };
+  const connectionOptions = (value, plane) => {
+    const options = snapshotOptions(value ?? {}, [
+      ...transportKeys,
+      "protocol",
+      "hostname",
+      "host",
+      "port",
+      "defaultPort",
+      "path",
+      "method",
+      "auth",
+      "headers",
+    ]);
+    for (const key of transportKeys)
+      if (options[key] !== undefined && options[key] !== false && options[key] !== null)
+        throw new Error(`Proofline egress denied plane=${plane} reason=proxy-or-custom-dispatcher`);
+    for (const key of [
+      "protocol",
+      "hostname",
+      "host",
+      "port",
+      "defaultPort",
+      "path",
+      "method",
+      "auth",
+    ])
+      if (options[key] !== undefined) options[key] = String(options[key]);
+    if (options.headers !== undefined) {
+      const headers = options.headers;
+      if (Array.isArray(headers)) {
+        // Node HTTP accepts a flat raw-header list.
+        options.headers = captureHeaderArray(headers);
+      } else {
+        options.headers = Object.fromEntries(
+          Object.entries(snapshotOptions(headers)).map(([key, value]) => [
+            key,
+            Array.isArray(value) ? captureHeaderArray(value) : String(value),
+          ]),
+        );
+      }
+    }
+    return options;
   };
   const inspectHttp = (plane, protocol, args) => {
     let input;
-    let options = {};
+    let supplied = {};
+    let callback;
     if (typeof args[0] === "string" || args[0] instanceof URL) {
-      input = args[0];
-      if (args[1] && typeof args[1] === "object") options = args[1];
-    } else if (args[0] && typeof args[0] === "object") options = args[0];
-    if (
-      options.agent ||
-      options.createConnection ||
-      options.lookup ||
-      options.socketPath ||
-      options.proxy ||
-      options.dispatcher
-    )
-      throw new Error(
-        `Proofline egress denied plane=${plane} method=${String(options.method ?? "GET").toUpperCase()} origin=<invalid> url=<invalid> reason=proxy-or-tunnel`,
-      );
-    const method = String(options.method ?? "GET").toUpperCase();
-    let inputUrl;
+      // Coerce once and dispatch the resulting plain options, never this URL object.
+      input = String(args[0]);
+      if (typeof args[1] === "function") callback = args[1];
+      else {
+        supplied = args[1] ?? {};
+        callback = args[2];
+      }
+    } else {
+      supplied = args[0] ?? {};
+      callback = args[1];
+    }
+    const options = connectionOptions(supplied, plane);
+    const method = (options.method ?? "GET").toUpperCase();
+    let base;
     try {
-      inputUrl = input ? new URL(String(input)) : undefined;
+      base = input === undefined ? new URL(`${protocol}//127.0.0.1`) : new URL(input);
     } catch {
       throw new Error(
         `Proofline egress denied plane=${plane} method=${method} origin=<invalid> url=<invalid> reason=malformed-url`,
       );
     }
-    const requestedPath = options.path ?? inputUrl?.pathname ?? "/";
-    if (method === "CONNECT" || /^[A-Za-z][A-Za-z0-9+.-]*:\/\//.test(requestedPath)) {
-      const target =
-        inputUrl ??
-        new URL(
-          `${protocol}//${options.hostname ?? options.host ?? "127.0.0.1"}${requestedPath.startsWith("/") ? requestedPath : "/"}`,
-        );
-      throw denied({
-        plane,
-        method,
-        url: target,
-        reason: method === "CONNECT" ? "tunnel" : "proxy",
-      });
+    const inputOptions = input === undefined ? {} : urlToHttpOptions(base);
+    const effective = { ...inputOptions, ...options };
+    const effectiveProtocol = effective.protocol ?? protocol;
+    const hostname = effective.hostname ?? effective.host ?? "localhost";
+    const host = hostname.includes(":") && !hostname.startsWith("[") ? `[${hostname}]` : hostname;
+    const port =
+      effective.port ?? effective.defaultPort ?? (effectiveProtocol === "https:" ? "443" : "80");
+    try {
+      base = new URL(`${effectiveProtocol}//${host}:${port}`);
+    } catch {
+      throw new Error(
+        `Proofline egress denied plane=${plane} method=${method} origin=<invalid> url=<invalid> reason=malformed-url`,
+      );
     }
-    const base = inputUrl ?? new URL(`${protocol}//127.0.0.1`);
-    if (options.protocol) base.protocol = String(options.protocol);
-    if (options.hostname) {
-      const hostname = String(options.hostname);
-      base.hostname =
-        hostname.includes(":") && !hostname.startsWith("[") ? `[${hostname}]` : hostname;
-    } else if (options.host) {
-      const host = String(options.host);
-      const colonCount = (host.match(/:/g) ?? []).length;
-      base.host = colonCount > 1 && !host.startsWith("[") ? `[${host}]` : host;
-    }
-    if (options.port !== undefined) base.port = String(options.port);
-    if (options.path) {
-      const parsedPath = new URL(String(options.path), base);
-      base.pathname = parsedPath.pathname;
-      base.search = parsedPath.search;
-    }
-    if (options.auth) {
-      const [username, password = ""] = String(options.auth).split(":", 2);
-      base.username = username;
-      base.password = password;
-    }
-    const headers = optionHeaders(options);
-    if (headers.host && headers.host.toLowerCase() !== base.host.toLowerCase())
-      throw denied({ plane, method, url: base, reason: "host-header-override" });
+    const requestedPath = effective.path ?? "/";
+    if (method === "CONNECT" || !requestedPath.startsWith("/"))
+      throw denied({ plane, method, url: base, reason: method === "CONNECT" ? "tunnel" : "proxy" });
+    const parsedPath = new URL(requestedPath, base);
+    if (parsedPath.origin !== base.origin)
+      throw denied({ plane, method, url: parsedPath, reason: "proxy" });
+    base.pathname = parsedPath.pathname;
+    base.search = parsedPath.search;
+    if (effective.auth) throw denied({ plane, method, url: base, reason: "credentials" });
+    const headers = effective.headers;
+    const headerEntries = Array.isArray(headers)
+      ? Array.from({ length: headers.length / 2 }, (_, index) => [
+          headers[index * 2],
+          headers[index * 2 + 1],
+        ])
+      : Object.entries(headers ?? {});
+    for (const [key, value] of headerEntries)
+      if (key.toLowerCase() === "host" && String(value).toLowerCase() !== base.host.toLowerCase())
+        throw denied({ plane, method, url: base, reason: "host-header-override" });
     assertUrl({ plane, method, value: base });
-    return { method, url: base };
+    return {
+      method,
+      url: base,
+      args: [
+        {
+          ...effective,
+          protocol: base.protocol,
+          hostname: base.hostname.replace(/^\[|\]$/g, ""),
+          host: undefined,
+          port: Number(port),
+          defaultPort: undefined,
+          path: requestedPath,
+          method,
+        },
+        callback,
+      ],
+    };
   };
 
   for (const [module, protocol, name] of [
@@ -209,38 +466,63 @@ function installGuard() {
     const originalRequest = module.request;
     const originalGet = module.get;
     module.request = function guardedRequest(...args) {
-      inspectHttp(`${name}.request`, protocol, args);
-      return originalRequest.apply(this, args);
+      return originalRequest.apply(this, inspectHttp(`${name}.request`, protocol, args).args);
     };
     module.get = function guardedGet(...args) {
-      inspectHttp(`${name}.get`, protocol, args);
-      return originalGet.apply(this, args);
+      return originalGet.apply(this, inspectHttp(`${name}.get`, protocol, args).args);
     };
     const OriginalClientRequest = module.ClientRequest;
     if (typeof OriginalClientRequest === "function") {
       function ProoflineGuardedClientRequest(...args) {
         const { method, url } = inspectHttp(`${name}.ClientRequest`, protocol, args);
-        throw denied({
-          plane: `${name}.ClientRequest`,
-          method,
-          url,
-          reason: "direct-constructor",
-        });
+        throw denied({ plane: `${name}.ClientRequest`, method, url, reason: "direct-constructor" });
       }
-      Object.setPrototypeOf(ProoflineGuardedClientRequest, OriginalClientRequest);
+      // Share the instance prototype for native methods and instanceof, but replace
+      // its constructor and never inherit the original static constructor.
       ProoflineGuardedClientRequest.prototype = OriginalClientRequest.prototype;
+      Object.defineProperty(OriginalClientRequest.prototype, "constructor", {
+        value: ProoflineGuardedClientRequest,
+        writable: true,
+        configurable: true,
+      });
       module.ClientRequest = ProoflineGuardedClientRequest;
     }
   }
 
   if (globalThis.WebSocket) {
     const OriginalWebSocket = globalThis.WebSocket;
-    globalThis.WebSocket = class ProoflineGuardedWebSocket extends OriginalWebSocket {
-      constructor(url, protocols) {
-        assertUrl({ plane: "websocket", method: "CONNECT", value: url });
-        super(url, protocols);
-      }
-    };
+    function ProoflineGuardedWebSocket(value, protocols) {
+      if (!new.target) throw new TypeError("WebSocket requires new.");
+      const stableValue = new URL(String(value));
+      if (stableValue.protocol === "http:") stableValue.protocol = "ws:";
+      if (stableValue.protocol === "https:") stableValue.protocol = "wss:";
+      const url = assertUrl({ plane: "websocket", method: "CONNECT", value: stableValue });
+      let normalized = protocols;
+      if (protocols && typeof protocols === "object" && !Array.isArray(protocols)) {
+        normalized = connectionOptions(protocols, "websocket");
+        if (normalized.protocols !== undefined)
+          normalized.protocols = Array.isArray(normalized.protocols)
+            ? snapshotStringArray(normalized.protocols, "WebSocket protocols")
+            : String(normalized.protocols);
+      } else if (Array.isArray(protocols))
+        normalized = snapshotStringArray(protocols, "WebSocket protocols");
+      else if (protocols !== undefined) normalized = String(protocols);
+      return Reflect.construct(OriginalWebSocket, [url.href, normalized], new.target);
+    }
+    Object.setPrototypeOf(ProoflineGuardedWebSocket, Object.getPrototypeOf(OriginalWebSocket));
+    ProoflineGuardedWebSocket.prototype = OriginalWebSocket.prototype;
+    Object.defineProperty(OriginalWebSocket.prototype, "constructor", {
+      value: ProoflineGuardedWebSocket,
+      writable: true,
+      configurable: true,
+    });
+    for (const key of ["CONNECTING", "OPEN", "CLOSING", "CLOSED"])
+      Object.defineProperty(
+        ProoflineGuardedWebSocket,
+        key,
+        Object.getOwnPropertyDescriptor(OriginalWebSocket, key),
+      );
+    globalThis.WebSocket = ProoflineGuardedWebSocket;
   }
 
   const delegatedPolicy = (provided) => {
@@ -310,6 +592,7 @@ function installGuard() {
       PROOFLINE_GUARD_PRELOAD: immutablePreload,
       NODE_OPTIONS: mergeGuardNodeOptions(provided.NODE_OPTIONS ?? immutableNodeOptions),
       ...fixedGitEnvironment,
+      ...guardedToolEnvironment,
       GIT_AUTHOR_NAME: "Proofline Guarded",
       GIT_AUTHOR_EMAIL: "proofline@example.invalid",
       GIT_COMMITTER_NAME: "Proofline Guarded",
@@ -317,7 +600,9 @@ function installGuard() {
     };
   };
   const resolveExecutable = (command, environment = process.env) => {
-    const value = String(command);
+    if (typeof command !== "string")
+      throw new Error("Proofline child executable must be a primitive string.");
+    const value = command;
     const candidates = value.includes(path.sep)
       ? [value]
       : String(environment?.PATH ?? process.env.PATH ?? "")
@@ -725,16 +1010,79 @@ function installGuard() {
       `Proofline unsupported-child-plane: executable ${path.basename(executable)} is not an exact reviewed child.`,
     );
   };
+  // Native execFile reconstructs its options, so a Symbol option cannot carry
+  // authority to ChildProcess.spawn. Carry a one-use private token through a fresh
+  // environment instead; remove it before native dispatch and bind it to the
+  // exact file/argv/environment/cwd that the reviewed wrapper already captured.
+  const approvalEnvironmentKey = "PROOFLINE_INTERNAL_CHILD_APPROVAL";
+  const nativeApprovals = new Map();
+  const invocationIdentity = (file, argv, pairs, cwd) =>
+    JSON.stringify([
+      file,
+      argv,
+      [...pairs].sort(),
+      cwd instanceof URL ? fileURLToPath(cwd) : (cwd ?? null),
+    ]);
+  const approvedNativeDispatch = (file, argv, options, invoke) => {
+    const environment = { ...options.env };
+    delete environment[approvalEnvironmentKey];
+    const pairs = Object.entries(environment)
+      .filter(([, value]) => value !== undefined)
+      .map(([key, value]) => `${key}=${value}`);
+    const identity = invocationIdentity(file, [options.argv0 ?? file, ...argv], pairs, options.cwd);
+    const token = randomBytes(32).toString("hex");
+    nativeApprovals.set(token, identity);
+    try {
+      return invoke({ ...options, env: { ...environment, [approvalEnvironmentKey]: token } });
+    } finally {
+      nativeApprovals.delete(token);
+    }
+  };
+  const originalNativeSpawn = childProcess.ChildProcess.prototype.spawn;
+  childProcess.ChildProcess.prototype.spawn = function guardedNativeSpawn(provided) {
+    const options = snapshotOptions(provided);
+    const argv = snapshotStringArray(options.args ?? []);
+    const pairs = snapshotStringArray(options.envPairs ?? [], "native child environment");
+    let token;
+    const environment = [];
+    for (const pair of pairs) {
+      if (pair.startsWith(`${approvalEnvironmentKey}=`)) {
+        if (token !== undefined)
+          throw new Error("Proofline unsupported-child-plane: duplicate native approval.");
+        token = pair.slice(approvalEnvironmentKey.length + 1);
+      } else environment.push(pair);
+    }
+    const approved = nativeApprovals.get(token);
+    nativeApprovals.delete(token);
+    if (
+      approved === undefined ||
+      typeof options.file !== "string" ||
+      approved !== invocationIdentity(options.file, argv, environment, options.cwd)
+    )
+      throw new Error(
+        "Proofline unsupported-child-plane: unapproved low-level child dispatch is denied.",
+      );
+    if (Array.isArray(options.stdio)) options.stdio = Array.from(options.stdio);
+    return originalNativeSpawn.call(this, { ...options, args: argv, envPairs: environment });
+  };
+
   const patchSpawn = (name) => {
     const original = childProcess[name];
     childProcess[name] = function guardedSpawn(command, argsOrOptions, maybeOptions) {
       const hasArgs = Array.isArray(argsOrOptions);
-      const args = hasArgs ? argsOrOptions : undefined;
-      const options = (hasArgs ? maybeOptions : argsOrOptions) ?? {};
+      const args = hasArgs ? snapshotStringArray(argsOrOptions) : undefined;
+      const options = snapshotChildOptions((hasArgs ? maybeOptions : argsOrOptions) ?? {});
       const capability = supportedChild(command, options, args ?? []);
       const delegated = options[prooflineDelegatedPolicy] === true;
       const invocation = nativeChildInvocation(capability, args ?? [], options, delegated);
-      return original.call(this, capability.executable, invocation.argv, invocation.options);
+      if (name === "spawnSync")
+        return original.call(this, capability.executable, invocation.argv, invocation.options);
+      return approvedNativeDispatch(
+        capability.executable,
+        invocation.argv,
+        invocation.options,
+        (options) => original.call(this, capability.executable, invocation.argv, options),
+      );
     };
   };
   patchSpawn("spawn");
@@ -747,11 +1095,11 @@ function installGuard() {
     callback,
   ) {
     const hasArgs = Array.isArray(argsOrOptions);
-    const args = hasArgs ? argsOrOptions : [];
+    const args = hasArgs ? snapshotStringArray(argsOrOptions) : [];
     const candidateOptions = hasArgs ? optionsOrCallback : argsOrOptions;
     const options =
       candidateOptions && typeof candidateOptions === "object" && !Array.isArray(candidateOptions)
-        ? candidateOptions
+        ? snapshotChildOptions(candidateOptions)
         : {};
     const done =
       typeof callback === "function"
@@ -764,21 +1112,21 @@ function installGuard() {
     const capability = supportedChild(file, options, args);
     const delegated = options[prooflineDelegatedPolicy] === true;
     const invocation = nativeChildInvocation(capability, args, options, delegated);
-    return done
-      ? originalExecFile.call(
-          this,
-          capability.executable,
-          invocation.argv,
-          invocation.options,
-          done,
-        )
-      : originalExecFile.call(this, capability.executable, invocation.argv, invocation.options);
+    return approvedNativeDispatch(
+      capability.executable,
+      invocation.argv,
+      invocation.options,
+      (options) =>
+        done
+          ? originalExecFile.call(this, capability.executable, invocation.argv, options, done)
+          : originalExecFile.call(this, capability.executable, invocation.argv, options),
+    );
   };
   const originalExecFileSync = childProcess.execFileSync;
   childProcess.execFileSync = function guardedExecFileSync(file, argsOrOptions, maybeOptions) {
     const hasArgs = Array.isArray(argsOrOptions);
-    const args = hasArgs ? argsOrOptions : [];
-    const options = (hasArgs ? maybeOptions : argsOrOptions) ?? {};
+    const args = hasArgs ? snapshotStringArray(argsOrOptions) : [];
+    const options = snapshotChildOptions((hasArgs ? maybeOptions : argsOrOptions) ?? {});
     const capability = supportedChild(file, options, args);
     const delegated = options[prooflineDelegatedPolicy] === true;
     const invocation = nativeChildInvocation(capability, args, options, delegated);
@@ -792,19 +1140,35 @@ function installGuard() {
   const originalFork = childProcess.fork;
   childProcess.fork = function guardedFork(modulePath, argsOrOptions, maybeOptions) {
     const hasArgs = Array.isArray(argsOrOptions);
-    const args = hasArgs ? argsOrOptions : [];
-    const options = (hasArgs ? maybeOptions : argsOrOptions) ?? {};
+    const args = hasArgs ? snapshotStringArray(argsOrOptions) : [];
+    const options = snapshotChildOptions((hasArgs ? maybeOptions : argsOrOptions) ?? {});
     if (options.execPath && path.resolve(options.execPath) !== path.resolve(process.execPath))
       throw new Error(
         "Proofline unsupported-child-plane: fork requires the guarded Node executable.",
       );
     assertSafeNodeArgv(options.execArgv ?? []);
+    if (options.shell)
+      throw new Error("Proofline unsupported-child-plane: shell child execution is denied.");
+    if (typeof modulePath !== "string" && !(modulePath instanceof URL))
+      throw new Error("Proofline fork module path must be a string or URL.");
+    if (modulePath instanceof URL) modulePath = new URL(modulePath.href);
     if (options.silent === false && options.stdio && options.stdio !== "inherit")
       throw new Error("Proofline unsupported-child-plane: conflicting fork stdio.");
-    return originalFork.call(this, modulePath, args, {
-      ...options,
-      env: forcedChildEnvironment(options.env),
-    });
+    const execArgv = snapshotStringArray(options.execArgv ?? process.execArgv, "fork execArgv");
+    if (options.execArgv === undefined) {
+      // Node's normal fork behavior excludes the parent's eval expression.
+      const evalIndex = Math.max(execArgv.lastIndexOf("-e"), execArgv.lastIndexOf("--eval"));
+      if (evalIndex >= 0) execArgv.splice(evalIndex, 2);
+    }
+    assertSafeNodeArgv(execArgv);
+    const forkOptions = { ...options, execArgv, env: forcedChildEnvironment(options.env) };
+    const nativeModulePath = modulePath instanceof URL ? fileURLToPath(modulePath) : modulePath;
+    return approvedNativeDispatch(
+      forkOptions.execPath || process.execPath,
+      [...execArgv, nativeModulePath, ...args],
+      forkOptions,
+      (options) => originalFork.call(this, nativeModulePath, args, options),
+    );
   };
   for (const name of ["exec", "execSync"]) {
     childProcess[name] = () => {

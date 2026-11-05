@@ -3,6 +3,8 @@ import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import type { Browser, BrowserContext } from "@playwright/test";
+// @ts-expect-error Portable JavaScript init script.
+import { blockUnsupportedBrowserWorkers } from "../../../../tools/proofline/browser-runtime-boundary.mjs";
 import { launchProoflineTestApp } from "../../../../tools/proofline/run-guarded.mjs";
 
 export type WorkerScenarioServer = {
@@ -75,7 +77,17 @@ export async function startWorkerScenarioServer(
   try {
     const ready = await launch.ready;
     dependencies.onReady?.(ready.origin);
-    bootstrap = await (dependencies.createBootstrapContext?.() ?? browser.newContext());
+    bootstrap = await (dependencies.createBootstrapContext?.() ??
+      browser.newContext({ serviceWorkers: "block" }));
+    await bootstrap.addInitScript(blockUnsupportedBrowserWorkers);
+    await bootstrap.route("**/*", (route) =>
+      new URL(route.request().url()).origin === ready.origin
+        ? route.continue()
+        : route.abort("blockedbyclient"),
+    );
+    await bootstrap.routeWebSocket("**/*", (socket) =>
+      socket.close({ code: 1008, reason: "Bootstrap websocket denied" }),
+    );
     const response = await bootstrap
       .newPage()
       .then((page) =>

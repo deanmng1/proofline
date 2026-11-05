@@ -130,3 +130,15 @@ Remote main f4f10c7 has no manifest, as actual record preflight confirms. The se
 ## Final-review repair follow-up
 
 The first fresh d3b80 gate failed its new optional-print fixture under NxFORCE_COLOR=1; preserve that failed attempt. The independent whole-project audit separately found a P1 quoted NODE_OPTIONS preload/inspector startup gap. Strict finite environment grammar and scoped fixture-color repair passed review afterfix1 addressed an introduced apostrophe-path P2 with actual relocated launch/idempotence RED/GREEN. All findings are addressed at scoped task level. Repeat the committed full fresh gate, then update/reverify the Roomboard source bundle against the repaired core and obtain original whole-project evaluator closure before publication. No old pilot snapshot or partial gate becomes a new pass.
+
+## Integrated final cohort checklist
+
+- [x] Complete one ordinary-API source audit and retain frozen6c R1–R5 findings.
+- [x] Implement NodeR1–R4 and generic browserR5 with independent task reviews; retain header-species P2 and Nx compatibility failure/fix evidence.
+- [x] Integrate exact identities, new100%helperfloor, production exclusions and exact generated-MSW ignore; preserve24oldfloors and232196baseauthoredbytes.
+- [x] Pass exact full tools coverage292/292 and all21measured tools floors after fix1.
+- [ ] Obtain the original evaluator's all-five closure against one committed cohort.
+- [ ] Pass a new complete fresh root/work-orders gate, compatibility receipt and actual local release ZIP at that implementation head.
+- [ ] Upgrade Roomboard once to the audited37-file core plus target-owned initializer registration, reverify/review and replace the recommended own-history bundle.
+- [ ] Execute reviewed hosted bootstrap PR/main sequence and strict actual API/native artifact audit.
+- [ ] Complete final independent weighted rating and tracked docs/evidence closeout.

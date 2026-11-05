@@ -108,7 +108,8 @@
       "client/test-entry.jsx",
       "checks/browser/auth.mjs",
       "checks/browser/api.mjs",
-      "checks/browser/scenario.mjs"
+      "checks/browser/scenario.mjs",
+      "tools/proofline/browser-runtime-boundary.mjs"
     ]
   },
   "workspaces": [
