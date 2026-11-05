@@ -143,17 +143,80 @@ export const guardedEnvironment = ({ env = {}, allowedOrigins, allowedChildCapab
   return guarded;
 };
 
+// This is an argv grammar, not Node's complete option catalog. An unknown option must
+// not turn its next token into an apparent script and conceal a later preload.
+const nodeBooleanOptions = new Set([
+  "--enable-source-maps",
+  "--experimental-strip-types",
+  "--experimental-transform-types",
+  "--experimental-import-meta-resolve",
+  "--no-deprecation",
+  "--no-warnings",
+  "--trace-warnings",
+  "--trace-deprecation",
+  "--no-experimental-detect-module",
+  "--no-experimental-require-module",
+]);
+const nodeOperandOptions = new Map([
+  ["--conditions", (value) => value.length > 0],
+  ["-C", (value) => value.length > 0],
+  [
+    "--input-type",
+    (value) => ["module", "commonjs", "module-typescript", "commonjs-typescript"].includes(value),
+  ],
+  [
+    "--unhandled-rejections",
+    (value) => ["strict", "throw", "warn", "none", "warn-with-error-code"].includes(value),
+  ],
+  ["--max-old-space-size", (value) => /^[1-9]\d*$/.test(value)],
+  ["--max-semi-space-size", (value) => /^[1-9]\d*$/.test(value)],
+  ["--stack-trace-limit", (value) => /^\d+$/.test(value)],
+  ["--eval", () => true],
+  ["-e", () => true],
+]);
+// Print's expression is optional. Only the separate form is supported: Node's
+// --print=... spelling can still consume the next token as its expression.
+const nodeOptionalPrintOptions = new Set(["--print", "-p"]);
+// V8's numeric options require their operand in the same argv token.
+const nodeEqualsOnlyOptions = new Set([
+  "--max-old-space-size",
+  "--max-semi-space-size",
+  "--stack-trace-limit",
+]);
+
 export const assertSafeNodeArgv = (argv = []) => {
-  for (const value of argv) {
-    if (value === "--") break;
-    if (!value.startsWith("-")) break;
+  const reject = () => {
+    throw new Error(
+      "Proofline unsupported-child-plane: Node argv cannot replace preload execution or use an unreviewed option boundary.",
+    );
+  };
+  if (
+    !Array.isArray(argv) ||
+    argv.some((value) => typeof value !== "string" || value.includes("\0"))
+  )
+    reject();
+  for (let index = 0; index < argv.length; index += 1) {
+    const value = argv[index];
+    // Node stops option processing at a script, stdin, or the explicit separator.
+    if (value === "--" || value === "-" || !value.startsWith("-")) return;
+    if (nodeBooleanOptions.has(value)) continue;
+    if (nodeOptionalPrintOptions.has(value)) {
+      const next = argv[index + 1];
+      // A dash-prefixed token remains an option (or --/stdin), never source.
+      if (next !== undefined && !next.startsWith("-")) index += 1;
+      continue;
+    }
+    const equals = value.indexOf("=");
+    const option = equals < 0 ? value : value.slice(0, equals);
+    const validate = nodeOperandOptions.get(option);
+    if (!validate || (equals < 0 && nodeEqualsOnlyOptions.has(option))) reject();
+    const operand = equals < 0 ? argv[++index] : value.slice(equals + 1);
     if (
-      /^(?:--require|-r|--import|--loader|--experimental-loader)(?:=|$)/.test(value) ||
-      /^--inspect(?:-brk|-port)?(?:=|$)/.test(value) ||
-      /^--run(?:=|$)/.test(value)
+      typeof operand !== "string" ||
+      (equals < 0 && operand.startsWith("-")) ||
+      !validate(operand)
     )
-      throw new Error(
-        "Proofline unsupported-child-plane: Node argv cannot replace preload execution.",
-      );
+      reject();
+    // Eval consumes source, but does not end Node option parsing.
   }
 };

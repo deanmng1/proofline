@@ -61,22 +61,54 @@ export const assertProductionNegativeArtifact = ({
   const artifactFiles = new Set(files.map((file) => file.relative));
   const repositoryRootReal = realpathSync(repositoryRoot);
   const normalizeModuleId = (raw: string) => {
-    const withoutVirtualPrefix = raw.replace(/^\0+/, "");
-    const withoutQuery = withoutVirtualPrefix.split(/[?#]/, 1)[0];
-    if (!path.isAbsolute(withoutQuery))
-      return withoutQuery.replaceAll("\\", "/").replace(/^\.\//, "");
-    const relative = path.relative(repositoryRootReal, withoutQuery);
-    if (relative.startsWith(`..${path.sep}`) || path.isAbsolute(relative)) throw new Error();
-    return relative.split(path.sep).join("/");
+    if (typeof raw !== "string" || !raw || raw.trim() !== raw)
+      throw new Error("Invalid production module identity");
+    const virtual = raw.startsWith("\0");
+    const body = virtual ? raw.slice(1) : raw;
+    if (
+      !body ||
+      Array.from(body).some(
+        (character) => character.charCodeAt(0) < 32 || character.charCodeAt(0) === 127,
+      )
+    )
+      throw new Error("Invalid production module identity");
+    const queryIndex = body.search(/[?#]/);
+    const bare = queryIndex < 0 ? body : body.slice(0, queryIndex);
+    const suffix = queryIndex < 0 ? "" : body.slice(queryIndex);
+    if (!bare) throw new Error("Invalid production module identity");
+    // Explicit plugin namespaces are opaque, never resolved as filesystem paths.
+    // NUL-prefixed filesystem proxy IDs still receive the same path validation and
+    // forbidden-file comparison as their underlying module.
+    if (bare.startsWith("virtual:")) {
+      if (bare === "virtual:") throw new Error("Invalid production module identity");
+      return { file: bare, identity: `${virtual ? "\0" : ""}${bare}${suffix}` };
+    }
+    const portable = bare.replaceAll("\\", "/");
+    if (/^[A-Za-z]:/.test(portable) || bare.startsWith("\\"))
+      throw new Error("Invalid production module identity");
+    const absolute = portable.startsWith("/");
+    const candidate = absolute ? portable.slice(1) : portable.replace(/^\.\//, "");
+    if (candidate.split("/").some((part) => !part || part === "." || part === ".."))
+      throw new Error("Invalid production module identity");
+    const file = absolute
+      ? path.relative(repositoryRootReal, portable).split(path.sep).join("/")
+      : candidate;
+    if (!file || file === ".." || file.startsWith("../") || path.isAbsolute(file))
+      throw new Error("Invalid production module identity");
+    // Queries and virtual proxies are separate graph nodes; absolute/relative and
+    // separator aliases of the same file plus suffix are the same identity.
+    return { file, identity: `${virtual ? "\0" : ""}${file}${suffix}` };
   };
-  const configuredForbiddenModules = new Set(forbiddenModules.map(normalizeModuleId));
+  const configuredForbiddenModules = new Set(
+    forbiddenModules.map((raw) => normalizeModuleId(raw).file),
+  );
   const genericForbiddenModules = [
     /(?:^|\/)src\/mocks\//,
     /(?:^|\/)src\/test-entry\.[cm]?[jt]sx?$/,
     /(?:^|\/)src\/test-capability\.[cm]?[jt]sx?$/,
   ];
   const inspectModuleReference = (raw: string, owner: string) => {
-    const normalized = normalizeModuleId(raw);
+    const normalized = normalizeModuleId(raw).file;
     if (
       configuredForbiddenModules.has(normalized) ||
       genericForbiddenModules.some((pattern) => pattern.test(normalized))
@@ -102,6 +134,12 @@ export const assertProductionNegativeArtifact = ({
       )
         throw new Error();
       const entries = new Set(Object.keys(parsed));
+      const entryIdentities = new Set<string>();
+      for (const entryId of entries) {
+        const { identity } = normalizeModuleId(entryId);
+        if (entryIdentities.has(identity)) throw new Error();
+        entryIdentities.add(identity);
+      }
       for (const [entryId, rawEntry] of Object.entries(parsed)) {
         if (!entryId || !rawEntry || typeof rawEntry !== "object" || Array.isArray(rawEntry))
           throw new Error();
@@ -179,10 +217,10 @@ export const assertProductionNegativeArtifact = ({
         declaredFiles.add(chunk.file);
         for (const module of chunk.modules) {
           if (typeof module !== "string" || !module) throw new Error();
-          const normalizedModule = normalizeModuleId(module);
-          if (!normalizedModule || declaredModules.has(normalizedModule)) throw new Error();
-          declaredModules.add(normalizedModule);
-          inspectModuleReference(normalizedModule, chunk.file);
+          const { identity } = normalizeModuleId(module);
+          if (declaredModules.has(identity)) throw new Error();
+          declaredModules.add(identity);
+          inspectModuleReference(module, chunk.file);
         }
         for (const imported of [...chunk.imports, ...chunk.dynamicImports]) {
           if (typeof imported !== "string") throw new Error();

@@ -1,4 +1,4 @@
-import { execFile, execFileSync, spawn, spawnSync } from "node:child_process";
+import { execFile, execFileSync, fork, spawn, spawnSync } from "node:child_process";
 import {
   appendFileSync,
   chmodSync,
@@ -349,4 +349,60 @@ test("canonical_unit_runner_establishes_manifest_artifacts_before_vitest", () =>
   const testIndex = unitBranch.indexOf("for (const target of execution.unitTargets)");
   expect(buildIndex).toBeGreaterThanOrEqual(0);
   expect(testIndex).toBeGreaterThan(buildIndex);
+});
+
+test("canonical_unit_runner_rejects_operand_hidden_preloads_before_all_child_dispatches", async () => {
+  const sentinel = path.join(temporary, "preload.cjs");
+  const marker = path.join(temporary, "preload-ran");
+  const childFile = path.join(temporary, "ordinary-child.mjs");
+  writeFileSync(sentinel, `require("node:fs").writeFileSync(${JSON.stringify(marker)}, "ran");`);
+  writeFileSync(childFile, "process.exitCode = 0;");
+  const completed = (child: ReturnType<typeof spawn>) =>
+    new Promise<void>((resolve, reject) => {
+      child.once("error", reject);
+      child.once("close", () => resolve());
+    });
+  const optionCases = [
+    ["--conditions", "proofline", "--require", sentinel],
+    ["--conditions=proofline", "--require", sentinel],
+    ["-C", "proofline", "--require", sentinel],
+    ...["-p", "--print"].flatMap((option) => [
+      [option, "-r", sentinel, "-e", "0"],
+      [option, `-r${sentinel}`, "-e", "0"],
+      [option, "--no-warnings", "-r", sentinel, "-e", "0"],
+    ]),
+    ["--print=1", "0", "-r", sentinel, "-e", "0"],
+  ];
+  for (const options of optionCases) {
+    const argv = [...options, childFile];
+    const attempts = {
+      spawn: () => completed(spawn(process.execPath, argv)),
+      spawnSync: () => {
+        spawnSync(process.execPath, argv);
+      },
+      execFile: () =>
+        new Promise<void>((resolve, reject) =>
+          execFile(process.execPath, argv, (error) => (error ? reject(error) : resolve())),
+        ),
+      execFileSync: () => {
+        execFileSync(process.execPath, argv);
+      },
+      fork: () => completed(fork(childFile, [], { execArgv: options, silent: true })),
+    };
+    for (const [method, attempt] of Object.entries(attempts)) {
+      let denial = "dispatched";
+      try {
+        await attempt();
+      } catch (error) {
+        denial = String(error);
+      }
+      expect
+        .soft({ denial, sentinelRan: existsSync(marker) }, `${JSON.stringify(options)} ${method}`)
+        .toEqual({
+          denial: expect.stringContaining("unsupported-child-plane"),
+          sentinelRan: false,
+        });
+      rmSync(marker, { force: true });
+    }
+  }
 });

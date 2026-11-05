@@ -944,4 +944,181 @@ describe("Proofline egress guard", () => {
       ] as never),
     ).toThrow(/only executable and purpose/i);
   });
+  test("rejects_node_execution_overrides_after_supported_option_operands", () => {
+    for (const prefix of [
+      ["--conditions", "proofline"],
+      ["--conditions=proofline"],
+      ["-C", "proofline"],
+      ["--input-type", "module"],
+    ]) {
+      for (const forbidden of [
+        "--require",
+        "-r",
+        "--import",
+        "--loader",
+        "--experimental-loader",
+        "--inspect",
+        "--inspect-brk",
+        "--inspect-port",
+        "--run",
+      ]) {
+        expect
+          .soft(
+            () => assertSafeNodeArgv([...prefix, forbidden, "sentinel", "-e", "0"]),
+            `${prefix} ${forbidden}`,
+          )
+          .toThrow(/unsupported-child-plane/);
+        expect
+          .soft(() => assertSafeNodeArgv([...prefix, `${forbidden}=sentinel`, "-e", "0"]))
+          .toThrow(/unsupported-child-plane/);
+      }
+    }
+    for (const argv of [
+      ["--unknown-option", "value", "--require", "sentinel"],
+      ["--conditions"],
+      ["--conditions="],
+      ["--conditions", "--require", "sentinel"],
+      ["-rsentinel"],
+      ["--no-warnings=false"],
+      ["--input-type", "invalid"],
+      ["--max-old-space-size=0"],
+      ["--max-old-space-size", "256"],
+      ["--max-semi-space-size", "8"],
+      ["--stack-trace-limit", "10"],
+      ["--max-semi-space-size", "invalid"],
+      ["--stack-trace-limit=-1"],
+      ["--unhandled-rejections=invalid"],
+    ])
+      expect
+        .soft(() => assertSafeNodeArgv(argv), JSON.stringify(argv))
+        .toThrow(/unsupported-child-plane/);
+  });
+
+  test("preserves_supported_node_operands_and_true_script_boundaries", async () => {
+    const child = script("argv-control.mjs", "console.log(JSON.stringify(process.argv.slice(2)));");
+    const cases = [
+      ["--conditions", "proofline", "-e", "console.log('[]')"],
+      ["--conditions=proofline", child],
+      ["-C", "proofline", child],
+      ["--input-type", "module", "--no-warnings", "-e", "console.log('[]')"],
+      [
+        "--input-type=module",
+        "--experimental-strip-types",
+        "--enable-source-maps",
+        "-e",
+        "console.log('[]')",
+      ],
+      ["--unhandled-rejections", "strict", "--max-old-space-size=256", child],
+      ["--max-semi-space-size=8", "--stack-trace-limit=10", "-p", "JSON.stringify([])"],
+      [child, "--require", "ordinary-app-argument"],
+      ["--", child, "--import=ordinary-app-argument"],
+      [
+        "-e",
+        "console.log(JSON.stringify(process.argv.slice(1)))",
+        "--",
+        "--require",
+        "ordinary-app-argument",
+      ],
+    ];
+    const expected = [
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      ["--require", "ordinary-app-argument"],
+      ["--import=ordinary-app-argument"],
+      ["--require", "ordinary-app-argument"],
+    ];
+    for (const [index, argv] of cases.entries()) {
+      const result = await withProoflineGuard([process.execPath, ...argv], {
+        allowedOrigins: [allowedOrigin],
+      });
+      expect(result.code, result.stderr).toBe(0);
+      expect(JSON.parse(result.stdout)).toEqual(expected[index]);
+    }
+  });
+
+  test("rejects_direct_operand_hidden_preloads_before_sentinel_execution", async () => {
+    const marker = path.join(temporaryRoot, "direct-preload-ran");
+    const sentinel = script(
+      "direct-preload.cjs",
+      `require("node:fs").writeFileSync(${JSON.stringify(marker)}, "ran");`,
+    );
+    const attempts = [
+      ...["--require", "--import"].map((option) => [
+        "--conditions",
+        "proofline",
+        option,
+        sentinel,
+        "-e",
+        "0",
+      ]),
+      ...["-p", "--print"].flatMap((option) => [
+        [option, "-r", sentinel, "-e", "0"],
+        [option, `-r${sentinel}`, "-e", "0"],
+        [option, "--no-warnings", "-r", sentinel, "-e", "0"],
+      ]),
+      ["--print=1", "0", "-r", sentinel, "-e", "0"],
+    ];
+    for (const argv of attempts) {
+      let denial = "dispatched";
+      try {
+        await withProoflineGuard([process.execPath, ...argv], { allowedOrigins: [allowedOrigin] });
+      } catch (error) {
+        denial = String(error);
+      }
+      expect.soft({ denial, sentinelRan: existsSync(marker) }, JSON.stringify(argv)).toEqual({
+        denial: expect.stringContaining("unsupported-child-plane"),
+        sentinelRan: false,
+      });
+      rmSync(marker, { force: true });
+    }
+  });
+
+  test("preserves_optional_print_expressions_without_hiding_node_options", async () => {
+    const child = script(
+      "print-control.mjs",
+      "console.log(JSON.stringify(process.argv.slice(2)));",
+    );
+    for (const option of ["-p", "--print"]) {
+      const cases = [
+        { argv: [option], output: "undefined" },
+        { argv: [option, "JSON.stringify([])"], output: "[]" },
+        { argv: [option, "\\-1"], output: "-1" },
+        { argv: [option, "-e", "JSON.stringify([])"], output: "[]" },
+        { argv: [option, "--no-warnings", "-e", "JSON.stringify([])"], output: "[]" },
+        {
+          argv: [option, "--", child, "-r", "ordinary-app-argument"],
+          output: '["-r","ordinary-app-argument"]',
+        },
+      ];
+      for (const { argv, output } of cases) {
+        let result: GuardedRunResult | undefined;
+        let error: unknown;
+        try {
+          result = await withProoflineGuard([process.execPath, ...argv], {
+            allowedOrigins: [allowedOrigin],
+          });
+        } catch (caught) {
+          error = caught;
+        }
+        expect.soft(error, JSON.stringify(argv)).toBeUndefined();
+        expect.soft(result?.code, result?.stderr).toBe(0);
+        expect.soft(result?.stdout.trim(), JSON.stringify(argv)).toBe(output);
+      }
+    }
+    for (const argv of [
+      ["--print=1"],
+      ["-p=1"],
+      ["-p", "-1"],
+      ["--eval", "-r"],
+      ["--conditions", "-r"],
+    ])
+      expect
+        .soft(() => assertSafeNodeArgv(argv), JSON.stringify(argv))
+        .toThrow(/unsupported-child-plane/);
+  });
 });
