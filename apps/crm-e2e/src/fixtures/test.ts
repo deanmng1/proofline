@@ -17,6 +17,29 @@ type CrmFixtures = {
 };
 type CrmWorkerFixtures = { workerServer: WorkerScenarioServer };
 
+export async function teardownScenarioFactory(
+  created: Iterable<ProoflineScenario>,
+  bodyError?: unknown,
+) {
+  const cleanup = await Promise.allSettled(
+    [...created].map(async (scenario) => {
+      const errors: unknown[] = [];
+      await scenario.assertNoUnexpectedRequests().catch((error) => errors.push(error));
+      await scenario.reset().catch((error) => errors.push(error));
+      if (errors.length)
+        throw new AggregateError(errors, `Scenario ${scenario.id} egress or cleanup failed.`);
+    }),
+  );
+  const cleanupErrors = cleanup
+    .filter((result) => result.status === "rejected")
+    .map((result) => (result as PromiseRejectedResult).reason);
+  if (bodyError || cleanupErrors.length)
+    throw new AggregateError(
+      [...(bodyError ? [bodyError] : []), ...cleanupErrors],
+      "Scenario factory or cleanup failed.",
+    );
+}
+
 export const test = base.extend<CrmFixtures, CrmWorkerFixtures>({
   workerServer: [
     async ({ browser }, use, workerInfo) => {
@@ -90,25 +113,9 @@ export const test = base.extend<CrmFixtures, CrmWorkerFixtures>({
     } catch (error) {
       bodyError = error;
     }
-    const cleanup = await Promise.allSettled(
-      [...created].map(async (scenario) => {
-        const errors: unknown[] = [];
-        await scenario.assertNoUnexpectedRequests().catch((error) => errors.push(error));
-        await scenario.reset().catch((error) => errors.push(error));
-        if (errors.length)
-          throw new AggregateError(errors, `Scenario ${scenario.id} egress or cleanup failed.`);
-      }),
-    );
-    const cleanupErrors = cleanup
-      .filter((result) => result.status === "rejected")
-      .map((result) => (result as PromiseRejectedResult).reason);
-    if (!bodyError && cleanupErrors.length === 0 && testInfo.status === testInfo.expectedStatus)
+    await teardownScenarioFactory(created, bodyError);
+    if (testInfo.status === testInfo.expectedStatus)
       rmSync(videoDirectory, { recursive: true, force: true });
-    if (bodyError || cleanupErrors.length)
-      throw new AggregateError(
-        [...(bodyError ? [bodyError] : []), ...cleanupErrors],
-        "Scenario factory or cleanup failed.",
-      );
   },
   scenario: async ({ scenarioFactory, scenarioOptions, seed }, use) => {
     const scenario = scenarioFactory({ seed, ...scenarioOptions });

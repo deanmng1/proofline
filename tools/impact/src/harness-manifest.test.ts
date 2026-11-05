@@ -10,7 +10,11 @@ import {
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { afterEach, expect, test } from "vitest";
-import { validateHarness } from "./harness-manifest.ts";
+import {
+  harnessManifestSchema,
+  validateHarness,
+  validateHarnessAuthority,
+} from "./harness-manifest.ts";
 import { main } from "./main.ts";
 
 const roots: string[] = [];
@@ -675,4 +679,68 @@ test("uses_the_most_specific_workspace_for_binding_command_validation", () => {
   expect(validateHarness({ cwd, manifest: configured }).errors.join(" ")).toMatch(
     /Ambiguous workspace/,
   );
+});
+
+test("validates portable execution metadata and rejects missing references or escaping runner paths", async () => {
+  const { manifest } = fixture();
+  const execution = {
+    unitBuildCommands: ["serve"],
+    unitTargets: [{ argv: ["run", "app/src"], cwd: "." }],
+    browserBuildCommands: [],
+    browserArgs: ["test", "--config", "app/playwright.config.ts"],
+  };
+  expect(harnessManifestSchema.safeParse({ ...manifest, execution }).success).toBe(true);
+  expect(
+    validateHarnessAuthority({
+      ...manifest,
+      execution: { ...execution, unitBuildCommands: ["absent"] },
+    }).errors.join(" "),
+  ).toMatch(/Unknown execution/);
+  for (const argv of [["watch"], ["run", "--reporter=json"], ["run", "--config", "../escape.ts"]]) {
+    expect(
+      validateHarnessAuthority({
+        ...manifest,
+        execution: { ...execution, unitTargets: [{ argv, cwd: "." }] },
+      }).errors.length,
+    ).toBeGreaterThan(0);
+  }
+  expect(
+    harnessManifestSchema.safeParse({
+      ...manifest,
+      execution: { ...execution, unitTargets: [{ argv: ["run"], cwd: "../escape" }] },
+    }).success,
+  ).toBe(false);
+  expect(
+    harnessManifestSchema.safeParse({
+      ...manifest,
+      execution: { ...execution, browserArgs: ["test"] },
+    }).success,
+  ).toBe(false);
+});
+
+test("execution metadata cannot direct coverage cleanup over retained evidence", () => {
+  const { manifest } = fixture();
+  const execution = {
+    unitBuildCommands: [],
+    unitTargets: [
+      { argv: ["run", "--coverage", "--coverage.reportsDirectory=artifacts/coverage"], cwd: "." },
+    ],
+    browserBuildCommands: [],
+    browserArgs: ["test", "--config", "app/playwright.config.ts"],
+  };
+  expect(validateHarnessAuthority({ ...manifest, execution }).errors).toEqual([]);
+  for (const option of [
+    ["--coverage.reportsDirectory=artifacts/proofline/runs/previous"],
+    ["--coverage.reportsDirectory", "artifacts"],
+    ["--coverage.reportsDirectory=."],
+  ])
+    expect(
+      validateHarnessAuthority({
+        ...manifest,
+        execution: {
+          ...execution,
+          unitTargets: [{ argv: ["run", "--coverage", ...option], cwd: "." }],
+        },
+      }).errors.join(" "),
+    ).toMatch(/protected execution evidence/);
 });

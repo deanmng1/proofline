@@ -3,7 +3,7 @@ import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "nod
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { describe, expect, test } from "vitest";
-import { main } from "./main.ts";
+import { main, runSelection } from "./main.ts";
 import { parsePlaywrightIdentities } from "./playwright-discovery.ts";
 import * as selection from "./select.ts";
 import * as validation from "./validate.ts";
@@ -209,4 +209,56 @@ test("rejects_extra_catalog_evidence_without_a_manifest_binding", () => {
       } as unknown as import("./types.ts").HarnessManifest)
       .errors.join(" "),
   ).toMatch(/Unbound catalog evidence/);
+});
+
+test("selected Playwright runtime skips and expected failures cannot satisfy execution", async () => {
+  const cwd = mkdtempSync(path.join(tmpdir(), "impact-required-browser-"));
+  try {
+    const selected = { path: "tests/required.spec.ts", title: "required", line: 1, tags: [] };
+    const plans = [
+      {
+        argv: [process.execPath, "fixture.cjs", "playwright", "test"],
+        cwd: ".",
+        workspace: "tests",
+        runner: "playwright" as const,
+        dependencies: [],
+      },
+    ];
+    for (const outcome of ["passed", "skipped", "expected-failure"]) {
+      const report = {
+        config: { rootDir: path.join(cwd, "tests") },
+        suites: [
+          {
+            specs: [
+              {
+                file: "required.spec.ts",
+                title: "required",
+                line: 1,
+                tags: [],
+                tests: [
+                  {
+                    projectName: "chromium",
+                    expectedStatus: outcome === "expected-failure" ? "failed" : "passed",
+                    status: "expected",
+                    results: [
+                      { status: outcome === "expected-failure" ? "failed" : outcome, retry: 0 },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      };
+      writeFileSync(
+        path.join(cwd, "fixture.cjs"),
+        `process.stdout.write(${JSON.stringify(JSON.stringify(report))});`,
+      );
+      const execute = () => runSelection(cwd, { vitest: [], playwright: [selected] }, plans);
+      if (outcome === "passed") expect(execute).not.toThrow();
+      else expect(execute).toThrow(/genuinely execute/);
+    }
+  } finally {
+    rmSync(cwd, { recursive: true, force: true });
+  }
 });

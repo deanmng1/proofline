@@ -334,13 +334,15 @@ test("canonical_unit_runner_establishes_manifest_artifacts_before_vitest", () =>
   const runner = readFileSync("tools/proofline/canonical-runner.mjs", "utf8");
   const manifest = JSON.parse(readFileSync("proofline.harness.json", "utf8")) as {
     commands: Record<string, { argv: string[]; cwd: string }>;
+    execution: { unitBuildCommands: string[]; unitTargets: { argv: string[]; cwd: string }[] };
   };
   expect(manifest.commands.buildProduction).toEqual({ argv: ["pnpm", "build"], cwd: "." });
   expect(manifest.commands.buildTest).toEqual({ argv: ["pnpm", "build:test"], cwd: "." });
-  expect(runner).toContain('const unitBuildCommandKeys = ["buildProduction", "buildTest"]');
+  expect(manifest.execution.unitBuildCommands).toEqual(["buildProduction", "buildTest"]);
+  expect(manifest.execution.unitTargets.length).toBeGreaterThan(0);
   const unitBranch = runner.slice(runner.indexOf('if (mode === "unit")'));
-  const buildIndex = unitBranch.indexOf("runManifestCommands(unitBuildCommandKeys)");
-  const testIndex = unitBranch.indexOf("unitArguments()");
+  const buildIndex = unitBranch.indexOf("runManifestCommands(execution.unitBuildCommands)");
+  const testIndex = unitBranch.indexOf("for (const target of execution.unitTargets)");
   expect(buildIndex).toBeGreaterThanOrEqual(0);
   expect(testIndex).toBeGreaterThan(buildIndex);
 });

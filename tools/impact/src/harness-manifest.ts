@@ -10,6 +10,8 @@ import {
 import path from "node:path";
 import ts from "typescript";
 import { z } from "zod";
+// @ts-expect-error Portable runtime module also runs directly under Node.
+import { assertControlledOutputs } from "../../proofline/execution-artifacts.mjs";
 import type { DiscoveredTests } from "./types.ts";
 import { relativePath, rulesSchema } from "./validate.ts";
 import { resolveWorkspace } from "./workspaces.ts";
@@ -101,6 +103,39 @@ const coverageSchema = z
 export const harnessManifestSchema = z
   .object({
     version: z.literal(1),
+    execution: z
+      .object({
+        unitBuildCommands: z.array(text),
+        unitTargets: z
+          .array(
+            z
+              .object({
+                argv: z
+                  .array(text)
+                  .min(1)
+                  .refine((args) => args[0] === "run", "Vitest target must begin with run"),
+                cwd: z.union([z.literal("."), relativePath]),
+              })
+              .strict(),
+          )
+          .min(1),
+        browserBuildCommands: z.array(text),
+        browserArgs: z
+          .array(text)
+          .min(3)
+          .refine(
+            (args) =>
+              args[0] === "test" &&
+              args.some((arg) => arg === "--config" || arg.startsWith("--config=")),
+            "Browser args require test and explicit config",
+          ),
+      })
+      .strict()
+      .optional(),
+    production: z
+      .object({ directory: relativePath, forbiddenModules: z.array(relativePath).min(1) })
+      .strict()
+      .optional(),
     commands: z
       .record(text, commandSchema)
       .refine(
@@ -193,6 +228,42 @@ export const validateHarnessAuthority = (input: unknown) => {
   const unique = (values: string[], label: string) => {
     if (new Set(values).size !== values.length) errors.push(`Duplicate ${label}`);
   };
+  if (manifest.execution) {
+    for (const key of [
+      ...manifest.execution.unitBuildCommands,
+      ...manifest.execution.browserBuildCommands,
+    ])
+      if (!manifest.commands[key]) errors.push(`Unknown execution build command: ${key}`);
+    for (const target of [
+      ...manifest.execution.unitTargets,
+      { argv: manifest.execution.browserArgs, cwd: "." },
+    ]) {
+      const args = target.argv;
+      try {
+        assertControlledOutputs(args, {
+          cwd: path.resolve(target.cwd),
+          protectedRoot: path.resolve("artifacts/proofline"),
+        });
+      } catch (error) {
+        errors.push(String(error));
+      }
+      if (
+        args.some((arg) => /^--(?:output(?:File|Dir)?|reporter|watch|ui|list)(?:[.=]|$)/.test(arg))
+      )
+        errors.push("Unsupported execution runner output/discovery option");
+      for (let index = 0; index < args.length; index++) {
+        const arg = args[index];
+        const value =
+          arg.startsWith("--config=") || arg.startsWith("--root=")
+            ? arg.slice(arg.indexOf("=") + 1)
+            : ["--config", "--root"].includes(arg)
+              ? args[++index]
+              : undefined;
+        if (value !== undefined && !relativePath.safeParse(value).success && value !== ".")
+          errors.push("Execution config/root must remain in repository");
+      }
+    }
+  }
   const workspaces = manifest.workspaces.map((workspace) => workspace.path);
   unique(workspaces, "workspace path");
   unique(

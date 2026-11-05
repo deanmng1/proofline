@@ -84,6 +84,41 @@
       "branches": 0,
       "functions": 0,
       "statements": 0
+    },
+    "tools/proofline/execution-artifacts.mjs": {
+      "report": "artifacts/coverage/proofline-tools/coverage-summary.json",
+      "lines": 60,
+      "branches": 87,
+      "functions": 50,
+      "statements": 60
+    },
+    "tools/proofline/execution-verification.mjs": {
+      "report": "artifacts/coverage/proofline-tools/coverage-summary.json",
+      "lines": 100,
+      "branches": 82,
+      "functions": 100,
+      "statements": 100
+    },
+    "tools/proofline/test-fixtures/runner.ts": {
+      "report": "artifacts/coverage/proofline-tools/coverage-summary.json",
+      "lines": 100,
+      "branches": 100,
+      "functions": 100,
+      "statements": 100
+    },
+    "tools/proofline/vitest-execution.mjs": {
+      "report": "artifacts/coverage/proofline-tools/coverage-summary.json",
+      "lines": 0,
+      "branches": 0,
+      "functions": 0,
+      "statements": 0
+    },
+    "tools/proofline/vitest-native-reporter.mjs": {
+      "report": "artifacts/coverage/proofline-tools/coverage-summary.json",
+      "lines": 0,
+      "branches": 0,
+      "functions": 0,
+      "statements": 0
     }
   }
 }

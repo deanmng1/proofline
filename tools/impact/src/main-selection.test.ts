@@ -68,6 +68,10 @@ test("runs_only_one_declared_vitest_and_playwright_identity", () => {
       `const { spawnSync } = require("node:child_process");
 const cli = process.argv[2] === "vitest" ? ${JSON.stringify(repositoryVitestCli)} : ${JSON.stringify(repositoryPlaywrightCli)};
 const result = spawnSync(process.execPath, [cli, ...process.argv.slice(3)], { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] });
+if (process.argv[2] === "playwright" && !process.argv.includes("--list") && result.stdout?.trim().startsWith("{")) {
+  require("node:fs").mkdirSync("artifacts", { recursive: true });
+  require("node:fs").writeFileSync("artifacts/ran.json", result.stdout);
+}
 process.stdout.write(result.stdout || ""); process.stderr.write(result.stderr || ""); process.exit(result.status ?? 1);`,
     );
     write(

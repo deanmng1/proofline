@@ -1,7 +1,7 @@
 import { readdir, readFile } from "node:fs/promises";
 import { createScenario, type ProoflineScenario, type ScenarioOptions } from "./scenario";
 import { startWorkerScenarioServer, type WorkerScenarioServer } from "./scenario-server";
-import { expect, test } from "./test";
+import { expect, teardownScenarioFactory, test } from "./test";
 
 type IsolationEvidence = {
   type: "worker" | "scenario";
@@ -783,13 +783,18 @@ test("worker_setup_stops_the_server_when_bootstrap_close_fails", { tag: "@scenar
 });
 
 test("factory_teardown_rejects_an_unacknowledged_caught_denial", { tag: "@egress" }, async ({
-  scenarioFactory,
+  browser,
+  workerServer,
 }) => {
-  test.fail();
-  const scenario = scenarioFactory({ id: "unacknowledged-denial" });
+  const scenario = createScenario({ browser, workerServer, id: "unacknowledged-denial" });
   const page = await scenario.newPage();
   await page.goto("/login");
   await page.evaluate(() => fetch("https://unacknowledged.invalid/caught").catch(() => undefined));
+  const error = await teardownScenarioFactory([scenario]).catch((error: unknown) => error);
+  expect(error).toBeInstanceOf(AggregateError);
+  const errors = (error as AggregateError).errors.flatMap((error: AggregateError) => error.errors);
+  expect(errors.map(String).join(" ")).toContain("https://unacknowledged.invalid/caught");
+  expect(page.isClosed()).toBe(true);
 });
 
 test("shard_a_isolates_runtime_and_storage", { tag: "@isolation" }, async ({

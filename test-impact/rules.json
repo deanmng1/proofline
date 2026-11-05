@@ -877,28 +877,76 @@
         {
           "path": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "shard_a_isolates_runtime_and_storage",
-          "line": 795,
+          "line": 800,
           "tag": "@isolation"
         },
         {
           "path": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "shard_b_isolates_runtime_and_storage",
-          "line": 803,
+          "line": 808,
           "tag": "@isolation"
         },
         {
           "path": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "shard_a_uses_an_os_assigned_worker_port",
-          "line": 811,
+          "line": 816,
           "tag": "@isolation"
         },
         {
           "path": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "shard_b_uses_an_os_assigned_worker_port",
-          "line": 819,
+          "line": 824,
           "tag": "@isolation"
         }
       ]
+    },
+    {
+      "id": "EXEC-001",
+      "description": "Required test identities execute exactly once and genuinely pass; runtime skip, expected failure, retry, omission and ambiguous results cannot satisfy evidence.",
+      "criticality": "critical",
+      "paths": [
+        "tools/proofline/canonical-runner.mjs",
+        "tools/proofline/execution-verification.mjs",
+        "tools/proofline/vitest-native-reporter.mjs",
+        "tools/proofline/vitest-execution.mjs"
+      ],
+      "vitest": [
+        {
+          "file": "tools/proofline/src/required-execution.test.ts",
+          "title": "native Vitest events reject actual expected failure and successful retry",
+          "line": 150
+        },
+        {
+          "file": "tools/proofline/src/required-execution.test.ts",
+          "title": "canonical tuning flags cannot omit required unit targets or browser identities",
+          "line": 288
+        },
+        {
+          "file": "tools/proofline/src/required-execution.test.ts",
+          "title": "standalone native discovery and execution require no undeclared Nx binary",
+          "line": 334
+        }
+      ],
+      "playwright": []
+    },
+    {
+      "id": "EVID-001",
+      "description": "Each guarded invocation retains isolated, source-bound native results and failure diagnostics that later or parallel invocations cannot overwrite.",
+      "criticality": "critical",
+      "paths": ["tools/proofline/execution-artifacts.mjs", "tools/proofline/vitest-execution.mjs"],
+      "vitest": [
+        {
+          "file": "tools/proofline/src/execution-artifacts.test.ts",
+          "title": "preserves failed invocation bytes across subsequent and parallel allocations",
+          "line": 13
+        },
+        {
+          "file": "tools/proofline/src/execution-artifacts.test.ts",
+          "title": "coverage CLI config and environment destinations cannot erase finalized evidence",
+          "line": 58
+        }
+      ],
+      "playwright": []
     }
   ]
 }

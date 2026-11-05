@@ -571,6 +571,14 @@
         {
           "glob": "tools/proofline/src/canonical-runner-egress.test.ts",
           "reason": "Canonical runner integration test sources are not instrumented production sources."
+        },
+        {
+          "glob": "tools/proofline/src/execution-artifacts.test.ts",
+          "reason": "Test sources are not instrumented production sources."
+        },
+        {
+          "glob": "tools/proofline/src/required-execution.test.ts",
+          "reason": "Test sources are not instrumented production sources."
         }
       ],
       "report": "artifacts/coverage/proofline-tools/coverage-summary.json",
@@ -600,9 +608,14 @@
         "tools/proofline/run-guarded.mjs",
         "tools/proofline/serve-test-app.mjs",
         "tools/proofline/check-production.mjs",
-        "tools/proofline/src/production-negative.ts"
+        "tools/proofline/src/production-negative.ts",
+        "tools/proofline/canonical-runner.mjs",
+        "tools/proofline/execution-verification.mjs",
+        "tools/proofline/vitest-native-reporter.mjs",
+        "tools/proofline/execution-artifacts.mjs",
+        "tools/proofline/vitest-execution.mjs"
       ],
-      "ruleIds": ["SAFE-001"],
+      "ruleIds": ["SAFE-001", "EXEC-001", "EVID-001"],
       "layers": ["contract", "playwright"],
       "testBindings": [
         {
@@ -715,6 +728,56 @@
           "file": "tools/proofline/src/canonical-runner-egress.test.ts",
           "title": "canonical_unit_runner_establishes_manifest_artifacts_before_vitest",
           "line": 333
+        },
+        {
+          "ruleId": "EXEC-001",
+          "layer": "contract",
+          "testId": "binding-exec-001-native-evidence",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/required-execution.test.ts",
+          "title": "native Vitest events reject actual expected failure and successful retry",
+          "line": 150
+        },
+        {
+          "ruleId": "EVID-001",
+          "layer": "contract",
+          "testId": "binding-evid-001-native-evidence",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/execution-artifacts.test.ts",
+          "title": "preserves failed invocation bytes across subsequent and parallel allocations",
+          "line": 13
+        },
+        {
+          "ruleId": "EXEC-001",
+          "layer": "contract",
+          "testId": "binding-exec-001-full-scope",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/required-execution.test.ts",
+          "title": "canonical tuning flags cannot omit required unit targets or browser identities",
+          "line": 288
+        },
+        {
+          "ruleId": "EXEC-001",
+          "layer": "contract",
+          "testId": "binding-exec-001-optional-tooling",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/required-execution.test.ts",
+          "title": "standalone native discovery and execution require no undeclared Nx binary",
+          "line": 334
+        },
+        {
+          "ruleId": "EVID-001",
+          "layer": "contract",
+          "testId": "binding-evid-001-coverage-preservation",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/execution-artifacts.test.ts",
+          "title": "coverage CLI config and environment destinations cannot erase finalized evidence",
+          "line": 58
         }
       ],
       "ruleLayers": [
@@ -725,6 +788,14 @@
         {
           "ruleId": "SAFE-001",
           "layer": "playwright"
+        },
+        {
+          "ruleId": "EXEC-001",
+          "layer": "contract"
+        },
+        {
+          "ruleId": "EVID-001",
+          "layer": "contract"
         }
       ]
     },
@@ -2483,7 +2554,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "shard_a_isolates_runtime_and_storage",
-          "line": 795,
+          "line": 800,
           "tag": "@isolation"
         },
         {
@@ -2494,7 +2565,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "shard_b_isolates_runtime_and_storage",
-          "line": 803,
+          "line": 808,
           "tag": "@isolation"
         },
         {
@@ -2505,7 +2576,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "shard_a_uses_an_os_assigned_worker_port",
-          "line": 811,
+          "line": 816,
           "tag": "@isolation"
         },
         {
@@ -2516,7 +2587,7 @@
           "runner": "playwright",
           "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
           "title": "shard_b_uses_an_os_assigned_worker_port",
-          "line": 819,
+          "line": 824,
           "tag": "@isolation"
         },
         {
@@ -2733,5 +2804,60 @@
   ],
   "lifecycleMatrix": "test-impact/lifecycle-matrix.json",
   "goldenWorkflowMatrix": "test-impact/workflows/crm-golden.json",
-  "ruleRegistry": "test-impact/rules.json"
+  "ruleRegistry": "test-impact/rules.json",
+  "execution": {
+    "unitBuildCommands": ["buildProduction", "buildTest"],
+    "unitTargets": [
+      {
+        "argv": ["run", "--config", "apps/crm-web/vite.config.ts"],
+        "cwd": "."
+      },
+      {
+        "argv": ["run", "packages/api-contracts/src"],
+        "cwd": "."
+      },
+      {
+        "argv": ["run", "packages/domain/src"],
+        "cwd": "."
+      },
+      {
+        "argv": ["run", "packages/finance-service/src"],
+        "cwd": "."
+      },
+      {
+        "argv": ["run", "packages/insurance-runtime/src"],
+        "cwd": "."
+      },
+      {
+        "argv": ["run", "packages/policy-service/src"],
+        "cwd": "."
+      },
+      {
+        "argv": ["run", "packages/policy-state-service/src"],
+        "cwd": "."
+      },
+      {
+        "argv": ["run", "packages/service-bus/src"],
+        "cwd": "."
+      },
+      {
+        "argv": ["run", "packages/test-kit/src", "--passWithNoTests"],
+        "cwd": "."
+      },
+      {
+        "argv": ["run", "tools/impact/src"],
+        "cwd": "."
+      },
+      {
+        "argv": ["run", "tools/proofline/src"],
+        "cwd": "."
+      }
+    ],
+    "browserBuildCommands": ["buildTest"],
+    "browserArgs": ["test", "--config", "apps/crm-e2e/playwright.config.ts"]
+  },
+  "production": {
+    "directory": "dist/crm-web",
+    "forbiddenModules": ["apps/crm-web/src/test-entry.tsx", "apps/crm-web/src/test-capability.ts"]
+  }
 }

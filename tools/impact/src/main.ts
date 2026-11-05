@@ -99,11 +99,19 @@ const plansFor = (cwd: string, manifest: HarnessManifest): RunnerPlan[] => {
   }
   return plans;
 };
-const invoke = (cwd: string, command: HarnessCommand, capture = false) => {
+const invoke = (
+  cwd: string,
+  command: HarnessCommand,
+  capture = false,
+  selected?: { runner: string; file: string; title: string },
+) => {
   const [binary, ...args] = command.argv;
   const result = spawnSync(binary, args, {
     cwd: path.join(cwd, command.cwd),
     encoding: "utf8",
+    env: selected
+      ? { ...process.env, PROOFLINE_SELECTED_IDENTITY: JSON.stringify(selected) }
+      : process.env,
     stdio: capture ? "pipe" : "inherit",
     maxBuffer: 32 * 1024 * 1024,
   });
@@ -256,7 +264,10 @@ export const runSelection = (cwd: string, selection: DiscoveredTests, plans: Run
         cwd: plan.cwd,
         argv: [...plan.argv.slice(0, index + 2), ...options, ...exact],
       };
-      if (runner === "vitest") {
+      if (
+        runner === "vitest" &&
+        !command.argv.some((arg) => arg.endsWith("canonical-runner.mjs"))
+      ) {
         const report = invoke(
           cwd,
           { ...command, argv: [...command.argv, "--reporter=json"] },
@@ -270,7 +281,37 @@ export const runSelection = (cwd: string, selection: DiscoveredTests, plans: Run
           .filter((result: { status: string }) => result.status === "passed");
         if (passed.length !== 1 || !new RegExp(exact[2]).test(passed[0].fullName))
           throw new Error(`Selected identity did not execute exactly once:${file}:${test.title}`);
-      } else invoke(cwd, command);
+      } else if (command.argv.some((arg) => arg.endsWith("canonical-runner.mjs")))
+        invoke(cwd, command, false, { runner, file, title: test.title });
+      else {
+        const report = invoke(
+          cwd,
+          { ...command, argv: [...command.argv, "--reporter=json"] },
+          true,
+        );
+        const identities = parsePlaywrightIdentities(report, report.config?.rootDir);
+        const runtimeTests: {
+          expectedStatus: string;
+          status: string;
+          results: { status: string; retry: number }[];
+        }[] = [];
+        const visit = (suite: { specs?: { tests: typeof runtimeTests }[]; suites?: unknown[] }) => {
+          for (const spec of suite.specs ?? []) runtimeTests.push(...spec.tests);
+          for (const child of suite.suites ?? []) visit(child as Parameters<typeof visit>[0]);
+        };
+        for (const suite of report.suites ?? []) visit(suite);
+        if (
+          identities.length !== 1 ||
+          identities[0].title !== test.title ||
+          runtimeTests.length !== 1 ||
+          runtimeTests[0].expectedStatus !== "passed" ||
+          runtimeTests[0].status !== "expected" ||
+          runtimeTests[0].results.length !== 1 ||
+          runtimeTests[0].results[0].status !== "passed" ||
+          runtimeTests[0].results[0].retry !== 0
+        )
+          throw new Error(`Selected identity did not genuinely execute:${file}:${test.title}`);
+      }
     }
   }
 };
