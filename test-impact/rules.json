@@ -1394,17 +1394,17 @@
         {
           "file": "tools/proofline/src/doctor.test.ts",
           "title": "pnpm lock structural coherence > requires unique importer parents root sections and selected dependency entries",
-          "line": 325
+          "line": 336
         },
         {
           "file": "tools/proofline/src/doctor.test.ts",
           "title": "pnpm lock structural coherence > rejects duplicate selected scalar fields and unsupported YAML ambiguity",
-          "line": 356
+          "line": 367
         },
         {
           "file": "tools/proofline/src/doctor.test.ts",
           "title": "pnpm lock structural coherence > accepts current root and work-orders block-map locks with explicit section boundaries",
-          "line": 380
+          "line": 391
         }
       ],
       "playwright": []

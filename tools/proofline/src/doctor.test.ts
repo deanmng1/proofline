@@ -229,6 +229,8 @@ describe("preflight coherence and installed cache boundaries", () => {
       "dependency",
       "host-link",
       "target-registry",
+      "exports-hidden",
+      "metadata-name",
     ]) {
       const root = mkdtempSync(path.join(tmpdir(), "proofline-doctor-installed-"));
       try {
@@ -240,11 +242,18 @@ describe("preflight coherence and installed cache boundaries", () => {
           writeFileSync(
             path.join(directory, "package.json"),
             JSON.stringify({
-              name,
+              name: mutation === "metadata-name" && name === "react" ? "wrong-package" : name,
               version: mutation === "dependency" && name === "react" ? "19.0.0" : version,
+              ...(mutation === "exports-hidden" ? { exports: { ".": "./index.js" } } : {}),
             }),
           );
         }
+        if (mutation === "exports-hidden")
+          for (const name of Object.keys(stack))
+            writeFileSync(
+              path.join(root, "node_modules", name, "index.js"),
+              'throw new Error("Doctor must not execute dependency entrypoints");',
+            );
         const cache = path.join(root, "arbitrary-cache-name");
         mkdirSync(cache);
         const registry = {
@@ -307,7 +316,9 @@ describe("preflight coherence and installed cache boundaries", () => {
               : original(file),
           loadBrowserRegistry: mutation === "target-registry" ? undefined : async () => registry,
         });
-        expect(result.ready, mutation).toBe(["valid", "target-registry"].includes(mutation));
+        expect(result.ready, mutation).toBe(
+          ["valid", "target-registry", "exports-hidden"].includes(mutation),
+        );
         if (mutation === "valid")
           expect(
             result.checks

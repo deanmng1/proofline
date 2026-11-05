@@ -289,7 +289,6 @@ export const collectPreflight = async ({
       "exact installed versions; contained direct dependencies for independent targets",
       "Run pnpm install --frozen-lockfile in this target. Independent targets need their own installation without host links.",
       () => {
-        const resolver = createRequire(path.join(cwd, "package.json"));
         const observed = {};
         const names = new Set([
           ...Object.keys(pins),
@@ -298,7 +297,13 @@ export const collectPreflight = async ({
             : []),
         ]);
         for (const name of names) {
-          const file = resolver.resolve(`${name}/package.json`);
+          require(
+            /^(?:@[a-z0-9._-]+\/)?[a-z0-9._-]+$/i.test(name) &&
+              name.split("/").every((part) => ![".", ".."].includes(part)),
+          );
+          // Direct dependency metadata is filesystem data; package exports may hide it.
+          // Do not load a package entrypoint to discover its version.
+          const file = path.join(cwd, "node_modules", name, "package.json");
           const real = realpathSync(file);
           if (independent)
             require(
@@ -307,7 +312,13 @@ export const collectPreflight = async ({
                   `${canonical(cwd)}${path.sep}`,
                 ),
             );
-          const version = JSON.parse(readFile(file)).version;
+          const metadata = JSON.parse(readFile(file));
+          require(
+            metadata.name === name &&
+              typeof metadata.version === "string" &&
+              metadata.version.length > 0,
+          );
+          const version = metadata.version;
           if (pins[name]) require(version === pins[name]);
           observed[name] = version;
         }
