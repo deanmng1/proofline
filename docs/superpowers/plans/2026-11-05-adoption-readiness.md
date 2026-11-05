@@ -86,16 +86,22 @@
 
 - [x] Integrate all source ownership/exact bindings and classify new source coverage without lowering minima; refresh generated rules and canonical command docs.
 - [x] Append all RED/GREEN/review evidence and make small clean local implementation commits.
-- [ ] Create a fresh full-history CRM clone outside the checkout, use empty HOME/store/browser cache, frozen public installation and exact pinned runtime; verify the documented demo and arbitrary-cache execution.
-- [ ] Prepare/install work-orders independently with a separate store and no host dependency links; verify all ten adaptation gates and core byte equality.
-- [ ] Run the full original twelve-command Task 8 chain from cleared generated state at the committed implementation head with `IMPACT_BASE=d8fef7175f7b9cdf52903821764ec85782a6aa4a` and `IMPACT_HEAD=HEAD`: lint, typecheck, manifest, impact dry-run/execution, unit, browser, coverage/check, record, production and whitespace.
-- [ ] Run explicit two-worker scenario/both shards and actual local release bundle directory/ZIP verification with current source/session provenance.
+- [x] Create a fresh full-history CRM clone outside the checkout, use empty HOME/store/browser cache, frozen public installation and exact pinned runtime; verify the documented demo and arbitrary-cache execution.
+- [x] Prepare/install work-orders independently with a separate store and no host dependency links; verify all ten adaptation gates and core byte equality.
+- [x] Run the full original twelve-command Task 8 chain from cleared generated state at the committed implementation head with `IMPACT_BASE=d8fef7175f7b9cdf52903821764ec85782a6aa4a` and `IMPACT_HEAD=HEAD`: lint, typecheck, manifest, impact dry-run/execution, unit, browser, coverage/check, record, production and whitespace.
+- [x] Run explicit two-worker scenario/both shards and actual local release bundle directory/ZIP verification with current source/session provenance.
 
 ### Task 7: Independent reassessment and closeout
 
-- [ ] Commission a fresh agent to review all seven findings against actual fresh-install evidence, inspect whole-change spec/quality and rate the project again with the original weighted rubric.
-- [ ] Reproduce and repair material new findings with scoped independent re-review; do not target an inflated rating.
-- [ ] Append final evidence, mark tracked status/plan accurately, commit locally, validate committed-head record governance and clean tracked tree. Keep all historical evidence and preexisting `.codex/`.
+- [x] Commission a fresh agent to review all seven findings against actual fresh-install evidence, inspect whole-change spec/quality and rate the project again with the original weighted rubric.
+- [x] Reproduce and repair material new findings with scoped independent re-review; do not target an inflated rating.
+- [x] Append final evidence, mark tracked status/plan accurately, commit locally, validate committed-head record governance and clean tracked tree. Keep all historical evidence and preexisting `.codex/`.
+
+## Verified closeout
+
+Implementation `b368d854fb4e3ffb8f0b4e7f65b3851ad7e48b0b` passed all 22 fresh controller steps, including the original twelve-command gate, explicit isolation/shards, independent work-orders installation and actual release directory/ZIP verification. Native results: 554 unit tests/80 required identities, 44 browser tests/31 required identities, nine coverage groups with unchanged historical minima, ten target gates, 31 identical core files and 11 target-local direct packages. Root/target installs downloaded 464/127 packages with zero reuse.
+
+The independent reviewer additionally passed the actual fresh demo workflow, the documented eight-test app-router command and a separate 719-file ZIP inventory audit. [Whole-change review](../../reviews/2026-11-05-adoption-readiness.md): spec and quality APPROVED; all A01–A07 closed; weighted rating 8.025, rounded to **8.0/10**, previously 6.0/10. Both failed completion attempts, the scoped repairs and the manual-probe readiness correction remain retained evidence. Final administrative changes are documentation and append-only records; the verified implementation is unchanged. Hosted workflow/API/deployment and wider platform support remain unverified.
 
 ## Self-review
 

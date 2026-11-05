@@ -4,7 +4,7 @@
 
 [PROJECT_STATUS.md](PROJECT_STATUS.md) is the clone-visible recovery map. It names the active tracked design and execution checklist; resume from that checklist's first unchecked item. Do not infer unfinished work from historical plans or require an ignored `.superpowers/` directory or prior chat.
 
-The current increment fixes the seven independent adoption findings under the [2026-11-05 design](superpowers/specs/2026-11-05-adoption-readiness-design.md) and [plan](superpowers/plans/2026-11-05-adoption-readiness.md). The user authorized parallel implementation, fresh independent installs of the CRM and work-orders targets, and a fresh independent rating. That verification and review remain in progress until the tracked plan/status say otherwise.
+The seven adoption findings under the [2026-11-05 design](superpowers/specs/2026-11-05-adoption-readiness-design.md) and [plan](superpowers/plans/2026-11-05-adoption-readiness.md) are complete at verified implementation `b368d85`. Parallel implementation, fresh independent CRM/work-orders installations, the full completion gate and independent reassessment passed. The [review](reviews/2026-11-05-adoption-readiness.md) rates the unpublished preview 8.0/10, up from 6.0/10, with no unresolved material finding. There is no remaining authorized implementation task; retain the stated hosted/platform/support limits when scoping future work.
 
 ## Product and boundaries
 
