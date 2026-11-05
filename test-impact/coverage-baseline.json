@@ -106,6 +106,34 @@
       "functions": 94,
       "statements": 96
     },
+    "tools/proofline/release-archive.mjs": {
+      "report": "artifacts/coverage/proofline-tools/coverage-summary.json",
+      "lines": 97,
+      "branches": 88,
+      "functions": 100,
+      "statements": 97
+    },
+    "tools/proofline/release-bundle.mjs": {
+      "report": "artifacts/coverage/proofline-tools/coverage-summary.json",
+      "lines": 85,
+      "branches": 70,
+      "functions": 100,
+      "statements": 85
+    },
+    "tools/proofline/release-evidence.mjs": {
+      "report": "artifacts/coverage/proofline-tools/coverage-summary.json",
+      "lines": 100,
+      "branches": 95,
+      "functions": 100,
+      "statements": 100
+    },
+    "tools/proofline/release-verify.mjs": {
+      "report": "artifacts/coverage/proofline-tools/coverage-summary.json",
+      "lines": 86,
+      "branches": 97,
+      "functions": 66,
+      "statements": 86
+    },
     "tools/proofline/test-fixtures/runner.ts": {
       "report": "artifacts/coverage/proofline-tools/coverage-summary.json",
       "lines": 100,

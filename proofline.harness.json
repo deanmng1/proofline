@@ -585,6 +585,10 @@
           "reason": "Test sources are not instrumented production sources."
         },
         {
+          "glob": "tools/proofline/src/release-verification.test.ts",
+          "reason": "Test sources are not instrumented production sources."
+        },
+        {
           "glob": "tools/proofline/src/required-execution.test.ts",
           "reason": "Test sources are not instrumented production sources."
         }
@@ -621,11 +625,15 @@
         "tools/proofline/execution-verification.mjs",
         "tools/proofline/vitest-native-reporter.mjs",
         "tools/proofline/execution-artifacts.mjs",
+        "tools/proofline/release-bundle.mjs",
+        "tools/proofline/release-evidence.mjs",
+        "tools/proofline/release-verify.mjs",
+        "tools/proofline/release-archive.mjs",
         "tools/proofline/validate-portability.mjs",
         "tools/proofline/vitest-execution.mjs",
         "tools/proofline/portability-result.mjs"
       ],
-      "ruleIds": ["SAFE-001", "EXEC-001", "EVID-001", "PORT-001"],
+      "ruleIds": ["SAFE-001", "EXEC-001", "EVID-001", "REL-001", "PORT-001"],
       "layers": ["contract", "playwright"],
       "testBindings": [
         {
@@ -760,6 +768,36 @@
           "line": 13
         },
         {
+          "ruleId": "REL-001",
+          "layer": "contract",
+          "testId": "binding-rel-001-1",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/release-verification.test.ts",
+          "title": "immutable release verification > packages production bytes and validates the entire execution root",
+          "line": 572
+        },
+        {
+          "ruleId": "REL-001",
+          "layer": "contract",
+          "testId": "binding-rel-001-2",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/release-verification.test.ts",
+          "title": "immutable release verification > validates a real complete archive without provider credentials",
+          "line": 999
+        },
+        {
+          "ruleId": "REL-001",
+          "layer": "contract",
+          "testId": "binding-rel-001-3",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/release-verification.test.ts",
+          "title": "immutable release verification > workflow publishes only after complete gates and deployment uses trusted prebuilt output",
+          "line": 827
+        },
+        {
           "ruleId": "PORT-001",
           "layer": "contract",
           "testId": "binding-port-001-1",
@@ -815,6 +853,10 @@
         },
         {
           "ruleId": "EVID-001",
+          "layer": "contract"
+        },
+        {
+          "ruleId": "REL-001",
           "layer": "contract"
         },
         {

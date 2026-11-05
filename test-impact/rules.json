@@ -949,6 +949,35 @@
       "playwright": []
     },
     {
+      "id": "REL-001",
+      "description": "Release deployment consumes only the exact immutable artifact and complete current-run gate evidence from a successful trusted verification run.",
+      "criticality": "critical",
+      "paths": [
+        "tools/proofline/release-bundle.mjs",
+        "tools/proofline/release-evidence.mjs",
+        "tools/proofline/release-verify.mjs",
+        "tools/proofline/release-archive.mjs"
+      ],
+      "vitest": [
+        {
+          "file": "tools/proofline/src/release-verification.test.ts",
+          "title": "immutable release verification > packages production bytes and validates the entire execution root",
+          "line": 572
+        },
+        {
+          "file": "tools/proofline/src/release-verification.test.ts",
+          "title": "immutable release verification > validates a real complete archive without provider credentials",
+          "line": 999
+        },
+        {
+          "file": "tools/proofline/src/release-verification.test.ts",
+          "title": "immutable release verification > workflow publishes only after complete gates and deployment uses trusted prebuilt output",
+          "line": 827
+        }
+      ],
+      "playwright": []
+    },
+    {
       "id": "PORT-001",
       "description": "The same reusable core validates an unrelated standalone application with exact ownership, isolated execution, coverage, append-only evidence and production-negative boundaries.",
       "criticality": "critical",

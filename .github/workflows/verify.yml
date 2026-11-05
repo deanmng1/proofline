@@ -31,11 +31,14 @@ jobs:
   verify:
     runs-on: ubuntu-latest
     env:
+      PROOFLINE_SESSION_ID: ${{ github.run_id }}-${{ github.run_attempt }}
+      PROOFLINE_CI_RUN_ID: ${{ github.run_id }}
+      PROOFLINE_CI_RUN_ATTEMPT: ${{ github.run_attempt }}
       IMPACT_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
       IMPACT_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
     steps:
       - name: Checkout full history for impact analysis
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
@@ -60,30 +63,37 @@ jobs:
         run: node tools/impact/resolve-ci-revisions.mjs >> "$GITHUB_ENV"
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@fe02b34f77f8bc703788d5817da081398fad5dd2 # v4
         with:
           version: 11.24.0
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
-          node-version: 24
+          node-version: 24.22.1
           cache: pnpm
+
+      - name: Start fresh current-run evidence
+        run: rm -rf artifacts/proofline artifacts/portability artifacts/release-bundle
 
       - name: Install dependencies
         id: dependencies
         run: pnpm install --frozen-lockfile
 
       - name: Lint
+        id: lint
         run: pnpm lint
 
       - name: Typecheck
+        id: typecheck
         run: pnpm typecheck
 
       - name: Validate portable harness manifest
+        id: manifest
         run: pnpm harness:validate
 
       - name: Build and audit the production application boundary
+        id: production
         shell: bash
         run: |
           mkdir -p artifacts
@@ -92,6 +102,7 @@ jobs:
           pnpm proofline:check-production 2>&1 | tee -a artifacts/proofline-production-output.txt
 
       - name: Validate portable execution record and generated catalog
+        id: record
         run: pnpm record:check -- --base "$IMPACT_BASE" --head "$IMPACT_HEAD"
 
       - name: Install Chromium
@@ -103,16 +114,24 @@ jobs:
         run: pnpm exec playwright install --with-deps firefox webkit
 
       - name: Preview impact selection
-        id: impact
+        id: impactPreview
         shell: bash
         run: |
           pnpm test:impacted -- --dry-run --base "$IMPACT_BASE" --head "$IMPACT_HEAD"
           echo "fallback=$(node -p \"require('./artifacts/impact/selection.json').fallback\")" >> "$GITHUB_OUTPUT"
 
       - name: Run impact-selected tests
+        id: impact
+        env:
+          PROOFLINE_GATE_KEY: impact
+          PROOFLINE_GATE_EXECUTION_ID: ${{ github.run_id }}-${{ github.run_attempt }}-impact
         run: pnpm test:impacted -- --base "$IMPACT_BASE" --head "$IMPACT_HEAD"
 
       - name: Run full Vitest safety gate
+        id: unit
+        env:
+          PROOFLINE_GATE_KEY: unit
+          PROOFLINE_GATE_EXECUTION_ID: ${{ github.run_id }}-${{ github.run_attempt }}-unit
         if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
         shell: bash
         run: |
@@ -121,12 +140,40 @@ jobs:
           pnpm test 2>&1 | tee artifacts/vitest-output.txt
 
       - name: Run full Chromium safety gate
+        id: browser
+        env:
+          PROOFLINE_GATE_KEY: browser
+          PROOFLINE_GATE_EXECUTION_ID: ${{ github.run_id }}-${{ github.run_attempt }}-browser
         if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
         shell: bash
         run: |
           mkdir -p artifacts
           set -o pipefail
           pnpm e2e 2>&1 | tee artifacts/browser-output.txt
+
+      - name: Run explicit multi-worker scenario gate
+        id: browserScenario
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
+        env:
+          PROOFLINE_GATE_KEY: browserScenario
+          PROOFLINE_GATE_EXECUTION_ID: ${{ github.run_id }}-${{ github.run_attempt }}-browserScenario
+        run: node tools/proofline/canonical-runner.mjs playwright test --config apps/crm-e2e/playwright.config.ts apps/crm-e2e/src/fixtures/scenario-contract.spec.ts --project chromium --workers=2
+
+      - name: Run explicit scenario shard one
+        id: browserScenarioShard1
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
+        env:
+          PROOFLINE_GATE_KEY: browserScenarioShard1
+          PROOFLINE_GATE_EXECUTION_ID: ${{ github.run_id }}-${{ github.run_attempt }}-browserScenarioShard1
+        run: node tools/proofline/canonical-runner.mjs playwright test --config apps/crm-e2e/playwright.config.ts apps/crm-e2e/src/fixtures/scenario-contract.spec.ts --project chromium --shard=1/2
+
+      - name: Run explicit scenario shard two
+        id: browserScenarioShard2
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
+        env:
+          PROOFLINE_GATE_KEY: browserScenarioShard2
+          PROOFLINE_GATE_EXECUTION_ID: ${{ github.run_id }}-${{ github.run_attempt }}-browserScenarioShard2
+        run: node tools/proofline/canonical-runner.mjs playwright test --config apps/crm-e2e/playwright.config.ts apps/crm-e2e/src/fixtures/scenario-contract.spec.ts --project chromium --shard=2/2
 
       - name: Run optional Firefox and WebKit invariant smoke
         if: ${{ !cancelled() && steps.dependencies.outcome == 'success' && github.event_name == 'workflow_dispatch' && inputs.cross_browser }}
@@ -138,6 +185,7 @@ jobs:
           node tools/proofline/canonical-runner.mjs playwright test --config apps/crm-e2e/playwright.config.ts apps/crm-e2e/src/proofline/cross-browser-smoke.spec.ts --project=firefox --project=webkit 2>&1 | tee -a artifacts/browser-output.txt
 
       - name: Generate Vitest coverage baseline
+        id: coverage
         if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
         shell: bash
         run: |
@@ -146,16 +194,54 @@ jobs:
           pnpm coverage 2>&1 | tee artifacts/coverage-output.txt
 
       - name: Check scoped critical-file coverage ratchets
+        id: coverageCheck
         if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
         run: pnpm coverage:check -- --base "$IMPACT_BASE" --head "$IMPACT_HEAD"
 
       - name: Check patch whitespace
+        id: whitespace
         if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
         run: git diff --check
 
+      - name: Validate independent application portability
+        id: portability
+        env:
+          PROOFLINE_GATE_KEY: portability
+          PROOFLINE_GATE_EXECUTION_ID: ${{ github.run_id }}-${{ github.run_attempt }}-portability
+        run: pnpm proofline:validate-portability
+
+      - name: Package audited immutable production release
+        if: ${{ success() && github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+        env:
+          PROOFLINE_GATE_OUTCOMES: >-
+            {"lint":"${{ steps.lint.outcome }}","typecheck":"${{ steps.typecheck.outcome }}","manifest":"${{ steps.manifest.outcome }}","production":"${{ steps.production.outcome }}","record":"${{ steps.record.outcome }}","impactPreview":"${{ steps.impactPreview.outcome }}","impact":"${{ steps.impact.outcome }}","unit":"${{ steps.unit.outcome }}","browser":"${{ steps.browser.outcome }}","browserScenario":"${{ steps.browserScenario.outcome }}","browserScenarioShard1":"${{ steps.browserScenarioShard1.outcome }}","browserScenarioShard2":"${{ steps.browserScenarioShard2.outcome }}","coverage":"${{ steps.coverage.outcome }}","coverageCheck":"${{ steps.coverageCheck.outcome }}","whitespace":"${{ steps.whitespace.outcome }}","portability":"${{ steps.portability.outcome }}"}
+        run: node tools/proofline/release-bundle.mjs
+
+      - name: Publish successful immutable release bundle
+        if: ${{ success() && github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: proofline-release-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/release-bundle/
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Preserve all invocation evidence including failures
+        if: ${{ always() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: execution-evidence-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            artifacts/proofline/
+            artifacts/portability/
+          include-hidden-files: true
+          if-no-files-found: warn
+          retention-days: 14
+
       - name: Upload coverage baseline
         if: ${{ always() }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: coverage-baseline
           if-no-files-found: warn
@@ -166,7 +252,7 @@ jobs:
 
       - name: Upload immutable verification diagnostics
         if: ${{ always() }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: verification-diagnostics
           if-no-files-found: warn

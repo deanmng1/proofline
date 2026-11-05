@@ -1,13 +1,13 @@
 name: Deploy Demo
 
-# Deploys the tagged commit to the Vercel production demo.
-# Runs only when a GitHub release is published.
+# Deploy only the exact static artifact from complete successful verification.
 on:
   release:
     types: [published]
 
 permissions:
   contents: read
+  actions: read
   deployments: write
 
 concurrency:
@@ -18,21 +18,27 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout release tag
-        uses: actions/checkout@v4
+      - name: Checkout trusted default-branch verifier
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
-          ref: refs/tags/${{ github.event.release.tag_name }}
+          ref: ${{ github.event.repository.default_branch }}
+          persist-credentials: false
 
-      - name: Install Vercel CLI
-        run: npm install --global vercel
-
-      - name: Deploy to Vercel
-        uses: BetaHuhn/deploy-to-vercel-action@v1
+      - name: Setup pinned Node runtime
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
+          node-version: 24.22.1
+
+      - name: Resolve release commit and verify immutable production artifact
+        env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PROOFLINE_RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: node tools/proofline/release-verify.mjs
+
+      - name: Deploy exact verified prebuilt static output
+        working-directory: verified-release
+        env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-          PRODUCTION: true
-          ATTACH_COMMIT_METADATA: true
-          TRIM_COMMIT_MESSAGE: true
+        run: npm exec --yes --package=vercel@65.11.0 -- vercel deploy --prebuilt --prod --yes --token="$VERCEL_TOKEN"
