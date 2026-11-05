@@ -57,12 +57,13 @@
 
 ### Task 3: Make compatibility and preflight claims executable
 
-**Files:** Worker owns new `proofline.compatibility.json`, `tools/proofline/compatibility.mjs`, `doctor.mjs`, `src/compatibility.test.ts`, `src/doctor.test.ts`; provide a macOS job integration fragment under ignored output, not a competing canonical workflow. Coordinate any extra helper. Controller owns script aliases, public docs and canonical workflow integration.
+**Files:** Worker owns new `proofline.compatibility.json`, `tools/proofline/compatibility.mjs`, `doctor.mjs`, `src/compatibility.test.ts`, `src/doctor.test.ts`; additive runtime production in `execution-artifacts.mjs`/`src/execution-artifacts.test.ts` and narrow optional-runtime v1 compatibility in `portability-result.mjs`/`src/portability.test.ts`. Provide a macOS job integration fragment under ignored output, not a competing canonical workflow. Coordinate any extra helper. Controller owns script aliases, public docs and canonical workflow integration.
 
 **Interfaces:** strict `validateCompatibilityDeclaration(value)`; `collectCompatibilityEvidence(...)` and `summarizeCompatibility(...)` that validate native/source/runtime/independent-target evidence; `collectPreflight(...)` with injectable read/probe seams and source/installed CLI stages. The specification owns the exact two candidate IDs/runner labels/stack.
 
 - [ ] Add RED unknown/duplicate declaration and missing/smoke/stale/source/runtime/reused-install/summary-only evidence cases; prove no candidate becomes verified by a flag.
-- [ ] Implement strict declaration and per-cell evidence collection using existing native and portability validators. Actual runtime comes from the executing process/installed packages; fixture mode stays explicit.
+- [ ] Add actual-process `metadata.runtime={nodeVersion,platform,arch,execPath}` to native invocation production with RED/GREEN, refusing caller override. Preserve old v1 evidence via a strict optional-runtime metadata addition, with malformed/unknown-field negatives and all historical minima unchanged.
+- [ ] Implement strict declaration and per-cell evidence collection using existing native and portability validators. Require matching runtime on authoritative gates, all bound children and independent target native records; actual collector runtime/package tuple must also match. Fixture mode stays explicit; requested hosted mode/env is not authenticated provenance.
 - [ ] Add RED doctor cases for missing/wrong Node/pnpm/Git/history/locks/revisions/dependencies/browser and safe custom-cache resolution; source stage works without dependencies and has no network/install/build/mutation.
 - [ ] Implement text/JSON preflight, concrete remediation, nonzero unmet requirements and explicit informational unverified platform status. Reuse installed registry validation; do not broaden authority.
 - [ ] Verify focused guarded tests and real source/installed doctor probes. Publish the exact macOS full-gate job/receipt contract, measured new coverage and binding identities.
