@@ -1,7 +1,18 @@
 import { createHash } from "node:crypto";
-import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import {
+  existsSync,
+  lstatSync,
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  realpathSync,
+  rmSync,
+  symlinkSync,
+  writeFileSync,
+} from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import ts from "typescript";
 import { describe, expect, it } from "vitest";
 // @ts-expect-error Native JavaScript runtime API
 import { productionAuditOptions } from "../check-production.mjs";
@@ -134,6 +145,74 @@ const nativeFixture = () => {
   };
 };
 
+const independentInstallation = (fixture: ReturnType<typeof nativeFixture>) => {
+  const record = fixture.record;
+  record.dependencyMode = "independent";
+  record.preparation = {
+    dependencyDirectory: "node_modules",
+    hostLinked: false,
+    resolvedPackages: Object.fromEntries(
+      ["vite", "vitest", "react", "@playwright/test", "zod"].map((name) => [
+        name,
+        `node_modules/.pnpm/${name.replaceAll("/", "+")}@1.0.0/node_modules/${name}`,
+      ]),
+    ),
+  };
+  record.setup = {
+    root: "/external/setup",
+    home: "/external/setup/home",
+    store: "/external/setup/store",
+    browserCache: "/external/setup/browser-cache",
+    registry: "https://registry.npmjs.org",
+    packageManager: "pnpm@11.24.0",
+    packageManagerVersion: "11.24.0",
+  };
+  const pnpm = "/external/setup/tooling/node_modules/pnpm/bin/pnpm.cjs";
+  const node = "/runtime/bin/node";
+  record.installation = [
+    [
+      "install-package-manager",
+      [
+        "npm",
+        "install",
+        "--prefix",
+        "/external/setup/tooling",
+        "--registry",
+        "https://registry.npmjs.org",
+        "--ignore-scripts",
+        "--no-audit",
+        "--no-fund",
+        "pnpm@11.24.0",
+      ],
+    ],
+    [
+      "install-dependencies",
+      [
+        node,
+        pnpm,
+        "install",
+        "--frozen-lockfile",
+        "--store-dir",
+        "/external/setup/store",
+        "--registry",
+        "https://registry.npmjs.org",
+      ],
+    ],
+    ["install-browser", [node, pnpm, "exec", "playwright", "install", "chromium"]],
+  ].map(([key, argv]) => {
+    const logPath = `${key}.log`;
+    fixture.write(logPath, `$ ${JSON.stringify(argv)}\nSetup completed.\n`);
+    return {
+      key,
+      argv,
+      cwd: record.target,
+      exitCode: 0,
+      logPath,
+      logSha256: fixture.hash(logPath),
+    };
+  });
+};
+
 describe("Proofline standalone portability", () => {
   it("rejects_modified_reusable_core_in_the_target", () => {
     const source = mkdtempSync(path.join(os.tmpdir(), "proofline-source-"));
@@ -169,6 +248,230 @@ describe("Proofline standalone portability", () => {
       expect(() => prepareTarget({ temporaryRoot: process.cwd() })).toThrow(/outside/);
     } finally {
       rmSync(prepared.target, { recursive: true, force: true });
+    }
+  });
+
+  it("prepares_independent_dependencies_without_copying_or_linking_host_modules", () => {
+    const prepared = prepareTarget({ dependencyMode: "independent" });
+    try {
+      expect(prepared.dependencyMode).toBe("independent");
+      expect(existsSync(path.join(prepared.target, "node_modules"))).toBe(false);
+      expect(assertCopiedCore(process.cwd(), prepared.target, prepared.files)).toEqual(
+        prepared.hashes,
+      );
+      const manifest = JSON.parse(readFileSync(path.join(prepared.target, "package.json"), "utf8"));
+      const declared = { ...manifest.dependencies, ...manifest.devDependencies };
+      const imported = new Set<string>();
+      for (const file of prepared.files) {
+        const source = ts.createSourceFile(
+          file,
+          readFileSync(path.join(prepared.target, file), "utf8"),
+          ts.ScriptTarget.Latest,
+          true,
+        );
+        const visit = (node: ts.Node) => {
+          if (
+            (ts.isImportDeclaration(node) || ts.isExportDeclaration(node)) &&
+            node.moduleSpecifier &&
+            ts.isStringLiteral(node.moduleSpecifier)
+          ) {
+            const name = node.moduleSpecifier.text;
+            if (!name.startsWith(".") && !name.startsWith("node:"))
+              imported.add(
+                name.startsWith("@") ? name.split("/").slice(0, 2).join("/") : name.split("/")[0],
+              );
+          }
+          ts.forEachChild(node, visit);
+        };
+        visit(source);
+      }
+      for (const dependency of imported) expect(declared[dependency]).toMatch(/^\d+\.\d+\.\d+$/);
+      expect(manifest.packageManager).toBe("pnpm@11.24.0");
+      expect(manifest.engines.node).toBe(">=24.22.1 <25");
+      expect(readFileSync(path.join(prepared.target, "pnpm-workspace.yaml"), "utf8")).toMatch(
+        /allowBuilds:\n {2}esbuild: true/,
+      );
+      expect(readFileSync(path.join(prepared.target, "pnpm-lock.yaml"), "utf8")).toMatch(/zod:/);
+    } finally {
+      rmSync(prepared.target, { recursive: true, force: true });
+    }
+  });
+
+  it("retains_explicit_offline_reuse_and_rejects_unknown_dependency_modes", () => {
+    const prepared = prepareTarget();
+    try {
+      expect(prepared.dependencyMode).toBe("reuse");
+      expect(lstatSync(path.join(prepared.target, "node_modules")).isSymbolicLink()).toBe(true);
+      expect(realpathSync(path.join(prepared.target, "node_modules"))).toBe(
+        realpathSync("node_modules"),
+      );
+      expect(() => prepareTarget({ dependencyMode: "automatic" })).toThrow(/dependency mode/);
+    } finally {
+      rmSync(prepared.target, { recursive: true, force: true });
+    }
+  });
+
+  it("does_not_copy_example_dependency_links_and_fails_reuse_without_source_dependencies", () => {
+    const source = mkdtempSync(path.join(os.tmpdir(), "proofline-copy-source-"));
+    mkdirSync(path.join(source, "examples/work-orders"), { recursive: true });
+    mkdirSync(path.join(source, "tools/impact"), { recursive: true });
+    mkdirSync(path.join(source, "tools/proofline"), { recursive: true });
+    writeFileSync(path.join(source, "tools/impact/core.ts"), "export const portable = true;\n");
+    symlinkSync(
+      realpathSync("node_modules"),
+      path.join(source, "examples/work-orders/node_modules"),
+      "dir",
+    );
+    let prepared: ReturnType<typeof prepareTarget> | undefined;
+    try {
+      prepared = prepareTarget({ repositoryRoot: source, dependencyMode: "independent" });
+      expect(existsSync(path.join(prepared.target, "node_modules"))).toBe(false);
+      expect(() => prepareTarget({ repositoryRoot: source })).toThrow(
+        /dependencies.*missing|missing.*dependencies/i,
+      );
+    } finally {
+      if (prepared) rmSync(prepared.target, { recursive: true, force: true });
+      rmSync(source, { recursive: true, force: true });
+    }
+  });
+
+  it("requires_explicit_network_setup_and_initializes_clone_complete_target_history", () => {
+    expect(portability.parsePortabilityOptions([])).toEqual({
+      dependencyMode: "reuse",
+      prepareOnly: false,
+    });
+    expect(portability.parsePortabilityOptions(["--independent-install"])).toEqual({
+      dependencyMode: "independent",
+      prepareOnly: false,
+    });
+    expect(portability.parsePortabilityOptions(["--", "--independent-install"])).toEqual({
+      dependencyMode: "independent",
+      prepareOnly: false,
+    });
+    expect(
+      portability.parsePortabilityOptions(["--prepare-only", "--dependency-mode", "independent"]),
+    ).toEqual({ dependencyMode: "independent", prepareOnly: true });
+    for (const args of [
+      ["--dependency-mode", "independent"],
+      ["--unknown"],
+      ["--", "--", "--independent-install"],
+      ["--", "--dependency-mode", "reuse", "--independent-install"],
+      ["--independent-install", "--prepare-only"],
+    ])
+      expect(() => portability.parsePortabilityOptions(args)).toThrow();
+    const prepared = prepareTarget({ dependencyMode: "independent" });
+    try {
+      const bootstrap = portability.initializeTarget(prepared.target);
+      expect(bootstrap).toMatch(/^[a-f0-9]{40}$/);
+      expect(existsSync(path.join(prepared.target, ".git/HEAD"))).toBe(true);
+      expect(readFileSync(path.join(prepared.target, "test-impact/rules.md"), "utf8")).toContain(
+        "WORK-001",
+      );
+      expect(
+        readFileSync(path.join(prepared.target, "docs/PORTABLE_TEST_AUTOMATION.md"), "utf8"),
+      ).toContain("coverageCheck");
+      const record = readFileSync(
+        path.join(prepared.target, "test-impact/execution-record.jsonl"),
+        "utf8",
+      );
+      expect(record.endsWith("\n")).toBe(true);
+      expect(JSON.parse(record.trim()).eventId).toBe("work-orders-adaptation");
+      expect(() => portability.initializeTarget(prepared.target)).toThrow(/already initialized/);
+      expect(
+        readFileSync(path.join(prepared.target, "test-impact/execution-record.jsonl"), "utf8"),
+      ).toBe(record);
+    } finally {
+      rmSync(prepared.target, { recursive: true, force: true });
+    }
+  });
+
+  it("validates_relocated_independent_setup_and_rejects_rehashed_false_installation_claims", () => {
+    for (const mutation of [
+      "mode",
+      "missing-mode",
+      "host-link",
+      "escape",
+      "missing-package",
+      "missing-setup",
+      "version",
+      "registry",
+      "duplicate",
+      "cwd",
+      "frozen",
+      "npm-script",
+      "browser",
+      "missing-log",
+      "hash",
+      "log-argv",
+      "unsafe-log",
+      "setup-in-target",
+    ]) {
+      const fixture = nativeFixture();
+      try {
+        independentInstallation(fixture);
+        const options = { artifactRoot: fixture.artifactRoot, checkLogs: false };
+        expect(() => validatePortabilityResult(fixture.record, options)).not.toThrow();
+        const record = fixture.record;
+        const dependency = record.installation[1];
+        if (mutation === "mode") record.dependencyMode = "automatic";
+        if (mutation === "missing-mode") delete record.dependencyMode;
+        if (mutation === "host-link") record.preparation.hostLinked = true;
+        if (mutation === "escape")
+          record.preparation.resolvedPackages.zod = "../host/node_modules/zod";
+        if (mutation === "missing-package") delete record.preparation.resolvedPackages.zod;
+        if (mutation === "missing-setup") delete record.setup;
+        if (mutation === "version") record.setup.packageManagerVersion = "11.25.0";
+        if (mutation === "registry")
+          dependency.argv[dependency.argv.length - 1] = "https://unreviewed.example";
+        if (mutation === "duplicate") record.installation[2] = structuredClone(dependency);
+        if (mutation === "cwd") dependency.cwd = "/host";
+        if (mutation === "frozen")
+          dependency.argv.splice(dependency.argv.indexOf("--frozen-lockfile"), 1);
+        if (mutation === "npm-script") record.installation[0].argv.splice(6, 1);
+        if (mutation === "browser") record.installation[2].argv[5] = "firefox";
+        if (mutation === "missing-log") rmSync(path.join(fixture.artifactRoot, dependency.logPath));
+        if (mutation === "hash") dependency.logSha256 = "a".repeat(64);
+        if (mutation === "log-argv")
+          fixture.write(dependency.logPath, "Unrelated successful output.\n");
+        if (mutation === "unsafe-log") dependency.logPath = "../outside.log";
+        if (mutation === "setup-in-target") record.setup.root = path.join(record.target, "setup");
+        if (["registry", "frozen", "npm-script", "browser", "log-argv"].includes(mutation)) {
+          if (mutation !== "log-argv")
+            for (const install of record.installation)
+              fixture.write(
+                install.logPath,
+                `$ ${JSON.stringify(install.argv)}\nSetup completed.\n`,
+              );
+          for (const install of record.installation)
+            install.logSha256 = fixture.hash(install.logPath);
+        }
+        expect(() => validatePortabilityResult(record, options), mutation).toThrow();
+      } finally {
+        fixture.close();
+      }
+    }
+  });
+
+  it("keeps_historical_evidence_compatible_and_rejects_reuse_with_independent_setup_claims", () => {
+    const fixture = nativeFixture();
+    try {
+      const options = { artifactRoot: fixture.artifactRoot, checkLogs: false };
+      expect(() => validatePortabilityResult(fixture.record, options)).not.toThrow();
+      fixture.record.dependencyMode = "reuse";
+      fixture.record.installation = [];
+      fixture.record.preparation = {
+        dependencyDirectory: "node_modules",
+        hostLinked: true,
+        resolvedPackages: {},
+      };
+      expect(() => validatePortabilityResult(fixture.record, options)).not.toThrow();
+      fixture.record.preparation.hostLinked = false;
+      expect(() => validatePortabilityResult(fixture.record, options)).toThrow();
+      independentInstallation(fixture);
+      fixture.record.dependencyMode = "reuse";
+      expect(() => validatePortabilityResult(fixture.record, options)).toThrow();
+    } finally {
+      fixture.close();
     }
   });
 

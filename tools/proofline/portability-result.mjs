@@ -91,6 +91,7 @@ export const validatePortabilityResult = (
     if (!Array.isArray(evidence.errors) || evidence.errors.length)
       throw new Error(`Failed target evidence ${file}`);
   }
+  validateInstallationEvidence(record, artifactRoot);
   validateNativePortability(record, artifactRoot, authority);
   return record;
 };
@@ -114,6 +115,120 @@ const safeFile = (root, relative) => {
     "Retained artifact escapes its root",
   );
   return file;
+};
+const validateInstallationEvidence = (record, artifactRoot) => {
+  if (!Object.hasOwn(record, "dependencyMode")) {
+    requireCondition(
+      !["installation", "preparation", "setup"].some((key) => Object.hasOwn(record, key)),
+      "Missing dependency mode for installation evidence",
+    );
+    return; // Historical v1 evidence predates explicit installation provenance.
+  }
+  requireCondition(
+    ["reuse", "independent"].includes(record.dependencyMode),
+    "Unsupported dependency mode",
+  );
+  const preparation = record.preparation;
+  requireCondition(
+    preparation?.dependencyDirectory === "node_modules" &&
+      typeof preparation.hostLinked === "boolean" &&
+      plainObject(preparation.resolvedPackages) &&
+      Array.isArray(record.installation),
+    "Incomplete dependency preparation evidence",
+  );
+  if (record.dependencyMode === "reuse") {
+    requireCondition(
+      preparation.hostLinked &&
+        Object.keys(preparation.resolvedPackages).length === 0 &&
+        record.installation.length === 0 &&
+        !Object.hasOwn(record, "setup"),
+      "Offline reuse contains independent installation claims",
+    );
+    return;
+  }
+  requireCondition(
+    !preparation.hostLinked &&
+      ["vite", "vitest", "react", "@playwright/test", "zod"].every((key) =>
+        Object.hasOwn(preparation.resolvedPackages, key),
+      ) &&
+      Object.values(preparation.resolvedPackages).every(
+        (relative) =>
+          typeof relative === "string" &&
+          relative.startsWith("node_modules/") &&
+          !relative.includes("\\") &&
+          !relative.split("/").some((part) => ["", ".", ".."].includes(part)),
+      ),
+    "Independent dependencies are missing or linked outside their target",
+  );
+  const setup = record.setup;
+  requireCondition(
+    typeof setup?.root === "string" &&
+      path.isAbsolute(setup.root) &&
+      setup.root !== record.target &&
+      !setup.root.startsWith(`${record.target}${path.sep}`) &&
+      setup.home === path.join(setup.root, "home") &&
+      setup.store === path.join(setup.root, "store") &&
+      setup.browserCache === path.join(setup.root, "browser-cache") &&
+      setup.registry === "https://registry.npmjs.org" &&
+      setup.packageManager === "pnpm@11.24.0" &&
+      setup.packageManagerVersion === "11.24.0",
+    "Unsupported independent setup provenance",
+  );
+  requireCondition(
+    record.installation.length === 3 &&
+      new Set(record.installation.map((item) => item.key)).size === 3,
+    "Missing or duplicate independent setup steps",
+  );
+  const dependency = record.installation.find((item) => item.key === "install-dependencies");
+  const node = dependency?.argv?.[0];
+  requireCondition(
+    typeof node === "string" &&
+      path.isAbsolute(node) &&
+      /^node(?:\.exe)?$/.test(path.basename(node)),
+    "Missing setup Node executable",
+  );
+  const pnpm = path.join(setup.root, "tooling/node_modules/pnpm/bin/pnpm.cjs");
+  const commands = {
+    "install-package-manager": [
+      "npm",
+      "install",
+      "--prefix",
+      path.join(setup.root, "tooling"),
+      "--registry",
+      setup.registry,
+      "--ignore-scripts",
+      "--no-audit",
+      "--no-fund",
+      "pnpm@11.24.0",
+    ],
+    "install-dependencies": [
+      node,
+      pnpm,
+      "install",
+      "--frozen-lockfile",
+      "--store-dir",
+      setup.store,
+      "--registry",
+      setup.registry,
+    ],
+    "install-browser": [node, pnpm, "exec", "playwright", "install", "chromium"],
+  };
+  for (const install of record.installation) {
+    requireCondition(
+      Object.hasOwn(commands, install.key) &&
+        isDeepStrictEqual(install.argv, commands[install.key]) &&
+        install.cwd === record.target &&
+        install.exitCode === 0 &&
+        /^[a-f0-9]{64}$/.test(install.logSha256),
+      "Unsupported independent setup command",
+    );
+    const log = safeFile(artifactRoot, install.logPath);
+    requireCondition(
+      digest(log) === install.logSha256 &&
+        readFileSync(log, "utf8").startsWith(`$ ${JSON.stringify(install.argv)}\n`),
+      "Changed independent setup log or command",
+    );
+  }
 };
 const jsonFile = (root, relative) => JSON.parse(readFileSync(safeFile(root, relative), "utf8"));
 const identitySet = (identities) =>
