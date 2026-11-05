@@ -16,7 +16,7 @@ Resume from the first unchecked item in that tracked checklist. No ignored local
 | Required outcomes, failure artifacts, release verification, second app | Complete at `4feb057` | Fresh 18-step local gate; record closeout `6324ffc` |
 | Showcase and genuine second-app recording | Complete at `d8fef71` | Dated source snapshot in showcase measurements |
 | A01–A07 adoption-readiness repairs | Complete at verified implementation `b368d85` | Fresh 22-step local pass, independent command/evidence checks, [8.0/10 reassessment](reviews/2026-11-05-adoption-readiness.md) |
-| Hosted/compatibility/adoption/reliability readiness | Design/reconnaissance in progress from `024aa83` | Active design/plan; no new completion or rating claimed |
+| Hosted/compatibility/adoption/reliability readiness | Tasks 1–4 implemented and independently reviewed; core at `4bf90b6` | Pilot, shared integration, fresh/hosted gates and final rating remain pending |
 
 ## Latest completed verification
 

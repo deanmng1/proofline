@@ -17,6 +17,22 @@ Apply the portable core in this order:
 
 Lifecycle matrices make transitions reviewable even when generation is unnecessary. Stateless targets set `lifecycleMatrix` to `null`. State-model generation is intentionally parked: a target may add service-level generated transition tests when its matrix becomes too large to maintain by hand, without generating the default browser suite.
 
+### Existing applications and their own history
+
+Freeze the application's original source, license, dependency lock and acceptance examples before adaptation. Copy the non-test reusable files under `tools/impact` and `tools/proofline` from one immutable Proofline commit and record every copied file's SHA-256. Exclude `*.test.ts`, `fixtures/`, `tools/proofline/test-fixtures/` and the host `project.json` files. Keep required supporting runtime/declaration files, including `tools/impact/test-fixtures/git.ts`. Copy no CRM pages, services, rules, fixtures, root dependency links or preauthored work-orders adaptation into a different application.
+
+Keep the application's existing Git history. The work-orders `--prepare-only` command is specific to that reference fixture and must not initialize over an existing application's history. Declare that app's own direct runtime/tool imports, exact package manager, browser install/build approvals and reproducible lockfile. The reusable validator currently imports zod; target test tooling includes matching Vitest/V8 and Playwright. A copied core alone is not a configured or tested target.
+
+Create the target-owned manifest/rule catalog, deterministic seams, separate guarded test entrypoint and narrow tests. Describe only capabilities the application has: an app without authentication, tenancy or providers must document those absent contracts rather than fabricate security coverage. Measure its own coverage and make a bootstrap commit containing the initial manifest, baseline, rendered canonical command table, rule catalog and first authored JSONL event. This commit establishes the governed base; an earlier application commit without those files cannot supply a comparable harness baseline.
+
+Next make a real controlled source change and append its evidence in a new commit. Use that bootstrap and changed commit as explicit base/head for exact selection, coverage ratchets and append-only record governance. Prove unmapped changes fall back to full commands, then run the complete native unit/browser/coverage/production gates. Preserve the original baseline, failed runs and copied-core hashes. Agents may perform this development work, but committed test execution must remain deterministic and agent-free.
+
+### Read-only preflight
+
+After the core and target manifest are present, `node tools/proofline/doctor.mjs --stage source` checks runtime, package-manager/Git/history and coherent package/lock/manifest inputs without requiring node_modules. After explicit frozen dependency and Chromium installation, use `--stage installed` for direct-package and exact browser companion checks. Add `--json` for machine-readable results and `--independent` when dependencies must resolve entirely inside the target. An explicit paired `--base`/`--head` accepts full immutable commit SHAs only.
+
+The doctor performs no install, build, Git mutation, browser launch or automatic fix. A ready result is a prerequisite observation, not successful tests, browser OS-library readiness or authenticated hosted evidence. Preserve current setup errors rather than bypassing the canonical gates. Root convenience aliases `proofline:doctor`, `proofline:compatibility` and `proofline:audit-hosted` do not replace manifest-owned test commands.
+
 ## Test-only and egress boundary
 
 The production app and test app are separate build entrypoints. The test launcher generates a fresh random startup capability, passes it to a loopback-only server, and the server refuses missing, incorrect, or replayed capabilities. Test API, fake authentication, seeded identities, and provider fakes must be absent from production module/route manifests; `pnpm proofline:check-production` proves this negative boundary.

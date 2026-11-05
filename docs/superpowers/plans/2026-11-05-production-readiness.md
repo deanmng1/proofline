@@ -36,11 +36,11 @@
 
 **Interfaces:** Preserve `assertSafeNodeArgv(argv)` and production audit APIs. Use an explicit supported Node option grammar and a canonical module-ID contract; no blanket child allowance, production scan bypass or rejection of ordinary post-script args.
 
-- [ ] Add RED tests for `--conditions value` followed by preload/import/loader/inspector/run, direct and inherited spawn/execFile/fork sentinel execution, plus safe separate/equal operands and true script/`--` boundaries.
-- [ ] Add RED marker-free production alias/relative escape/duplicate-normalized graph and Vite module fixtures; preserve legitimate virtual/query cases.
-- [ ] Implement minimal parser and module identity repairs; retain complete RED/GREEN logs and native IDs.
-- [ ] Verify guarded egress/canonical/production suites and actual CRM/work-orders production audits. Publish measured coverage and exact new binding identities to the controller.
-- [ ] Obtain independent spec and quality review, address material findings, integrate and commit.
+- [x] Add RED tests for `--conditions value` followed by preload/import/loader/inspector/run, direct and inherited spawn/execFile/fork sentinel execution, plus safe separate/equal operands and true script/`--` boundaries.
+- [x] Add RED marker-free production alias/relative escape/duplicate-normalized graph and Vite module fixtures; preserve legitimate virtual/query cases.
+- [x] Implement minimal parser and module identity repairs; retain complete RED/GREEN logs and native IDs.
+- [x] Verify guarded egress/canonical/production suites and actual CRM/work-orders production audits. Publish measured coverage and exact new binding identities to the controller.
+- [x] Obtain independent spec and quality review, address material findings, integrate and commit.
 
 ### Task 2: Bridge local release verification to real hosted proof
 
@@ -48,12 +48,12 @@
 
 **Interfaces:** `createGithubReleaseApi({token,fetchImpl,...boundedOptions}) -> {api,list}`; `resolveAndDownloadVerification({repository,sourceCommit,token,directory,api,list})` shared with preserved `resolveAndDownloadRelease({tag,...})`; a hosted-proof CLI taking exact commit or tag and external output paths; pure `assessReleaseRecovery(...)` using injected observations/time. Existing exported release directory/archive APIs remain compatible. Operational receipts record mode/provenance and never replace API/native authority.
 
-- [ ] Establish RED transport fixtures for pagination, status/JSON/timeout/page/body limits, redirect credential handling and sanitized errors; no real requests.
-- [ ] Establish RED full-resolver fixtures for post-download run/artifact ID substitution, attempt/digest/conclusion/expiry changes and tag movement. Use actual valid fixture ZIPs and reject unknown fixture routes.
-- [ ] Implement bounded transport and shared exact-commit/tag resolver. Preserve every original release/native/ZIP rule; no receipt is published after final authority failure.
-- [ ] Add RED/GREEN receipt classification/overwrite/provenance and deterministic expired-evidence recovery cases; preserve old-attempt and dispatch rejection.
-- [ ] Add read-only audit and manual prebuilt preview workflow contracts. Prereleases cannot automatically deploy production; preview has no `--prod`, no source rebuild, no token output, and missing credentials fail before provider invocation.
-- [ ] Verify focused guarded release/API/receipt/recovery tests, publish interfaces/new source coverage/bindings and workflow fragment details, obtain independent spec/quality review and integrate.
+- [x] Establish RED transport fixtures for pagination, status/JSON/timeout/page/body limits, redirect credential handling and sanitized errors; no real requests.
+- [x] Establish RED full-resolver fixtures for post-download run/artifact ID substitution, attempt/digest/conclusion/expiry changes and tag movement. Use actual valid fixture ZIPs and reject unknown fixture routes.
+- [x] Implement bounded transport and shared exact-commit/tag resolver. Preserve every original release/native/ZIP rule; no receipt is published after final authority failure.
+- [x] Add RED/GREEN receipt classification/overwrite/provenance and deterministic expired-evidence recovery cases; preserve old-attempt and dispatch rejection.
+- [x] Add read-only audit and manual prebuilt preview workflow contracts. Prereleases cannot automatically deploy production; preview has no `--prod`, no source rebuild, no token output, and missing credentials fail before provider invocation.
+- [x] Verify focused guarded release/API/receipt/recovery tests, publish interfaces/new source coverage/bindings and workflow fragment details, obtain independent spec/quality review and integrate.
 
 ### Task 3: Make compatibility and preflight claims executable
 
@@ -61,13 +61,13 @@
 
 **Interfaces:** strict `validateCompatibilityDeclaration(value)`; `collectCompatibilityEvidence(...)` and `summarizeCompatibility(...)` that validate native/source/runtime/independent-target evidence; `collectPreflight(...)` with injectable read/probe seams and source/installed CLI stages. The specification owns the exact two candidate IDs/runner labels/stack.
 
-- [ ] Add RED unknown/duplicate declaration and missing/smoke/stale/source/runtime/reused-install/summary-only evidence cases; prove no candidate becomes verified by a flag.
-- [ ] Add actual-process `metadata.runtime={nodeVersion,platform,arch,execPath}` to native invocation production with RED/GREEN, refusing caller override. Preserve old v1 evidence via a strict optional-runtime metadata addition, with malformed/unknown-field negatives and all historical minima unchanged.
-- [ ] Implement strict declaration and per-cell evidence collection using existing native and portability validators. Require matching runtime on authoritative gates, all bound children and independent target native records; actual collector runtime/package tuple must also match. Fixture mode stays explicit; requested hosted mode/env is not authenticated provenance.
-- [ ] Add RED doctor cases for missing/wrong Node/pnpm/Git/history/locks/revisions/dependencies/browser and safe custom-cache resolution; source stage works without dependencies and has no network/install/build/mutation.
-- [ ] Implement text/JSON preflight, concrete remediation, nonzero unmet requirements and explicit informational unverified platform status. Reuse installed registry validation; do not broaden authority.
-- [ ] Verify focused guarded tests and real source/installed doctor probes. Publish the exact macOS full-gate job/receipt contract, measured new coverage and binding identities.
-- [ ] Obtain independent spec/quality review, address findings and integrate.
+- [x] Add RED unknown/duplicate declaration and missing/smoke/stale/source/runtime/reused-install/summary-only evidence cases; prove no candidate becomes verified by a flag.
+- [x] Add actual-process `metadata.runtime={nodeVersion,platform,arch,execPath}` to native invocation production with RED/GREEN, refusing caller override. Preserve old v1 evidence via a strict optional-runtime metadata addition, with malformed/unknown-field negatives and all historical minima unchanged.
+- [x] Implement strict declaration and per-cell evidence collection using existing native and portability validators. Require matching runtime on authoritative gates, all bound children and independent target native records; actual collector runtime/package tuple must also match. Fixture mode stays explicit; requested hosted mode/env is not authenticated provenance.
+- [x] Add RED doctor cases for missing/wrong Node/pnpm/Git/history/locks/revisions/dependencies/browser and safe custom-cache resolution; source stage works without dependencies and has no network/install/build/mutation.
+- [x] Implement text/JSON preflight, concrete remediation, nonzero unmet requirements and explicit informational unverified platform status. Reuse installed registry validation; do not broaden authority.
+- [x] Verify focused guarded tests and real source/installed doctor probes. Publish the exact macOS full-gate job/receipt contract, measured new coverage and binding identities.
+- [x] Obtain independent spec/quality review, address findings and integrate.
 
 ### Task 4: Freeze a separately authored unharnessed application
 
@@ -75,9 +75,9 @@
 
 **Interfaces:** Plain React/Vite `/rooms` and `/reservations` UI; pure room/slot reserve/cancel/conflict/stable-command replay semantics. Fixed seed choices and no auth/tenant/provider/database claims. Ordinary app tests may exist before adoption. Freeze baseline commit and inventory before Task 5.
 
-- [ ] Write ordinary failing domain tests before implementing room/slot rules.
-- [ ] Implement the minimal visible two-screen app and own pinned dependencies/build/tests; verify those and freeze the source/inventory.
-- [ ] Independently review the baseline acceptance/source and confirm it contains no preauthored Proofline adaptation. Commit baseline before pilot dispatch.
+- [x] Write ordinary failing domain tests before implementing room/slot rules.
+- [x] Implement the minimal visible two-screen app and own pinned dependencies/build/tests; verify those and freeze the source/inventory.
+- [x] Independently review the baseline acceptance/source and confirm it contains no preauthored Proofline adaptation. Commit baseline before pilot dispatch.
 
 ### Task 5: Run a fresh independent agent adaptation trial
 

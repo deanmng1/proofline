@@ -32,12 +32,16 @@ Install Node with your normal version manager, then install the pinned package m
 ```sh
 git clone https://github.com/deanmng1/proofline.git
 cd proofline
+node tools/proofline/doctor.mjs --stage source
 pnpm install --frozen-lockfile
 pnpm exec playwright install chromium
+node tools/proofline/doctor.mjs --stage installed
 pnpm harness:validate
 ```
 
 On Linux CI, install browser system dependencies with `pnpm exec playwright install --with-deps chromium`. Both the full unit gate and browser gate need Chromium: a harness unit regression deliberately executes a real browser identity. A custom `PLAYWRIGHT_BROWSERS_PATH` is supported; install and run using the same value.
+
+The read-only doctor checks prerequisites and prints concrete remediation. Source mode works without installed dependencies; installed mode also checks package resolution and the exact installed browser companions. Use `--json` for structured output. It performs no installation or repair, and a ready preflight does not establish passed tests or browser operating-system-library readiness.
 
 ## Try the CRM without a backend
 

@@ -34,6 +34,9 @@
     "rules:generate": "node --experimental-strip-types tools/impact/src/main.ts --generate-rules",
     "harness:validate": "node --experimental-strip-types tools/impact/src/main.ts --validate-harness",
     "proofline:validate-portability": "node tools/proofline/validate-portability.mjs",
+    "proofline:doctor": "node tools/proofline/doctor.mjs",
+    "proofline:compatibility": "node tools/proofline/compatibility.mjs",
+    "proofline:audit-hosted": "node tools/proofline/hosted-proof.mjs",
     "demo": "node apps/crm-web/scripts/demo.mjs",
     "build:demo": "pnpm nx run crm-web:build-demo"
   },
