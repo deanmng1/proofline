@@ -11,8 +11,10 @@ import {
 } from "node:fs";
 import http from "node:http";
 import https from "node:https";
+import { register } from "node:module";
 import { tmpdir } from "node:os";
 import path from "node:path";
+import { MessageChannel, Worker } from "node:worker_threads";
 import { afterAll, beforeAll, expect, test } from "vitest";
 
 let origin = "";
@@ -460,7 +462,6 @@ test("canonical_unit_runner_rejects_node_options_preloads_before_all_child_dispa
 });
 
 test("canonical_unit_runner_rejects_worker_threads_and_preserves_message_channels", async () => {
-  const { Worker, MessageChannel } = await import("node:worker_threads");
   expect(Object.getPrototypeOf(Worker)).toBe(Function.prototype);
   expect(Object.getPrototypeOf(Worker.prototype)).toBe(Object.prototype);
   expect(Worker.prototype.constructor).toBe(Worker);
@@ -495,7 +496,6 @@ test("canonical_unit_runner_rejects_worker_threads_and_preserves_message_channel
 });
 
 test("canonical_unit_runner_rejects_async_loader_registration_before_execution", async () => {
-  const { register } = await import("node:module");
   const marker = path.join(temporary, "canonical-loader-ran");
   const file = path.join(temporary, "canonical-loader.mjs");
   writeFileSync(

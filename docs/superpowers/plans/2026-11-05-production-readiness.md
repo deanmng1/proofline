@@ -137,7 +137,7 @@ The first fresh d3b80 gate failed its new optional-print fixture under NxFORCE_C
 - [x] Implement NodeR1–R4 and generic browserR5 with independent task reviews; retain header-species P2 and Nx compatibility failure/fix evidence.
 - [x] Integrate exact identities, new100%helperfloor, production exclusions and exact generated-MSW ignore; preserve24oldfloors and232196baseauthoredbytes.
 - [x] Pass exact full tools coverage292/292 and all21measured tools floors after fix1.
-- [ ] Obtain the original evaluator's all-five closure against one committed cohort.
+- [x] Obtain the original evaluator's all-five closure against one committed cohort (`8c7614f`; all R1–R5 closed).
 - [ ] Pass a new complete fresh root/work-orders gate, compatibility receipt and actual local release ZIP at that implementation head.
 - [ ] Upgrade Roomboard once to the audited37-file core plus target-owned initializer registration, reverify/review and replace the recommended own-history bundle.
 - [ ] Execute reviewed hosted bootstrap PR/main sequence and strict actual API/native artifact audit.

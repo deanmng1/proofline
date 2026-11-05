@@ -734,7 +734,7 @@
           "runner": "vitest",
           "file": "tools/proofline/src/canonical-runner-egress.test.ts",
           "title": "canonical_unit_runner_rejects_package_manager_wrapper_escape_with_stripped_env",
-          "line": 95
+          "line": 97
         },
         {
           "ruleId": "SAFE-001",
@@ -744,7 +744,7 @@
           "runner": "vitest",
           "file": "tools/proofline/src/canonical-runner-egress.test.ts",
           "title": "canonical_unit_runner_rejects_forged_delegated_policy_broadening",
-          "line": 150
+          "line": 152
         },
         {
           "ruleId": "SAFE-001",
@@ -795,7 +795,7 @@
           "runner": "vitest",
           "file": "tools/proofline/src/canonical-runner-egress.test.ts",
           "title": "canonical_unit_runner_rejects_repository_clean_filters_before_native_dispatch",
-          "line": 199
+          "line": 201
         },
         {
           "ruleId": "SAFE-001",
@@ -805,7 +805,7 @@
           "runner": "vitest",
           "file": "tools/proofline/src/canonical-runner-egress.test.ts",
           "title": "canonical_unit_runner_ignores_HOME_and_XDG_git_configuration",
-          "line": 225
+          "line": 227
         },
         {
           "ruleId": "SAFE-001",
@@ -815,7 +815,7 @@
           "runner": "vitest",
           "file": "tools/proofline/src/canonical-runner-egress.test.ts",
           "title": "canonical_unit_runner_limits_git_to_filter_free_object_and_metadata_operations",
-          "line": 246
+          "line": 248
         },
         {
           "ruleId": "SAFE-001",
@@ -825,7 +825,7 @@
           "runner": "vitest",
           "file": "tools/proofline/src/canonical-runner-egress.test.ts",
           "title": "canonical_unit_runner_establishes_manifest_artifacts_before_vitest",
-          "line": 333
+          "line": 335
         },
         {
           "ruleId": "EXEC-001",
@@ -1065,7 +1065,7 @@
           "runner": "vitest",
           "file": "tools/proofline/src/canonical-runner-egress.test.ts",
           "title": "canonical_unit_runner_rejects_operand_hidden_preloads_before_all_child_dispatches",
-          "line": 354
+          "line": 356
         },
         {
           "ruleId": "SAFE-001",
@@ -1635,7 +1635,7 @@
           "runner": "vitest",
           "file": "tools/proofline/src/canonical-runner-egress.test.ts",
           "title": "canonical_unit_runner_rejects_node_options_preloads_before_all_child_dispatches",
-          "line": 410
+          "line": 412
         },
         {
           "ruleId": "SAFE-001",
@@ -1785,7 +1785,7 @@
           "runner": "vitest",
           "file": "tools/proofline/src/canonical-runner-egress.test.ts",
           "title": "canonical_unit_runner_rejects_worker_threads_and_preserves_message_channels",
-          "line": 462
+          "line": 464
         },
         {
           "ruleId": "SAFE-001",
@@ -1795,7 +1795,7 @@
           "runner": "vitest",
           "file": "tools/proofline/src/canonical-runner-egress.test.ts",
           "title": "canonical_unit_runner_rejects_async_loader_registration_before_execution",
-          "line": 497
+          "line": 498
         },
         {
           "ruleId": "SAFE-001",

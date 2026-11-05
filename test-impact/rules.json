@@ -635,12 +635,12 @@
         {
           "file": "tools/proofline/src/canonical-runner-egress.test.ts",
           "title": "canonical_unit_runner_rejects_package_manager_wrapper_escape_with_stripped_env",
-          "line": 95
+          "line": 97
         },
         {
           "file": "tools/proofline/src/canonical-runner-egress.test.ts",
           "title": "canonical_unit_runner_rejects_forged_delegated_policy_broadening",
-          "line": 150
+          "line": 152
         },
         {
           "file": "tools/proofline/src/egress-guard.test.ts",
@@ -665,22 +665,22 @@
         {
           "file": "tools/proofline/src/canonical-runner-egress.test.ts",
           "title": "canonical_unit_runner_rejects_repository_clean_filters_before_native_dispatch",
-          "line": 199
+          "line": 201
         },
         {
           "file": "tools/proofline/src/canonical-runner-egress.test.ts",
           "title": "canonical_unit_runner_ignores_HOME_and_XDG_git_configuration",
-          "line": 225
+          "line": 227
         },
         {
           "file": "tools/proofline/src/canonical-runner-egress.test.ts",
           "title": "canonical_unit_runner_limits_git_to_filter_free_object_and_metadata_operations",
-          "line": 246
+          "line": 248
         },
         {
           "file": "tools/proofline/src/canonical-runner-egress.test.ts",
           "title": "canonical_unit_runner_establishes_manifest_artifacts_before_vitest",
-          "line": 333
+          "line": 335
         },
         {
           "file": "tools/proofline/src/playwright-cache.test.ts",
@@ -760,7 +760,7 @@
         {
           "file": "tools/proofline/src/canonical-runner-egress.test.ts",
           "title": "canonical_unit_runner_rejects_operand_hidden_preloads_before_all_child_dispatches",
-          "line": 354
+          "line": 356
         },
         {
           "file": "tools/proofline/src/production-negative.test.ts",
@@ -800,7 +800,7 @@
         {
           "file": "tools/proofline/src/canonical-runner-egress.test.ts",
           "title": "canonical_unit_runner_rejects_node_options_preloads_before_all_child_dispatches",
-          "line": 410
+          "line": 412
         },
         {
           "file": "tools/proofline/src/egress-guard.test.ts",
@@ -875,12 +875,12 @@
         {
           "file": "tools/proofline/src/canonical-runner-egress.test.ts",
           "title": "canonical_unit_runner_rejects_worker_threads_and_preserves_message_channels",
-          "line": 462
+          "line": 464
         },
         {
           "file": "tools/proofline/src/canonical-runner-egress.test.ts",
           "title": "canonical_unit_runner_rejects_async_loader_registration_before_execution",
-          "line": 497
+          "line": 498
         },
         {
           "file": "tools/proofline/src/canonical-runner-egress.test.ts",
