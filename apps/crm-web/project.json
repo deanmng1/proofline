@@ -27,8 +27,11 @@
       "command": "pnpm exec vitest run --config apps/crm-web/vite.config.ts"
     },
     "coverage": {
-      "command": "node tools/proofline/canonical-runner.mjs vitest run --config apps/crm-web/vite.config.ts --coverage",
-      "outputs": ["{workspaceRoot}/artifacts/coverage/crm-web"],
+      "command": "node tools/proofline/canonical-runner.mjs vitest run --config apps/crm-web/vite.config.ts --coverage && node tools/proofline/canonical-runner.mjs vitest run apps/crm-web/scripts/demo.test.ts --coverage --coverage.all --coverage.provider=v8 --coverage.reportOnFailure --coverage.reportsDirectory=artifacts/coverage/crm-demo --coverage.reporter=text --coverage.reporter=html --coverage.reporter=lcov --coverage.reporter=json-summary --coverage.include='apps/crm-web/scripts/*.mjs'",
+      "outputs": [
+        "{workspaceRoot}/artifacts/coverage/crm-web",
+        "{workspaceRoot}/artifacts/coverage/crm-demo"
+      ],
       "cache": false
     },
     "test-watch": {

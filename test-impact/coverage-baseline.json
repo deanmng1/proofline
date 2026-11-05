@@ -163,6 +163,7 @@
       "statements": 0
     },
     "apps/crm-web/scripts/demo.mjs": {
+      "report": "artifacts/coverage/crm-demo/coverage-summary.json",
       "lines": 52,
       "branches": 50,
       "functions": 50,

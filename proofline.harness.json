@@ -631,7 +631,7 @@
           "reason": "Test sources are not instrumented production sources."
         }
       ],
-      "report": "artifacts/coverage/crm-web/coverage-summary.json",
+      "report": "artifacts/coverage/crm-demo/coverage-summary.json",
       "reportFormat": "istanbul-json-summary",
       "metrics": ["lines", "functions", "branches", "statements"],
       "aggregation": "per-file",
