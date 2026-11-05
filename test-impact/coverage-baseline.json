@@ -99,12 +99,26 @@
       "functions": 100,
       "statements": 100
     },
+    "tools/proofline/portability-result.mjs": {
+      "report": "artifacts/coverage/proofline-tools/coverage-summary.json",
+      "lines": 96,
+      "branches": 97,
+      "functions": 94,
+      "statements": 96
+    },
     "tools/proofline/test-fixtures/runner.ts": {
       "report": "artifacts/coverage/proofline-tools/coverage-summary.json",
       "lines": 100,
       "branches": 100,
       "functions": 100,
       "statements": 100
+    },
+    "tools/proofline/validate-portability.mjs": {
+      "report": "artifacts/coverage/proofline-tools/coverage-summary.json",
+      "lines": 27,
+      "branches": 90,
+      "functions": 80,
+      "statements": 27
     },
     "tools/proofline/vitest-execution.mjs": {
       "report": "artifacts/coverage/proofline-tools/coverage-summary.json",

@@ -32,7 +32,8 @@
     "coverage:check": "node --experimental-strip-types tools/impact/src/coverage-policy.ts",
     "record:check": "node --experimental-strip-types tools/impact/src/record-check.ts",
     "rules:generate": "node --experimental-strip-types tools/impact/src/main.ts --generate-rules",
-    "harness:validate": "node --experimental-strip-types tools/impact/src/main.ts --validate-harness"
+    "harness:validate": "node --experimental-strip-types tools/impact/src/main.ts --validate-harness",
+    "proofline:validate-portability": "node tools/proofline/validate-portability.mjs"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx,json,css,html,svg}": [

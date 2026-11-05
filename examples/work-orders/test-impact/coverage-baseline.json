@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "files": {
+    "client/orders.mjs": {
+      "report": "artifacts/coverage/work-orders/coverage-summary.json",
+      "lines": 100,
+      "branches": 100,
+      "functions": 100,
+      "statements": 100
+    }
+  }
+}

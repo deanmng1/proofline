@@ -1,0 +1,22 @@
+{
+  "name": "proofline-work-orders-portability",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node tools/proofline/canonical-runner.mjs unit",
+    "e2e": "node tools/proofline/canonical-runner.mjs browser"
+  },
+  "dependencies": {
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "devDependencies": {
+    "vite": "6.4.3",
+    "vitest": "3.2.7",
+    "@vitest/coverage-v8": "3.2.7",
+    "@playwright/test": "1.62.1",
+    "typescript": "5.8.3",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.4"
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "version": 1,
+  "rules": [
+    {
+      "id": "WORK-001",
+      "description": "Dispatcher completes own-organization requests once; observers and foreign organizations cannot mutate.",
+      "criticality": "critical",
+      "paths": [
+        "client/orders.mjs",
+        "client/{app.jsx,main.jsx,test-entry.jsx}",
+        "checks/browser/{auth.mjs,api.mjs,scenario.mjs}"
+      ],
+      "vitest": [
+        {
+          "file": "client/orders.test.ts",
+          "title": "work order rules > completes_a_request_once_and_replays_the_same_command",
+          "line": 5
+        },
+        {
+          "file": "client/orders.test.ts",
+          "title": "work order rules > denies_observers_and_foreign_organizations_without_mutation",
+          "line": 14
+        }
+      ],
+      "playwright": [
+        {
+          "title": "navigates_requests_to_completed_and_revokes_the_session",
+          "line": 3,
+          "tag": "@desk-golden",
+          "path": "checks/browser/journeys.spec.ts"
+        },
+        {
+          "title": "denies_observer_navigation_and_commands",
+          "line": 25,
+          "tag": "@desk-authority",
+          "path": "checks/browser/journeys.spec.ts"
+        },
+        {
+          "title": "isolates_two_organizations_in_one_runtime",
+          "line": 52,
+          "tag": "@desk-organizations",
+          "path": "checks/browser/journeys.spec.ts"
+        }
+      ]
+    },
+    {
+      "id": "WORK-002",
+      "description": "Deny undeclared page, worker and WebSocket requests; service workers remain blocked.",
+      "criticality": "standard",
+      "paths": ["checks/browser/{auth.mjs,api.mjs,scenario.mjs}"],
+      "vitest": [],
+      "playwright": [
+        {
+          "path": "checks/browser/journeys.spec.ts",
+          "title": "denies_undeclared_browser_egress_planes",
+          "line": 82,
+          "tag": "@desk-egress"
+        }
+      ]
+    }
+  ]
+}

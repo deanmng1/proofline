@@ -105,6 +105,10 @@
       ],
       "cwd": ".",
       "runner": "playwright"
+    },
+    "portability": {
+      "argv": ["node", "tools/proofline/validate-portability.mjs"],
+      "cwd": "."
     }
   },
   "workspaces": [
@@ -577,6 +581,10 @@
           "reason": "Test sources are not instrumented production sources."
         },
         {
+          "glob": "tools/proofline/src/portability.test.ts",
+          "reason": "Test sources are not instrumented production sources."
+        },
+        {
           "glob": "tools/proofline/src/required-execution.test.ts",
           "reason": "Test sources are not instrumented production sources."
         }
@@ -613,9 +621,11 @@
         "tools/proofline/execution-verification.mjs",
         "tools/proofline/vitest-native-reporter.mjs",
         "tools/proofline/execution-artifacts.mjs",
-        "tools/proofline/vitest-execution.mjs"
+        "tools/proofline/validate-portability.mjs",
+        "tools/proofline/vitest-execution.mjs",
+        "tools/proofline/portability-result.mjs"
       ],
-      "ruleIds": ["SAFE-001", "EXEC-001", "EVID-001"],
+      "ruleIds": ["SAFE-001", "EXEC-001", "EVID-001", "PORT-001"],
       "layers": ["contract", "playwright"],
       "testBindings": [
         {
@@ -750,6 +760,16 @@
           "line": 13
         },
         {
+          "ruleId": "PORT-001",
+          "layer": "contract",
+          "testId": "binding-port-001-1",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/portability.test.ts",
+          "title": "Proofline standalone portability > copies_a_standalone_target_with_byte_identical_core_and_no_CRM_product",
+          "line": 154
+        },
+        {
           "ruleId": "EXEC-001",
           "layer": "contract",
           "testId": "binding-exec-001-full-scope",
@@ -795,6 +815,10 @@
         },
         {
           "ruleId": "EVID-001",
+          "layer": "contract"
+        },
+        {
+          "ruleId": "PORT-001",
           "layer": "contract"
         }
       ]

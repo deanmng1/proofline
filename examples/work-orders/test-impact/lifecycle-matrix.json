@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "unchangedStateConvention": "null-or-same",
+  "rows": [
+    {
+      "state": "requested",
+      "operation": "complete",
+      "role": "dispatcher",
+      "tenantScope": "own",
+      "expectedResult": "accepted",
+      "nextState": "completed",
+      "ruleIds": ["WORK-001"],
+      "testLayer": "service"
+    },
+    {
+      "state": "completed",
+      "operation": "complete-same-command",
+      "role": "dispatcher",
+      "tenantScope": "own",
+      "expectedResult": "no-op",
+      "nextState": "completed",
+      "ruleIds": ["WORK-001"],
+      "testLayer": "service"
+    },
+    {
+      "state": "requested",
+      "operation": "complete",
+      "role": "observer",
+      "tenantScope": "own",
+      "expectedResult": "rejected",
+      "nextState": null,
+      "ruleIds": ["WORK-001"],
+      "testLayer": "service"
+    },
+    {
+      "state": "requested",
+      "operation": "complete",
+      "role": "dispatcher",
+      "tenantScope": "foreign",
+      "expectedResult": "rejected",
+      "nextState": null,
+      "ruleIds": ["WORK-001"],
+      "testLayer": "service"
+    }
+  ]
+}

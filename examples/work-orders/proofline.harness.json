@@ -1,0 +1,340 @@
+{
+  "version": 1,
+  "commands": {
+    "lint": {
+      "argv": ["node", "checks/static-check.mjs"],
+      "cwd": "."
+    },
+    "typecheck": {
+      "argv": ["node", "checks/static-check.mjs"],
+      "cwd": "."
+    },
+    "unit": {
+      "argv": ["node", "tools/proofline/canonical-runner.mjs", "unit"],
+      "cwd": "."
+    },
+    "browser": {
+      "argv": ["node", "tools/proofline/canonical-runner.mjs", "browser"],
+      "cwd": "."
+    },
+    "unitDiagnostic": {
+      "argv": [
+        "node",
+        "tools/proofline/canonical-runner.mjs",
+        "vitest",
+        "run",
+        "--config",
+        "client/vitest.config.mjs"
+      ],
+      "cwd": ".",
+      "runner": "vitest"
+    },
+    "browserDiagnostic": {
+      "argv": [
+        "node",
+        "tools/proofline/canonical-runner.mjs",
+        "playwright",
+        "test",
+        "--config",
+        "checks/browser/playwright.config.mjs"
+      ],
+      "cwd": ".",
+      "runner": "playwright"
+    },
+    "coverage": {
+      "argv": [
+        "node",
+        "tools/proofline/canonical-runner.mjs",
+        "vitest",
+        "run",
+        "--config",
+        "client/vitest.config.mjs",
+        "--coverage",
+        "--coverage.provider=v8",
+        "--coverage.reportsDirectory=artifacts/coverage/work-orders",
+        "--coverage.reporter=json-summary",
+        "--coverage.include=client/**/*.{mjs,jsx,ts,tsx}",
+        "--coverage.exclude=client/**/*.test.ts",
+        "--coverage.exclude=client/**/*.d.ts",
+        "--coverage.exclude=client/app.jsx",
+        "--coverage.exclude=client/main.jsx",
+        "--coverage.exclude=client/test-entry.jsx",
+        "--coverage.exclude=client/*config.mjs"
+      ],
+      "cwd": "."
+    },
+    "coverageCheck": {
+      "argv": ["node", "--experimental-strip-types", "tools/impact/src/coverage-policy.ts"],
+      "cwd": "."
+    },
+    "recordCheck": {
+      "argv": ["node", "--experimental-strip-types", "tools/impact/src/record-check.ts"],
+      "cwd": "."
+    },
+    "buildProduction": {
+      "argv": ["node", "checks/build.mjs"],
+      "cwd": "."
+    },
+    "buildTest": {
+      "argv": ["node", "checks/build.mjs", "test"],
+      "cwd": "."
+    },
+    "serveTest": {
+      "argv": [
+        "node",
+        "tools/proofline/serve-test-app.mjs",
+        "--directory",
+        "dist/work-orders-test",
+        "--port",
+        "0"
+      ],
+      "cwd": "."
+    }
+  },
+  "execution": {
+    "unitBuildCommands": ["buildProduction", "buildTest"],
+    "unitTargets": [
+      {
+        "argv": ["run", "--config", "client/vitest.config.mjs"],
+        "cwd": "."
+      }
+    ],
+    "browserBuildCommands": ["buildTest"],
+    "browserArgs": ["test", "--config", "checks/browser/playwright.config.mjs"]
+  },
+  "production": {
+    "directory": "dist/work-orders",
+    "forbiddenModules": [
+      "client/test-entry.jsx",
+      "checks/browser/auth.mjs",
+      "checks/browser/api.mjs",
+      "checks/browser/scenario.mjs"
+    ]
+  },
+  "workspaces": [
+    {
+      "path": "client",
+      "unitCommand": "unitDiagnostic",
+      "browserCommands": [],
+      "browserOptOutReason": "Browser journeys are owned by checks/browser."
+    },
+    {
+      "path": "checks/browser",
+      "unitCommand": null,
+      "browserCommands": ["browserDiagnostic"]
+    }
+  ],
+  "browser": {
+    "projects": ["chromium"],
+    "crossBrowserSmokeProjects": [],
+    "localOrigins": ["http://127.0.0.1"],
+    "testEntrypoint": "serveTest"
+  },
+  "adapters": {
+    "testModeEnvironment": "client/test-entry.jsx",
+    "auth": "checks/browser/auth.mjs",
+    "api": "checks/browser/api.mjs",
+    "providers": [],
+    "runnerEgress": "tools/proofline/canonical-runner.mjs"
+  },
+  "coverage": [
+    {
+      "workspace": "client",
+      "provider": "v8",
+      "providerVersion": "3.2.7",
+      "sourceGlobs": ["client/**/*.{mjs,jsx,ts,tsx}"],
+      "exclusions": [
+        {
+          "glob": "client/**/*.test.ts",
+          "reason": "Deterministic tests are evidence, not production sources."
+        },
+        {
+          "glob": "client/**/*.d.ts",
+          "reason": "Type-only browser declarations have no runtime."
+        },
+        {
+          "glob": "client/app.jsx",
+          "reason": "React view is verified by the separately declared browser matrix; this example measures its pure lifecycle runtime."
+        },
+        {
+          "glob": "client/main.jsx",
+          "reason": "DOM mount entrypoint is exercised by every browser workflow."
+        },
+        {
+          "glob": "client/test-entry.jsx",
+          "reason": "Test-only capability bootstrap is excluded from production artifacts."
+        },
+        {
+          "glob": "client/*config.mjs",
+          "reason": "Target-owned build and runner configuration is validated by static gates."
+        }
+      ],
+      "report": "artifacts/coverage/work-orders/coverage-summary.json",
+      "reportFormat": "istanbul-json-summary",
+      "metrics": ["lines", "functions", "branches", "statements"],
+      "aggregation": "per-file",
+      "producer": {
+        "command": {
+          "kind": "manifest-command",
+          "commandKey": "coverage"
+        },
+        "adapter": {
+          "kind": "vitest",
+          "implementation": "@vitest/coverage-v8",
+          "version": {
+            "kind": "package-json",
+            "package": "@vitest/coverage-v8"
+          }
+        }
+      }
+    }
+  ],
+  "ownership": [
+    {
+      "glob": "client/orders.mjs",
+      "entrypoints": ["client/orders.mjs"],
+      "ruleIds": ["WORK-001"],
+      "layers": ["service"],
+      "ruleLayers": [
+        {
+          "ruleId": "WORK-001",
+          "layer": "service"
+        }
+      ],
+      "testBindings": [
+        {
+          "ruleId": "WORK-001",
+          "layer": "service",
+          "testId": "work-unit-0",
+          "commandKey": "unitDiagnostic",
+          "runner": "vitest",
+          "file": "client/orders.test.ts",
+          "title": "work order rules > completes_a_request_once_and_replays_the_same_command",
+          "line": 5
+        },
+        {
+          "ruleId": "WORK-001",
+          "layer": "service",
+          "testId": "work-unit-1",
+          "commandKey": "unitDiagnostic",
+          "runner": "vitest",
+          "file": "client/orders.test.ts",
+          "title": "work order rules > denies_observers_and_foreign_organizations_without_mutation",
+          "line": 14
+        }
+      ]
+    },
+    {
+      "glob": "client/{app.jsx,main.jsx,test-entry.jsx}",
+      "entrypoints": ["client/app.jsx"],
+      "ruleIds": ["WORK-001"],
+      "layers": ["playwright"],
+      "ruleLayers": [
+        {
+          "ruleId": "WORK-001",
+          "layer": "playwright"
+        }
+      ],
+      "testBindings": [
+        {
+          "ruleId": "WORK-001",
+          "layer": "playwright",
+          "testId": "work-browser-0",
+          "commandKey": "browserDiagnostic",
+          "runner": "playwright",
+          "file": "checks/browser/journeys.spec.ts",
+          "title": "navigates_requests_to_completed_and_revokes_the_session",
+          "line": 3,
+          "tag": "@desk-golden"
+        },
+        {
+          "ruleId": "WORK-001",
+          "layer": "playwright",
+          "testId": "work-browser-1",
+          "commandKey": "browserDiagnostic",
+          "runner": "playwright",
+          "file": "checks/browser/journeys.spec.ts",
+          "title": "denies_observer_navigation_and_commands",
+          "line": 25,
+          "tag": "@desk-authority"
+        },
+        {
+          "ruleId": "WORK-001",
+          "layer": "playwright",
+          "testId": "work-browser-2",
+          "commandKey": "browserDiagnostic",
+          "runner": "playwright",
+          "file": "checks/browser/journeys.spec.ts",
+          "title": "isolates_two_organizations_in_one_runtime",
+          "line": 52,
+          "tag": "@desk-organizations"
+        }
+      ]
+    },
+    {
+      "glob": "checks/browser/{auth.mjs,api.mjs,scenario.mjs}",
+      "entrypoints": ["checks/browser/scenario.mjs"],
+      "ruleIds": ["WORK-001", "WORK-002"],
+      "layers": ["playwright"],
+      "ruleLayers": [
+        {
+          "ruleId": "WORK-001",
+          "layer": "playwright"
+        },
+        {
+          "ruleId": "WORK-002",
+          "layer": "playwright"
+        }
+      ],
+      "testBindings": [
+        {
+          "ruleId": "WORK-001",
+          "layer": "playwright",
+          "testId": "work-browser-3",
+          "commandKey": "browserDiagnostic",
+          "runner": "playwright",
+          "file": "checks/browser/journeys.spec.ts",
+          "title": "navigates_requests_to_completed_and_revokes_the_session",
+          "line": 3,
+          "tag": "@desk-golden"
+        },
+        {
+          "ruleId": "WORK-001",
+          "layer": "playwright",
+          "testId": "work-browser-4",
+          "commandKey": "browserDiagnostic",
+          "runner": "playwright",
+          "file": "checks/browser/journeys.spec.ts",
+          "title": "denies_observer_navigation_and_commands",
+          "line": 25,
+          "tag": "@desk-authority"
+        },
+        {
+          "ruleId": "WORK-001",
+          "layer": "playwright",
+          "testId": "work-browser-5",
+          "commandKey": "browserDiagnostic",
+          "runner": "playwright",
+          "file": "checks/browser/journeys.spec.ts",
+          "title": "isolates_two_organizations_in_one_runtime",
+          "line": 52,
+          "tag": "@desk-organizations"
+        },
+        {
+          "ruleId": "WORK-002",
+          "layer": "playwright",
+          "testId": "work-egress",
+          "commandKey": "browserDiagnostic",
+          "runner": "playwright",
+          "file": "checks/browser/journeys.spec.ts",
+          "title": "denies_undeclared_browser_egress_planes",
+          "line": 82,
+          "tag": "@desk-egress"
+        }
+      ]
+    }
+  ],
+  "ruleRegistry": "test-impact/rules.json",
+  "lifecycleMatrix": "test-impact/lifecycle-matrix.json",
+  "goldenWorkflowMatrix": "test-impact/workflows/work-orders.json"
+}

@@ -947,6 +947,24 @@
         }
       ],
       "playwright": []
+    },
+    {
+      "id": "PORT-001",
+      "description": "The same reusable core validates an unrelated standalone application with exact ownership, isolated execution, coverage, append-only evidence and production-negative boundaries.",
+      "criticality": "critical",
+      "paths": [
+        "tools/proofline/validate-portability.mjs",
+        "tools/proofline/check-production.mjs",
+        "tools/proofline/portability-result.mjs"
+      ],
+      "vitest": [
+        {
+          "file": "tools/proofline/src/portability.test.ts",
+          "title": "Proofline standalone portability > copies_a_standalone_target_with_byte_identical_core_and_no_CRM_product",
+          "line": 154
+        }
+      ],
+      "playwright": []
     }
   ]
 }

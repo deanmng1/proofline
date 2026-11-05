@@ -1,0 +1,94 @@
+{
+  "version": 1,
+  "tenantIsolationMode": "authenticated-contexts",
+  "rows": [
+    {
+      "id": "request-completion",
+      "status": "implemented",
+      "adapterSetup": [
+        "Fresh isolated work-order runtime; cookie-session transport and seeded identities installed before navigation."
+      ],
+      "userActions": [
+        "Open protected requests deep link, sign in as dispatch-north, complete the lamp request, follow Completed navigation, sign out and revisit."
+      ],
+      "urlTransitions": [
+        "/desk/requests -> /signin -> /desk/requests -> /desk/completed -> /signin"
+      ],
+      "visibleAssertions": [
+        "Requested work and Completed work headings, completed lamp and final sign-in screen."
+      ],
+      "persistedInvariants": ["Exactly one completed request after final visible completion."],
+      "ruleIds": ["WORK-001"],
+      "exclusions": [],
+      "evidence": [
+        {
+          "rowId": "request-completion",
+          "commandKey": "browserDiagnostic",
+          "ruleIds": ["WORK-001"],
+          "file": "checks/browser/journeys.spec.ts",
+          "title": "navigates_requests_to_completed_and_revokes_the_session",
+          "line": 3,
+          "tag": "@desk-golden"
+        }
+      ]
+    },
+    {
+      "id": "observer-denial",
+      "status": "implemented",
+      "adapterSetup": [
+        "Fresh isolated work-order runtime; cookie-session transport and seeded identities installed before navigation."
+      ],
+      "userActions": [
+        "Sign in as observe-north and inspect denied requests navigation and direct route."
+      ],
+      "urlTransitions": ["/desk/requests -> /signin -> /desk/requests"],
+      "visibleAssertions": ["Permission denied heading and absent Requests link."],
+      "persistedInvariants": [
+        "No mutation request issued by denied UI; direct API command denied without mutation."
+      ],
+      "ruleIds": ["WORK-001"],
+      "exclusions": [],
+      "evidence": [
+        {
+          "rowId": "observer-denial",
+          "commandKey": "browserDiagnostic",
+          "ruleIds": ["WORK-001"],
+          "file": "checks/browser/journeys.spec.ts",
+          "title": "denies_observer_navigation_and_commands",
+          "line": 25,
+          "tag": "@desk-authority"
+        }
+      ]
+    },
+    {
+      "id": "organization-isolation",
+      "status": "implemented",
+      "adapterSetup": [
+        "Fresh isolated work-order runtime; cookie-session transport and seeded identities installed before navigation."
+      ],
+      "userActions": [
+        "Sign in through two independent contexts as dispatch-north and dispatch-south, complete each own request and navigate to Completed."
+      ],
+      "urlTransitions": ["/desk/requests -> /signin -> /desk/requests"],
+      "visibleAssertions": [
+        "Each context displays only its own organization request and completed item."
+      ],
+      "persistedInvariants": [
+        "Two own requests completed; foreign read data absent and foreign commands rejected in both contexts."
+      ],
+      "ruleIds": ["WORK-001"],
+      "exclusions": [],
+      "evidence": [
+        {
+          "rowId": "organization-isolation",
+          "commandKey": "browserDiagnostic",
+          "ruleIds": ["WORK-001"],
+          "file": "checks/browser/journeys.spec.ts",
+          "title": "isolates_two_organizations_in_one_runtime",
+          "line": 52,
+          "tag": "@desk-organizations"
+        }
+      ]
+    }
+  ]
+}
