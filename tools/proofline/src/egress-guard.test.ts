@@ -15,6 +15,8 @@ import path from "node:path";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 import {
   assertSafeNodeArgv,
+  guardImportOption,
+  mergeGuardNodeOptions,
   normalizeAllowedChildCapabilities,
   parseAllowedChildCapabilitiesEnvironment,
   // @ts-expect-error The preload policy stays runtime-native JavaScript; this test exercises it directly.
@@ -1078,6 +1080,152 @@ describe("Proofline egress guard", () => {
     }
   });
 
+  test("rejects_unreviewed_node_options_syntax_before_startup", () => {
+    const rejected = [
+      '"--require" sentinel.cjs',
+      '--require="sentinel.cjs"',
+      "--require=sentinel.cjs",
+      "-r sentinel.cjs",
+      "-rsentinel.cjs",
+      '--re""quire sentinel.cjs',
+      '"--requ\\ire" sentinel.cjs',
+      "'--require' sentinel.cjs",
+      "--import=sentinel.mjs",
+      "--loader=sentinel.mjs",
+      "--experimental-loader sentinel.mjs",
+      "--inspect",
+      "--inspect=127.0.0.1:0",
+      '"--inspect=127.0.0.1:0"',
+      "--inspect-brk=0",
+      "--inspect-port=0",
+      "--unknown-option value",
+      "--conditions",
+      "--conditions --require sentinel.cjs",
+      "--conditions=",
+      "--conditions=--require",
+      "--trace-warnings=1",
+      "--max-old-space-size 256",
+      "--max-old-space-size=0",
+      "--input-type=invalid",
+      "--eval=0",
+      "-e 0",
+      "--print",
+      "--",
+      "ordinary-operand",
+      "--trace-warnings\t--require sentinel.cjs",
+      "--trace-warnings\n--require sentinel.cjs",
+      "--trace-warnings\0",
+      '"--trace-warnings"',
+      "--trace-warnings\\",
+      "--trace-warnings\u00a0",
+      `${guardImportOption}suffix`,
+      `prefix${guardImportOption}`,
+      `${guardImportOption} ${guardImportOption}`,
+      `"${guardImportOption}"`,
+      `--import ${guardImportOption.slice("--import=".length)}`,
+      `--conditions ${guardImportOption}`,
+      `--conditions=${guardImportOption}`,
+      null,
+      42,
+      {},
+    ];
+    for (const value of rejected)
+      expect
+        .soft(() => mergeGuardNodeOptions(value), JSON.stringify(value))
+        .toThrow(/NODE_OPTIONS.*reviewed/);
+    const secret = "private-environment-value";
+    expect(() => mergeGuardNodeOptions(`--unknown=${secret}`)).toThrow(/NODE_OPTIONS/);
+    try {
+      mergeGuardNodeOptions(`--unknown=${secret}`);
+    } catch (error) {
+      expect(String(error)).not.toContain(secret);
+    }
+  });
+
+  test("rejects_direct_node_options_preloads_before_sentinel_execution", async () => {
+    const marker = path.join(temporaryRoot, "environment-preload-ran");
+    const sentinel = script(
+      "environment-preload.cjs",
+      `require("node:fs").writeFileSync(${JSON.stringify(marker)}, "ran");`,
+    );
+    for (const nodeOptions of [
+      `"--require" ${sentinel}`,
+      `--re""quire ${sentinel}`,
+      `"--requ\\ire" ${sentinel}`,
+      `--require="${sentinel}"`,
+      `--require=${sentinel}`,
+      `--import=${sentinel}`,
+    ]) {
+      let denial = "dispatched";
+      try {
+        await withProoflineGuard([process.execPath, "-e", "0"], {
+          allowedOrigins: [allowedOrigin],
+          env: { NODE_OPTIONS: nodeOptions },
+        });
+      } catch (error) {
+        denial = String(error);
+      }
+      expect.soft({ denial, sentinelRan: existsSync(marker) }, nodeOptions).toEqual({
+        denial: expect.stringMatching(/NODE_OPTIONS.*reviewed/),
+        sentinelRan: false,
+      });
+      rmSync(marker, { force: true });
+    }
+  });
+
+  test("preserves_reviewed_node_options_and_exact_guard_inheritance", async () => {
+    expect(mergeGuardNodeOptions()).toBe(guardImportOption);
+    expect(mergeGuardNodeOptions(`  --trace-warnings  ${guardImportOption}  `)).toBe(
+      `--trace-warnings ${guardImportOption}`,
+    );
+    for (const nodeOptions of [
+      "--trace-warnings --trace-deprecation --no-deprecation --no-warnings",
+      "--enable-source-maps --experimental-strip-types --experimental-transform-types",
+      "--experimental-import-meta-resolve --no-experimental-detect-module --no-experimental-require-module",
+      "--conditions proofline -C development --conditions=test --input-type=module",
+      "--unhandled-rejections strict --max-old-space-size=256 --max-semi-space-size=8 --stack-trace-limit=0",
+      `--trace-warnings ${guardImportOption}`,
+    ]) {
+      const result = await withProoflineGuard(
+        [process.execPath, "-e", "console.log('safe-options')"],
+        {
+          allowedOrigins: [allowedOrigin],
+          env: { NODE_OPTIONS: nodeOptions },
+        },
+      );
+      expect(result.code, result.stderr).toBe(0);
+      expect(result.stdout.trim()).toBe("safe-options");
+    }
+  });
+
+  test("preserves_exact_guard_token_in_apostrophe_checkout_paths", async () => {
+    const relocated = path.join(temporaryRoot, "Dean's checkout");
+    mkdirSync(relocated);
+    for (const name of ["guard-policy.mjs", "egress-guard.mjs", "run-guarded.mjs"])
+      writeFileSync(
+        path.join(relocated, name),
+        readFileSync(path.join(repositoryRoot, "tools/proofline", name)),
+      );
+    const probe = script(
+      "relocated-policy-probe.mjs",
+      `
+      import { fileURLToPath } from "node:url";
+      const policy = await import(${JSON.stringify(path.join(relocated, "guard-policy.mjs"))});
+      const initial = policy.mergeGuardNodeOptions("");
+      const inherited = policy.mergeGuardNodeOptions(initial);
+      const repeated = policy.mergeGuardNodeOptions(inherited);
+      console.log(JSON.stringify({ initial, inherited, repeated, resolved: fileURLToPath(policy.guardPreloadUrl) }));
+    `,
+    );
+    const result = await runNode(probe);
+    expect(result.code, result.stderr).toBe(0);
+    const output = JSON.parse(result.stdout);
+    expect(output.initial).not.toMatch(/["'\\]/);
+    expect(output.inherited).toBe(output.initial);
+    expect(output.repeated).toBe(output.initial);
+    expect(output.resolved).toBe(realpathSync(path.join(relocated, "egress-guard.mjs")));
+  });
+
   test("preserves_optional_print_expressions_without_hiding_node_options", async () => {
     const child = script(
       "print-control.mjs",
@@ -1101,6 +1249,7 @@ describe("Proofline egress guard", () => {
         try {
           result = await withProoflineGuard([process.execPath, ...argv], {
             allowedOrigins: [allowedOrigin],
+            env: { FORCE_COLOR: "0" },
           });
         } catch (caught) {
           error = caught;

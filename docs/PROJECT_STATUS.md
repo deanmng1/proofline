@@ -6,6 +6,8 @@ The original portable harness, four enterprise verification improvements and all
 
 The user has now authorized parallel work on hosted CI/release proof, declared compatibility and independent adoption, and reliability/security with maintenance evidence. This increment is in progress; its implementation, new full gate and fresh independent rating are not yet complete. The user chose to prepare/test staging workflows while leaving live staging pending.
 
+The first blind Roomboard trial stopped on an absent-tenancy schema gap; its reports remain preserved. The assisted trial and separate final-core upgrade passed their 19 checks and independent reviews; a cloneable own-history bundle is linked in the [pilot report](pilots/roomboard-adoption.md). Maintenance upgrade/mutation/repeat evidence is reviewed. Final independent auditing then found a quoted startup-option bypass; its repair and an ordinary-path portability regression have independent task approval; a new committed full gate is required before publication. No remote source update, live staging or production deployment has occurred.
+
 Active design: [production-readiness evidence](superpowers/specs/2026-11-05-production-readiness-design.md).
 Active execution checklist: [production-readiness plan](superpowers/plans/2026-11-05-production-readiness.md).
 Resume from the first unchecked item in that tracked checklist. No ignored local ledger or chat history is required to recover this status.
@@ -16,7 +18,7 @@ Resume from the first unchecked item in that tracked checklist. No ignored local
 | Required outcomes, failure artifacts, release verification, second app | Complete at `4feb057` | Fresh 18-step local gate; record closeout `6324ffc` |
 | Showcase and genuine second-app recording | Complete at `d8fef71` | Dated source snapshot in showcase measurements |
 | A01–A07 adoption-readiness repairs | Complete at verified implementation `b368d85` | Fresh 22-step local pass, independent command/evidence checks, [8.0/10 reassessment](reviews/2026-11-05-adoption-readiness.md) |
-| Hosted/compatibility/adoption/reliability readiness | Tasks 1–4 implemented and independently reviewed; core at `4bf90b6` | Pilot, shared integration, fresh/hosted gates and final rating remain pending |
+| Hosted/compatibility/adoption/reliability readiness | Core, integration, maintenance and third-app trial reviewed through `d3b80ce`; final-review startup-boundary repair independently approved; fresh re-verification pending | First fresh attempt failed a color-sensitive new fixture; new full gate, hosted bootstrap/API audit and final rating remain pending |
 
 ## Latest completed verification
 

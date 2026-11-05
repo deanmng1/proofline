@@ -98,9 +98,11 @@ export const parseAllowedChildCapabilitiesEnvironment = (value) => {
   return normalizeAllowedChildCapabilities(parsed);
 };
 
+// URL permits literal apostrophes; encode them so our own import always fits the
+// strict NODE_OPTIONS grammar, including in ordinary apostrophe-containing paths.
 export const guardPreloadUrl = pathToFileURL(
   path.join(import.meta.dirname, "egress-guard.mjs"),
-).href;
+).href.replaceAll("'", "%27");
 export const guardImportOption = `--import=${guardPreloadUrl}`;
 // Only the reviewed structured launcher attaches this in-memory marker. It lets a guarded runner
 // create a more specific guarded child (for a newly allocated loopback server or exact browser
@@ -117,15 +119,41 @@ const safeGitIdentityEnvironment = new Set([
 export const unsafeGitEnvironmentKey = (key) =>
   key.startsWith("GIT_") && !safeGitIdentityEnvironment.has(key);
 
-const unsafePreload = /(?:^|\s)(?:--require|-r|--import|--loader|--experimental-loader)(?:=|\s)/;
-
+// NODE_OPTIONS is parsed by Node before any preload runs. Node accepts double-quoted
+// segments and backslash escapes inside them; a raw-string denylist cannot identify
+// its option boundaries. Support only the unambiguous ASCII, space-separated subset
+// here, rejecting all quotes/escapes/control characters before Node can interpret them.
 export const mergeGuardNodeOptions = (value = "") => {
-  const withoutGuard = value.split(guardImportOption).join(" ").trim();
-  if (unsafePreload.test(withoutGuard))
+  const reject = () => {
     throw new Error(
-      "Proofline child NODE_OPTIONS cannot add a preload or loader that overrides the guard.",
+      "Proofline child NODE_OPTIONS must use reviewed plain space-separated options; preloads, loaders, inspectors, quotes, escapes, and unknown forms are unsupported.",
     );
-  return [withoutGuard, guardImportOption].filter(Boolean).join(" ");
+  };
+  if (typeof value !== "string" || /[^\x20-\x7e]|["'\\]/.test(value)) reject();
+  const tokens = value.trim() ? value.trim().split(/ +/) : [];
+  const accepted = [];
+  let guardSeen = false;
+  for (let index = 0; index < tokens.length; index += 1) {
+    const token = tokens[index];
+    if (token === guardImportOption) {
+      if (guardSeen) reject();
+      guardSeen = true;
+      continue;
+    }
+    if (nodeBooleanOptions.has(token)) {
+      accepted.push(token);
+      continue;
+    }
+    const equals = token.indexOf("=");
+    const option = equals < 0 ? token : token.slice(0, equals);
+    const validate = nodeEnvironmentOperandOptions.get(option);
+    if (!validate || (equals < 0 && nodeEqualsOnlyOptions.has(option))) reject();
+    const operand = equals < 0 ? tokens[++index] : token.slice(equals + 1);
+    if (typeof operand !== "string" || operand.startsWith("-") || !validate(operand)) reject();
+    accepted.push(token);
+    if (equals < 0) accepted.push(operand);
+  }
+  return [...accepted, guardImportOption].join(" ");
 };
 
 export const guardedEnvironment = ({ env = {}, allowedOrigins, allowedChildCapabilities = [] }) => {
@@ -174,6 +202,11 @@ const nodeOperandOptions = new Map([
   ["--eval", () => true],
   ["-e", () => true],
 ]);
+// Environment options never accept eval/print/script boundaries. Reuse only the
+// reviewed value validators; unknown options cannot swallow a following token.
+const nodeEnvironmentOperandOptions = new Map(
+  [...nodeOperandOptions].filter(([option]) => option !== "--eval" && option !== "-e"),
+);
 // Print's expression is optional. Only the separate form is supported: Node's
 // --print=... spelling can still consume the next token as its expression.
 const nodeOptionalPrintOptions = new Set(["--print", "-p"]);

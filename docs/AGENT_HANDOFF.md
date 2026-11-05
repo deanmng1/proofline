@@ -48,4 +48,4 @@ Fresh-install checks must use separate external repositories, actual declared de
 
 ## Preview identity
 
-The package is unpublished source preview `0.9.0-preview.1`, manifest schema 1. It is distinct from the original dashboard 0.8.0 history/tag. [Support](../.github/SUPPORT.md) and [security reporting](../.github/SECURITY.md) state compatibility, scope and upgrade/release-evidence requirements. No remote publication is implied.
+The package is unpublished source preview `0.9.0-preview.2`, manifest schema 1. It is distinct from the original dashboard 0.8.0 history/tag. [Support](../.github/SUPPORT.md) and [security reporting](../.github/SECURITY.md) state compatibility, scope and upgrade/release-evidence requirements. No remote publication is implied.

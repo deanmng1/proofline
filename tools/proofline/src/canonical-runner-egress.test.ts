@@ -406,3 +406,55 @@ test("canonical_unit_runner_rejects_operand_hidden_preloads_before_all_child_dis
     }
   }
 });
+
+test("canonical_unit_runner_rejects_node_options_preloads_before_all_child_dispatches", async () => {
+  const sentinel = path.join(temporary, "environment-preload.cjs");
+  const marker = path.join(temporary, "environment-preload-ran");
+  const childFile = path.join(temporary, "environment-child.mjs");
+  writeFileSync(sentinel, `require("node:fs").writeFileSync(${JSON.stringify(marker)}, "ran");`);
+  writeFileSync(childFile, "process.exitCode = 0;");
+  const completed = (child: ReturnType<typeof spawn>) =>
+    new Promise<void>((resolve, reject) => {
+      child.once("error", reject);
+      child.once("close", () => resolve());
+    });
+  for (const nodeOptions of [
+    `"--require" ${sentinel}`,
+    `--re""quire ${sentinel}`,
+    `"--requ\\ire" ${sentinel}`,
+    `--require="${sentinel}"`,
+    `--require=${sentinel}`,
+    `--import=${sentinel}`,
+  ]) {
+    const options = { env: { ...process.env, NODE_OPTIONS: nodeOptions } };
+    const attempts = {
+      spawn: () => completed(spawn(process.execPath, [childFile], options)),
+      spawnSync: () => {
+        spawnSync(process.execPath, [childFile], options);
+      },
+      execFile: () =>
+        new Promise<void>((resolve, reject) =>
+          execFile(process.execPath, [childFile], options, (error) =>
+            error ? reject(error) : resolve(),
+          ),
+        ),
+      execFileSync: () => {
+        execFileSync(process.execPath, [childFile], options);
+      },
+      fork: () => completed(fork(childFile, [], { ...options, execArgv: [], silent: true })),
+    };
+    for (const [method, attempt] of Object.entries(attempts)) {
+      let denial = "dispatched";
+      try {
+        await attempt();
+      } catch (error) {
+        denial = String(error);
+      }
+      expect.soft({ denial, sentinelRan: existsSync(marker) }, `${nodeOptions} ${method}`).toEqual({
+        denial: expect.stringMatching(/NODE_OPTIONS.*reviewed/),
+        sentinelRan: false,
+      });
+      rmSync(marker, { force: true });
+    }
+  }
+});

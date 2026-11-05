@@ -630,7 +630,7 @@
         {
           "file": "tools/proofline/src/egress-guard.test.ts",
           "title": "Proofline egress guard > denies_fetch_http_https_websocket_and_inherited_child_egress",
-          "line": 420
+          "line": 422
         },
         {
           "file": "tools/proofline/src/canonical-runner-egress.test.ts",
@@ -645,7 +645,7 @@
         {
           "file": "tools/proofline/src/egress-guard.test.ts",
           "title": "Proofline egress guard > rejects_git_external_diff_helpers_before_native_dispatch",
-          "line": 249
+          "line": 251
         },
         {
           "file": "tools/proofline/src/production-negative.test.ts",
@@ -745,17 +745,17 @@
         {
           "file": "tools/proofline/src/egress-guard.test.ts",
           "title": "Proofline egress guard > rejects_node_execution_overrides_after_supported_option_operands",
-          "line": 947
+          "line": 949
         },
         {
           "file": "tools/proofline/src/egress-guard.test.ts",
           "title": "Proofline egress guard > preserves_supported_node_operands_and_true_script_boundaries",
-          "line": 997
+          "line": 999
         },
         {
           "file": "tools/proofline/src/egress-guard.test.ts",
           "title": "Proofline egress guard > rejects_direct_operand_hidden_preloads_before_sentinel_execution",
-          "line": 1044
+          "line": 1046
         },
         {
           "file": "tools/proofline/src/canonical-runner-egress.test.ts",
@@ -775,7 +775,32 @@
         {
           "file": "tools/proofline/src/egress-guard.test.ts",
           "title": "Proofline egress guard > preserves_optional_print_expressions_without_hiding_node_options",
-          "line": 1081
+          "line": 1229
+        },
+        {
+          "file": "tools/proofline/src/egress-guard.test.ts",
+          "title": "Proofline egress guard > rejects_unreviewed_node_options_syntax_before_startup",
+          "line": 1083
+        },
+        {
+          "file": "tools/proofline/src/egress-guard.test.ts",
+          "title": "Proofline egress guard > rejects_direct_node_options_preloads_before_sentinel_execution",
+          "line": 1145
+        },
+        {
+          "file": "tools/proofline/src/egress-guard.test.ts",
+          "title": "Proofline egress guard > preserves_reviewed_node_options_and_exact_guard_inheritance",
+          "line": 1176
+        },
+        {
+          "file": "tools/proofline/src/egress-guard.test.ts",
+          "title": "Proofline egress guard > preserves_exact_guard_token_in_apostrophe_checkout_paths",
+          "line": 1201
+        },
+        {
+          "file": "tools/proofline/src/canonical-runner-egress.test.ts",
+          "title": "canonical_unit_runner_rejects_node_options_preloads_before_all_child_dispatches",
+          "line": 410
         }
       ],
       "playwright": [
