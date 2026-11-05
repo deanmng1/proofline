@@ -40,7 +40,7 @@ Use a focused branch/PR for shared contributions and a commit subject explaining
 
 ## Source preview and upgrades
 
-`0.9.0-preview.1` identifies the unpublished Proofline source preview; the old dashboard `v0.8.0` tag is historical. Record an immutable source commit with every issue and verification result. No command in this guide tags, pushes, deploys or claims a published release.
+`0.9.0-preview.2` identifies the unpublished Proofline source preview; the old dashboard `v0.8.0` tag is historical. Record an immutable source commit with every issue and verification result. No command in this guide tags, pushes, deploys or claims a published release.
 
 Before changing runner/dependency versions, review package APIs and capability paths, regenerate compatible reports, preserve ratchets/history, repeat fresh independent installs of the CRM and work-orders targets, and run the complete gates. A coverage-provider/history migration requires a separately reviewed change. [Support and release policy](.github/SUPPORT.md) describes compatibility, artifact expiry and preview support. [Security reporting](.github/SECURITY.md) covers potential harness-boundary failures.
 

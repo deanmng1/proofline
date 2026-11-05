@@ -5,7 +5,7 @@ A portable regression-testing harness for React/Vite applications. Proofline run
 [![License: MIT](https://img.shields.io/badge/license-MIT-2563eb)](LICENSE)
 [![Source preview](https://img.shields.io/badge/preview-0.9.0--preview.1-2563eb)](CHANGELOG.md)
 
-**Distribution:** unpublished source preview `0.9.0-preview.1`, manifest schema 1. The historical dashboard `v0.8.0` tag predates Proofline. Use the source commit shown by `git rev-parse HEAD`; do not treat that old tag as a harness release. See [project status](docs/PROJECT_STATUS.md) and [preview support](.github/SUPPORT.md).
+**Distribution:** unpublished source preview `0.9.0-preview.2`, manifest schema 1. The historical dashboard `v0.8.0` tag predates Proofline. Use the source commit shown by `git rev-parse HEAD`; do not treat that old tag as a harness release. See [project status](docs/PROJECT_STATUS.md) and [preview support](.github/SUPPORT.md).
 
 ## What it provides
 

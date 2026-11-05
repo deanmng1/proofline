@@ -599,6 +599,30 @@
         {
           "glob": "tools/proofline/src/playwright-cache.test.ts",
           "reason": "Test sources are not instrumented production sources."
+        },
+        {
+          "glob": "tools/proofline/src/compatibility.test.ts",
+          "reason": "Test sources are not instrumented production sources."
+        },
+        {
+          "glob": "tools/proofline/src/doctor.test.ts",
+          "reason": "Test sources are not instrumented production sources."
+        },
+        {
+          "glob": "tools/proofline/src/github-release-api.test.ts",
+          "reason": "Test sources are not instrumented production sources."
+        },
+        {
+          "glob": "tools/proofline/src/hosted-proof.test.ts",
+          "reason": "Test sources are not instrumented production sources."
+        },
+        {
+          "glob": "tools/proofline/src/readiness-ci.test.ts",
+          "reason": "Test sources are not instrumented production sources."
+        },
+        {
+          "glob": "tools/proofline/src/release-recovery.test.ts",
+          "reason": "Test sources are not instrumented production sources."
         }
       ],
       "report": "artifacts/coverage/proofline-tools/coverage-summary.json",
@@ -669,9 +693,22 @@
         "tools/proofline/release-archive.mjs",
         "tools/proofline/validate-portability.mjs",
         "tools/proofline/vitest-execution.mjs",
-        "tools/proofline/portability-result.mjs"
+        "tools/proofline/portability-result.mjs",
+        "tools/proofline/github-release-api.mjs",
+        "tools/proofline/hosted-proof.mjs",
+        "tools/proofline/release-recovery.mjs",
+        "tools/proofline/compatibility.mjs",
+        "tools/proofline/doctor.mjs"
       ],
-      "ruleIds": ["SAFE-001", "EXEC-001", "EVID-001", "REL-001", "PORT-001"],
+      "ruleIds": [
+        "SAFE-001",
+        "EXEC-001",
+        "EVID-001",
+        "REL-001",
+        "PORT-001",
+        "CMP-001",
+        "SETUP-001"
+      ],
       "layers": ["contract", "playwright"],
       "testBindings": [
         {
@@ -813,7 +850,7 @@
           "runner": "vitest",
           "file": "tools/proofline/src/release-verification.test.ts",
           "title": "immutable release verification > packages production bytes and validates the entire execution root",
-          "line": 572
+          "line": 578
         },
         {
           "ruleId": "REL-001",
@@ -823,7 +860,7 @@
           "runner": "vitest",
           "file": "tools/proofline/src/release-verification.test.ts",
           "title": "immutable release verification > validates a real complete archive without provider credentials",
-          "line": 999
+          "line": 1331
         },
         {
           "ruleId": "REL-001",
@@ -833,7 +870,7 @@
           "runner": "vitest",
           "file": "tools/proofline/src/release-verification.test.ts",
           "title": "immutable release verification > workflow publishes only after complete gates and deployment uses trusted prebuilt output",
-          "line": 827
+          "line": 1159
         },
         {
           "ruleId": "PORT-001",
@@ -984,6 +1021,566 @@
           "file": "tools/proofline/src/portability.test.ts",
           "title": "Proofline standalone portability > validates_relocated_independent_setup_and_rejects_rehashed_false_installation_claims",
           "line": 388
+        },
+        {
+          "ruleId": "SAFE-001",
+          "layer": "contract",
+          "testId": "binding-safe-node-option-operands",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/egress-guard.test.ts",
+          "title": "Proofline egress guard > rejects_node_execution_overrides_after_supported_option_operands",
+          "line": 947
+        },
+        {
+          "ruleId": "SAFE-001",
+          "layer": "contract",
+          "testId": "binding-safe-node-safe-boundaries",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/egress-guard.test.ts",
+          "title": "Proofline egress guard > preserves_supported_node_operands_and_true_script_boundaries",
+          "line": 997
+        },
+        {
+          "ruleId": "SAFE-001",
+          "layer": "contract",
+          "testId": "binding-safe-node-direct-preload",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/egress-guard.test.ts",
+          "title": "Proofline egress guard > rejects_direct_operand_hidden_preloads_before_sentinel_execution",
+          "line": 1044
+        },
+        {
+          "ruleId": "SAFE-001",
+          "layer": "contract",
+          "testId": "binding-safe-node-inherited-preload",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/canonical-runner-egress.test.ts",
+          "title": "canonical_unit_runner_rejects_operand_hidden_preloads_before_all_child_dispatches",
+          "line": 354
+        },
+        {
+          "ruleId": "SAFE-001",
+          "layer": "contract",
+          "testId": "binding-safe-production-module-aliases",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/production-negative.test.ts",
+          "title": "Proofline production boundary > rejects_marker_free_module_aliases_escapes_and_duplicate_filesystem_identities",
+          "line": 453
+        },
+        {
+          "ruleId": "SAFE-001",
+          "layer": "contract",
+          "testId": "binding-safe-production-virtual-query",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/production-negative.test.ts",
+          "title": "Proofline production boundary > preserves_distinct_vite_virtual_and_query_module_identities",
+          "line": 553
+        },
+        {
+          "ruleId": "SAFE-001",
+          "layer": "contract",
+          "testId": "binding-safe-node-optional-print",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/egress-guard.test.ts",
+          "title": "Proofline egress guard > preserves_optional_print_expressions_without_hiding_node_options",
+          "line": 1081
+        },
+        {
+          "ruleId": "REL-001",
+          "layer": "contract",
+          "testId": "binding-readiness-0f5727ecd296499ea12f",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/github-release-api.test.ts",
+          "title": "bounded GitHub release transport > collects complete bounded pages with exact authenticated API requests",
+          "line": 12
+        },
+        {
+          "ruleId": "REL-001",
+          "layer": "contract",
+          "testId": "binding-readiness-1b880b476717f813e3e3",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/github-release-api.test.ts",
+          "title": "bounded GitHub release transport > sanitizes network and malformed JSON errors",
+          "line": 46
+        },
+        {
+          "ruleId": "REL-001",
+          "layer": "contract",
+          "testId": "binding-readiness-94458bb4a8d15a4757a7",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/github-release-api.test.ts",
+          "title": "bounded GitHub release transport > bounds pages and rejects malformed or oversized collections",
+          "line": 62
+        },
+        {
+          "ruleId": "REL-001",
+          "layer": "contract",
+          "testId": "binding-readiness-9531819f58967ae07ad3",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/github-release-api.test.ts",
+          "title": "bounded GitHub release transport > requests identity encoding and rejects compressed response ambiguity",
+          "line": 81
+        },
+        {
+          "ruleId": "REL-001",
+          "layer": "contract",
+          "testId": "binding-readiness-46137d7400fc0f60c790",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/github-release-api.test.ts",
+          "title": "bounded GitHub release transport > bounds streamed and declared bodies and rejects truncated downloads",
+          "line": 91
+        },
+        {
+          "ruleId": "REL-001",
+          "layer": "contract",
+          "testId": "binding-readiness-0954611f96fb8cf8598b",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/github-release-api.test.ts",
+          "title": "bounded GitHub release transport > times out fetch and stalled body reads within the same request budget",
+          "line": 113
+        },
+        {
+          "ruleId": "REL-001",
+          "layer": "contract",
+          "testId": "binding-readiness-2a5da313215559e1aca0",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/github-release-api.test.ts",
+          "title": "bounded GitHub release transport > cancels a stalled response body on timeout",
+          "line": 129
+        },
+        {
+          "ruleId": "REL-001",
+          "layer": "contract",
+          "testId": "binding-readiness-f9fc75c41fd1c8f90b0d",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/github-release-api.test.ts",
+          "title": "bounded GitHub release transport > downloads bytes only through reviewed HTTPS storage and strips credentials",
+          "line": 146
+        },
+        {
+          "ruleId": "REL-001",
+          "layer": "contract",
+          "testId": "binding-readiness-c1574592ebb2c093c282",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/github-release-api.test.ts",
+          "title": "bounded GitHub release transport > rejects redirects for JSON, missing locations and storage redirect loops",
+          "line": 185
+        },
+        {
+          "ruleId": "REL-001",
+          "layer": "contract",
+          "testId": "binding-readiness-151abc24edfc9230118f",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/github-release-api.test.ts",
+          "title": "bounded GitHub release transport > rejects unsafe repository routes and bounds before any request",
+          "line": 202
+        },
+        {
+          "ruleId": "REL-001",
+          "layer": "contract",
+          "testId": "binding-readiness-ea4a24d1b81e3358d2f3",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/hosted-proof.test.ts",
+          "title": "hosted proof provenance and workflow preparation > classifies injected transport as fixture regardless of caller declarations",
+          "line": 11
+        },
+        {
+          "ruleId": "REL-001",
+          "layer": "contract",
+          "testId": "binding-readiness-02deb6046b7f667826f3",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/hosted-proof.test.ts",
+          "title": "hosted proof provenance and workflow preparation > parses one immutable source and refuses ambiguous unsupported CLI options",
+          "line": 28
+        },
+        {
+          "ruleId": "REL-001",
+          "layer": "contract",
+          "testId": "binding-readiness-39619db0dc9094a26066",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/hosted-proof.test.ts",
+          "title": "hosted proof provenance and workflow preparation > rejects internal receipt destinations and missing authority before requesting",
+          "line": 57
+        },
+        {
+          "ruleId": "REL-001",
+          "layer": "contract",
+          "testId": "binding-readiness-129de27106b33ffebec6",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/hosted-proof.test.ts",
+          "title": "hosted proof provenance and workflow preparation > prepares read-only exact-commit audit and manual immutable preview without production deployment",
+          "line": 77
+        },
+        {
+          "ruleId": "REL-001",
+          "layer": "contract",
+          "testId": "binding-readiness-8eb46ae0a89aeae95d59",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/hosted-proof.test.ts",
+          "title": "hosted proof provenance and workflow preparation > classifies inherited effective fetch as fixture and captures its getter once",
+          "line": 133
+        },
+        {
+          "ruleId": "REL-001",
+          "layer": "contract",
+          "testId": "binding-readiness-8c12439a1287a2080637",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/release-recovery.test.ts",
+          "title": "deterministic release evidence recovery > rejects expired evidence and recommends rerunning all jobs of the original trusted run",
+          "line": 37
+        },
+        {
+          "ruleId": "REL-001",
+          "layer": "contract",
+          "testId": "binding-readiness-d9528629990de5dddb2c",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/release-recovery.test.ts",
+          "title": "deterministic release evidence recovery > accepts only complete newer original attempts with fresh exact-attempt artifacts",
+          "line": 47
+        },
+        {
+          "ruleId": "REL-001",
+          "layer": "contract",
+          "testId": "binding-readiness-ef40a5457152605b369a",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/release-recovery.test.ts",
+          "title": "deterministic release evidence recovery > requires an injected observation clock rather than ambient time",
+          "line": 75
+        },
+        {
+          "ruleId": "REL-001",
+          "layer": "contract",
+          "testId": "binding-readiness-12b5fa51cfe6cbde4e39",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/release-recovery.test.ts",
+          "title": "deterministic release evidence recovery > never substitutes dispatch PR fork failed or ambiguous authority",
+          "line": 82
+        },
+        {
+          "ruleId": "CMP-001",
+          "layer": "contract",
+          "testId": "binding-readiness-fee3ff200126640490e9",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/compatibility.test.ts",
+          "title": "compatibility evidence > parses explicit cell authority and artifact inputs without accepting unknown or duplicate options",
+          "line": 27
+        },
+        {
+          "ruleId": "CMP-001",
+          "layer": "contract",
+          "testId": "binding-readiness-33753e55304768ce9c49",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/compatibility.test.ts",
+          "title": "compatibility evidence > accepts exactly the two pinned complete candidate cells",
+          "line": 60
+        },
+        {
+          "ruleId": "CMP-001",
+          "layer": "contract",
+          "testId": "binding-readiness-61338316e09f6da728f5",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/compatibility.test.ts",
+          "title": "compatibility evidence > rejects unknown keys duplicate cells and altered candidate tuples",
+          "line": 69
+        },
+        {
+          "ruleId": "CMP-001",
+          "layer": "contract",
+          "testId": "binding-readiness-dd2a42ae9876144b80e9",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/compatibility.test.ts",
+          "title": "compatibility evidence > does not promote summary-only fixture or manually flagged receipts",
+          "line": 98
+        },
+        {
+          "ruleId": "CMP-001",
+          "layer": "contract",
+          "testId": "binding-readiness-108a362e9f339e2a0613",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/compatibility.test.ts",
+          "title": "compatibility evidence > rejects missing native evidence and unsupported modes without publishing receipts",
+          "line": 108
+        },
+        {
+          "ruleId": "CMP-001",
+          "layer": "contract",
+          "testId": "binding-readiness-07600c116e8246ffeab8",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/compatibility.test.ts",
+          "title": "source-bound native compatibility collection > reconciles full native CRM and independent work-orders fixtures without promoting a platform",
+          "line": 676
+        },
+        {
+          "ruleId": "CMP-001",
+          "layer": "contract",
+          "testId": "binding-readiness-413d46a4dd8781882c92",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/compatibility.test.ts",
+          "title": "source-bound native compatibility collection > rejects smoke stale source session runtime missing native and summary-only evidence",
+          "line": 723
+        },
+        {
+          "ruleId": "CMP-001",
+          "layer": "contract",
+          "testId": "binding-readiness-7bea6a7ea7ea8c254d2c",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/compatibility.test.ts",
+          "title": "source-bound native compatibility collection > rejects reused installation target runtime tuple changed core and stale authority",
+          "line": 767
+        },
+        {
+          "ruleId": "SETUP-001",
+          "layer": "contract",
+          "testId": "binding-readiness-c4961a5b9bed8d567da2",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/doctor.test.ts",
+          "title": "offline preflight > source mode works without dependencies using only bounded read-only probes",
+          "line": 74
+        },
+        {
+          "ruleId": "SETUP-001",
+          "layer": "contract",
+          "testId": "binding-readiness-36a069d3b3de0544dd8d",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/doctor.test.ts",
+          "title": "offline preflight > reports missing locks manifest and incoherent package pins with remediation",
+          "line": 83
+        },
+        {
+          "ruleId": "SETUP-001",
+          "layer": "contract",
+          "testId": "binding-readiness-9aa102692f9a158e39cd",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/doctor.test.ts",
+          "title": "offline preflight > rejects wrong child Node pnpm Git shallow history and invalid revisions",
+          "line": 100
+        },
+        {
+          "ruleId": "SETUP-001",
+          "layer": "contract",
+          "testId": "binding-readiness-9aed5d31489230e460a7",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/doctor.test.ts",
+          "title": "offline preflight > installed stage requires actual contained dependencies and reviewed browser metadata",
+          "line": 115
+        },
+        {
+          "ruleId": "SETUP-001",
+          "layer": "contract",
+          "testId": "binding-readiness-430f54ae87b24d7ba0d3",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/doctor.test.ts",
+          "title": "offline preflight > parses a strict CLI with paired immutable revisions and no fix operation",
+          "line": 128
+        },
+        {
+          "ruleId": "SETUP-001",
+          "layer": "contract",
+          "testId": "binding-readiness-a8a1e460c80f81d32e52",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/doctor.test.ts",
+          "title": "preflight coherence and installed cache boundaries > rejects ambiguous root importers and duplicate selected lock entries",
+          "line": 144
+        },
+        {
+          "ruleId": "SETUP-001",
+          "layer": "contract",
+          "testId": "binding-readiness-45d606718908d1023048",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/doctor.test.ts",
+          "title": "preflight coherence and installed cache boundaries > rejects lock resolutions from a different importer and manifest provider mismatch",
+          "line": 161
+        },
+        {
+          "ruleId": "SETUP-001",
+          "layer": "contract",
+          "testId": "binding-readiness-37f21129dec852fecd1c",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/doctor.test.ts",
+          "title": "preflight coherence and installed cache boundaries > reports missing commands wrong Node and missing history without exposing probe errors",
+          "line": 183
+        },
+        {
+          "ruleId": "SETUP-001",
+          "layer": "contract",
+          "testId": "binding-readiness-55d5e3810979d6a69477",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/doctor.test.ts",
+          "title": "preflight coherence and installed cache boundaries > requires supplied commits to exist and base to be a unique ancestor",
+          "line": 202
+        },
+        {
+          "ruleId": "SETUP-001",
+          "layer": "contract",
+          "testId": "binding-readiness-6bcc34cf5c6a32729fbd",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/doctor.test.ts",
+          "title": "preflight coherence and installed cache boundaries > checks exact installed packages and safe registry files in an arbitrary cache",
+          "line": 222
+        },
+        {
+          "ruleId": "SETUP-001",
+          "layer": "contract",
+          "testId": "binding-readiness-44c0ec7ebfd4971fee1d",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/doctor.test.ts",
+          "title": "pnpm lock structural coherence > requires unique importer parents root sections and selected dependency entries",
+          "line": 325
+        },
+        {
+          "ruleId": "SETUP-001",
+          "layer": "contract",
+          "testId": "binding-readiness-02c629748d3440b6a00b",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/doctor.test.ts",
+          "title": "pnpm lock structural coherence > rejects duplicate selected scalar fields and unsupported YAML ambiguity",
+          "line": 356
+        },
+        {
+          "ruleId": "SETUP-001",
+          "layer": "contract",
+          "testId": "binding-readiness-8995addcba7610a2b87f",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/doctor.test.ts",
+          "title": "pnpm lock structural coherence > accepts current root and work-orders block-map locks with explicit section boundaries",
+          "line": 380
+        },
+        {
+          "ruleId": "REL-001",
+          "layer": "contract",
+          "testId": "binding-readiness-55790477e0ee15802ef0",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/readiness-ci.test.ts",
+          "title": "canonical CI requires every declared complete compatibility cell",
+          "line": 15
+        },
+        {
+          "ruleId": "REL-001",
+          "layer": "contract",
+          "testId": "binding-readiness-87ab38779ba13892018d",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/readiness-ci.test.ts",
+          "title": "matrix evidence stays distinct and only one cell can publish eligible release artifacts",
+          "line": 31
+        },
+        {
+          "ruleId": "REL-001",
+          "layer": "contract",
+          "testId": "binding-readiness-98107279eaf51e0be8a4",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/release-verification.test.ts",
+          "title": "immutable release verification > audits exact commits with the same immutable verification authority",
+          "line": 911
+        },
+        {
+          "ruleId": "REL-001",
+          "layer": "contract",
+          "testId": "binding-readiness-d88e1442f844e5bc6395",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/release-verification.test.ts",
+          "title": "immutable release verification > rejects incomplete exact source or default transport input before any network request",
+          "line": 1110
+        },
+        {
+          "ruleId": "REL-001",
+          "layer": "contract",
+          "testId": "binding-readiness-35801835fb7e2c447bd8",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/release-verification.test.ts",
+          "title": "immutable release verification > preserves independently optional legacy release transport seams",
+          "line": 1135
+        },
+        {
+          "ruleId": "EVID-001",
+          "layer": "contract",
+          "testId": "binding-readiness-0425f21f0f677aad383b",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/execution-artifacts.test.ts",
+          "title": "records executing process runtime on every invocation and overrides claimed runtime",
+          "line": 104
+        },
+        {
+          "ruleId": "PORT-001",
+          "layer": "contract",
+          "testId": "binding-readiness-5410cb2e24315fb102de",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/portability.test.ts",
+          "title": "Proofline standalone portability > rejects_incomplete_runtime_compatibility_and_missing_relocation_destination",
+          "line": 830
+        },
+        {
+          "ruleId": "PORT-001",
+          "layer": "contract",
+          "testId": "binding-readiness-1771858f1544b65ccb91",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/portability.test.ts",
+          "title": "additive native runtime provenance > accepts strict producer runtime while retaining legacy work-orders metadata",
+          "line": 904
+        },
+        {
+          "ruleId": "PORT-001",
+          "layer": "contract",
+          "testId": "binding-readiness-1a786b9517afcfa2c11a",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/portability.test.ts",
+          "title": "additive native runtime provenance > rejects unknown metadata and malformed additive runtime",
+          "line": 931
         }
       ],
       "ruleLayers": [
@@ -1009,6 +1606,14 @@
         },
         {
           "ruleId": "PORT-001",
+          "layer": "contract"
+        },
+        {
+          "ruleId": "CMP-001",
+          "layer": "contract"
+        },
+        {
+          "ruleId": "SETUP-001",
           "layer": "contract"
         }
       ]
@@ -2349,7 +2954,7 @@
     },
     {
       "glob": "tools/impact/src/**",
-      "entrypoints": ["tools/impact/src/changed-files.ts"],
+      "entrypoints": ["tools/impact/src/changed-files.ts", "tools/impact/src/harness-manifest.ts"],
       "ruleIds": ["REG-001", "REG-002"],
       "layers": ["contract"],
       "testBindings": [
@@ -2372,6 +2977,46 @@
           "file": "tools/impact/src/main-selection.test.ts",
           "title": "runs_only_one_declared_vitest_and_playwright_identity",
           "line": 38
+        },
+        {
+          "ruleId": "REG-001",
+          "layer": "contract",
+          "testId": "binding-readiness-absent-tenancy-1",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/impact/src/harness-manifest.test.ts",
+          "title": "accepts_explicit_absent_tenancy_without_fabricated_security_workflows",
+          "line": 749
+        },
+        {
+          "ruleId": "REG-001",
+          "layer": "contract",
+          "testId": "binding-readiness-absent-tenancy-2",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/impact/src/harness-manifest.test.ts",
+          "title": "parses_explicit_absent_tenancy_with_its_reason_preserved",
+          "line": 787
+        },
+        {
+          "ruleId": "REG-001",
+          "layer": "contract",
+          "testId": "binding-readiness-absent-tenancy-3",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/impact/src/harness-manifest.test.ts",
+          "title": "preserves_both_existing_tenant_isolation_modes_without_absence_reasons",
+          "line": 802
+        },
+        {
+          "ruleId": "REG-001",
+          "layer": "contract",
+          "testId": "binding-readiness-absent-tenancy-4",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/impact/src/harness-manifest.test.ts",
+          "title": "rejects_missing_or_ambiguous_absent_tenancy_declarations",
+          "line": 820
         }
       ],
       "ruleLayers": [
