@@ -58,6 +58,8 @@ test("runs_only_one_declared_vitest_and_playwright_identity", () => {
     ],
   };
   try {
+    vi.stubEnv("GITHUB_ACTIONS", "true");
+    expect(process.env.GITHUB_ACTIONS).toBe("true");
     linkFixtureDependency(cwd, "vitest");
     linkFixtureDependency(cwd, "@playwright/test");
     write(".gitignore", "node_modules/\nartifacts/\n.nx/\ntest-results/\n");
@@ -100,7 +102,7 @@ process.stdout.write(result.stdout || ""); process.stderr.write(result.stderr ||
     );
     write(
       "checks/browser/playwright.config.ts",
-      `export default ${JSON.stringify({ testDir: "./src", projects: [{ name: "chromium" }], reporter: [["json", { outputFile: path.join(cwd, "artifacts/ran.json") }]] })};`,
+      `export default ${JSON.stringify({ testDir: "./src", projects: [{ name: "chromium" }], captureGitInfo: { commit: false, diff: false }, reporter: [["json", { outputFile: path.join(cwd, "artifacts/ran.json") }]] })};`,
     );
     write(
       spec,
