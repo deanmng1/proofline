@@ -53,13 +53,13 @@ export const rulesSchema = z
 export const renderRules = (registry: RuleRegistry) => {
   const cell = (text: string) => text.replace(/\|/g, "\\|").replace(/\n/g, " ");
   return [
-    "# Demonstration rule catalog",
+    "# Rule catalog",
     "",
     "Generated from `rules.json` by `pnpm rules:generate`. Edit the JSON registry, then regenerate this file.",
     "",
-    "These deterministic examples are test fixtures, not insurer, accounting, legal, payroll, or provider policy. Money is integer USD cents; rates are integer basis points.",
+    "This catalog describes the target application’s deterministic rules, owned source paths, and exact automated test identities.",
     "",
-    "| Rule ID | Criticality | Demonstration behavior | Owned paths | Exact automated evidence |",
+    "| Rule ID | Criticality | Declared behavior | Owned paths | Exact automated evidence |",
     "| --- | --- | --- | --- | --- |",
     ...registry.rules.map(
       (rule) =>

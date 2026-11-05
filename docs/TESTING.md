@@ -2,6 +2,8 @@
 
 Proofline treats business rules as executable contracts. Use the smallest deterministic layer that proves a behavior, then retain a few real browser workflows for navigation and cross-screen state. Impact selection is a diagnostic first pass; canonical full gates remain the correctness authority.
 
+For this CRM reference, monetary examples use integer USD cents and integer basis points. These deterministic fixtures do not define insurer, accounting, legal, payroll or provider policy. Other targets declare their own domain assumptions.
+
 ## Rule-to-regression workflow
 
 1. Add or update a stable rule in `test-impact/rules.json` and its ownership in `proofline.harness.json`.

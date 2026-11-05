@@ -3017,6 +3017,16 @@
           "file": "tools/impact/src/harness-manifest.test.ts",
           "title": "rejects_missing_or_ambiguous_absent_tenancy_declarations",
           "line": 820
+        },
+        {
+          "ruleId": "REG-001",
+          "layer": "contract",
+          "testId": "binding-readiness-target-neutral-catalog",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/impact/src/validate.test.ts",
+          "title": "renders_target_rules_without_inventing_financial_or_insurance_contracts",
+          "line": 36
         }
       ],
       "ruleLayers": [
