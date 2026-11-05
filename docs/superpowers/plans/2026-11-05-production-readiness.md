@@ -139,6 +139,6 @@ The first fresh d3b80 gate failed its new optional-print fixture under NxFORCE_C
 - [x] Pass exact full tools coverage292/292 and all21measured tools floors after fix1.
 - [x] Obtain the original evaluator's all-five closure against one committed cohort (`8c7614f`; all R1–R5 closed).
 - [ ] Pass a new complete fresh root/work-orders gate, compatibility receipt and actual local release ZIP at that implementation head.
-- [ ] Upgrade Roomboard once to the audited37-file core plus target-owned initializer registration, reverify/review and replace the recommended own-history bundle.
+- [x] Upgrade Roomboard once to the audited37-file core plus target-owned initializer registration, reverify/review and replace the recommended own-history bundle (target `aeaf7a0`, including independently reviewed setup cleanup).
 - [ ] Execute reviewed hosted bootstrap PR/main sequence and strict actual API/native artifact audit.
 - [ ] Complete final independent weighted rating and tracked docs/evidence closeout.
