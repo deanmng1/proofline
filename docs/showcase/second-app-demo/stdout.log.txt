@@ -1,0 +1,12 @@
+
+Running 1 test using 1 worker
+
+PASS — The protected Requests route requires a desk identity
+PASS — The north dispatcher sees only the north request
+PASS — Completing the lamp removes it from Requested work
+PASS — Visible Completed navigation shows the completed lamp
+PASS — After sign out, revisiting Completed requires authentication
+PASS — completed state, organization separation, single mutation, revoked session, and zero unexpected requests
+  ✓  1 [chromium] › showcase-capture-b1078611-dd3c-4391-bcdd-bf71039c204e/capture-workflow.spec.ts:27:1 › records_the_target_owned_navigated_work_order_journey (24.8s)
+
+  1 passed (25.6s)

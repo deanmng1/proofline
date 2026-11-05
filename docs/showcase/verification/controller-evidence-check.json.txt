@@ -1,0 +1,79 @@
+{
+  "head": "4feb0572fb8aa1a18fcfdfa0e9f5333b59d714e2",
+  "fullSteps": 18,
+  "ratchetGroups": 8,
+  "ratchetErrors": [],
+  "portabilityHelper": {
+    "lines": {
+      "total": 691,
+      "covered": 669,
+      "skipped": 0,
+      "pct": 96.81
+    },
+    "functions": {
+      "total": 19,
+      "covered": 18,
+      "skipped": 0,
+      "pct": 94.73
+    },
+    "statements": {
+      "total": 691,
+      "covered": 669,
+      "skipped": 0,
+      "pct": 96.81
+    },
+    "branches": {
+      "total": 256,
+      "covered": 256,
+      "skipped": 0,
+      "pct": 100
+    }
+  },
+  "standalone": {
+    "outcome": "passed",
+    "sourceCommit": "4feb0572fb8aa1a18fcfdfa0e9f5333b59d714e2",
+    "selection": {
+      "fallback": "none",
+      "vitest": 2,
+      "playwright": 4
+    },
+    "compatibility": {
+      "vite": "6.4.3",
+      "vitest": "3.2.7",
+      "react": "19.2.8",
+      "playwright": "1.62.1",
+      "node": "v24.22.1",
+      "platform": "darwin-arm64",
+      "browser": "chromium"
+    }
+  },
+  "coreHashes": 31,
+  "targetGates": 10,
+  "bundleSmoke": {
+    "mode": "local integration smoke; synthetic CI identity, no API/deployment",
+    "sourceCommit": "4feb0572fb8aa1a18fcfdfa0e9f5333b59d714e2",
+    "outcome": "passed",
+    "files": 664,
+    "archiveBytes": 4929029,
+    "digest": "sha256:679961e6a970cfe5b5f809985af2572f00970981fea5b481d7eaa81ee67dc7b4",
+    "gateKeys": [
+      "lint",
+      "typecheck",
+      "manifest",
+      "impactPreview",
+      "impact",
+      "unit",
+      "browser",
+      "coverage",
+      "coverageCheck",
+      "record",
+      "production",
+      "whitespace",
+      "browserScenario",
+      "browserScenarioShard1",
+      "browserScenarioShard2",
+      "portability"
+    ],
+    "sameInventory": true
+  }
+}

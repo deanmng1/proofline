@@ -55,7 +55,7 @@ Proofline checks actual required test outcomes and retains separate diagnostics 
 
 ## Visual guides
 
-Start with the [ten-slide browser presentation](docs/showcase/proofline-overview.html) for a plain-language introduction, a real test catching a controlled regression and passing after the fix, a recorded product workflow, and measured charts. A [PDF copy](docs/showcase/proofline-overview.pdf) is available for reading and sharing. Read the [technical companion](docs/showcase/TECHNICAL_GUIDE.md) for editable architecture diagrams, execution contracts, adaptation steps, and measurement sources.
+Start with the [13-slide browser presentation](docs/showcase/proofline-overview.html) for a plain-language introduction, a real test catching a controlled regression and passing after the fix, recorded CRM and second-app workflows, the four verification safeguards, and current test results. A [PDF copy](docs/showcase/proofline-overview.pdf) is available for reading and sharing. Read the [technical companion](docs/showcase/TECHNICAL_GUIDE.md) for editable architecture diagrams, execution contracts, adaptation steps, and measurement sources.
 
 ## Key Features
 

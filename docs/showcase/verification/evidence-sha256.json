@@ -1,0 +1,333 @@
+{
+  "version": 1,
+  "sourceCommit": "4feb0572fb8aa1a18fcfdfa0e9f5333b59d714e2",
+  "sourceRoot": ".superpowers/sdd/2026-11-04-enterprise-verification/evidence/fresh-attempt-2",
+  "qualification": "Local completion evidence under synthetic CI run identity. Copies preserve original bytes and machine-local paths. This compact showcase evidence set is not a complete deployable release bundle. Hashes detect alteration but are not a signature or an independent hosted attestation.",
+  "files": [
+    {
+      "path": "docs/showcase/verification/full-gate-state.json.txt",
+      "sha256": "b5892220370bd55c0767ac80662e453628330b33e925c6bf3e6324d8f01fc7d2",
+      "bytes": 3676,
+      "originalPath": ".superpowers/sdd/2026-11-04-enterprise-verification/evidence/fresh-attempt-2/full-gate-state.json",
+      "originalSha256": "b5892220370bd55c0767ac80662e453628330b33e925c6bf3e6324d8f01fc7d2",
+      "purpose": "Frozen completion evidence from cleared-state local verification.",
+      "kind": "byte-identical-copy"
+    },
+    {
+      "path": "docs/showcase/verification/ratchet.json.txt",
+      "sha256": "0e6e1d18f8d8bc1db6b74bea73bda288478dc228f29bbfb8b54b07a136dc14ec",
+      "bytes": 33633,
+      "originalPath": ".superpowers/sdd/2026-11-04-enterprise-verification/evidence/fresh-attempt-2/ratchet.json",
+      "originalSha256": "0e6e1d18f8d8bc1db6b74bea73bda288478dc228f29bbfb8b54b07a136dc14ec",
+      "purpose": "Frozen completion evidence from cleared-state local verification.",
+      "kind": "byte-identical-copy"
+    },
+    {
+      "path": "docs/showcase/verification/proofline-coverage-summary.json.txt",
+      "sha256": "2416cf40da51045f5e903de649852866c592b5331cdf02464b3703d1dcba02b2",
+      "bytes": 4566,
+      "originalPath": ".superpowers/sdd/2026-11-04-enterprise-verification/evidence/fresh-attempt-2/proofline-coverage-summary.json",
+      "originalSha256": "2416cf40da51045f5e903de649852866c592b5331cdf02464b3703d1dcba02b2",
+      "purpose": "Frozen completion evidence from cleared-state local verification.",
+      "kind": "byte-identical-copy"
+    },
+    {
+      "path": "docs/showcase/verification/portability-result.json.txt",
+      "sha256": "6ca8db5a1b354c717e54b6b338863892362a512fbf3926e45fdb7fe6da2f9f76",
+      "bytes": 20340,
+      "originalPath": ".superpowers/sdd/2026-11-04-enterprise-verification/evidence/fresh-attempt-2/portability-result.json",
+      "originalSha256": "6ca8db5a1b354c717e54b6b338863892362a512fbf3926e45fdb7fe6da2f9f76",
+      "purpose": "Frozen completion evidence from cleared-state local verification.",
+      "kind": "byte-identical-copy"
+    },
+    {
+      "path": "docs/showcase/verification/local-bundle-smoke.json.txt",
+      "sha256": "4d99036080aeb0c63ad051e796b51e4de74bc9d3fc6aa8d2e900ea2d05f2ec3c",
+      "bytes": 636,
+      "originalPath": ".superpowers/sdd/2026-11-04-enterprise-verification/evidence/fresh-attempt-2/local-bundle-smoke.json",
+      "originalSha256": "4d99036080aeb0c63ad051e796b51e4de74bc9d3fc6aa8d2e900ea2d05f2ec3c",
+      "purpose": "Frozen completion evidence from cleared-state local verification.",
+      "kind": "byte-identical-copy"
+    },
+    {
+      "path": "docs/showcase/verification/controller-evidence-check.json.txt",
+      "sha256": "0108ccb854f4ad1f49876002fdf6edb3569896a1507bd15d00059df5229d8d62",
+      "bytes": 1742,
+      "originalPath": ".superpowers/sdd/2026-11-04-enterprise-verification/evidence/fresh-attempt-2/controller-evidence-check.json",
+      "originalSha256": "0108ccb854f4ad1f49876002fdf6edb3569896a1507bd15d00059df5229d8d62",
+      "purpose": "Frozen completion evidence from cleared-state local verification.",
+      "kind": "byte-identical-copy"
+    },
+    {
+      "path": "docs/showcase/verification/final-committed-head.json.txt",
+      "sha256": "d96b8caeeeb31b3c7a66d0d630e0391c89f8828f283718524ba15a2576b77ac8",
+      "bytes": 507,
+      "originalPath": ".superpowers/sdd/2026-11-04-enterprise-verification/evidence/fresh-attempt-2/final-committed-head.json",
+      "originalSha256": "d96b8caeeeb31b3c7a66d0d630e0391c89f8828f283718524ba15a2576b77ac8",
+      "purpose": "Frozen completion evidence from cleared-state local verification.",
+      "kind": "byte-identical-copy"
+    },
+    {
+      "path": "docs/showcase/verification/final-record-check.json.txt",
+      "sha256": "d193b0fa3f658228769d0c7b86125e3751ab2b3ae67ead29a650459da1162c14",
+      "bytes": 7472,
+      "originalPath": ".superpowers/sdd/2026-11-04-enterprise-verification/evidence/fresh-attempt-2/final-record-check.json",
+      "originalSha256": "d193b0fa3f658228769d0c7b86125e3751ab2b3ae67ead29a650459da1162c14",
+      "purpose": "Frozen completion evidence from cleared-state local verification.",
+      "kind": "byte-identical-copy"
+    },
+    {
+      "path": "docs/showcase/verification/release.json.txt",
+      "sha256": "1f8fe1120f4cd4baf95d4766edeb335d906c0c625fbb29e54c1483ed941d5cf3",
+      "bytes": 111187,
+      "originalPath": ".superpowers/sdd/2026-11-04-enterprise-verification/evidence/fresh-attempt-2/release-bundle/release.json",
+      "originalSha256": "1f8fe1120f4cd4baf95d4766edeb335d906c0c625fbb29e54c1483ed941d5cf3",
+      "purpose": "Original complete release metadata and SHA256 inventory; production/media bytes are not copied into the showcase.",
+      "kind": "byte-identical-copy"
+    },
+    {
+      "path": "docs/showcase/verification/failure-artifact-preservation.json.txt",
+      "sha256": "558328038ddb3b2b28c9dff99589cb04ebca16b7e9c0ed6559c04168cf76bb66",
+      "bytes": 6636,
+      "originalPath": ".superpowers/sdd/2026-11-04-enterprise-verification/evidence/browser-artifact-preservation.json",
+      "originalSha256": "558328038ddb3b2b28c9dff99589cb04ebca16b7e9c0ed6559c04168cf76bb66",
+      "purpose": "Earlier implementation demonstration: runtime skip rejection and failed-browser artifacts preserved after success.",
+      "kind": "byte-identical-copy",
+      "qualification": "This is scoped implementation evidence, separate from the final completion gate; the inventory refers to retained local files, not media distributed here."
+    },
+    {
+      "path": "docs/showcase/verification/native/unit.verification.json.txt",
+      "sha256": "d61bb86f778ed01b4fd5b6414cc7c24df6f889827ce51167334c8b5dd66d8352",
+      "bytes": 182889,
+      "originalPath": ".superpowers/sdd/2026-11-04-enterprise-verification/evidence/fresh-attempt-2/release-bundle/evidence/proofline/runs/798c3869-cbcc-48ff-8059-e8bdc7c1d589/verification.json",
+      "originalSha256": "d61bb86f778ed01b4fd5b6414cc7c24df6f889827ce51167334c8b5dd66d8352",
+      "purpose": "Native runtime outcome reconciliation for the exact complete gate.",
+      "kind": "byte-identical-copy"
+    },
+    {
+      "path": "docs/showcase/verification/native/browser.verification.json.txt",
+      "sha256": "fc73eba10644a520249bd2e46a8821f8e595f1c3aa489912808b23ae93ea7afa",
+      "bytes": 20823,
+      "originalPath": ".superpowers/sdd/2026-11-04-enterprise-verification/evidence/fresh-attempt-2/release-bundle/evidence/proofline/runs/34c7d933-3d3a-47f2-a391-64a8409bede9/verification.json",
+      "originalSha256": "fc73eba10644a520249bd2e46a8821f8e595f1c3aa489912808b23ae93ea7afa",
+      "purpose": "Native runtime outcome reconciliation for the exact complete gate.",
+      "kind": "byte-identical-copy"
+    },
+    {
+      "path": "docs/showcase/verification/native/browser.native-report.json.txt",
+      "sha256": "718e687d2dde559aafa7a7690b639a83b7104fb9d9d27283398231e21f283827",
+      "bytes": 52426,
+      "originalPath": ".superpowers/sdd/2026-11-04-enterprise-verification/evidence/fresh-attempt-2/release-bundle/evidence/proofline/runs/34c7d933-3d3a-47f2-a391-64a8409bede9/native-report.json",
+      "originalSha256": "718e687d2dde559aafa7a7690b639a83b7104fb9d9d27283398231e21f283827",
+      "purpose": "Native Playwright report with exact reporter timing and outcomes.",
+      "kind": "byte-identical-copy"
+    },
+    {
+      "path": "docs/showcase/verification/native/browserScenario.verification.json.txt",
+      "sha256": "6436c9afcf6345f9ea569c8a972a9aa3744ec3d53cb202519606f649eca0c3eb",
+      "bytes": 13978,
+      "originalPath": ".superpowers/sdd/2026-11-04-enterprise-verification/evidence/fresh-attempt-2/release-bundle/evidence/proofline/runs/9456990c-2db0-4803-bc1c-c6efad1e556b/verification.json",
+      "originalSha256": "6436c9afcf6345f9ea569c8a972a9aa3744ec3d53cb202519606f649eca0c3eb",
+      "purpose": "Native runtime outcome reconciliation for the exact complete gate.",
+      "kind": "byte-identical-copy"
+    },
+    {
+      "path": "docs/showcase/verification/native/browserScenario.native-report.json.txt",
+      "sha256": "3ad9e0e920662a3777b2ed34fa5890f733f22adfc6d1a65df0648016509c641f",
+      "bytes": 29234,
+      "originalPath": ".superpowers/sdd/2026-11-04-enterprise-verification/evidence/fresh-attempt-2/release-bundle/evidence/proofline/runs/9456990c-2db0-4803-bc1c-c6efad1e556b/native-report.json",
+      "originalSha256": "3ad9e0e920662a3777b2ed34fa5890f733f22adfc6d1a65df0648016509c641f",
+      "purpose": "Native Playwright report with exact reporter timing and outcomes.",
+      "kind": "byte-identical-copy"
+    },
+    {
+      "path": "docs/showcase/verification/native/browserScenarioShard1.verification.json.txt",
+      "sha256": "e72c515661eeecfbeaec837ed1cace7e878bd0bc8d8b5333e2fe70609b748da0",
+      "bytes": 8090,
+      "originalPath": ".superpowers/sdd/2026-11-04-enterprise-verification/evidence/fresh-attempt-2/release-bundle/evidence/proofline/runs/84cd8ac0-bfa3-4a73-ac80-6780b3f0cc8c/verification.json",
+      "originalSha256": "e72c515661eeecfbeaec837ed1cace7e878bd0bc8d8b5333e2fe70609b748da0",
+      "purpose": "Native runtime outcome reconciliation for the exact complete gate.",
+      "kind": "byte-identical-copy"
+    },
+    {
+      "path": "docs/showcase/verification/native/browserScenarioShard1.native-report.json.txt",
+      "sha256": "57a172a91c934bdbc4dcad5f876853cbeab9c20c45bbd067be1849a9c03ea8e3",
+      "bytes": 16008,
+      "originalPath": ".superpowers/sdd/2026-11-04-enterprise-verification/evidence/fresh-attempt-2/release-bundle/evidence/proofline/runs/84cd8ac0-bfa3-4a73-ac80-6780b3f0cc8c/native-report.json",
+      "originalSha256": "57a172a91c934bdbc4dcad5f876853cbeab9c20c45bbd067be1849a9c03ea8e3",
+      "purpose": "Native Playwright report with exact reporter timing and outcomes.",
+      "kind": "byte-identical-copy"
+    },
+    {
+      "path": "docs/showcase/verification/native/browserScenarioShard2.verification.json.txt",
+      "sha256": "47abff96c895a7e2d9984081ef4b7f7ecde443f963ba70491365e34ebb1e6a69",
+      "bytes": 7990,
+      "originalPath": ".superpowers/sdd/2026-11-04-enterprise-verification/evidence/fresh-attempt-2/release-bundle/evidence/proofline/runs/721c2811-e29a-476f-b934-e02b7e838746/verification.json",
+      "originalSha256": "47abff96c895a7e2d9984081ef4b7f7ecde443f963ba70491365e34ebb1e6a69",
+      "purpose": "Native runtime outcome reconciliation for the exact complete gate.",
+      "kind": "byte-identical-copy"
+    },
+    {
+      "path": "docs/showcase/verification/native/browserScenarioShard2.native-report.json.txt",
+      "sha256": "de8910ea5a8134c52604693e43f7fa76879a36d46b69721c2c2e8a9b00fb535b",
+      "bytes": 15972,
+      "originalPath": ".superpowers/sdd/2026-11-04-enterprise-verification/evidence/fresh-attempt-2/release-bundle/evidence/proofline/runs/721c2811-e29a-476f-b934-e02b7e838746/native-report.json",
+      "originalSha256": "de8910ea5a8134c52604693e43f7fa76879a36d46b69721c2c2e8a9b00fb535b",
+      "purpose": "Native Playwright report with exact reporter timing and outcomes.",
+      "kind": "byte-identical-copy"
+    },
+    {
+      "path": "docs/showcase/verification/native/timing-extract.json.txt",
+      "sha256": "e580c4146d12982d43a3a5c06d29082bb5a37fabdd4f1889c9fd564cb4ab3e44",
+      "bytes": 18338,
+      "kind": "derived-extraction",
+      "purpose": "Native timing observations with exact source bytes, line references and extraction method."
+    },
+    {
+      "path": "docs/showcase/verification/coverage/api-contracts-summary.json.txt",
+      "sha256": "7694c3f6d265a7e62629843ba7e71906137f7eb0ca10bf35ae53a9e7caec3ed8",
+      "bytes": 1421,
+      "originalPath": "artifacts/coverage/api-contracts/coverage-summary.json",
+      "originalSha256": "7694c3f6d265a7e62629843ba7e71906137f7eb0ca10bf35ae53a9e7caec3ed8",
+      "purpose": "Raw V8/Istanbul counters produced by the completion coverage command.",
+      "kind": "byte-identical-copy",
+      "qualification": "Classified file percentages are cross-checked against frozen ratchet.json; the tools report comes directly from the frozen evidence copy."
+    },
+    {
+      "path": "docs/showcase/verification/coverage/crm-web-summary.json.txt",
+      "sha256": "a9e97f673baca0227cc1ddb93caf20833a711e118e13f9ca8f91c6310f775dd1",
+      "bytes": 39842,
+      "originalPath": "artifacts/coverage/crm-web/coverage-summary.json",
+      "originalSha256": "a9e97f673baca0227cc1ddb93caf20833a711e118e13f9ca8f91c6310f775dd1",
+      "purpose": "Raw V8/Istanbul counters produced by the completion coverage command.",
+      "kind": "byte-identical-copy",
+      "qualification": "Classified file percentages are cross-checked against frozen ratchet.json; the tools report comes directly from the frozen evidence copy."
+    },
+    {
+      "path": "docs/showcase/verification/coverage/domain-summary.json.txt",
+      "sha256": "c7fb96a570c49835cbab34644a241df147eb55e42cc11743ce1ad11fe975a721",
+      "bytes": 2663,
+      "originalPath": "artifacts/coverage/domain/coverage-summary.json",
+      "originalSha256": "c7fb96a570c49835cbab34644a241df147eb55e42cc11743ce1ad11fe975a721",
+      "purpose": "Raw V8/Istanbul counters produced by the completion coverage command.",
+      "kind": "byte-identical-copy",
+      "qualification": "Classified file percentages are cross-checked against frozen ratchet.json; the tools report comes directly from the frozen evidence copy."
+    },
+    {
+      "path": "docs/showcase/verification/coverage/finance-service-summary.json.txt",
+      "sha256": "553bfcac034b87b115f3bd338dde19460b63e9f8f342892674cd8ce2a626bad8",
+      "bytes": 887,
+      "originalPath": "artifacts/coverage/finance-service/coverage-summary.json",
+      "originalSha256": "553bfcac034b87b115f3bd338dde19460b63e9f8f342892674cd8ce2a626bad8",
+      "purpose": "Raw V8/Istanbul counters produced by the completion coverage command.",
+      "kind": "byte-identical-copy",
+      "qualification": "Classified file percentages are cross-checked against frozen ratchet.json; the tools report comes directly from the frozen evidence copy."
+    },
+    {
+      "path": "docs/showcase/verification/coverage/impact-tools-summary.json.txt",
+      "sha256": "d01e1b84a1d3dd487cc42618aa098a1a1bc7e0e0602f6f3c6db574ec0ec2da5c",
+      "bytes": 3396,
+      "originalPath": "artifacts/coverage/impact-tools/coverage-summary.json",
+      "originalSha256": "d01e1b84a1d3dd487cc42618aa098a1a1bc7e0e0602f6f3c6db574ec0ec2da5c",
+      "purpose": "Raw V8/Istanbul counters produced by the completion coverage command.",
+      "kind": "byte-identical-copy",
+      "qualification": "Classified file percentages are cross-checked against frozen ratchet.json; the tools report comes directly from the frozen evidence copy."
+    },
+    {
+      "path": "docs/showcase/verification/coverage/insurance-runtime-summary.json.txt",
+      "sha256": "bd57a3ad6dba1b335df7ba1154096f2e16f1187a5d775257bf01baea20abb584",
+      "bytes": 1179,
+      "originalPath": "artifacts/coverage/insurance-runtime/coverage-summary.json",
+      "originalSha256": "bd57a3ad6dba1b335df7ba1154096f2e16f1187a5d775257bf01baea20abb584",
+      "purpose": "Raw V8/Istanbul counters produced by the completion coverage command.",
+      "kind": "byte-identical-copy",
+      "qualification": "Classified file percentages are cross-checked against frozen ratchet.json; the tools report comes directly from the frozen evidence copy."
+    },
+    {
+      "path": "docs/showcase/verification/coverage/policy-service-summary.json.txt",
+      "sha256": "6a5dee3cf10aed6baecab5c152852225af44f39bd828846990f19e554f05d669",
+      "bytes": 883,
+      "originalPath": "artifacts/coverage/policy-service/coverage-summary.json",
+      "originalSha256": "6a5dee3cf10aed6baecab5c152852225af44f39bd828846990f19e554f05d669",
+      "purpose": "Raw V8/Istanbul counters produced by the completion coverage command.",
+      "kind": "byte-identical-copy",
+      "qualification": "Classified file percentages are cross-checked against frozen ratchet.json; the tools report comes directly from the frozen evidence copy."
+    },
+    {
+      "path": "docs/showcase/verification/coverage/policy-state-service-summary.json.txt",
+      "sha256": "850c5431865a337056b09266c2e9df72d92b693956ce78468d301ce72e5ce1cb",
+      "bytes": 903,
+      "originalPath": "artifacts/coverage/policy-state-service/coverage-summary.json",
+      "originalSha256": "850c5431865a337056b09266c2e9df72d92b693956ce78468d301ce72e5ce1cb",
+      "purpose": "Raw V8/Istanbul counters produced by the completion coverage command.",
+      "kind": "byte-identical-copy",
+      "qualification": "Classified file percentages are cross-checked against frozen ratchet.json; the tools report comes directly from the frozen evidence copy."
+    },
+    {
+      "path": "docs/showcase/verification/coverage/proofline-tools-summary.json.txt",
+      "sha256": "2416cf40da51045f5e903de649852866c592b5331cdf02464b3703d1dcba02b2",
+      "bytes": 4566,
+      "originalPath": ".superpowers/sdd/2026-11-04-enterprise-verification/evidence/fresh-attempt-2/proofline-coverage-summary.json",
+      "originalSha256": "2416cf40da51045f5e903de649852866c592b5331cdf02464b3703d1dcba02b2",
+      "purpose": "Raw V8/Istanbul counters produced by the completion coverage command.",
+      "kind": "byte-identical-copy",
+      "qualification": "Classified file percentages are cross-checked against frozen ratchet.json; the tools report comes directly from the frozen evidence copy."
+    },
+    {
+      "path": "docs/showcase/verification/coverage/service-bus-summary.json.txt",
+      "sha256": "50ac25bcc6b81425998368821bcbcb09ae83b551d98da4016b1203111e7031be",
+      "bytes": 873,
+      "originalPath": "artifacts/coverage/service-bus/coverage-summary.json",
+      "originalSha256": "50ac25bcc6b81425998368821bcbcb09ae83b551d98da4016b1203111e7031be",
+      "purpose": "Raw V8/Istanbul counters produced by the completion coverage command.",
+      "kind": "byte-identical-copy",
+      "qualification": "Classified file percentages are cross-checked against frozen ratchet.json; the tools report comes directly from the frozen evidence copy."
+    },
+    {
+      "path": "docs/showcase/verification/coverage/test-kit-summary.json.txt",
+      "sha256": "84bc4e5e566f64ad0c9682fea370163c7f38b984e1d05ba0d40348925682ae2a",
+      "bytes": 1628,
+      "originalPath": "artifacts/coverage/test-kit/coverage-summary.json",
+      "originalSha256": "84bc4e5e566f64ad0c9682fea370163c7f38b984e1d05ba0d40348925682ae2a",
+      "purpose": "Raw V8/Istanbul counters produced by the completion coverage command.",
+      "kind": "byte-identical-copy",
+      "qualification": "Classified file percentages are cross-checked against frozen ratchet.json; the tools report comes directly from the frozen evidence copy."
+    },
+    {
+      "path": "docs/showcase/verification/standalone/coverage-summary.json.txt",
+      "sha256": "3b3af1f474d017d7467c477327ef0901d73d63a145ca93d1a813e65dbf6b6f02",
+      "bytes": 569,
+      "originalPath": ".superpowers/sdd/2026-11-04-enterprise-verification/evidence/fresh-attempt-2/standalone-artifacts/artifacts/coverage/work-orders/coverage-summary.json",
+      "originalSha256": "3b3af1f474d017d7467c477327ef0901d73d63a145ca93d1a813e65dbf6b6f02",
+      "purpose": "Independent target-owned lifecycle source coverage; app UI is explicitly outside this coverage group.",
+      "kind": "byte-identical-copy"
+    },
+    {
+      "path": "docs/showcase/verification/standalone/unit.verification.json.txt",
+      "sha256": "dbbd8a4c1be525f1cf75c7f8e0812b4bfde8bb508626260467051b7139fc16c5",
+      "bytes": 2283,
+      "originalPath": ".superpowers/sdd/2026-11-04-enterprise-verification/evidence/fresh-attempt-2/standalone-artifacts/artifacts/proofline/runs/0ec53e55-5a7f-4018-bb75-db40b4507ba8/verification.json",
+      "originalSha256": "dbbd8a4c1be525f1cf75c7f8e0812b4bfde8bb508626260467051b7139fc16c5",
+      "purpose": "Canonical full native outcomes in the unrelated disposable repository.",
+      "kind": "byte-identical-copy"
+    },
+    {
+      "path": "docs/showcase/verification/standalone/browser.verification.json.txt",
+      "sha256": "43de9f7068c97e58ceb42dce88dd7c8a5bbc1c61029d8359807ff3a57706329f",
+      "bytes": 3604,
+      "originalPath": ".superpowers/sdd/2026-11-04-enterprise-verification/evidence/fresh-attempt-2/standalone-artifacts/artifacts/proofline/runs/62cf274c-452f-4d2e-bf6c-67b2b7d2d93a/verification.json",
+      "originalSha256": "43de9f7068c97e58ceb42dce88dd7c8a5bbc1c61029d8359807ff3a57706329f",
+      "purpose": "Canonical full native outcomes in the unrelated disposable repository.",
+      "kind": "byte-identical-copy"
+    },
+    {
+      "path": "docs/showcase/verification/standalone/browser.native-report.json.txt",
+      "sha256": "d20c0d292309933b19575398de0d3b0a4496d689b2b5f387f8c57b4ea754a3fa",
+      "bytes": 9824,
+      "originalPath": ".superpowers/sdd/2026-11-04-enterprise-verification/evidence/fresh-attempt-2/standalone-artifacts/artifacts/proofline/runs/62cf274c-452f-4d2e-bf6c-67b2b7d2d93a/native-report.json",
+      "originalSha256": "d20c0d292309933b19575398de0d3b0a4496d689b2b5f387f8c57b4ea754a3fa",
+      "purpose": "Actual native full Chromium result in the independent app.",
+      "kind": "byte-identical-copy"
+    }
+  ]
+}

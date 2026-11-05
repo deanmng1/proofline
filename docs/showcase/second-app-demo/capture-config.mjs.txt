@@ -1,0 +1,11 @@
+import { defineConfig } from "@playwright/test";
+export default defineConfig({
+  testDir: ".",
+  testMatch: "capture-workflow.spec.ts",
+  workers: 1,
+  retries: 0,
+  forbidOnly: true,
+  reporter: [["list"]],
+  use: { serviceWorkers: "block", trace: "retain-on-failure", screenshot: "only-on-failure", video: "retain-on-failure", launchOptions: { slowMo: 90 } },
+  projects: [{ name: "chromium", use: { browserName: "chromium" } }],
+});

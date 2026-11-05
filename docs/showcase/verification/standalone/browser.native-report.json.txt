@@ -1,0 +1,256 @@
+{
+  "config": {
+    "argv": [
+      "/Users/dio/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+      "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-work-orders-28jZj0/node_modules/@playwright/test/cli.js",
+      "test",
+      "--config",
+      "checks/browser/playwright.config.mjs",
+      "--reporter=list,json,html",
+      "--output=/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-work-orders-28jZj0/artifacts/proofline/runs/62cf274c-452f-4d2e-bf6c-67b2b7d2d93a/test-results"
+    ],
+    "configFile": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-work-orders-28jZj0/checks/browser/playwright.config.mjs",
+    "rootDir": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-work-orders-28jZj0/checks/browser",
+    "failOnFlakyTests": false,
+    "forbidOnly": true,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 2
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-work-orders-28jZj0/artifacts/proofline/runs/62cf274c-452f-4d2e-bf6c-67b2b7d2d93a/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 2
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-work-orders-28jZj0/checks/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "journeys.spec.ts"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ],
+      [
+        "html"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.62.1",
+    "workers": 2,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "journeys.spec.ts",
+      "file": "journeys.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "navigates_requests_to_completed_and_revokes_the_session",
+          "ok": true,
+          "tags": [
+            "desk-golden"
+          ],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 438,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-05T02:47:20.202Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "network-and-route-diagnostics",
+                      "contentType": "application/json",
+                      "body": "eyJzY2VuYXJpbyI6ImM4ZmNjOTc5LTJjNmUtNDc3ZS1hMzI1LTIxZTBiNDhmMTA2NiIsIm9yaWdpbiI6Imh0dHA6Ly8xMjcuMC4wLjE6NTg0NzIiLCJ1bmV4cGVjdGVkIjpbXSwiZXhwZWN0ZWREZW5pYWxzIjpbXSwibWV0cmljcyI6eyJtdXRhdGlvbnMiOjF9fQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "aa09586c1d16412a1f00-5f4e0c5094c7d962bd5b",
+          "file": "journeys.spec.ts",
+          "line": 3,
+          "column": 1
+        },
+        {
+          "title": "denies_observer_navigation_and_commands",
+          "ok": true,
+          "tags": [
+            "desk-authority"
+          ],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 1,
+                  "status": "passed",
+                  "duration": 260,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-05T02:47:20.202Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "network-and-route-diagnostics",
+                      "contentType": "application/json",
+                      "body": "eyJzY2VuYXJpbyI6IjcwMTc3ZDQ0LWQ1MDUtNDgyOC1iZjkwLWQ3OTY3MDg5ZDFkYiIsIm9yaWdpbiI6Imh0dHA6Ly8xMjcuMC4wLjE6NTg0NzEiLCJ1bmV4cGVjdGVkIjpbXSwiZXhwZWN0ZWREZW5pYWxzIjpbXSwibWV0cmljcyI6eyJtdXRhdGlvbnMiOjF9fQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "aa09586c1d16412a1f00-750afe3ef871766eef98",
+          "file": "journeys.spec.ts",
+          "line": 25,
+          "column": 1
+        },
+        {
+          "title": "isolates_two_organizations_in_one_runtime",
+          "ok": true,
+          "tags": [
+            "desk-organizations"
+          ],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 1,
+                  "status": "passed",
+                  "duration": 538,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-05T02:47:20.698Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "network-and-route-diagnostics",
+                      "contentType": "application/json",
+                      "body": "eyJzY2VuYXJpbyI6ImIxNTJiZjcyLTg5OTktNDhlOS04ZWZhLTlkODE2N2U1MmU0NyIsIm9yaWdpbiI6Imh0dHA6Ly8xMjcuMC4wLjE6NTg0NzEiLCJ1bmV4cGVjdGVkIjpbXSwiZXhwZWN0ZWREZW5pYWxzIjpbXSwibWV0cmljcyI6eyJtdXRhdGlvbnMiOjR9fQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "aa09586c1d16412a1f00-d6f99d6c06cca0f2c43a",
+          "file": "journeys.spec.ts",
+          "line": 52,
+          "column": 1
+        },
+        {
+          "title": "denies_undeclared_browser_egress_planes",
+          "ok": true,
+          "tags": [
+            "desk-egress"
+          ],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 113,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-05T02:47:20.876Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "network-and-route-diagnostics",
+                      "contentType": "application/json",
+                      "body": "eyJzY2VuYXJpbyI6ImFkOWY2NDk4LTA2OWUtNDkyNS05YjU1LTE5ZGRhMjlkZjgyNSIsIm9yaWdpbiI6Imh0dHA6Ly8xMjcuMC4wLjE6NTg0NzIiLCJ1bmV4cGVjdGVkIjpbXSwiZXhwZWN0ZWREZW5pYWxzIjpbeyJzY2VuYXJpbyI6ImFkOWY2NDk4LTA2OWUtNDkyNS05YjU1LTE5ZGRhMjlkZjgyNSIsIm1ldGhvZCI6IkdFVCIsInVybCI6Imh0dHBzOi8vdW5jb25maWd1cmVkLmludmFsaWQvcGFnZSIsInRyYWNlIjoiL3ByaXZhdGUvdmFyL2ZvbGRlcnMvNTMvdGN6emQxeHMzMDlkejVncXgzaDQxbG5tMDAwMGduL1QvcHJvb2ZsaW5lLXdvcmstb3JkZXJzLTI4alpqMC9hcnRpZmFjdHMvcHJvb2ZsaW5lL3J1bnMvNjJjZjI3NGMtNDUyZi00ZDJlLWJmNmMtNjdiMmI3ZDJkOTNhL3Rlc3QtcmVzdWx0cy9qb3VybmV5cy1kZW5pZXMtdW5kZWNsYXJlZC1icm93c2VyLWVncmVzcy1wbGFuZXMtY2hyb21pdW0ifSx7InNjZW5hcmlvIjoiYWQ5ZjY0OTgtMDY5ZS00OTI1LTliNTUtMTlkZGEyOWRmODI1IiwibWV0aG9kIjoiR0VUIiwidXJsIjoiaHR0cHM6Ly91bmNvbmZpZ3VyZWQuaW52YWxpZC93b3JrZXIiLCJ0cmFjZSI6Ii9wcml2YXRlL3Zhci9mb2xkZXJzLzUzL3RjenpkMXhzMzA5ZHo1Z3F4M2g0MWxubTAwMDBnbi9UL3Byb29mbGluZS13b3JrLW9yZGVycy0yOGpaajAvYXJ0aWZhY3RzL3Byb29mbGluZS9ydW5zLzYyY2YyNzRjLTQ1MmYtNGQyZS1iZjZjLTY3YjJiN2QyZDkzYS90ZXN0LXJlc3VsdHMvam91cm5leXMtZGVuaWVzLXVuZGVjbGFyZWQtYnJvd3Nlci1lZ3Jlc3MtcGxhbmVzLWNocm9taXVtIn0seyJzY2VuYXJpbyI6ImFkOWY2NDk4LTA2OWUtNDkyNS05YjU1LTE5ZGRhMjlkZjgyNSIsIm1ldGhvZCI6IldFQlNPQ0tFVCIsInVybCI6IndzczovL3VuY29uZmlndXJlZC5pbnZhbGlkL3NvY2tldCIsInRyYWNlIjoiL3ByaXZhdGUvdmFyL2ZvbGRlcnMvNTMvdGN6emQxeHMzMDlkejVncXgzaDQxbG5tMDAwMGduL1QvcHJvb2ZsaW5lLXdvcmstb3JkZXJzLTI4alpqMC9hcnRpZmFjdHMvcHJvb2ZsaW5lL3J1bnMvNjJjZjI3NGMtNDUyZi00ZDJlLWJmNmMtNjdiMmI3ZDJkOTNhL3Rlc3QtcmVzdWx0cy9qb3VybmV5cy1kZW5pZXMtdW5kZWNsYXJlZC1icm93c2VyLWVncmVzcy1wbGFuZXMtY2hyb21pdW0ifV0sIm1ldHJpY3MiOnsibXV0YXRpb25zIjowfX0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "aa09586c1d16412a1f00-6fb6126b0a34aaab4016",
+          "file": "journeys.spec.ts",
+          "line": 82,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-05T02:47:20.014Z",
+    "duration": 1250.993,
+    "expected": 4,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

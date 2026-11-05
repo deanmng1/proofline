@@ -1,0 +1,112 @@
+{
+  "version": 1,
+  "invocationId": "62cf274c-452f-4d2e-bf6c-67b2b7d2d93a",
+  "runner": "playwright",
+  "sourceCommit": "4b6f932eb8c9374efbeb767bffa4ada91b2528b2",
+  "repositoryRoot": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-work-orders-28jZj0",
+  "sessionId": "900000002-1",
+  "ciRunId": "900000002",
+  "ciRunAttempt": "1",
+  "repository": "deanmng1/proofline",
+  "workflow": "deanmng1/proofline/.github/workflows/verify.yml@refs/heads/main",
+  "gateKey": "portability:browser",
+  "gateExecutionId": "900000002-1-portability:browser",
+  "scope": "full",
+  "argv": [
+    "/Users/dio/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+    "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-work-orders-28jZj0/node_modules/@playwright/test/cli.js",
+    "test",
+    "--config",
+    "checks/browser/playwright.config.mjs",
+    "--reporter=list,json,html",
+    "--output=/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-work-orders-28jZj0/artifacts/proofline/runs/62cf274c-452f-4d2e-bf6c-67b2b7d2d93a/test-results"
+  ],
+  "requestedArgs": [
+    "test",
+    "--config",
+    "checks/browser/playwright.config.mjs"
+  ],
+  "cwd": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-work-orders-28jZj0",
+  "exitCode": 0,
+  "outcome": "passed",
+  "expected": [
+    {
+      "file": "checks/browser/journeys.spec.ts",
+      "title": "navigates_requests_to_completed_and_revokes_the_session",
+      "project": "chromium"
+    },
+    {
+      "file": "checks/browser/journeys.spec.ts",
+      "title": "denies_observer_navigation_and_commands",
+      "project": "chromium"
+    },
+    {
+      "file": "checks/browser/journeys.spec.ts",
+      "title": "isolates_two_organizations_in_one_runtime",
+      "project": "chromium"
+    },
+    {
+      "file": "checks/browser/journeys.spec.ts",
+      "title": "denies_undeclared_browser_egress_planes",
+      "project": "chromium"
+    }
+  ],
+  "observed": [
+    {
+      "file": "checks/browser/journeys.spec.ts",
+      "title": "navigates_requests_to_completed_and_revokes_the_session",
+      "project": "chromium",
+      "expectedStatus": "passed",
+      "status": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "nativeStatus": "expected"
+    },
+    {
+      "file": "checks/browser/journeys.spec.ts",
+      "title": "denies_observer_navigation_and_commands",
+      "project": "chromium",
+      "expectedStatus": "passed",
+      "status": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "nativeStatus": "expected"
+    },
+    {
+      "file": "checks/browser/journeys.spec.ts",
+      "title": "isolates_two_organizations_in_one_runtime",
+      "project": "chromium",
+      "expectedStatus": "passed",
+      "status": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "nativeStatus": "expected"
+    },
+    {
+      "file": "checks/browser/journeys.spec.ts",
+      "title": "denies_undeclared_browser_egress_planes",
+      "project": "chromium",
+      "expectedStatus": "passed",
+      "status": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "nativeStatus": "expected"
+    }
+  ],
+  "errors": [],
+  "children": [],
+  "artifacts": {
+    "nativeReport": "runs/62cf274c-452f-4d2e-bf6c-67b2b7d2d93a/native-report.json",
+    "stdout": "runs/62cf274c-452f-4d2e-bf6c-67b2b7d2d93a/stdout.log",
+    "stderr": "runs/62cf274c-452f-4d2e-bf6c-67b2b7d2d93a/stderr.log",
+    "discovery": "runs/62cf274c-452f-4d2e-bf6c-67b2b7d2d93a/discovery.json"
+  },
+  "metadata": {
+    "projects": [
+      "chromium"
+    ],
+    "workers": "2",
+    "shard": null
+  },
+  "gateComplete": true
+}

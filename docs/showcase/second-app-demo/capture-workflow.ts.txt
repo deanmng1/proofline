@@ -1,0 +1,107 @@
+import { mkdir, writeFile } from "node:fs/promises";
+import path from "node:path";
+import { test as scenarioTest, expect } from "../checks/browser/scenario.mjs";
+
+// Imported target fixture remains responsible for capability bootstrap, isolated runtime,
+// cookie sessions, all request/WebSocket routing, and final egress assertions.
+// The proxy changes only recording dimensions on contexts the fixture already records.
+const test = scenarioTest.extend({
+  browser: [async ({ browser }, use) => {
+    const recordingBrowser = new Proxy(browser, {
+      get(target, key) {
+        if (key === "newContext") return (options) => target.newContext({
+          ...options,
+          ...(options?.recordVideo ? {
+            viewport: { width: 960, height: 540 },
+            recordVideo: { ...options.recordVideo, size: { width: 960, height: 540 } },
+          } : {}),
+        });
+        const value = Reflect.get(target, key);
+        return typeof value === "function" ? value.bind(target) : value;
+      },
+    });
+    await use(recordingBrowser);
+  }, { scope: "worker" }],
+});
+
+test("records_the_target_owned_navigated_work_order_journey", async ({ scenario }) => {
+  test.setTimeout(90_000);
+  const assets = process.env.PROOFLINE_SHOWCASE_ASSETS;
+  if (!assets || !path.isAbsolute(assets)) throw new Error("Absolute capture asset path required");
+  await mkdir(assets, { recursive: true });
+  const started = Date.now();
+  const { context, page } = await scenario.createContext();
+  const video = page.video();
+  if (!video) throw new Error("Target fixture did not record a video");
+  const stages = [];
+  const stage = async (image, label, hold) => {
+    await page.mouse.move(940, 520);
+    await page.waitForTimeout(200);
+    await page.screenshot({ path: path.join(assets, image), fullPage: false });
+    stages.push({ image, label, elapsedSeconds: Number(((Date.now() - started) / 1000).toFixed(3)), path: new URL(page.url()).pathname });
+    console.log(`PASS — ${label}`);
+    await page.waitForTimeout(hold);
+  };
+
+  await page.goto(`${scenario.origin}/desk/requests`);
+  await expect(page.getByRole("heading", { name: "Work desk sign in" })).toBeVisible();
+  await expect(page).toHaveURL(/\/signin\?return=%2Fdesk%2Frequests$/);
+  await page.getByLabel("Desk identity").pressSequentially("dispatch-north", { delay: 70 });
+  await stage("01-sign-in.png", "The protected Requests route requires a desk identity", 3500);
+
+  await page.getByRole("button", { name: "Sign in", exact: true }).click();
+  await expect(page).toHaveURL(/\/desk\/requests$/);
+  await expect(page.getByRole("heading", { name: "Requested work" })).toBeVisible();
+  await expect(page.getByText("north · dispatcher", { exact: true })).toBeVisible();
+  await expect(page.getByText("Inspect loading door", { exact: true })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Complete Replace lobby lamp" })).toBeVisible();
+  const sessionCookie = (await context.cookies()).find((cookie) => cookie.name === "desk_session");
+  expect(sessionCookie?.httpOnly).toBe(true);
+  await stage("02-requests.png", "The north dispatcher sees only the north request", 4500);
+
+  await page.getByRole("button", { name: "Complete Replace lobby lamp" }).click();
+  await expect(page.getByRole("button", { name: "Complete Replace lobby lamp" })).toHaveCount(0);
+  expect(scenario.snapshot().find((order) => order.id === "north-1")?.state).toBe("completed");
+  await stage("03-request-completed.png", "Completing the lamp removes it from Requested work", 3000);
+
+  await page.getByRole("link", { name: "Completed", exact: true }).click();
+  await expect(page).toHaveURL(/\/desk\/completed$/);
+  await expect(page.getByRole("heading", { name: "Completed work" })).toBeVisible();
+  await expect(page.getByText("Replace lobby lamp", { exact: true })).toBeVisible();
+  await stage("04-completed.png", "Visible Completed navigation shows the completed lamp", 5500);
+
+  await page.getByRole("button", { name: "Sign out" }).click();
+  await page.goto(`${scenario.origin}/desk/completed`);
+  await expect(page.getByRole("heading", { name: "Work desk sign in" })).toBeVisible();
+  await expect(page).toHaveURL(/\/signin\?return=%2Fdesk%2Fcompleted$/);
+  await expect(page.getByText("Replace lobby lamp", { exact: true })).toHaveCount(0);
+  expect(await page.evaluate(async () => (await fetch("/work-api/session")).json())).toBeNull();
+  expect((await context.cookies()).some((cookie) => cookie.name === "desk_session")).toBe(false);
+  await stage("05-signed-out.png", "After sign out, revisiting Completed requires authentication", 4500);
+
+  expect(scenario.snapshot()).toEqual([
+    { id: "north-1", organization: "north", title: "Replace lobby lamp", state: "completed" },
+    { id: "south-1", organization: "south", title: "Inspect loading door", state: "requested" },
+  ]);
+  expect(scenario.mutations()).toBe(1);
+  scenario.assertNoUnexpectedRequests();
+  const inspection = {
+    status: "passed",
+    capturedAt: new Date().toISOString(),
+    sourceWorkflow: "checks/browser/journeys.spec.ts:navigates_requests_to_completed_and_revokes_the_session",
+    sourceFixture: "checks/browser/scenario.mjs",
+    viewport: { width: 960, height: 540 },
+    scenario: scenario.id,
+    origin: scenario.origin,
+    stages,
+    state: scenario.snapshot(),
+    assertions: { completedNorthOrders: 1, requestedSouthOrders: 1, mutations: 1, unexpectedRequests: 0, sessionAfterLogout: null, sessionCookieAfterLogout: false },
+    finalPath: new URL(page.url()).pathname,
+    elapsedSeconds: Number(((Date.now() - started) / 1000).toFixed(3)),
+    note: "Unchanged standalone target UI and target-owned test fixture; no injected UI or styles, provider connection, hosted CI, or deployment.",
+  };
+  await writeFile(path.join(assets, "inspection.json"), `${JSON.stringify(inspection, null, 2)}\n`);
+  await context.close();
+  await video.saveAs(path.join(assets, "work-orders-demo.webm"));
+  console.log("PASS — completed state, organization separation, single mutation, revoked session, and zero unexpected requests");
+});

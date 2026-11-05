@@ -1,0 +1,5723 @@
+{
+  "version": 1,
+  "invocationId": "798c3869-cbcc-48ff-8059-e8bdc7c1d589",
+  "runner": "aggregate",
+  "sourceCommit": "4feb0572fb8aa1a18fcfdfa0e9f5333b59d714e2",
+  "repositoryRoot": "/Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed",
+  "sessionId": "900000002-1",
+  "ciRunId": "900000002",
+  "ciRunAttempt": "1",
+  "repository": "deanmng1/proofline",
+  "workflow": "deanmng1/proofline/.github/workflows/verify.yml@refs/heads/main",
+  "gateKey": "unit",
+  "gateExecutionId": "900000002-1-unit",
+  "scope": "full",
+  "argv": [
+    "/Users/dio/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+    "/Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed/tools/proofline/canonical-runner.mjs",
+    "unit"
+  ],
+  "cwd": "/Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed",
+  "exitCode": 0,
+  "outcome": "passed",
+  "expected": [
+    {
+      "file": "tools/proofline/src/egress-guard.test.ts",
+      "title": "Proofline egress guard > denies_fetch_http_https_websocket_and_inherited_child_egress"
+    },
+    {
+      "file": "tools/proofline/src/canonical-runner-egress.test.ts",
+      "title": "canonical_unit_runner_rejects_package_manager_wrapper_escape_with_stripped_env"
+    },
+    {
+      "file": "tools/proofline/src/canonical-runner-egress.test.ts",
+      "title": "canonical_unit_runner_rejects_forged_delegated_policy_broadening"
+    },
+    {
+      "file": "tools/proofline/src/egress-guard.test.ts",
+      "title": "Proofline egress guard > rejects_git_external_diff_helpers_before_native_dispatch"
+    },
+    {
+      "file": "tools/proofline/src/production-negative.test.ts",
+      "title": "Proofline production boundary > rejects_test_markers_in_a_production_bundle"
+    },
+    {
+      "file": "tools/proofline/src/product-e2e-boundary.test.ts",
+      "title": "Proofline product E2E boundary > product_e2e_specs_delegate_transport_and_storage_to_fixtures"
+    },
+    {
+      "file": "tools/proofline/src/canonical-runner-egress.test.ts",
+      "title": "canonical_unit_runner_rejects_repository_clean_filters_before_native_dispatch"
+    },
+    {
+      "file": "tools/proofline/src/canonical-runner-egress.test.ts",
+      "title": "canonical_unit_runner_ignores_HOME_and_XDG_git_configuration"
+    },
+    {
+      "file": "tools/proofline/src/canonical-runner-egress.test.ts",
+      "title": "canonical_unit_runner_limits_git_to_filter_free_object_and_metadata_operations"
+    },
+    {
+      "file": "tools/proofline/src/canonical-runner-egress.test.ts",
+      "title": "canonical_unit_runner_establishes_manifest_artifacts_before_vitest"
+    },
+    {
+      "file": "tools/proofline/src/required-execution.test.ts",
+      "title": "native Vitest events reject actual expected failure and successful retry"
+    },
+    {
+      "file": "tools/proofline/src/execution-artifacts.test.ts",
+      "title": "preserves failed invocation bytes across subsequent and parallel allocations"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > packages production bytes and validates the entire execution root"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > validates a real complete archive without provider credentials"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > workflow publishes only after complete gates and deployment uses trusted prebuilt output"
+    },
+    {
+      "file": "tools/proofline/src/portability.test.ts",
+      "title": "Proofline standalone portability > copies_a_standalone_target_with_byte_identical_core_and_no_CRM_product"
+    },
+    {
+      "file": "tools/proofline/src/required-execution.test.ts",
+      "title": "canonical tuning flags cannot omit required unit targets or browser identities"
+    },
+    {
+      "file": "tools/proofline/src/required-execution.test.ts",
+      "title": "standalone native discovery and execution require no undeclared Nx binary"
+    },
+    {
+      "file": "tools/proofline/src/execution-artifacts.test.ts",
+      "title": "coverage CLI config and environment destinations cannot erase finalized evidence"
+    },
+    {
+      "file": "apps/crm-web/src/bootstrap.test.tsx",
+      "title": "CRM application bootstrap > test_bootstrap_never_initializes_monitoring"
+    },
+    {
+      "file": "packages/policy-service/src/policy-service.test.ts",
+      "title": "Policy service > binds_a_quote_once_and_publishes_policy_lifecycle_changed"
+    },
+    {
+      "file": "packages/insurance-runtime/src/runtime.test.ts",
+      "title": "insurance runtime > bind_chain_is_idempotent_across_all_consumers"
+    },
+    {
+      "file": "packages/policy-service/src/policy-service.test.ts",
+      "title": "Policy service > rejects_same_command_id_with_different_payload"
+    },
+    {
+      "file": "packages/policy-service/src/policy-service.test.ts",
+      "title": "Policy service > transitions_bound_policy_to_cancelled_at_next_revision"
+    },
+    {
+      "file": "packages/insurance-runtime/src/runtime.test.ts",
+      "title": "insurance runtime > cancellation_is_terminal_and_replay_does_not_restore_bound_state"
+    },
+    {
+      "file": "packages/insurance-runtime/src/timestamps.test.ts",
+      "title": "UTC timestamp boundaries > policy_clock_rejection_leaves_each_command_retryable_without_partial_state"
+    },
+    {
+      "file": "packages/service-bus/src/service-bus.test.ts",
+      "title": "in-memory service bus > leaves_failed_delivery_pending_for_a_deterministic_retry"
+    },
+    {
+      "file": "packages/insurance-runtime/src/runtime.test.ts",
+      "title": "insurance runtime > retries_pending_finance_delivery_without_duplicate_policy_or_commission_records"
+    },
+    {
+      "file": "packages/insurance-runtime/src/runtime.test.ts",
+      "title": "insurance runtime > same_command_ids_and_entity_ids_are_independent_across_tenants"
+    },
+    {
+      "file": "packages/insurance-runtime/src/runtime.test.ts",
+      "title": "insurance runtime > rejects_foreign_quote_references_without_draining_another_tenants_pending_delivery"
+    },
+    {
+      "file": "packages/policy-state-service/src/policy-state-service.test.ts",
+      "title": "Policy State service > isolates_tenant_and_policy_ids_that_contain_key_delimiters"
+    },
+    {
+      "file": "packages/api-contracts/src/test-api.test.ts",
+      "title": "createTestApi > requires_independent_command_and_correlation_identities_before_mutation"
+    },
+    {
+      "file": "packages/api-contracts/src/test-api.test.ts",
+      "title": "createTestApi > binds_over_http_and_exposes_finance_initialized_through_policy_state"
+    },
+    {
+      "file": "packages/insurance-runtime/src/runtime.test.ts",
+      "title": "insurance runtime > replays_customer_and_property_intake_with_stable_command_identity"
+    },
+    {
+      "file": "packages/domain/src/commission.test.ts",
+      "title": "commission rules > COM-001 rounds a written commission half-up and makes it immediately payable"
+    },
+    {
+      "file": "packages/finance-service/src/finance-service.test.ts",
+      "title": "Finance service > written_accrues_on_bound_state"
+    },
+    {
+      "file": "packages/domain/src/commission.test.ts",
+      "title": "commission rules > COM-002 becomes payable at the exact hold boundary without rewriting the accrual"
+    },
+    {
+      "file": "packages/finance-service/src/finance-service.test.ts",
+      "title": "Finance service > cash_first_accrues_only_settled_premium"
+    },
+    {
+      "file": "packages/domain/src/commission.test.ts",
+      "title": "commission rules > COM-004 rejects malformed or negative commission plans at the domain boundary"
+    },
+    {
+      "file": "packages/domain/src/commission.test.ts",
+      "title": "commission rules > COM-005 projects linked payment without replacing the historical accrual"
+    },
+    {
+      "file": "packages/finance-service/src/finance-service.test.ts",
+      "title": "Finance service > appends_commission_payment_without_rewriting_accrual"
+    },
+    {
+      "file": "packages/service-bus/src/immutable-delivery.test.ts",
+      "title": "immutable delivery > owns_nested_publisher_and_inspection_values_before_delivery"
+    },
+    {
+      "file": "packages/finance-service/src/finance-service.test.ts",
+      "title": "Finance service > reverses_only_allocated_settled_premium_in_a_mixed_refund"
+    },
+    {
+      "file": "packages/finance-service/src/finance-service.test.ts",
+      "title": "Finance service > replays_commands_once_and_rejects_conflicting_input"
+    },
+    {
+      "file": "packages/finance-service/src/finance-service.test.ts",
+      "title": "Finance service > initializes_ledger_from_policy_state"
+    },
+    {
+      "file": "packages/finance-service/src/finance-service.test.ts",
+      "title": "Finance service > rejects_over_refund_or_cross_tenant_allocation"
+    },
+    {
+      "file": "packages/policy-state-service/src/policy-state-service.test.ts",
+      "title": "Policy State service > projects_bound_policy_and_publishes_state_change"
+    },
+    {
+      "file": "packages/policy-state-service/src/policy-state-service.test.ts",
+      "title": "Policy State service > ignores_duplicate_policy_lifecycle_delivery"
+    },
+    {
+      "file": "packages/service-bus/src/service-bus.test.ts",
+      "title": "in-memory service bus > delivers_once_per_consumer_and_preserves_delivery_log"
+    },
+    {
+      "file": "packages/service-bus/src/service-bus.test.ts",
+      "title": "in-memory service bus > drains_messages_in_publish_order"
+    },
+    {
+      "file": "packages/api-contracts/src/test-api.test.ts",
+      "title": "createTestApi > replays_lost_customer_and_property_responses_without_duplicate_entities"
+    },
+    {
+      "file": "packages/api-contracts/src/test-api.test.ts",
+      "title": "createTestApi > rejects_role_and_cross_tenant_mutations_through_the_test_api"
+    },
+    {
+      "file": "packages/api-contracts/src/test-api.test.ts",
+      "title": "createTestApi > authority_denial_does_not_drain_pending_recovery"
+    },
+    {
+      "file": "packages/api-contracts/src/test-api.test.ts",
+      "title": "createTestApi > unclassified_operations_fail_before_authority_or_runtime_access"
+    },
+    {
+      "file": "tools/impact/src/validate.test.ts",
+      "title": "feature-map validation > reports stale tags instead of silently selecting zero Playwright tests"
+    },
+    {
+      "file": "tools/impact/src/main-selection.test.ts",
+      "title": "runs_only_one_declared_vitest_and_playwright_identity"
+    },
+    {
+      "file": "apps/crm-web/src/test/api.test.ts",
+      "title": "api layer (http wrapper) > preserves the API recoverability contract on non-2xx responses"
+    },
+    {
+      "file": "apps/crm-web/src/features/crm-workflow.test.tsx",
+      "title": "insurance CRM reference workflow > retries_lost_customer_and_property_responses_with_one_stable_identity"
+    },
+    {
+      "file": "apps/crm-web/src/features/crm-workflow.test.tsx",
+      "title": "insurance CRM reference workflow > rotates_intake_identity_only_after_a_terminal_rejection"
+    },
+    {
+      "file": "apps/crm-web/src/test/app-router.test.tsx",
+      "title": "app routing > denies_crm_direct_routes_to_an_authenticated_unauthorized_role"
+    },
+    {
+      "file": "apps/crm-web/src/test/rbac.test.tsx",
+      "title": "role-based access control > redirects a Manager away from a restricted route"
+    },
+    {
+      "file": "tools/proofline/src/product-e2e-boundary.test.ts",
+      "title": "Proofline product E2E boundary > scenario_fixture_declares_context_install_cleanup_and_retry_lifecycle"
+    },
+    {
+      "file": "tools/proofline/src/product-e2e-boundary.test.ts",
+      "title": "Proofline product E2E boundary > scenario_fixture_declares_every_reviewed_browser_egress_plane"
+    },
+    {
+      "file": "tools/proofline/src/product-e2e-boundary.test.ts",
+      "title": "Proofline product E2E boundary > scenario_commands_preserve_multi_worker_and_both_shard_isolation_gates"
+    },
+    {
+      "file": "apps/crm-web/src/test/tenancy.test.tsx",
+      "title": "multi-tenancy > loads tenant memberships only after authenticated login"
+    }
+  ],
+  "observed": [
+    {
+      "file": "apps/crm-web/src/bootstrap.test.tsx",
+      "title": "CRM application bootstrap > production_bootstrap_initializes_monitoring",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/bootstrap.test.tsx",
+      "title": "CRM application bootstrap > test_bootstrap_never_initializes_monitoring",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/features/crm-workflow.test.tsx",
+      "title": "insurance CRM reference workflow > lets an agent choose Risk Secure Plus, bind it once, and see the cash-first timing",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/features/crm-workflow.test.tsx",
+      "title": "insurance CRM reference workflow > records a settled premium payment as an append-only ledger event",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/features/crm-workflow.test.tsx",
+      "title": "insurance CRM reference workflow > retries quote creation and binding with stable, independent command identities",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/features/crm-workflow.test.tsx",
+      "title": "insurance CRM reference workflow > validates allocation rows and retries an accepted multi-allocation refund without duplicate entries",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/features/crm-workflow.test.tsx",
+      "title": "insurance CRM reference workflow > retries an unchanged accepted refund after reconnect refreshes the remaining balance",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/features/crm-workflow.test.tsx",
+      "title": "insurance CRM reference workflow > shows an error panel when the customer contract fails",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/features/crm-workflow.test.tsx",
+      "title": "insurance CRM reference workflow > shows an accessible error when customer creation is rejected",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/features/crm-workflow.test.tsx",
+      "title": "insurance CRM reference workflow > retries_lost_customer_and_property_responses_with_one_stable_identity",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/features/crm-workflow.test.tsx",
+      "title": "insurance CRM reference workflow > rotates_intake_identity_only_after_a_terminal_rejection",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/features/crm-workflow.test.tsx",
+      "title": "insurance CRM reference workflow > shows accessible quote and bind failures",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/features/crm-workflow.test.tsx",
+      "title": "insurance CRM reference workflow > shows an accessible reconciliation prompt when the bind outcome is unknown",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/features/crm-workflow.test.tsx",
+      "title": "insurance CRM reference workflow > releases a terminal bind retry so another quoted policy can bind",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/features/crm-workflow.test.tsx",
+      "title": "insurance CRM reference workflow > reconciles an uncertain accepted bind instead of allowing it to be dismissed",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/features/crm-workflow.test.tsx",
+      "title": "insurance CRM reference workflow > serializes a pending bind reconciliation before allowing another bind action",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/features/crm-workflow.test.tsx",
+      "title": "insurance CRM reference workflow > recovers accepted bind after quote refetch with lost response",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/features/crm-workflow.test.tsx",
+      "title": "insurance CRM reference workflow > recovers accepted bind after quote refetch with pending delivery",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/a11y.test.tsx",
+      "title": "accessibility > login page has no detectable violations in the remembered-account mode",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/a11y.test.tsx",
+      "title": "accessibility > login page has no detectable violations in the password mode",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/a11y.test.tsx",
+      "title": "accessibility > overview page has no detectable violations",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/a11y.test.tsx",
+      "title": "accessibility > users page has no detectable violations",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/a11y.test.tsx",
+      "title": "accessibility > transactions page has no detectable violations",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/a11y.test.tsx",
+      "title": "accessibility > settings page has no detectable violations",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/a11y.test.tsx",
+      "title": "accessibility > user settings page has no detectable violations",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/a11y.test.tsx",
+      "title": "accessibility > mail page has no detectable violations",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/a11y.test.tsx",
+      "title": "accessibility > calendar page has no detectable violations",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/a11y.test.tsx",
+      "title": "accessibility > profile page has no detectable violations",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/a11y.test.tsx",
+      "title": "accessibility > ui kit page has no detectable violations",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/a11y.test.tsx",
+      "title": "accessibility > data tables page has no detectable violations",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/a11y.test.tsx",
+      "title": "accessibility > data charts page has no detectable violations",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/a11y.test.tsx",
+      "title": "accessibility > notifications page has no detectable violations",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/api.test.ts",
+      "title": "api layer (http wrapper) > returns parsed JSON for a successful GET",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/api.test.ts",
+      "title": "api layer (http wrapper) > throws a structured error on non-2xx responses",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/api.test.ts",
+      "title": "api layer (http wrapper) > preserves the API recoverability contract on non-2xx responses",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/api.test.ts",
+      "title": "api layer (http wrapper) > sends a JSON body on PATCH and returns the updated resource",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/api.test.ts",
+      "title": "api layer (http wrapper) > reads the dashboard overview payload",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/app-router.test.tsx",
+      "title": "app routing > denies_crm_direct_routes_to_an_authenticated_unauthorized_role",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/app-router.test.tsx",
+      "title": "app routing > renders user settings and persists the selected theme",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/app-router.test.tsx",
+      "title": "app routing > redirects protected routes to login when there is no session",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/app-router.test.tsx",
+      "title": "app routing > renders a skip link for authenticated routes",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/app-router.test.tsx",
+      "title": "app routing > logs in and reaches the overview page",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/app-router.test.tsx",
+      "title": "app routing > renders the denser overview modules for an authenticated session",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/app-router.test.tsx",
+      "title": "app routing > renders the users table for an authenticated session",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/app-router.test.tsx",
+      "title": "app routing > loads settings and submits the form",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/auth.test.tsx",
+      "title": "auth & session > retries a 401 with a refreshed token and resolves the request",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/auth.test.tsx",
+      "title": "auth & session > silently refreshes an expired session on load",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/calendar.test.tsx",
+      "title": "calendar module > renders the current month with seeded events",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/calendar.test.tsx",
+      "title": "calendar module > navigates between months",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/components.test.tsx",
+      "title": "shared components > StatePanel renders loading and error variants",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/components.test.tsx",
+      "title": "shared components > EmptyState renders title and description",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/components.test.tsx",
+      "title": "shared components > DataTable renders headers and rows",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/data-gallery.test.tsx",
+      "title": "data gallery > renders the transactions table with sorting and a detail drawer",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/data-gallery.test.tsx",
+      "title": "data gallery > filters transactions with status chips",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/data-gallery.test.tsx",
+      "title": "data gallery > renders the chart gallery with accessible alternatives",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/error-boundary.test.tsx",
+      "title": "ErrorBoundary > renders a fallback when a child throws",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/error-boundary.test.tsx",
+      "title": "ErrorBoundary > clears the error and recovers after Try again",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/error-boundary.test.tsx",
+      "title": "ErrorBoundary > supports a custom fallback",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/i18n.test.tsx",
+      "title": "internationalization > renders nav labels in English by default",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/i18n.test.tsx",
+      "title": "internationalization > switches visible UI strings to Spanish",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/login.test.tsx",
+      "title": "login screen > falls back to the demo persona when no account is remembered",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/login.test.tsx",
+      "title": "login screen > renders the remembered account from local storage",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/login.test.tsx",
+      "title": "login screen > signs in through the remembered account and reaches the overview",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/login.test.tsx",
+      "title": "login screen > honors the redirect target carried by protected routes",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/login.test.tsx",
+      "title": "login screen > switches to the password form, validates input and signs in",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/login.test.tsx",
+      "title": "login screen > removes the saved account and pins the password form",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/login.test.tsx",
+      "title": "login screen > sends the provider method for social sign-in buttons",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/mail.test.tsx",
+      "title": "mail module > renders inbox messages from the mock endpoint",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/mail.test.tsx",
+      "title": "mail module > opens a message in the reader and marks it read",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/mail.test.tsx",
+      "title": "mail module > shows the sent folder under the mail subsection",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/modules.test.tsx",
+      "title": "module pages > renders { path: '/app/analytics', heading: /reports and product health/i }",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/modules.test.tsx",
+      "title": "module pages > renders { path: '/app/team', heading: /members, roles and access/i }",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/modules.test.tsx",
+      "title": "module pages > renders { path: '/app/billing', heading: /plans, usage and invoices/i }",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/modules.test.tsx",
+      "title": "module pages > renders { path: '/app/transactions', heading: /payments and charges/i }",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/modules.test.tsx",
+      "title": "module pages > renders { path: '/app/notifications', heading: /alerts and in-app messages/i }",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/modules.test.tsx",
+      "title": "module pages > renders { path: '/app/support', heading: /tickets and feedback/i }",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/modules.test.tsx",
+      "title": "module pages > renders { path: '/app/integrations', heading: /connected apps and api keys/i }",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/modules.test.tsx",
+      "title": "module pages > renders overview bottom zone from live mock endpoints",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/monitoring.test.ts",
+      "title": "monitoring > reports errors to the console fallback when no DSN is configured",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/monitoring.test.ts",
+      "title": "monitoring > reports events to the console fallback when no DSN is configured",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/monitoring.test.ts",
+      "title": "monitoring > initializes without throwing in the test environment",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/monitoring.test.ts",
+      "title": "monitoring > forwards window errors through the reporter",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/nav.test.tsx",
+      "title": "navigation information architecture > exposes leaf items for search regardless of nesting",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/nav.test.tsx",
+      "title": "navigation information architecture > resolves trails through section parents",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/nav.test.tsx",
+      "title": "navigation information architecture > resolves the longest href match for nested routes",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/nav.test.tsx",
+      "title": "navigation information architecture > keeps sections collapsed unless their subtree is active",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/nav.test.tsx",
+      "title": "navigation information architecture > auto-expands the active trail and toggles on click",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/nav.test.tsx",
+      "title": "navigation information architecture > hides restricted children for a Manager while keeping allowed ones",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/nav.test.tsx",
+      "title": "navigation information architecture > renders breadcrumbs for nested routes with the current page last",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/nav.test.tsx",
+      "title": "navigation information architecture > renders two-level breadcrumbs for flat pages",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/pages-group.test.tsx",
+      "title": "pages group > renders the profile from the mock endpoint",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/pages-group.test.tsx",
+      "title": "pages group > renders the 404 demo inside the app shell",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/rbac.test.tsx",
+      "title": "role-based access control > shows every nav item for an Owner session",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/rbac.test.tsx",
+      "title": "role-based access control > hides role-restricted nav items for a Manager session",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/rbac.test.tsx",
+      "title": "role-based access control > redirects a Manager away from a restricted route",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/rbac.test.tsx",
+      "title": "role-based access control > allows an Owner to reach a restricted route",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/tenancy.test.tsx",
+      "title": "multi-tenancy > authorizes the first membership request from a seeded session",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/tenancy.test.tsx",
+      "title": "multi-tenancy > loads tenant memberships only after authenticated login",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/tenancy.test.tsx",
+      "title": "multi-tenancy > switches the active workspace and persists the choice",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/tenancy.test.tsx",
+      "title": "multi-tenancy > scopes API requests with the X-Tenant-Id header",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/theme.test.tsx",
+      "title": "theme switching > applies and persists each available theme from user settings",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/ui-kit.test.tsx",
+      "title": "ui kit page > renders the foundations panel by default",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/ui-kit.test.tsx",
+      "title": "ui kit page > switches panels and shows the component sections",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/ui-kit.test.tsx",
+      "title": "ui kit page > fires a toast when a button variant is clicked",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/ui-kit.test.tsx",
+      "title": "ui kit page > toggles the switch and counts input characters in the forms panel",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/ui-kit.test.tsx",
+      "title": "ui kit page > shows the tooltip on hover in the overlays panel",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/ui-kit.test.tsx",
+      "title": "ui kit page > renders the feedback panel with toasts and skeletons",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/user-settings.test.tsx",
+      "title": "user settings > renders personalization sections and session identity",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/user-settings.test.tsx",
+      "title": "user settings > applies and persists a palette selection",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "apps/crm-web/src/test/user-settings.test.tsx",
+      "title": "user settings > switches the interface language from the language picker",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/api-contracts/src/test-api.test.ts",
+      "title": "createTestApi > rejects_role_and_cross_tenant_mutations_through_the_test_api",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/api-contracts/src/test-api.test.ts",
+      "title": "createTestApi > authority_denial_does_not_drain_pending_recovery",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/api-contracts/src/test-api.test.ts",
+      "title": "createTestApi > unclassified_operations_fail_before_authority_or_runtime_access",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/api-contracts/src/test-api.test.ts",
+      "title": "createTestApi > replays_lost_customer_and_property_responses_without_duplicate_entities",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/api-contracts/src/test-api.test.ts",
+      "title": "createTestApi > requires_command_and_correlation_identity_for_customer_and_property_intake",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/api-contracts/src/test-api.test.ts",
+      "title": "createTestApi > rejects_foreign_quote_references_before_retrying_pending_finance_delivery",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/api-contracts/src/test-api.test.ts",
+      "title": "createTestApi > creates_generated_quote_and_policy_once_and_rejects_changed_replay",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/api-contracts/src/test-api.test.ts",
+      "title": "createTestApi > rejects_invalid_quote_plan_and_foreign_property_without_publishing",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/api-contracts/src/test-api.test.ts",
+      "title": "createTestApi > isolates state for API instances created from the same seed",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/api-contracts/src/test-api.test.ts",
+      "title": "createTestApi > rejects_missing_or_cross_tenant_request_context",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/api-contracts/src/test-api.test.ts",
+      "title": "createTestApi > replays_http_mutation_with_the_same_command_id",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/api-contracts/src/test-api.test.ts",
+      "title": "createTestApi > binds_over_http_and_exposes_finance_initialized_through_policy_state",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/api-contracts/src/test-api.test.ts",
+      "title": "createTestApi > exposes_cancelled_lifecycle_in_policy_list_detail_and_ledger",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/api-contracts/src/test-api.test.ts",
+      "title": "createTestApi > http_replay_recovers_pending_finance_delivery",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/api-contracts/src/test-api.test.ts",
+      "title": "createTestApi > mixed_refund_allocations_reverse_only_settled_premium_commission",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/api-contracts/src/test-api.test.ts",
+      "title": "createTestApi > requires_independent_command_and_correlation_identities_before_mutation",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/api-contracts/src/test-api.test.ts",
+      "title": "createTestApi > uses the identical contract through MSW handlers",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/api-contracts/src/test-api.test.ts",
+      "title": "createTestApi > returns a deliberate error for an unknown route",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/domain/src/commission.test.ts",
+      "title": "commission rules > creates commission from only immutable policy identity and plan",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/domain/src/commission.test.ts",
+      "title": "commission rules > COM-004 rejects malformed or negative commission plans at the domain boundary",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/domain/src/commission.test.ts",
+      "title": "commission rules > COM-001 rounds a written commission half-up and makes it immediately payable",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/domain/src/commission.test.ts",
+      "title": "commission rules > COM-002 becomes payable at the exact hold boundary without rewriting the accrual",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/domain/src/commission.test.ts",
+      "title": "commission rules > COM-005 projects linked payment without replacing the historical accrual",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/domain/src/commission.test.ts",
+      "title": "commission rules > refund adjustments retain the original accrual and hold period",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/domain/src/value-contracts.test.ts",
+      "title": "shared value contracts > snapshot_owns_and_freezes_nested_arrays_without_freezing_the_caller",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/domain/src/value-contracts.test.ts",
+      "title": "shared value contracts > accepts_explicit_UTC_2024-02-29T00:00:00Z",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/domain/src/value-contracts.test.ts",
+      "title": "shared value contracts > accepts_explicit_UTC_2026-01-01T23:59:59.1Z",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/domain/src/value-contracts.test.ts",
+      "title": "shared value contracts > accepts_explicit_UTC_2026-01-01T23:59:59.12Z",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/domain/src/value-contracts.test.ts",
+      "title": "shared value contracts > accepts_explicit_UTC_2026-01-01T23:59:59.123Z",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/domain/src/value-contracts.test.ts",
+      "title": "shared value contracts > rejects_non_UTC_or_invalid_calendar_value_2026-02-29T00:00:00Z",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/domain/src/value-contracts.test.ts",
+      "title": "shared value contracts > rejects_non_UTC_or_invalid_calendar_value_2026-13-01T00:00:00Z",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/domain/src/value-contracts.test.ts",
+      "title": "shared value contracts > rejects_non_UTC_or_invalid_calendar_value_2026-01-01T25:00:00Z",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/domain/src/value-contracts.test.ts",
+      "title": "shared value contracts > rejects_non_UTC_or_invalid_calendar_value_2026-01-01T00:60:00Z",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/domain/src/value-contracts.test.ts",
+      "title": "shared value contracts > rejects_non_UTC_or_invalid_calendar_value_2026-01-01T00:00:60Z",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/domain/src/value-contracts.test.ts",
+      "title": "shared value contracts > rejects_non_UTC_or_invalid_calendar_value_2026-01-01T00:00:00.0001Z",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/domain/src/value-contracts.test.ts",
+      "title": "shared value contracts > rejects_non_UTC_or_invalid_calendar_value_2026-01-01T00:00:00",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/domain/src/value-contracts.test.ts",
+      "title": "shared value contracts > rejects_non_UTC_or_invalid_calendar_value_2026-01-01T24:00:00Z",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/domain/src/value-contracts.test.ts",
+      "title": "shared value contracts > rejects_non_UTC_or_invalid_calendar_value_2026-01-01T00:00:00-05:00",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/domain/src/value-contracts.test.ts",
+      "title": "shared value contracts > rejects_non_string_input_at_untyped_boundaries",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/finance-service/src/finance-service.test.ts",
+      "title": "Finance service > hydrates_a_detached_complete_finance_checkpoint",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/finance-service/src/finance-service.test.ts",
+      "title": "Finance service > rejects_forged_checkpoint_receipts_and_cross_tenant_ledger_history",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/finance-service/src/finance-service.test.ts",
+      "title": "Finance service > initializes_ledger_from_policy_state",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/finance-service/src/finance-service.test.ts",
+      "title": "Finance service > rejects_finance_events_for_uninitialized_policy",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/finance-service/src/finance-service.test.ts",
+      "title": "Finance service > cash_first_accrues_only_settled_premium",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/finance-service/src/finance-service.test.ts",
+      "title": "Finance service > written_accrues_on_bound_state",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/finance-service/src/finance-service.test.ts",
+      "title": "Finance service > does_not_reverse_an_allocated_deposit_refund",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/finance-service/src/finance-service.test.ts",
+      "title": "Finance service > reverses_only_allocated_settled_premium_in_a_mixed_refund",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/finance-service/src/finance-service.test.ts",
+      "title": "Finance service > rejects_over_refund_or_cross_tenant_allocation",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/finance-service/src/finance-service.test.ts",
+      "title": "Finance service > appends_commission_payment_without_rewriting_accrual",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/finance-service/src/finance-service.test.ts",
+      "title": "Finance service > replays_commands_once_and_rejects_conflicting_input",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/finance-service/src/finance-service.test.ts",
+      "title": "Finance service > distinct_commands_share_workflow_correlation_and_retry_independently",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/finance-service/src/finance-service.test.ts",
+      "title": "Finance service > consumes_distinct_command_ids_in_one_workflow_and_rejects_missing_command_id",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/finance-service/src/finance-service.test.ts",
+      "title": "Finance service > keeps_refund_rounding_per_original_premium_accrual",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/finance-service/src/finance-service.test.ts",
+      "title": "Finance service > validates_full_refund_atomically_and_rechecks_queued_balance",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/finance-service/src/finance-service.test.ts",
+      "title": "Finance service > isolates_same_command_and_policy_ids_across_tenants_and_detaches_snapshots",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/finance-service/src/finance-service.test.ts",
+      "title": "Finance service > rejects_invalid_cents_0",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/finance-service/src/finance-service.test.ts",
+      "title": "Finance service > rejects_invalid_cents_-1",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/finance-service/src/finance-service.test.ts",
+      "title": "Finance service > rejects_invalid_cents_1.5",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/finance-service/src/finance-service.test.ts",
+      "title": "Finance service > rejects_invalid_cents_9007199254740992",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/finance-service/src/finance-service.test.ts",
+      "title": "Finance service > rejects_refund_sources_that_are_claims_or_other_policies",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/finance-service/src/finance-service.test.ts",
+      "title": "Finance service > preserves_allocation_identity_and_rounds_partial_refunds_cumulatively",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/finance-service/src/finance-service.test.ts",
+      "title": "Finance service > requires_unique_nonempty_allocation_ids_before_publishing",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/finance-service/src/finance-service.test.ts",
+      "title": "Finance service > honors_reverse_on_refund_and_caps_written_reversal_at_bound_accrual",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/insurance-runtime/src/runtime.test.ts",
+      "title": "insurance runtime > restores_command_accepted_before_delivery_without_repeating_mutation",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/insurance-runtime/src/runtime.test.ts",
+      "title": "insurance runtime > restores_after_one_consumer_receipt_and_finance_failure",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/insurance-runtime/src/runtime.test.ts",
+      "title": "insurance runtime > drains_restored_pending_delivery_before_returning_an_accepted_command_result",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/insurance-runtime/src/runtime.test.ts",
+      "title": "insurance runtime > replays_same_command_after_recreation_without_duplicate_policy_projection_or_ledger",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/insurance-runtime/src/runtime.test.ts",
+      "title": "insurance runtime > rejects_malformed_or_cross_tenant_checkpoint_before_hydration",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/insurance-runtime/src/runtime.test.ts",
+      "title": "insurance runtime > rejects_completed_consumer_receipts_without_their_durable_effects",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/insurance-runtime/src/runtime.test.ts",
+      "title": "insurance runtime > rejects_non_contiguous_finance_policy_state_receipts",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/insurance-runtime/src/runtime.test.ts",
+      "title": "insurance runtime > rejects_forged_runtime_receipt_queue_identity_and_lowered_sequence",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/insurance-runtime/src/runtime.test.ts",
+      "title": "insurance runtime > rejects_structural_checkpoint_corruption_before_hydration",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/insurance-runtime/src/runtime.test.ts",
+      "title": "insurance runtime > continues_generated_identity_sequence_exactly_after_restore",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/insurance-runtime/src/runtime.test.ts",
+      "title": "insurance runtime > does_not_infer_allocator_state_from_explicit_external_ids",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/insurance-runtime/src/runtime.test.ts",
+      "title": "insurance runtime > rejects_history_receipt_and_command_facts_that_contradict_service_state",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/insurance-runtime/src/runtime.test.ts",
+      "title": "insurance runtime > projects_cancelled_policy_status_in_list_and_detail_queries",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/insurance-runtime/src/runtime.test.ts",
+      "title": "insurance runtime > replays_customer_and_property_intake_with_stable_command_identity",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/insurance-runtime/src/runtime.test.ts",
+      "title": "insurance runtime > isolates_same_intake_command_and_correlation_ids_across_tenants",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/insurance-runtime/src/runtime.test.ts",
+      "title": "insurance runtime > rejects_foreign_quote_references_without_draining_another_tenants_pending_delivery",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/insurance-runtime/src/runtime.test.ts",
+      "title": "insurance runtime > same_command_ids_and_entity_ids_are_independent_across_tenants",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/insurance-runtime/src/runtime.test.ts",
+      "title": "insurance runtime > bind_chain_is_idempotent_across_all_consumers",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/insurance-runtime/src/runtime.test.ts",
+      "title": "insurance runtime > fresh_runtimes_do_not_share_bus_or_ledger_state",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/insurance-runtime/src/runtime.test.ts",
+      "title": "insurance runtime > checkpoints_and_replays_every_finance_command_shape",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/insurance-runtime/src/runtime.test.ts",
+      "title": "insurance runtime > legacy_reducer_is_not_exported_or_used_by_the_runtime",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/insurance-runtime/src/runtime.test.ts",
+      "title": "insurance runtime > retries_pending_finance_delivery_without_duplicate_policy_or_commission_records",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/insurance-runtime/src/runtime.test.ts",
+      "title": "insurance runtime > cancellation_is_terminal_and_replay_does_not_restore_bound_state",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/insurance-runtime/src/timestamps.test.ts",
+      "title": "UTC timestamp boundaries > rejects_invalid_clock_command_and_envelope_2026-01-01T12:00:00",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/insurance-runtime/src/timestamps.test.ts",
+      "title": "UTC timestamp boundaries > rejects_invalid_clock_command_and_envelope_2026-01-01",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/insurance-runtime/src/timestamps.test.ts",
+      "title": "UTC timestamp boundaries > rejects_invalid_clock_command_and_envelope_bad",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/insurance-runtime/src/timestamps.test.ts",
+      "title": "UTC timestamp boundaries > rejects_invalid_clock_command_and_envelope_2026-02-30T00:00:00.000Z",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/insurance-runtime/src/timestamps.test.ts",
+      "title": "UTC timestamp boundaries > rejects_invalid_clock_command_and_envelope_2026-01-01T24:00:00.000Z",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/insurance-runtime/src/timestamps.test.ts",
+      "title": "UTC timestamp boundaries > rejects_invalid_clock_command_and_envelope_2026-01-01T12:00:00+00:00",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/insurance-runtime/src/timestamps.test.ts",
+      "title": "UTC timestamp boundaries > policy_clock_rejection_leaves_each_command_retryable_without_partial_state",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/insurance-runtime/src/timestamps.test.ts",
+      "title": "UTC timestamp boundaries > finance_rejects_invalid_command_and_projection_clocks",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/insurance-runtime/src/timestamps.test.ts",
+      "title": "UTC timestamp boundaries > preserves_explicit_UTC_across_runtime_and_commission_hold_calculation",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/policy-service/src/policy-service.test.ts",
+      "title": "Policy service > hydrates_a_detached_full_policy_checkpoint_and_replays_each_command",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/policy-service/src/policy-service.test.ts",
+      "title": "Policy service > rejects_forged_checkpoint_receipt_fingerprint_or_result_identity",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/policy-service/src/policy-service.test.ts",
+      "title": "Policy service > fails_closed_for_duplicate_or_missing_policy_entities",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/policy-service/src/policy-service.test.ts",
+      "title": "Policy service > preserves_independent_workflow_correlation_on_every_policy_command",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/policy-service/src/policy-service.test.ts",
+      "title": "Policy service > creates_quote_and_publishes_policy_quote_created",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/policy-service/src/policy-service.test.ts",
+      "title": "Policy service > binds_a_quote_once_and_publishes_policy_lifecycle_changed",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/policy-service/src/policy-service.test.ts",
+      "title": "Policy service > transitions_bound_policy_to_cancelled_at_next_revision",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/policy-service/src/policy-service.test.ts",
+      "title": "Policy service > returns_original_result_for_a_replayed_command_id",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/policy-service/src/policy-service.test.ts",
+      "title": "Policy service > rejects_same_command_id_with_different_payload",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/policy-service/src/policy-service.test.ts",
+      "title": "Policy service > rejects_property_from_another_tenant_or_customer",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/policy-service/src/policy-service.test.ts",
+      "title": "Policy service > owns_input_terms_and_detaches_results_queries_and_replay_receipts",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/policy-state-service/src/policy-state-service.test.ts",
+      "title": "Policy State service > rejects_impossible_or_mutated_checkpoint_histories",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/policy-state-service/src/policy-state-service.test.ts",
+      "title": "Policy State service > projects_bound_policy_and_publishes_state_change",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/policy-state-service/src/policy-state-service.test.ts",
+      "title": "Policy State service > projects_valid_cancelled_revision",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/policy-state-service/src/policy-state-service.test.ts",
+      "title": "Policy State service > ignores_duplicate_policy_lifecycle_delivery",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/policy-state-service/src/policy-state-service.test.ts",
+      "title": "Policy State service > ignores_stale_policy_state_revision",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/policy-state-service/src/policy-state-service.test.ts",
+      "title": "Policy State service > isolates_tenant_and_policy_ids_that_contain_key_delimiters",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/policy-state-service/src/policy-state-service.test.ts",
+      "title": "Policy State service > rejects_conflicting_same_revision",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/policy-state-service/src/policy-state-service.test.ts",
+      "title": "Policy State service > rejects_skipped_or_invalid_lifecycle_transition",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/service-bus/src/immutable-delivery.test.ts",
+      "title": "immutable delivery > owns_nested_publisher_and_inspection_values_before_delivery",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/service-bus/src/immutable-delivery.test.ts",
+      "title": "immutable delivery > consumer_mutation_cannot_change_later_delivery_or_failed_retry",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/service-bus/src/immutable-delivery.test.ts",
+      "title": "immutable delivery > delimiter_ids_do_not_collide_between_consumers_and_messages",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/service-bus/src/service-bus.test.ts",
+      "title": "in-memory service bus > restores_completed_receipts_and_pending_delivery_without_repeating_consumers",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/service-bus/src/service-bus.test.ts",
+      "title": "in-memory service bus > returns_detached_checkpoints_and_detaches_hydrated_input",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/service-bus/src/service-bus.test.ts",
+      "title": "in-memory service bus > rejects_forged_or_contradictory_completed_receipts",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/service-bus/src/service-bus.test.ts",
+      "title": "in-memory service bus > rejects_malformed_checkpoint_collections_and_identities",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/service-bus/src/service-bus.test.ts",
+      "title": "in-memory service bus > delivers_once_per_consumer_and_preserves_delivery_log",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/service-bus/src/service-bus.test.ts",
+      "title": "in-memory service bus > drains_messages_in_publish_order",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/service-bus/src/service-bus.test.ts",
+      "title": "in-memory service bus > appends_nested_publications_to_the_queue_tail",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "packages/service-bus/src/service-bus.test.ts",
+      "title": "in-memory service bus > leaves_failed_delivery_pending_for_a_deterministic_retry",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/contract.test.ts",
+      "title": "machine-readable regression contract > retains_fail_closed_artifacts_when_registry_or_discovery_is_missing",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/contract.test.ts",
+      "title": "machine-readable regression contract > rejects_undiscovered_rule_evidence",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/contract.test.ts",
+      "title": "machine-readable regression contract > rejects_duplicate_rule_ids",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/contract.test.ts",
+      "title": "machine-readable regression contract > rejects_a_critical_rule_without_deterministic_evidence",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/contract.test.ts",
+      "title": "machine-readable regression contract > rejects_ambiguous_and_malformed_evidence",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/contract.test.ts",
+      "title": "machine-readable regression contract > selects_all_rule_tests_for_an_owned_source_path",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/contract.test.ts",
+      "title": "machine-readable regression contract > rejects_markdown_registry_drift",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/contract.test.ts",
+      "title": "machine-readable regression contract > runs_only_the_selected_test_identity",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/contract.test.ts",
+      "title": "machine-readable regression contract > preserves_literal_title_separators_and_regex_characters",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/contract.test.ts",
+      "title": "machine-readable regression contract > uses_explicit_runner_configuration_for_identity",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/contract.test.ts",
+      "title": "machine-readable regression contract > selects_one_playwright_location_without_its_sibling_test",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/contract.test.ts",
+      "title": "machine-readable regression contract > enables_flaky_failure_only_in_ci",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/contract.test.ts",
+      "title": "rejects_extra_catalog_evidence_without_a_manifest_binding",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/contract.test.ts",
+      "title": "selected Playwright runtime skips and expected failures cannot satisfy execution",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/governance.test.ts",
+      "title": "coverage baseline monotonicity > rejects a lower lines threshold",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/governance.test.ts",
+      "title": "coverage baseline monotonicity > rejects a lower branches threshold",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/governance.test.ts",
+      "title": "coverage baseline monotonicity > rejects a lower functions threshold",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/governance.test.ts",
+      "title": "coverage baseline monotonicity > rejects a lower statements threshold",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/governance.test.ts",
+      "title": "coverage baseline monotonicity > rejects deleted groups and sources",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/governance.test.ts",
+      "title": "coverage baseline monotonicity > rejects changed provider coverage-group authority",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/governance.test.ts",
+      "title": "coverage baseline monotonicity > rejects changed providerVersion coverage-group authority",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/governance.test.ts",
+      "title": "coverage baseline monotonicity > rejects changed report coverage-group authority",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/governance.test.ts",
+      "title": "coverage baseline monotonicity > rejects changed reportFormat coverage-group authority",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/governance.test.ts",
+      "title": "coverage baseline monotonicity > rejects changed aggregation coverage-group authority",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/governance.test.ts",
+      "title": "coverage baseline monotonicity > rejects changed exclusions coverage-group authority",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/governance.test.ts",
+      "title": "coverage baseline monotonicity > rejects changed sourceGlobs coverage-group authority",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/governance.test.ts",
+      "title": "coverage baseline monotonicity > rejects duplicate coverage-group identities instead of collapsing them",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/governance.test.ts",
+      "title": "coverage baseline monotonicity > rejects changed coverage producer authority after adoption",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/governance.test.ts",
+      "title": "coverage baseline monotonicity > allows an explicit reasoned exclusion outside the base set but rejects wildcard hiding",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/governance.test.ts",
+      "title": "coverage baseline monotonicity > rejects narrowing a base production glob to the currently known source list",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/governance.test.ts",
+      "title": "coverage baseline monotonicity > rejects excluding a base-effective source omitted from a stale baseline",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/governance.test.ts",
+      "title": "coverage baseline monotonicity > allows only exact, explicitly non-production test-source exclusions",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/governance.test.ts",
+      "title": "verified merge base > rejects missing, unresolved, shallow, checkout-mismatched, and conflicting revisions",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/governance.test.ts",
+      "title": "byte-exact execution record prefix > accepts an exact prefix with complete unique appended rows",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/governance.test.ts",
+      "title": "byte-exact execution record prefix > rejects historical byte rewrite",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/governance.test.ts",
+      "title": "byte-exact execution record prefix > rejects historical insertion",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/governance.test.ts",
+      "title": "byte-exact execution record prefix > rejects historical deletion",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/governance.test.ts",
+      "title": "byte-exact execution record prefix > rejects historical reordering",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/governance.test.ts",
+      "title": "byte-exact execution record prefix > rejects CRLF normalization",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/governance.test.ts",
+      "title": "byte-exact execution record prefix > rejects missing or extra trailing newlines and malformed or duplicate appended rows",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/governance.test.ts",
+      "title": "byte-exact execution record prefix > rejects invalid UTF-8 and records without event identities",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/governance.test.ts",
+      "title": "changed harness evidence > requires an appended scope for packages/example/src/value.ts",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/governance.test.ts",
+      "title": "changed harness evidence > requires an appended scope for proofline.harness.json",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/governance.test.ts",
+      "title": "changed harness evidence > requires an appended scope for test-impact/workflows/example.json",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/governance.test.ts",
+      "title": "changed harness evidence > requires an appended scope for test-impact/rules.json",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/governance.test.ts",
+      "title": "changed harness evidence > requires an appended scope for tools/impact/src/governance.ts",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/governance.test.ts",
+      "title": "changed harness evidence > requires an appended scope for .github/workflows/verify.yml",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/governance.test.ts",
+      "title": "changed harness evidence > requires an appended scope for docs/TESTING.md",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/governance.test.ts",
+      "title": "changed harness evidence > requires an appended scope for docs/PORTABLE_TEST_AUTOMATION.md",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/governance.test.ts",
+      "title": "changed harness evidence > requires an appended scope for package.json",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/governance.test.ts",
+      "title": "changed harness evidence > governs manifest adapter and workspace project paths with segment-aware scopes",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/governance.test.ts",
+      "title": "changed harness evidence > uses base and proposed manifests so removed ownership cannot evade evidence",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/governance.test.ts",
+      "title": "changed harness evidence > checks both renamed identities and excludes only explicit generated artifacts",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/governance.test.ts",
+      "title": "changed harness evidence > governs README and rejects an unscoped governed change",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/governance.test.ts",
+      "title": "coverage and record governance entrypoints > records exact resolved coverage producer provenance in the ratchet",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/governance.test.ts",
+      "title": "coverage and record governance entrypoints > accepts a manifest-command browser-compatible Istanbul summary producer",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/governance.test.ts",
+      "title": "coverage and record governance entrypoints > normalizes generated in-repository absolute paths before they become evidence",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/governance.test.ts",
+      "title": "coverage and record governance entrypoints > rejects incompatible provider metadata and always writes a complete ratchet",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/governance.test.ts",
+      "title": "coverage and record governance entrypoints > rejects unclassified baseline sources, missing reports and metrics, and duplicate report paths",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/governance.test.ts",
+      "title": "coverage and record governance entrypoints > rejects a newly matching production source and a missing baseline source",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/governance.test.ts",
+      "title": "coverage and record governance entrypoints > rejects escaping and duplicate-normalized report source identities",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/governance.test.ts",
+      "title": "coverage and record governance entrypoints > binds declared coverage provider and version to the executed target",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/governance.test.ts",
+      "title": "coverage and record governance entrypoints > rejects conflicting duplicate coverage target flags",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/governance.test.ts",
+      "title": "coverage and record governance entrypoints > retains invalid revisions and missing Git blob failures as gate errors",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/governance.test.ts",
+      "title": "coverage and record governance entrypoints > recordMain verifies merge-base bytes and changed-path scopes",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/governance.test.ts",
+      "title": "coverage and record governance entrypoints > an_old_or_unrelated_record_cannot_satisfy_a_new_governed_change",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/governance.test.ts",
+      "title": "coverage and record governance entrypoints > recordMain governs paths removed from the proposed manifest using base authority",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/governance.test.ts",
+      "title": "coverage and record governance entrypoints > recordMain writes revision diagnostics when the proposed record is missing",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/governance.test.ts",
+      "title": "CI governance contract > resolves trusted manual, pull-request, and push revision authority",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/governance.test.ts",
+      "title": "CI governance contract > keeps explicit revisions, validation, full gates, and always-retained diagnostics",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/harness-manifest.test.ts",
+      "title": "accepts_static_contracts_without_executing_commands",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/harness-manifest.test.ts",
+      "title": "rejects_invalid_or_non_executable_harness_metadata",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/harness-manifest.test.ts",
+      "title": "rejects_duplicate_or_unbound_ownership",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/harness-manifest.test.ts",
+      "title": "rejects_empty_browser_opt_out_without_reason",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/harness-manifest.test.ts",
+      "title": "rejects_stale_exact_test_identity",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/harness-manifest.test.ts",
+      "title": "rejects_invalid_lifecycle_and_golden_workflow_rows",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/harness-manifest.test.ts",
+      "title": "requires_exact_discovered_evidence_for_every_implemented_golden_row",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/harness-manifest.test.ts",
+      "title": "rejects_a_test_command_that_bypasses_the_declared_runner_egress_adapter",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/harness-manifest.test.ts",
+      "title": "rejects_symlink_escape_and_new_unregistered_nx_workspace",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/harness-manifest.test.ts",
+      "title": "harness_cli_writes_validation_artifact_before_failure",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/harness-manifest.test.ts",
+      "title": "rejects_binding_command_mismatch_duplicate_ids_and_missing_rule_layer_pairs",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/harness-manifest.test.ts",
+      "title": "rejects_catalog_drift_malformed_projects_and_invalid_source_groups",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/harness-manifest.test.ts",
+      "title": "uses_supplied_discovery_for_dynamic_tests_and_rejects_unregistered_declarations",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/harness-manifest.test.ts",
+      "title": "accepts_stateless_contracts_and_honest_browser_exclusions",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/harness-manifest.test.ts",
+      "title": "rejects_package_binaries_that_exist_but_are_not_executable",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/harness-manifest.test.ts",
+      "title": "preserves_exact_test_title_whitespace",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/harness-manifest.test.ts",
+      "title": "rejects_non_test_command_roles_even_when_workspace_and_binding_agree",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/harness-manifest.test.ts",
+      "title": "requires_explicit_runner_roles_for_custom_test_commands",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/harness-manifest.test.ts",
+      "title": "rejects_duplicate_and_overlapping_coverage_sources_across_reports",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/harness-manifest.test.ts",
+      "title": "allows_disjoint_effective_coverage_sources_when_exclusions_partition_groups",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/harness-manifest.test.ts",
+      "title": "requires_explicit_smoke_scope_for_every_supported_non_chromium_browser",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/harness-manifest.test.ts",
+      "title": "uses_the_most_specific_workspace_for_binding_command_validation",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/harness-manifest.test.ts",
+      "title": "validates portable execution metadata and rejects missing references or escaping runner paths",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/harness-manifest.test.ts",
+      "title": "execution metadata cannot direct coverage cleanup over retained evidence",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/main-selection.test.ts",
+      "title": "runs_only_one_declared_vitest_and_playwright_identity",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/main-selection.test.ts",
+      "title": "uses_structured_runner_and_canonical_commands_with_their_declared_cwd",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/main-selection.test.ts",
+      "title": "discovers_nested_workspace_once_and_executes_its_own_cwd",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/playwright-discovery.test.ts",
+      "title": "Playwright discovery > preserves_exact_titles_lines_and_tags_and_rejects_missing_identities",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/playwright-discovery.test.ts",
+      "title": "Playwright discovery > uses Playwright-reported tags instead of source-text comments",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/playwright-discovery.test.ts",
+      "title": "normalizes_relative_and_absolute_runner_files_from_the_reported_root",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/policy.test.ts",
+      "title": "coverage ratchets > requires explicit revisions and retains the failure in the ratchet artifact",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/policy.test.ts",
+      "title": "coverage ratchets > accepts_repository_relative_report_paths_and_the_baseline",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/policy.test.ts",
+      "title": "coverage ratchets > rejects_absolute_report_paths_even_when_they_point_inside_the_repository",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/policy.test.ts",
+      "title": "coverage ratchets > rejects_a_critical_file_below_its_lines_baseline",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/policy.test.ts",
+      "title": "coverage ratchets > rejects_a_critical_file_below_its_branches_baseline",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/policy.test.ts",
+      "title": "coverage ratchets > rejects_a_critical_file_below_its_functions_baseline",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/policy.test.ts",
+      "title": "coverage ratchets > rejects_a_critical_file_below_its_statements_baseline",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/policy.test.ts",
+      "title": "coverage ratchets > fails_closed_for_missing_reports_files_metrics_and_baselines",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/policy.test.ts",
+      "title": "portable execution record > documents access-bearer rotation without claiming an independent refresh credential",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/policy.test.ts",
+      "title": "portable execution record > requires_exact_manifest_command_parity_in_the_canonical_documentation_table",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/policy.test.ts",
+      "title": "portable execution record > accepts_repository_relative_directory_artifacts_without_rewriting_history",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/policy.test.ts",
+      "title": "portable execution record > accepts_valid_records",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/policy.test.ts",
+      "title": "portable execution record > rejects_malformed_lines",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/policy.test.ts",
+      "title": "portable execution record > rejects_duplicate_record_ids",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/real-manifest-selection.test.ts",
+      "title": "real_manifest_discovers_and_selects_exact_vitest_and_playwright_identities",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/real-manifest-selection.test.ts",
+      "title": "real_manifest_executes_its_selected_vitest_and_playwright_identities",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/select.test.ts",
+      "title": "manifest-owned selection > selects_declared_test_bindings_even_when_static_imports_are_absent",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/select.test.ts",
+      "title": "manifest-owned selection > adds_static_import_evidence_without_treating_it_as_ownership",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/select.test.ts",
+      "title": "manifest-owned selection > rejects_deleted_or_ambiguous_bindings",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/select.test.ts",
+      "title": "manifest-owned selection > fails_closed_for_unresolvable_revisions_dynamic_dependencies_and_unmapped_workspaces",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/select.test.ts",
+      "title": "manifest-owned selection > accepts_a_literal_dynamic_target_only_with_reviewed_entrypoint_bindings",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/select.test.ts",
+      "title": "manifest-owned selection > retains_the_exact_transitive_dynamic_import_edge_in_selection_evidence",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/select.test.ts",
+      "title": "retains_path_reasons_and_registered_workspace_fallback_commands",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/select.test.ts",
+      "title": "requires_full_history_and_a_checked_out_discovery_head",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/select.test.ts",
+      "title": "adds_importing_identities_beyond_the_declared_binding_and_covers_owned_assets",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/select.test.ts",
+      "title": "deduplicates_runnable_identities_while_retaining_each_owner_and_binding",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/select.test.ts",
+      "title": "fails_closed_when_vitest_file_filter_could_match_another_identity",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/select.test.ts",
+      "title": "rejects_filename_collisions_for_unbound_static_import_additions",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/select.test.ts",
+      "title": "attributes_additive_identities_to_the_most_specific_workspace",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/select.test.ts",
+      "title": "detects_worktree_changes_without_running_repository_attribute_filters",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/select.test.ts",
+      "title": "retains_committed_staged_and_raw_worktree_change_evidence_without_Git_conversion",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/validate.test.ts",
+      "title": "feature-map validation > rejects_feature_files_when_vitest_discovery_is_empty",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/validate.test.ts",
+      "title": "feature-map validation > accepts feature tags that resolve to discovered Playwright tests",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/impact/src/validate.test.ts",
+      "title": "feature-map validation > reports stale tags instead of silently selecting zero Playwright tests",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/canonical-runner-egress.test.ts",
+      "title": "canonical_unit_runner_denies_fetch_http_https_websocket_and_inherited_child_egress",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/canonical-runner-egress.test.ts",
+      "title": "canonical_unit_runner_rejects_package_manager_wrapper_escape_with_stripped_env",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/canonical-runner-egress.test.ts",
+      "title": "canonical_unit_runner_rejects_forged_delegated_policy_broadening",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/canonical-runner-egress.test.ts",
+      "title": "canonical_unit_runner_rejects_repository_clean_filters_before_native_dispatch",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/canonical-runner-egress.test.ts",
+      "title": "canonical_unit_runner_ignores_HOME_and_XDG_git_configuration",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/canonical-runner-egress.test.ts",
+      "title": "canonical_unit_runner_limits_git_to_filter_free_object_and_metadata_operations",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/canonical-runner-egress.test.ts",
+      "title": "canonical_unit_runner_establishes_manifest_artifacts_before_vitest",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/egress-guard.test.ts",
+      "title": "Proofline egress guard > validates_exact_child_executable_policy_and_node_preload_argv",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/egress-guard.test.ts",
+      "title": "Proofline egress guard > resolves_an_exact_PATH_child_but_rejects_network_capable_git_arguments",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/egress-guard.test.ts",
+      "title": "Proofline egress guard > disables_repository_git_hooks_and_rejects_hook_path_overrides",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/egress-guard.test.ts",
+      "title": "Proofline egress guard > rejects_git_external_diff_helpers_before_native_dispatch",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/egress-guard.test.ts",
+      "title": "Proofline egress guard > allows_only_declared_loopback_runner_requests",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/egress-guard.test.ts",
+      "title": "Proofline egress guard > normalizes_ipv6_default_ports_precedence_credentials_and_malformed_requests",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/egress-guard.test.ts",
+      "title": "Proofline egress guard > denies_fetch_http_https_websocket_and_inherited_child_egress",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/egress-guard.test.ts",
+      "title": "Proofline egress guard > denies_direct_client_request_construction_in_root_and_inherited_children",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/egress-guard.test.ts",
+      "title": "Proofline egress guard > preserves_allowed_fetch_redirect_modes_and_followed_response_metadata",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/egress-guard.test.ts",
+      "title": "Proofline egress guard > denies_redirect_proxy_tunnel_and_child_override_bypasses",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/egress-guard.test.ts",
+      "title": "Proofline egress guard > guards_or_rejects_every_spawn_fork_exec_and_execfile_child_plane",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/egress-guard.test.ts",
+      "title": "Proofline egress guard > installs_the_preload_before_actual_server_runtime_startup",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/egress-guard.test.ts",
+      "title": "Proofline egress guard > rejects_malformed_or_non_loopback_allowlists_before_target_code",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/egress-guard.test.ts",
+      "title": "Proofline egress guard > generates_private_distinct_capabilities_for_programmatic_test_app_launches",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/egress-guard.test.ts",
+      "title": "Proofline egress guard > preserves_structured_argv_exit_signal_stdout_and_stderr",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/egress-guard.test.ts",
+      "title": "Proofline egress guard > rejects_unstructured_or_extensible_child_capabilities",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/execution-artifacts.test.ts",
+      "title": "preserves failed invocation bytes across subsequent and parallel allocations",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/execution-artifacts.test.ts",
+      "title": "rejects conflicting artifact override --outputFile=elsewhere",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/execution-artifacts.test.ts",
+      "title": "rejects conflicting artifact override --output=elsewhere",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/execution-artifacts.test.ts",
+      "title": "rejects conflicting artifact override --reporter=json",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/execution-artifacts.test.ts",
+      "title": "rejects conflicting artifact override --reporter",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/execution-artifacts.test.ts",
+      "title": "rejects conflicting artifact override --outputFile.json=elsewhere",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/execution-artifacts.test.ts",
+      "title": "never replaces a finalized verification record",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/execution-artifacts.test.ts",
+      "title": "coverage CLI config and environment destinations cannot erase finalized evidence",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/portability.test.ts",
+      "title": "Proofline standalone portability > rejects_modified_reusable_core_in_the_target",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/portability.test.ts",
+      "title": "Proofline standalone portability > copies_a_standalone_target_with_byte_identical_core_and_no_CRM_product",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/portability.test.ts",
+      "title": "Proofline standalone portability > rejects_absent_gates_and_unsupported_compatibility_metadata",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/portability.test.ts",
+      "title": "Proofline standalone portability > rejects_missing_retained_evidence_after_valid_result_metadata",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/portability.test.ts",
+      "title": "Proofline standalone portability > rejects_missing_or_escaping_production_metadata",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/portability.test.ts",
+      "title": "Proofline standalone portability > always_audits_declared_adapters_even_when_extra_module_metadata_omits_them",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/portability.test.ts",
+      "title": "Proofline standalone portability > declares_target_owned_execution_and_production_paths",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/portability.test.ts",
+      "title": "Proofline standalone portability > rejects_missing_or_tampered_native_artifacts_from_valid_relocated_evidence",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/portability.test.ts",
+      "title": "Proofline standalone portability > rejects_stale_native_context_and_summary_only_portability_substitutions",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/portability.test.ts",
+      "title": "Proofline standalone portability > binds_relocated_native_evidence_to_external_host_authority_and_child_hashes",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/portability.test.ts",
+      "title": "Proofline standalone portability > rejects_foreign_native_repository_and_workflow_after_complete_rehash",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/portability.test.ts",
+      "title": "Proofline standalone portability > rejects_missing_or_substituted_instrumented_argv_after_complete_rehash",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/portability.test.ts",
+      "title": "Proofline standalone portability > rejects_null_repository_claim_when_actual_host_context_is_nonlocal",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/portability.test.ts",
+      "title": "Proofline standalone portability > verifies_relocated_local_evidence_without_inheriting_CI_checkout_identity",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/portability.test.ts",
+      "title": "Proofline standalone portability > rejects_incomplete_runtime_compatibility_and_missing_relocation_destination",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/portability.test.ts",
+      "title": "Proofline standalone portability > rejects_a_rehashed_failed_coverage_diagnostic_despite_passing_gate_summaries",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/portability.test.ts",
+      "title": "Proofline standalone portability > requires_original_invocation_logs_when_local_path_validation_is_requested",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/portability.test.ts",
+      "title": "Proofline standalone portability > rejects_rehashed_type_confusion_in_aggregate_project_identity",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/product-e2e-boundary.test.ts",
+      "title": "Proofline product E2E boundary > canonical_wrapper_descendant_retains_egress_guard",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/product-e2e-boundary.test.ts",
+      "title": "Proofline product E2E boundary > product_e2e_specs_delegate_transport_and_storage_to_fixtures",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/product-e2e-boundary.test.ts",
+      "title": "Proofline product E2E boundary > rejects_forbidden_crm_screen_to_screen_goto in features/direct-customer-to-quotes.spec.ts",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/product-e2e-boundary.test.ts",
+      "title": "Proofline product E2E boundary > rejects_forbidden_crm_screen_to_screen_goto in proofline/direct-quotes-to-policy.spec.ts",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/product-e2e-boundary.test.ts",
+      "title": "Proofline product E2E boundary > allows_declared_initial_and_guard_navigation_helpers",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/product-e2e-boundary.test.ts",
+      "title": "Proofline product E2E boundary > rejects_undeclared_navigation_even_inside_the_shared_helper_module",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/product-e2e-boundary.test.ts",
+      "title": "Proofline product E2E boundary > canonical_test_commands_cannot_bypass_the_declared_runner_egress_adapter",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/product-e2e-boundary.test.ts",
+      "title": "Proofline product E2E boundary > canonical_runner_child_authority_is_structured_and_forces_guard_policy_on_every_child",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/product-e2e-boundary.test.ts",
+      "title": "Proofline product E2E boundary > scenario_fixture_declares_context_install_cleanup_and_retry_lifecycle",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/product-e2e-boundary.test.ts",
+      "title": "Proofline product E2E boundary > scenario_fixture_declares_every_reviewed_browser_egress_plane",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/product-e2e-boundary.test.ts",
+      "title": "Proofline product E2E boundary > scenario_commands_preserve_multi_worker_and_both_shard_isolation_gates",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/production-negative.test.ts",
+      "title": "Proofline production boundary > rejects_test_markers_in_a_production_bundle",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/production-negative.test.ts",
+      "title": "Proofline production boundary > refuses_test_entry_without_a_launcher_capability",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/production-negative.test.ts",
+      "title": "Proofline production boundary > builds_the_test_entry_only_with_a_launcher_supplied_capability",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/production-negative.test.ts",
+      "title": "Proofline production boundary > launches_the_test_artifact_only_after_one_server_side_capability_proof",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > selects only an unambiguous successful exact trusted push run",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > rejects wrong run authority head_sha",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > rejects wrong run authority path",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > rejects wrong run authority event",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > rejects wrong run authority head_branch",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > rejects wrong run authority conclusion",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > rejects wrong run authority repository",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > rejects wrong run authority run_attempt",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > rejects invalid artifact expired",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > rejects invalid artifact expires_at",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > rejects invalid artifact name",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > rejects invalid artifact digest",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > rejects invalid artifact workflow_run",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > packages production bytes and validates the entire execution root",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > accepts mandatory Chromium without expanding optional smoke projects",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > accepts effective default workers from the live runner for browser",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > accepts effective default workers from the live runner for browserScenarioShard1",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > accepts effective default workers from the live runner for browserScenarioShard2",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > rejects inconsistent effective default worker metadata missing",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > rejects inconsistent effective default worker metadata null",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > rejects inconsistent effective default worker metadata wrong",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > accepts the coverage-safe Vitest execution shim contract",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > reaudits declared production adapters immediately before packaging",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > rejects contradictory native scenario applicability runtimeWorkers",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > rejects contradictory native scenario applicability discoveryWorkers",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > rejects contradictory native scenario applicability missingWorkers",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > rejects contradictory native scenario applicability runtimeShard",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > rejects contradictory native scenario applicability discoveryShard",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > rejects contradictory native scenario applicability missingShard",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > rejects contradictory native scenario applicability runtimeArgv",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > rejects contradictory native scenario applicability discoveryArgv",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > rejects dirty tracked source before packaging",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > rejects production symlinks and missing or failed gates",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > rejects stale or incomplete current gate evidence sourceCommit",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > rejects stale or incomplete current gate evidence sessionId",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > rejects stale or incomplete current gate evidence ciRunId",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > rejects stale or incomplete current gate evidence ciRunAttempt",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > rejects stale or incomplete current gate evidence scope",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > rejects stale or incomplete current gate evidence gateComplete",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > rejects stale or incomplete current gate evidence children",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > rejects missing inventory files",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > rejects extra inventory files",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > rejects changed inventory files",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > rejects independently substituted evidence repository",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > rejects independently substituted evidence workflow",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > rejects independently substituted evidence nativeExpectedFailure",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > rejects independently substituted evidence nativeRetry",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > rejects independently substituted evidence missingNativeReport",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > rejects independently substituted evidence missingStdout",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > rejects independently substituted evidence subsetBrowser",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > rejects independently substituted evidence wrongWorkers",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > rejects independently substituted evidence wrongShard",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > rejects independently substituted evidence duplicateGate",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > rejects independently substituted evidence missingManifestBinding",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > rejects independently substituted evidence argvSubset",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > rejects independently substituted evidence foreignNativeReference",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > rejects independently substituted evidence metadataProjects",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > resolves annotated tags and consumes only the exact API-authorized artifact",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > workflow publishes only after complete gates and deployment uses trusted prebuilt output",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > rejects fully rehashed standalone authority substitution wrongRepository",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > rejects fully rehashed standalone authority substitution missingRepository",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > rejects fully rehashed standalone authority substitution wrongWorkflow",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > rejects fully rehashed standalone authority substitution missingWorkflow",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > rejects fully rehashed standalone authority substitution missingArgv",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > rejects fully rehashed standalone authority substitution substitutedArgv",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > rejects incomplete standalone release evidence standaloneMissingNative",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > rejects incomplete standalone release evidence standaloneStaleContext",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > rejects incomplete standalone release evidence standaloneMissingChild",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > rejects incomplete standalone release evidence standaloneMissingLog",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > rejects stale or incomplete portability evidence sourceCommit",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > rejects stale or incomplete portability evidence sessionId",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > rejects stale or incomplete portability evidence ciRunId",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > rejects stale or incomplete portability evidence ciRunAttempt",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > rejects stale or incomplete portability evidence outcome",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > rejects stale or incomplete portability evidence gates",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > rejects stale or incomplete portability evidence evidenceHashes",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > rejects stale or incomplete portability evidence artifactDirectory",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > checks archive digest before any extraction and rejects unsafe archives",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/release-verification.test.ts",
+      "title": "immutable release verification > validates a real complete archive without provider credentials",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/required-execution.test.ts",
+      "title": "required execution reconciliation > accepts genuine passing required identities",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/required-execution.test.ts",
+      "title": "required execution reconciliation > rejects runtime skipped",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/required-execution.test.ts",
+      "title": "required execution reconciliation > rejects runtime pending",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/required-execution.test.ts",
+      "title": "required execution reconciliation > rejects runtime todo",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/required-execution.test.ts",
+      "title": "required execution reconciliation > rejects runtime failed",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/required-execution.test.ts",
+      "title": "required execution reconciliation > rejects substituted or ambiguous native outcome {\"expectedStatus\":\"failed\"}",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/required-execution.test.ts",
+      "title": "required execution reconciliation > rejects substituted or ambiguous native outcome {\"retry\":1}",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/required-execution.test.ts",
+      "title": "required execution reconciliation > rejects substituted or ambiguous native outcome {\"repeats\":1}",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/required-execution.test.ts",
+      "title": "required execution reconciliation > rejects substituted or ambiguous native outcome {\"project\":\"wrong\"}",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/required-execution.test.ts",
+      "title": "required execution reconciliation > rejects missing malformed and zero reports undefined",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/required-execution.test.ts",
+      "title": "required execution reconciliation > rejects missing malformed and zero reports {}",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/required-execution.test.ts",
+      "title": "required execution reconciliation > rejects missing malformed and zero reports {\"testResults\":[]}",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/required-execution.test.ts",
+      "title": "required execution reconciliation > rejects duplicate and missing native sidecar identities",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/required-execution.test.ts",
+      "title": "required execution reconciliation > rejects omitted unit targets and accepts a complete aggregate",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/required-execution.test.ts",
+      "title": "required execution reconciliation > allows explicit empty target only without required identities",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/required-execution.test.ts",
+      "title": "required execution reconciliation > deduplicates rule bindings while preserving exact identity",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/required-execution.test.ts",
+      "title": "required execution reconciliation > discovers selected and shard browser applicability before runtime",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/required-execution.test.ts",
+      "title": "native Vitest events reject actual expected failure and successful retry",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/required-execution.test.ts",
+      "title": "canonical execution rejects absent metadata and unknown build prerequisites",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/required-execution.test.ts",
+      "title": "matches lossless project outcomes against the native JSON assertion multiset",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/required-execution.test.ts",
+      "title": "accepts passing browser applicability and rejects expected-failure and retry substitutions",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/required-execution.test.ts",
+      "title": "cannot hide native suite errors behind a zero exit code",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/required-execution.test.ts",
+      "title": "canonical tuning flags cannot omit required unit targets or browser identities",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "tools/proofline/src/required-execution.test.ts",
+      "title": "standalone native discovery and execution require no undeclared Nx binary",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    }
+  ],
+  "errors": [],
+  "children": [
+    {
+      "version": 1,
+      "invocationId": "3bfb0962-cad4-41b9-9f81-b3fc42a6f34a",
+      "verification": "runs/3bfb0962-cad4-41b9-9f81-b3fc42a6f34a/verification.json",
+      "sha256": "371f944f2e9d6324a15172495f9670e4a4087b77bcfe2ef7bfcc9105dba9cc89"
+    },
+    {
+      "version": 1,
+      "invocationId": "55a9b72a-80d4-4eeb-8fc7-8f4606c205d2",
+      "verification": "runs/55a9b72a-80d4-4eeb-8fc7-8f4606c205d2/verification.json",
+      "sha256": "302fc71e486a7293370fd215cb8259be05028d0cf9d4f91cc4e22cb63050cfc5"
+    },
+    {
+      "version": 1,
+      "invocationId": "70fea4b3-6045-4324-b6f4-b399940c1535",
+      "verification": "runs/70fea4b3-6045-4324-b6f4-b399940c1535/verification.json",
+      "sha256": "68fd6ca91fc77ae797493e0ca0d66dbdb220f2181caa2fae29b7ffd5505c762c"
+    },
+    {
+      "version": 1,
+      "invocationId": "2fda3947-7d3d-4237-b617-07d8c83e710a",
+      "verification": "runs/2fda3947-7d3d-4237-b617-07d8c83e710a/verification.json",
+      "sha256": "36a1d80b027d1ec57422ab7f4d9e8ad75e5bbb14a818d02d71221086e88e7001"
+    },
+    {
+      "version": 1,
+      "invocationId": "4c86d776-412d-447d-ac6a-1a6836a3522c",
+      "verification": "runs/4c86d776-412d-447d-ac6a-1a6836a3522c/verification.json",
+      "sha256": "06e515abd1d4612b10f7b56a62972174f83aebffb43c571bfaea4a768f84e699"
+    },
+    {
+      "version": 1,
+      "invocationId": "a13cbb55-7bf1-489c-a810-3c3c602b31bd",
+      "verification": "runs/a13cbb55-7bf1-489c-a810-3c3c602b31bd/verification.json",
+      "sha256": "15b8e8e55836bfbf027f07aaaf1c6c48afe7f352f86c92b864c7ebf60e16d68a"
+    },
+    {
+      "version": 1,
+      "invocationId": "1173ca86-c7e3-4027-b495-2b3c01a4738e",
+      "verification": "runs/1173ca86-c7e3-4027-b495-2b3c01a4738e/verification.json",
+      "sha256": "1f33846792287905959cdd7c36c371dd1680680963a045007a58f855be1d94fd"
+    },
+    {
+      "version": 1,
+      "invocationId": "8a5f1d36-f808-4727-abb2-b9a905064e19",
+      "verification": "runs/8a5f1d36-f808-4727-abb2-b9a905064e19/verification.json",
+      "sha256": "108bb8d58574dfe06a9079117dcbdb99d4e08b085872450b170f6f770f058c1a"
+    },
+    {
+      "version": 1,
+      "invocationId": "0ed91b0c-cbe7-4705-8822-feaa54a2d476",
+      "verification": "runs/0ed91b0c-cbe7-4705-8822-feaa54a2d476/verification.json",
+      "sha256": "15eb60797579490492325c2b5b0fa27d4fe489ca27d6e57c9250d509e7b3ba24"
+    },
+    {
+      "version": 1,
+      "invocationId": "fd2f32dc-a280-4227-83a2-30957a751097",
+      "verification": "runs/fd2f32dc-a280-4227-83a2-30957a751097/verification.json",
+      "sha256": "591c862d869003e05dcf0cfa311c2c1bd176ed1a4a7ad2ce86936dc4c392c76d"
+    },
+    {
+      "version": 1,
+      "invocationId": "228c5725-e5f9-4a75-888f-abbe54ef9102",
+      "verification": "runs/228c5725-e5f9-4a75-888f-abbe54ef9102/verification.json",
+      "sha256": "b2ba0c7cb4be5ecbb1d54730b85afa0ec6e994312bdb5155ac30e2267ac6dd98"
+    }
+  ],
+  "artifacts": {},
+  "metadata": {
+    "projects": [],
+    "workers": null,
+    "shard": null
+  },
+  "gateComplete": true
+}

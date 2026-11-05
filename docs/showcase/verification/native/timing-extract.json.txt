@@ -1,0 +1,373 @@
+{
+  "version": 1,
+  "method": "Playwright stats.duration/1000 from copied native reports. Vitest duration is the final top-level Duration line in each child stdout, avoiding nested regression fixture output; source hashes and line numbers retained. Timings exclude parent command prerequisites and are not a benchmark.",
+  "browser": {
+    "browser": {
+      "nativeReporterSeconds": 20.392556,
+      "nativeReporterStats": {
+        "startTime": "2026-11-05T02:43:57.713Z",
+        "duration": 20392.556,
+        "expected": 43,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "source": {
+        "path": "docs/showcase/verification/native/browser.native-report.json.txt",
+        "sha256": "718e687d2dde559aafa7a7690b639a83b7104fb9d9d27283398231e21f283827"
+      }
+    },
+    "browserScenario": {
+      "nativeReporterSeconds": 3.757196,
+      "nativeReporterStats": {
+        "startTime": "2026-11-05T02:46:52.539Z",
+        "duration": 3757.196,
+        "expected": 24,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "source": {
+        "path": "docs/showcase/verification/native/browserScenario.native-report.json.txt",
+        "sha256": "3ad9e0e920662a3777b2ed34fa5890f733f22adfc6d1a65df0648016509c641f"
+      }
+    },
+    "browserScenarioShard1": {
+      "nativeReporterSeconds": 2.7437750000000003,
+      "nativeReporterStats": {
+        "startTime": "2026-11-05T02:46:57.072Z",
+        "duration": 2743.775,
+        "expected": 12,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "source": {
+        "path": "docs/showcase/verification/native/browserScenarioShard1.native-report.json.txt",
+        "sha256": "57a172a91c934bdbc4dcad5f876853cbeab9c20c45bbd067be1849a9c03ea8e3"
+      }
+    },
+    "browserScenarioShard2": {
+      "nativeReporterSeconds": 2.2377599999999997,
+      "nativeReporterStats": {
+        "startTime": "2026-11-05T02:47:00.576Z",
+        "duration": 2237.7599999999998,
+        "expected": 12,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "source": {
+        "path": "docs/showcase/verification/native/browserScenarioShard2.native-report.json.txt",
+        "sha256": "de8910ea5a8134c52604693e43f7fa76879a36d46b69721c2c2e8a9b00fb535b"
+      }
+    }
+  },
+  "unitTargets": [
+    {
+      "argv": [
+        "run",
+        "--config",
+        "apps/crm-web/vite.config.ts"
+      ],
+      "cwd": "/Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed",
+      "invocationId": "3bfb0962-cad4-41b9-9f81-b3fc42a6f34a",
+      "requiredIdentities": 7,
+      "testsPassed": 110,
+      "testFilesPassed": 22,
+      "verificationOriginal": {
+        "path": ".superpowers/sdd/2026-11-04-enterprise-verification/evidence/fresh-attempt-2/release-bundle/evidence/proofline/runs/3bfb0962-cad4-41b9-9f81-b3fc42a6f34a/verification.json",
+        "sha256": "371f944f2e9d6324a15172495f9670e4a4087b77bcfe2ef7bfcc9105dba9cc89"
+      },
+      "nativeReportOriginal": {
+        "path": ".superpowers/sdd/2026-11-04-enterprise-verification/evidence/fresh-attempt-2/release-bundle/evidence/proofline/runs/3bfb0962-cad4-41b9-9f81-b3fc42a6f34a/native-report.json",
+        "sha256": "8dbf4015df041061dd311661d2581505ed15403eecb280e721d8174f1bb3e0a2"
+      },
+      "nativeReporterSeconds": 56.43,
+      "reporterDurationEvidence": {
+        "original": {
+          "path": ".superpowers/sdd/2026-11-04-enterprise-verification/evidence/fresh-attempt-2/release-bundle/evidence/proofline/runs/3bfb0962-cad4-41b9-9f81-b3fc42a6f34a/stdout.log",
+          "sha256": "8728716d3a43ee178be0fdb8a1a2ec52366cc6a305dec3a6190b70b7eab96d06"
+        },
+        "line": 92,
+        "text": "   Duration  56.43s (transform 493ms, setup 1.61s, collect 2.78s, tests 47.17s, environment 2.65s, prepare 540ms)"
+      }
+    },
+    {
+      "argv": [
+        "run",
+        "packages/api-contracts/src"
+      ],
+      "cwd": "/Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed",
+      "invocationId": "55a9b72a-80d4-4eeb-8fc7-8f4606c205d2",
+      "requiredIdentities": 6,
+      "testsPassed": 18,
+      "testFilesPassed": 1,
+      "verificationOriginal": {
+        "path": ".superpowers/sdd/2026-11-04-enterprise-verification/evidence/fresh-attempt-2/release-bundle/evidence/proofline/runs/55a9b72a-80d4-4eeb-8fc7-8f4606c205d2/verification.json",
+        "sha256": "302fc71e486a7293370fd215cb8259be05028d0cf9d4f91cc4e22cb63050cfc5"
+      },
+      "nativeReportOriginal": {
+        "path": ".superpowers/sdd/2026-11-04-enterprise-verification/evidence/fresh-attempt-2/release-bundle/evidence/proofline/runs/55a9b72a-80d4-4eeb-8fc7-8f4606c205d2/native-report.json",
+        "sha256": "2321650c54b3c8b5e11197cb6f1c79ecd9396e18b75036b097533b22381002c2"
+      },
+      "nativeReporterSeconds": 0.321,
+      "reporterDurationEvidence": {
+        "original": {
+          "path": ".superpowers/sdd/2026-11-04-enterprise-verification/evidence/fresh-attempt-2/release-bundle/evidence/proofline/runs/55a9b72a-80d4-4eeb-8fc7-8f4606c205d2/stdout.log",
+          "sha256": "5e38970710ecb5b3ce13212fce167cd3861b7002a86f702e3efc5298d6f512d1"
+        },
+        "line": 9,
+        "text": "   Duration  321ms (transform 73ms, setup 0ms, collect 126ms, tests 31ms, environment 0ms, prepare 34ms)"
+      }
+    },
+    {
+      "argv": [
+        "run",
+        "packages/domain/src"
+      ],
+      "cwd": "/Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed",
+      "invocationId": "70fea4b3-6045-4324-b6f4-b399940c1535",
+      "requiredIdentities": 4,
+      "testsPassed": 21,
+      "testFilesPassed": 2,
+      "verificationOriginal": {
+        "path": ".superpowers/sdd/2026-11-04-enterprise-verification/evidence/fresh-attempt-2/release-bundle/evidence/proofline/runs/70fea4b3-6045-4324-b6f4-b399940c1535/verification.json",
+        "sha256": "68fd6ca91fc77ae797493e0ca0d66dbdb220f2181caa2fae29b7ffd5505c762c"
+      },
+      "nativeReportOriginal": {
+        "path": ".superpowers/sdd/2026-11-04-enterprise-verification/evidence/fresh-attempt-2/release-bundle/evidence/proofline/runs/70fea4b3-6045-4324-b6f4-b399940c1535/native-report.json",
+        "sha256": "1cd67d7f611077d27efb2d50f4e62267dd9d91e64bffa2c898c2676d719862c3"
+      },
+      "nativeReporterSeconds": 0.191,
+      "reporterDurationEvidence": {
+        "original": {
+          "path": ".superpowers/sdd/2026-11-04-enterprise-verification/evidence/fresh-attempt-2/release-bundle/evidence/proofline/runs/70fea4b3-6045-4324-b6f4-b399940c1535/stdout.log",
+          "sha256": "b070e75e0af5aedeee5f84e7ef8198a99acd9b88aa923dcc687234c3abd054a1"
+        },
+        "line": 10,
+        "text": "   Duration  191ms (transform 40ms, setup 0ms, collect 48ms, tests 5ms, environment 0ms, prepare 70ms)"
+      }
+    },
+    {
+      "argv": [
+        "run",
+        "packages/finance-service/src"
+      ],
+      "cwd": "/Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed",
+      "invocationId": "2fda3947-7d3d-4237-b617-07d8c83e710a",
+      "requiredIdentities": 7,
+      "testsPassed": 24,
+      "testFilesPassed": 1,
+      "verificationOriginal": {
+        "path": ".superpowers/sdd/2026-11-04-enterprise-verification/evidence/fresh-attempt-2/release-bundle/evidence/proofline/runs/2fda3947-7d3d-4237-b617-07d8c83e710a/verification.json",
+        "sha256": "36a1d80b027d1ec57422ab7f4d9e8ad75e5bbb14a818d02d71221086e88e7001"
+      },
+      "nativeReportOriginal": {
+        "path": ".superpowers/sdd/2026-11-04-enterprise-verification/evidence/fresh-attempt-2/release-bundle/evidence/proofline/runs/2fda3947-7d3d-4237-b617-07d8c83e710a/native-report.json",
+        "sha256": "1e0dff46c2bc14b49f2a9890ce1d89e2a904dc7c4fd0ce4f95a6cbe36abe302e"
+      },
+      "nativeReporterSeconds": 0.231,
+      "reporterDurationEvidence": {
+        "original": {
+          "path": ".superpowers/sdd/2026-11-04-enterprise-verification/evidence/fresh-attempt-2/release-bundle/evidence/proofline/runs/2fda3947-7d3d-4237-b617-07d8c83e710a/stdout.log",
+          "sha256": "923a8b71a577249efb76cae91c11ad42e3f0c3f37255fcdce6d0e1159f7b3722"
+        },
+        "line": 9,
+        "text": "   Duration  231ms (transform 46ms, setup 0ms, collect 52ms, tests 10ms, environment 0ms, prepare 24ms)"
+      }
+    },
+    {
+      "argv": [
+        "run",
+        "packages/insurance-runtime/src"
+      ],
+      "cwd": "/Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed",
+      "invocationId": "4c86d776-412d-447d-ac6a-1a6836a3522c",
+      "requiredIdentities": 7,
+      "testsPassed": 32,
+      "testFilesPassed": 2,
+      "verificationOriginal": {
+        "path": ".superpowers/sdd/2026-11-04-enterprise-verification/evidence/fresh-attempt-2/release-bundle/evidence/proofline/runs/4c86d776-412d-447d-ac6a-1a6836a3522c/verification.json",
+        "sha256": "06e515abd1d4612b10f7b56a62972174f83aebffb43c571bfaea4a768f84e699"
+      },
+      "nativeReportOriginal": {
+        "path": ".superpowers/sdd/2026-11-04-enterprise-verification/evidence/fresh-attempt-2/release-bundle/evidence/proofline/runs/4c86d776-412d-447d-ac6a-1a6836a3522c/native-report.json",
+        "sha256": "3650eb9d042de6cee87562bd75dafb910944e3334fa1d6ade20ae635ea48f616"
+      },
+      "nativeReporterSeconds": 0.263,
+      "reporterDurationEvidence": {
+        "original": {
+          "path": ".superpowers/sdd/2026-11-04-enterprise-verification/evidence/fresh-attempt-2/release-bundle/evidence/proofline/runs/4c86d776-412d-447d-ac6a-1a6836a3522c/stdout.log",
+          "sha256": "01244cb8b5c3624978c51a0e932a6d29c4daee069f9a5a3a048c7c026cab59be"
+        },
+        "line": 10,
+        "text": "   Duration  263ms (transform 87ms, setup 0ms, collect 127ms, tests 35ms, environment 0ms, prepare 76ms)"
+      }
+    },
+    {
+      "argv": [
+        "run",
+        "packages/policy-service/src"
+      ],
+      "cwd": "/Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed",
+      "invocationId": "a13cbb55-7bf1-489c-a810-3c3c602b31bd",
+      "requiredIdentities": 3,
+      "testsPassed": 11,
+      "testFilesPassed": 1,
+      "verificationOriginal": {
+        "path": ".superpowers/sdd/2026-11-04-enterprise-verification/evidence/fresh-attempt-2/release-bundle/evidence/proofline/runs/a13cbb55-7bf1-489c-a810-3c3c602b31bd/verification.json",
+        "sha256": "15b8e8e55836bfbf027f07aaaf1c6c48afe7f352f86c92b864c7ebf60e16d68a"
+      },
+      "nativeReportOriginal": {
+        "path": ".superpowers/sdd/2026-11-04-enterprise-verification/evidence/fresh-attempt-2/release-bundle/evidence/proofline/runs/a13cbb55-7bf1-489c-a810-3c3c602b31bd/native-report.json",
+        "sha256": "02648eb45bea7ef58eb5bbb7cd3ad16500fa085a8378a427e2ef02906d13e7ad"
+      },
+      "nativeReporterSeconds": 0.21,
+      "reporterDurationEvidence": {
+        "original": {
+          "path": ".superpowers/sdd/2026-11-04-enterprise-verification/evidence/fresh-attempt-2/release-bundle/evidence/proofline/runs/a13cbb55-7bf1-489c-a810-3c3c602b31bd/stdout.log",
+          "sha256": "46d9532ca5bb04bdafc55aec7ae0549142c34796bf1e1bcc92c7f3530f85bad0"
+        },
+        "line": 9,
+        "text": "   Duration  210ms (transform 41ms, setup 0ms, collect 45ms, tests 11ms, environment 0ms, prepare 37ms)"
+      }
+    },
+    {
+      "argv": [
+        "run",
+        "packages/policy-state-service/src"
+      ],
+      "cwd": "/Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed",
+      "invocationId": "1173ca86-c7e3-4027-b495-2b3c01a4738e",
+      "requiredIdentities": 3,
+      "testsPassed": 8,
+      "testFilesPassed": 1,
+      "verificationOriginal": {
+        "path": ".superpowers/sdd/2026-11-04-enterprise-verification/evidence/fresh-attempt-2/release-bundle/evidence/proofline/runs/1173ca86-c7e3-4027-b495-2b3c01a4738e/verification.json",
+        "sha256": "1f33846792287905959cdd7c36c371dd1680680963a045007a58f855be1d94fd"
+      },
+      "nativeReportOriginal": {
+        "path": ".superpowers/sdd/2026-11-04-enterprise-verification/evidence/fresh-attempt-2/release-bundle/evidence/proofline/runs/1173ca86-c7e3-4027-b495-2b3c01a4738e/native-report.json",
+        "sha256": "37d113957c42a22923fde03133dc4d68fc808b9f9c45481476bd61610b183058"
+      },
+      "nativeReporterSeconds": 0.203,
+      "reporterDurationEvidence": {
+        "original": {
+          "path": ".superpowers/sdd/2026-11-04-enterprise-verification/evidence/fresh-attempt-2/release-bundle/evidence/proofline/runs/1173ca86-c7e3-4027-b495-2b3c01a4738e/stdout.log",
+          "sha256": "795efc96d500c6e0d4dea90dfd466eff5c69fd78b0671c2bb7979016e7c3d4e9"
+        },
+        "line": 9,
+        "text": "   Duration  203ms (transform 37ms, setup 0ms, collect 41ms, tests 4ms, environment 0ms, prepare 39ms)"
+      }
+    },
+    {
+      "argv": [
+        "run",
+        "packages/service-bus/src"
+      ],
+      "cwd": "/Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed",
+      "invocationId": "8a5f1d36-f808-4727-abb2-b9a905064e19",
+      "requiredIdentities": 4,
+      "testsPassed": 11,
+      "testFilesPassed": 2,
+      "verificationOriginal": {
+        "path": ".superpowers/sdd/2026-11-04-enterprise-verification/evidence/fresh-attempt-2/release-bundle/evidence/proofline/runs/8a5f1d36-f808-4727-abb2-b9a905064e19/verification.json",
+        "sha256": "108bb8d58574dfe06a9079117dcbdb99d4e08b085872450b170f6f770f058c1a"
+      },
+      "nativeReportOriginal": {
+        "path": ".superpowers/sdd/2026-11-04-enterprise-verification/evidence/fresh-attempt-2/release-bundle/evidence/proofline/runs/8a5f1d36-f808-4727-abb2-b9a905064e19/native-report.json",
+        "sha256": "6d081cc2cc41196f775b86ff498dffe945819fd4e1df4a497f85c9a6400da5c3"
+      },
+      "nativeReporterSeconds": 0.21,
+      "reporterDurationEvidence": {
+        "original": {
+          "path": ".superpowers/sdd/2026-11-04-enterprise-verification/evidence/fresh-attempt-2/release-bundle/evidence/proofline/runs/8a5f1d36-f808-4727-abb2-b9a905064e19/stdout.log",
+          "sha256": "d6937208cb2e8847b5d22d2daf8a472379b746e041db025b76ca1b04478dda69"
+        },
+        "line": 10,
+        "text": "   Duration  210ms (transform 46ms, setup 0ms, collect 72ms, tests 11ms, environment 0ms, prepare 57ms)"
+      }
+    },
+    {
+      "argv": [
+        "run",
+        "packages/test-kit/src",
+        "--passWithNoTests"
+      ],
+      "cwd": "/Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed",
+      "invocationId": "0ed91b0c-cbe7-4705-8822-feaa54a2d476",
+      "requiredIdentities": 0,
+      "testsPassed": 0,
+      "testFilesPassed": 0,
+      "verificationOriginal": {
+        "path": ".superpowers/sdd/2026-11-04-enterprise-verification/evidence/fresh-attempt-2/release-bundle/evidence/proofline/runs/0ed91b0c-cbe7-4705-8822-feaa54a2d476/verification.json",
+        "sha256": "15eb60797579490492325c2b5b0fa27d4fe489ca27d6e57c9250d509e7b3ba24"
+      },
+      "nativeReportOriginal": {
+        "path": ".superpowers/sdd/2026-11-04-enterprise-verification/evidence/fresh-attempt-2/release-bundle/evidence/proofline/runs/0ed91b0c-cbe7-4705-8822-feaa54a2d476/native-report.json",
+        "sha256": "37d07f1d2776a3225448ec15d526d7a7dc1bb0a3d5769562e1a4c646f6d83cd4"
+      },
+      "nativeReporterSeconds": null,
+      "reporterDurationEvidence": {
+        "note": "Explicit empty test-kit target; no test duration reported."
+      }
+    },
+    {
+      "argv": [
+        "run",
+        "tools/impact/src"
+      ],
+      "cwd": "/Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed",
+      "invocationId": "fd2f32dc-a280-4227-83a2-30957a751097",
+      "requiredIdentities": 2,
+      "testsPassed": 134,
+      "testFilesPassed": 9,
+      "verificationOriginal": {
+        "path": ".superpowers/sdd/2026-11-04-enterprise-verification/evidence/fresh-attempt-2/release-bundle/evidence/proofline/runs/fd2f32dc-a280-4227-83a2-30957a751097/verification.json",
+        "sha256": "591c862d869003e05dcf0cfa311c2c1bd176ed1a4a7ad2ce86936dc4c392c76d"
+      },
+      "nativeReportOriginal": {
+        "path": ".superpowers/sdd/2026-11-04-enterprise-verification/evidence/fresh-attempt-2/release-bundle/evidence/proofline/runs/fd2f32dc-a280-4227-83a2-30957a751097/native-report.json",
+        "sha256": "e7ad216e8107fdd99252ae4748d37291c0d4a23df512732e2dfca8b0c79f39f4"
+      },
+      "nativeReporterSeconds": 44.64,
+      "reporterDurationEvidence": {
+        "original": {
+          "path": ".superpowers/sdd/2026-11-04-enterprise-verification/evidence/fresh-attempt-2/release-bundle/evidence/proofline/runs/fd2f32dc-a280-4227-83a2-30957a751097/stdout.log",
+          "sha256": "796e98040209940f6b00e16cc596134bdee306e9c9235344287229cfa9637da0"
+        },
+        "line": 99,
+        "text": "   Duration  44.64s (transform 474ms, setup 0ms, collect 2.79s, tests 67.82s, environment 1ms, prepare 498ms)"
+      }
+    },
+    {
+      "argv": [
+        "run",
+        "tools/proofline/src"
+      ],
+      "cwd": "/Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed",
+      "invocationId": "228c5725-e5f9-4a75-888f-abbe54ef9102",
+      "requiredIdentities": 22,
+      "testsPassed": 167,
+      "testFilesPassed": 8,
+      "verificationOriginal": {
+        "path": ".superpowers/sdd/2026-11-04-enterprise-verification/evidence/fresh-attempt-2/release-bundle/evidence/proofline/runs/228c5725-e5f9-4a75-888f-abbe54ef9102/verification.json",
+        "sha256": "b2ba0c7cb4be5ecbb1d54730b85afa0ec6e994312bdb5155ac30e2267ac6dd98"
+      },
+      "nativeReportOriginal": {
+        "path": ".superpowers/sdd/2026-11-04-enterprise-verification/evidence/fresh-attempt-2/release-bundle/evidence/proofline/runs/228c5725-e5f9-4a75-888f-abbe54ef9102/native-report.json",
+        "sha256": "c001708787361f2de52b8ff1141c6d72b0d83b8056c46f272e3f9b56175ed5bb"
+      },
+      "nativeReporterSeconds": 21.44,
+      "reporterDurationEvidence": {
+        "original": {
+          "path": ".superpowers/sdd/2026-11-04-enterprise-verification/evidence/fresh-attempt-2/release-bundle/evidence/proofline/runs/228c5725-e5f9-4a75-888f-abbe54ef9102/stdout.log",
+          "sha256": "79dc9728005ebfd8ce1852c1fce78c4d1aacccec3265b3d881e5d8175bbd32a0"
+        },
+        "line": 32,
+        "text": "   Duration  21.44s (transform 483ms, setup 0ms, collect 1.87s, tests 47.92s, environment 1ms, prepare 449ms)"
+      }
+    }
+  ]
+}

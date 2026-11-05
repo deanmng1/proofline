@@ -3,20 +3,20 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="An introduction to Proofline: repeatable regression checks, a recorded reference-CRM journey, and evidence you can inspect.">
+<meta name="description" content="An introduction to Proofline: repeatable regression checks, preserved evidence, verified release artifacts, and recorded demos of two applications.">
 <meta name="color-scheme" content="light dark">
 <title>Proofline — Your rules. Checked on every change.</title>
 <!--
 PROVENANCE AND EDITING
 This is a fixed 1920 × 1080 browser presentation. All typography, diagrams, charts,
-styles and controls are local. Fonts are embedded; product media is in ./demo/.
+styles and controls are local. Fonts are embedded; media is in ./demo/ and ./second-app-demo/.
 The chosen Warm Editorial preview is the visual authority: Instrument Serif,
 Manrope, paper #F5EEE3, ink #2F2721, terracotta #A6422A.
 
-Historical measurements: ./measurements.json; tested implementation head
-4dc77a6ec005c710bd992b771a1c984b94b4e6a1; pinned base
-31b63c305eb37ab11c117a42445a5b0c9b1695e0. These are observed results,
-not a new completion-gate claim for this documentation revision.
+Current measurements: ./measurements.json; verified implementation head
+4feb0572fb8aa1a18fcfdfa0e9f5333b59d714e2; pinned base
+cfe5f11630eac902210bce1999b7a34f9847d8fc. Actual local commands used a
+clearly synthetic CI identity; no hosted workflow or deployment is claimed.
 Detailed definitions, exclusions and source links: ./TECHNICAL_GUIDE.md.
 Demo provenance: ./demo/provenance.json, capture-summary.json, inspection.json.
 The demo is a separately recorded reference workflow with synthetic data and fakes.
@@ -25,12 +25,12 @@ It is never evidence of live-provider integration or production database durabil
 Coverage bars sum raw line counters within each governed group. They do not average
 file percentages and do not depict whole-product or browser coverage. The actual
 ratchet checks every classified file across lines/functions/branches/statements.
-The Execution safeguards parent report includes canonical-runner.mjs at 0/263 lines;
-subprocess execution is not collected there. Separate behavioral tests still apply.
+The Harness + release tools parent report only partially collects subprocess
+execution. Separate guarded behavioral and second-app evidence still applies.
 
-Timing bars show canonical-full-browser reporter durations for official Pass 1 and
-Pass 2 of the same 43-test, five-worker Chromium suite. Builds excluded. No speedup,
-cost reduction, full-chain duration, or cross-browser result is established.
+Latest results describe one cleared-state local run: 536 unit tests, 43 Chromium
+tests, eight coverage groups, and ten second-app gates. Scenario/shard runs overlap
+the full browser suite. Counts must not be added into a unique-test total.
 -->
 <style>
 /* biome-ignore-all lint/complexity/noImportantStyles: Fixed-stage print and reduced-motion overrides must supersede inline transforms and hidden slide states. */
@@ -198,6 +198,13 @@ svg {
 @media print{.bug-live{display:none}.bug-print{display:grid}.bug-foot{top:935px}.bug-intro{top:285px}}
 
 
+
+/* === ENTERPRISE VERIFICATION / open diagrams in the existing editorial system === */
+.guarantee-heading{font-size:111px}.guarantee-intro{position:absolute;left:115px;top:290px;font-size:33px;width:1550px}.guarantee-grid{position:absolute;left:110px;right:110px;top:420px;display:grid;grid-template-columns:1fr 1fr;column-gap:120px;row-gap:65px}.guarantee{position:relative;border-top:1px solid var(--ink);padding:26px 0 0 92px;min-height:195px}.guarantee .number{position:absolute;left:0;top:17px;font-family:"Instrument Serif",serif;font-size:70px;color:var(--rust);line-height:1}.guarantee h3{font-family:"Instrument Serif",serif;font-size:49px;font-weight:400;line-height:1.1;letter-spacing:-.03em;margin-bottom:18px}.guarantee p{font-size:29px;line-height:1.45;max-width:630px}.guarantee-note{position:absolute;left:110px;right:110px;top:956px;border-top:1px solid var(--rule);padding-top:20px;font-size:25px}
+.release-heading{font-size:111px}.release-intro{position:absolute;left:115px;top:294px;width:1540px;font-size:34px}.release-flow{position:absolute;left:110px;right:110px;top:465px;display:grid;grid-template-columns:repeat(4,1fr);gap:65px}.release-step{border-top:1px solid var(--rule);position:relative;padding-top:25px}.release-step .number{font-family:"Instrument Serif",serif;font-size:68px;color:var(--paper);line-height:1;margin-bottom:30px}.release-step h3{font-size:36px;font-weight:600;line-height:1.25;letter-spacing:-.035em;margin-bottom:20px}.release-step p{font-size:29px;line-height:1.45;max-width:350px;opacity:.82}.release-arrow{position:absolute;right:-47px;top:23px;font-family:"Instrument Serif",serif;font-size:54px}.release-proof{position:absolute;left:110px;right:110px;top:835px;display:flex;align-items:baseline;gap:35px;border-top:1px solid var(--rule);padding-top:22px}.release-proof strong{font-family:"Instrument Serif",serif;font-weight:400;font-size:96px;line-height:1}.release-proof span{font-size:31px;line-height:1.4}.release-note{position:absolute;left:110px;right:110px;top:1000px;font-size:23px;line-height:1.35;opacity:.85}
+.workorders-heading{font-size:105px}.workorders-intro{position:absolute;left:115px;top:277px;font-size:31px;line-height:1.4;width:1600px}.workorders-media{top:368px;width:1080px;height:608px;background:#fff}.workorders-steps{left:1260px;top:385px;width:540px}.workorders-steps li{padding-left:70px;margin-bottom:21px;padding-bottom:24px}.workorders-steps strong{font-size:32px}.workorders-steps p{font-size:27px}.workorders-proof{border-top:1px solid var(--rule);padding-top:17px;margin-top:25px;display:flex;align-items:center;gap:22px}.workorders-proof strong{font-family:"Instrument Serif",serif;font-size:88px;color:var(--rust);font-weight:400;line-height:1}.workorders-proof span{font-size:27px;line-height:1.35}.workorders-caption{top:1005px;font-size:22px}
+.results-heading{font-size:111px}.results-intro{position:absolute;left:115px;top:292px;font-size:33px;width:1560px}.result-summary{position:absolute;left:110px;top:435px;width:485px}.result-summary .metric-number{font-size:190px;line-height:1;color:var(--rust);margin-bottom:20px}.result-summary h3{font-size:37px;font-weight:600;line-height:1.25;letter-spacing:-.04em;margin-bottom:26px}.result-summary p{font-size:29px;line-height:1.5;width:440px}.results-list{position:absolute;left:700px;right:110px;top:414px;padding:0;list-style:none}.results-list li{display:grid;grid-template-columns:195px 1fr;gap:35px;align-items:center;border-top:1px solid var(--rule);padding:23px 0}.results-list strong{font-family:"Instrument Serif",serif;font-weight:400;font-size:90px;letter-spacing:-.04em;line-height:1}.results-list h3{font-size:32px;line-height:1.3;letter-spacing:-.03em;font-weight:600;margin-bottom:7px}.results-list p{font-size:25px;line-height:1.4}.results-note{position:absolute;left:110px;right:110px;top:956px;border-top:1px solid var(--rule);padding-top:17px;font-size:23px;line-height:1.4}.results-note a{color:var(--rust)}
+
 /* === PRESENTATION UI — kept outside the fixed slide canvas === */
 .deck-controls{left:auto;right:16px;transform:none;display:flex;align-items:center;gap:0;border:1px solid rgba(245,238,227,.35);background:var(--ink);color:var(--paper);bottom:12px;font-size:14px;line-height:1;box-shadow:none}.deck-controls button{height:40px;min-width:44px;border:0;background:transparent;color:inherit;font-size:22px;padding:0 14px}.deck-controls button:disabled{opacity:.3;cursor:default}.deck-count{min-width:60px;text-align:center;font-size:13px;font-variant-numeric:tabular-nums}.deck-progress{height:2px;background:var(--rust);position:absolute;left:0;bottom:-1px;transition:width .2s}.deck-controls .help-button{font-size:13px;min-width:41px;border-left:1px solid rgba(245,238,227,.22)}.edit-hotzone{position:fixed;left:0;top:0;width:80px;height:80px;z-index:1100}.edit-toggle{position:fixed;left:16px;top:15px;z-index:1101;opacity:0;pointer-events:none;transition:opacity .2s;background:var(--paper);color:var(--ink);border:1px solid var(--ink);font-size:13px;padding:10px 14px}.edit-toggle.show,.edit-toggle.active,.edit-toggle:focus-visible{opacity:1;pointer-events:auto}.edit-toolbar{position:fixed;right:16px;top:15px;display:none;gap:6px;z-index:1101}.editing .edit-toolbar{display:flex}.edit-toolbar button{font-size:13px;border:1px solid var(--ink);padding:10px 12px;background:var(--paper);color:var(--ink)}.editing [data-edit]{outline:2px dashed rgba(166,66,42,.45);outline-offset:7px;cursor:text}.editing [data-edit]:focus{outline:3px solid var(--rust)}.help-panel{position:fixed;right:18px;bottom:66px;width:315px;background:var(--paper);color:var(--ink);padding:22px;border:1px solid var(--ink);font-size:14px;line-height:1.7;z-index:1100;display:none}.help-panel.open{display:block}.help-panel strong{display:block;margin-bottom:7px;font-size:16px}.help-panel p{font-size:14px;letter-spacing:0;line-height:1.7}.sr-status{position:fixed;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);padding:12px 18px;background:var(--ink);border:1px solid var(--paper);color:var(--paper);font-size:14px;z-index:1200;opacity:0;pointer-events:none;transition:opacity .2s}.toast.show{opacity:1}
 .coverage-list{padding:0;list-style:none}.architecture-flow{position:absolute;left:110px;right:110px;top:870px;border-top:1px solid var(--rule);padding-top:24px;display:flex;justify-content:space-between;align-items:center;gap:18px;font-size:28px;line-height:1.4}.print-only{display:none}
@@ -212,7 +219,7 @@ svg {
 
 <!-- === SLIDE 01 / WHAT PROOFLINE IS === -->
 <section class="slide active visible" aria-labelledby="cover-title" data-title="Your rules. Checked on every change.">
-  <div class="chapter"><span class="eyebrow">Regression testing for React / Vite</span><span class="page">01 / 10</span></div>
+  <div class="chapter"><span class="eyebrow">Regression testing for React / Vite</span><span class="page">01 / 13</span></div>
   <h1 class="cover-title reveal" id="cover-title" data-edit="cover-title" data-fit>Proofline</h1>
   <div class="cover-statement serif reveal delay-1" data-edit="cover-statement" data-fit>Your rules.<br>Checked on every change.</div>
   <p class="cover-description reveal delay-2" data-edit="cover-description" data-fit>A portable test harness: a reusable system for running checks<br>and keeping evidence as your application changes.</p>
@@ -221,7 +228,7 @@ svg {
 
 <!-- === SLIDE 02 / AUTHORING AND EXECUTION ARE DISTINCT === -->
 <section class="slide" aria-labelledby="process-title" data-title="Author once. Repeat with confidence.">
-  <div class="chapter"><span class="eyebrow">How it works</span><span class="page">02 / 10</span></div>
+  <div class="chapter"><span class="eyebrow">How it works</span><span class="page">02 / 13</span></div>
   <h2 class="heading process-heading reveal" id="process-title" data-edit="process-title" data-fit>Author once.<br>Repeat with confidence.</h2>
   <p class="process-intro reveal delay-1" data-edit="process-intro" data-fit>Turn an important rule into a check the whole team can repeat.</p>
   <figure class="process-grid" aria-label="Define, write, repeat">
@@ -234,19 +241,19 @@ svg {
 
 <!-- === SLIDE 03 / THE TWO TEST LAYERS === -->
 <section class="slide ink" aria-labelledby="hybrid-title" data-title="Small checks. Real journeys.">
-  <div class="chapter"><span class="eyebrow">A hybrid testing system</span><span class="page">03 / 10</span></div>
+  <div class="chapter"><span class="eyebrow">A hybrid testing system</span><span class="page">03 / 13</span></div>
   <h2 class="heading hybrid-heading reveal" id="hybrid-title" data-edit="hybrid-title" data-fit>Small checks.<br>Real journeys.</h2>
   <div class="hybrid-columns">
-    <div class="hybrid-column reveal delay-1"><div class="hybrid-stat">404</div><h3 class="hybrid-label" data-edit="hybrid-focused-label" data-fit>Focused tests · Vitest</h3><p data-edit="hybrid-focused-body" data-fit>Rules, calculations, APIs, permissions,<br>retries and interface behavior.</p></div>
+    <div class="hybrid-column reveal delay-1"><div class="hybrid-stat">536</div><h3 class="hybrid-label" data-edit="hybrid-focused-label" data-fit>Focused tests · Vitest</h3><p data-edit="hybrid-focused-body" data-fit>Rules, calculations, APIs, permissions,<br>retries and interface behavior.</p></div>
     <div class="hybrid-column reveal delay-2"><div class="hybrid-stat">43</div><h3 class="hybrid-label" data-edit="hybrid-browser-label" data-fit>Browser tests · Chromium</h3><p data-edit="hybrid-browser-body" data-fit>Real navigation across screens,<br>plus scenario and containment checks.</p></div>
   </div>
   <figure class="architecture-flow" aria-label="Application connected through portable contracts and runners to focused and browser tests, then reports and evidence" data-fit><span>Your app</span><span aria-hidden="true">→</span><span>Contracts + runners</span><span aria-hidden="true">→</span><span>Focused + browser checks</span><span aria-hidden="true">→</span><span>Reports + evidence</span></figure>
-  <p class="hybrid-note" data-fit>32 critical rules map to exact tests. Snapshot: 45 unit files across 11 targets (one empty).<br>The 43 browser tests include 24 scenario tests.</p>
+  <p class="hybrid-note" data-fit>36 critical rules map to exact tests. Snapshot: 49 unit files across 11 targets (one empty).<br>The 43 browser tests include 24 scenario tests.</p>
 </section>
 
 <!-- === CONTROLLED REGRESSION DEMO / CAPTURED REAL TEST RUNS === -->
 <section class="slide" id="bugDemoSlide" aria-labelledby="bug-demo-title" data-title="A deposit must not earn commission">
-  <div class="chapter"><span class="eyebrow">Proofline catches a regression · FIN-002</span><span class="page">04 / 10</span></div>
+  <div class="chapter"><span class="eyebrow">Proofline catches a regression · FIN-002</span><span class="page">04 / 13</span></div>
   <h2 class="heading bug-heading reveal" id="bug-demo-title" data-edit="bug-demo-title" data-fit>A deposit must not earn commission</h2>
   <p class="bug-intro reveal delay-1" data-fit>A $25 deposit should earn $0 commission. A controlled source change breaks that rule.<br>Replay real captured runs from an isolated copy. A developer applies the fix.</p>
   <div class="bug-live">
@@ -264,7 +271,7 @@ svg {
 
 <!-- === SLIDE 04 / ACTUAL RECORDED WORKFLOW === -->
 <section class="slide" aria-labelledby="demo-title" data-title="Follow a real user journey.">
-  <div class="chapter"><span class="eyebrow">Recorded walkthrough</span><span class="page">05 / 10</span></div>
+  <div class="chapter"><span class="eyebrow">Recorded walkthrough</span><span class="page">05 / 13</span></div>
   <h2 class="heading demo-heading reveal" id="demo-title" data-edit="demo-title" data-fit>Follow a real user journey.</h2>
   <figure class="demo-media reveal delay-1">
     <video id="workflowVideo" controls playsinline preload="metadata" poster="demo/03-quote.png" aria-label="Recorded Proofline workflow in the insurance CRM: sign in, customer intake, quote and bind, finance, logout and denied revisit">
@@ -287,7 +294,7 @@ svg {
 
 <!-- === SLIDE 05 / ASSERT PERSISTED RESULTS AFTER THE UI WORK === -->
 <section class="slide" aria-labelledby="outcome-title" data-title="The screen is half the proof.">
-  <div class="chapter"><span class="eyebrow">What the demo proves</span><span class="page">06 / 10</span></div>
+  <div class="chapter"><span class="eyebrow">What the demo proves</span><span class="page">06 / 13</span></div>
   <h2 class="heading outcome-heading reveal" id="outcome-title" data-edit="outcome-title" data-fit>The screen is half the proof.</h2>
   <figure class="outcome-media reveal delay-1"><img src="demo/05-finance-ledger.png" alt="Actual finance screen after the workflow: the bound policy, a $10.00 deposit in the append-only ledger, $12.50 payable commission, and immutable event history."></figure>
   <div class="outcomes reveal delay-2">
@@ -301,7 +308,7 @@ svg {
 
 <!-- === SLIDE 06 / BOUNDARIES AND RECOVERY ARE FIRST-CLASS EVIDENCE === -->
 <section class="slide" aria-labelledby="capability-title" data-title="Trust includes the difficult paths.">
-  <div class="chapter"><span class="eyebrow">Beyond the happy path</span><span class="page">07 / 10</span></div>
+  <div class="chapter"><span class="eyebrow">Beyond the happy path</span><span class="page">07 / 13</span></div>
   <h2 class="heading capability-heading reveal" id="capability-title" data-edit="capability-title" data-fit>Trust includes<br>the difficult paths.</h2>
   <div class="capabilities">
     <div class="capability reveal delay-1"><div class="capability-mark">01</div><h3 data-edit="access-title" data-fit>Right access</h3><p data-edit="access-body" data-fit>Roles and tenants control which routes and records a user can reach.</p></div>
@@ -311,39 +318,96 @@ svg {
   <p class="closed-note" data-edit="closed-note" data-fit>Missing or ambiguous evidence fails closed.</p>
 </section>
 
-<!-- === SLIDE 07 / GROUP LINE COVERAGE, FROM COVERED / TOTAL COUNTERS === -->
+
+<!-- === REQUIRED OUTCOMES / PRESERVATION / RELEASE / PORTABILITY === -->
+<section class="slide" id="guaranteesSlide" aria-labelledby="guarantee-title" data-title="Four stronger guarantees.">
+  <div class="chapter"><span class="eyebrow">What the harness now enforces</span><span class="page">08 / 13</span></div>
+  <h2 class="heading guarantee-heading reveal" id="guarantee-title" data-fit>Four stronger guarantees.</h2>
+  <p class="guarantee-intro reveal delay-1" data-fit>Each check leaves evidence you can inspect and trust.</p>
+  <div class="guarantee-grid">
+    <div class="guarantee reveal delay-1"><span class="number">01</span><h3 data-fit>Required tests really pass</h3><p data-fit>Skipped, missing or expected-failure results stop the gate.</p></div>
+    <div class="guarantee reveal delay-2"><span class="number">02</span><h3 data-fit>Failures stay inspectable</h3><p data-fit>Logs, traces, screenshots and videos remain with each run.</p></div>
+    <div class="guarantee reveal delay-2"><span class="number">03</span><h3 data-fit>Release the verified build</h3><p data-fit>Source, run identity and file hashes bind the exact output.</p></div>
+    <div class="guarantee reveal delay-3"><span class="number">04</span><h3 data-fit>Proven on a second app</h3><p data-fit>The work-orders app passes with 31 core files unchanged.</p></div>
+  </div>
+  <p class="guarantee-note" data-fit>Deterministic checks. Independent review. Missing evidence stops progress.</p>
+</section>
+
+<!-- === THE RELEASE ARTIFACT / SOURCE-BOUND, VERIFIED, NEVER REBUILT === -->
+<section class="slide ink" id="releaseSlide" aria-labelledby="release-title" data-title="Release the build that passed.">
+  <div class="chapter"><span class="eyebrow">Verified release artifacts</span><span class="page">09 / 13</span></div>
+  <h2 class="heading release-heading reveal" id="release-title" data-fit>Release the build that passed.</h2>
+  <p class="release-intro reveal delay-1" data-fit>The release workflow checks the artifact again before deployment.</p>
+  <figure class="release-flow" aria-label="Exact source commit, complete test gates, audited build, verified artifact">
+    <div class="release-step reveal delay-1"><div class="number">01</div><h3 data-fit>Exact source</h3><p data-fit>One committed revision, repository and run.</p><span class="release-arrow" aria-hidden="true">→</span></div>
+    <div class="release-step reveal delay-1"><div class="number">02</div><h3 data-fit>Complete checks</h3><p data-fit>Required suites, coverage and second-app validation.</p><span class="release-arrow" aria-hidden="true">→</span></div>
+    <div class="release-step reveal delay-2"><div class="number">03</div><h3 data-fit>Audited build</h3><p data-fit>Production output excludes test adapters.</p><span class="release-arrow" aria-hidden="true">→</span></div>
+    <div class="release-step reveal delay-3"><div class="number">04</div><h3 data-fit>Verified artifact</h3><p data-fit>Every file hash checked. Deploy without rebuilding.</p></div>
+  </figure>
+  <div class="release-proof reveal delay-3"><strong data-fit>664</strong><span data-fit>files verified in the local release bundle<br>Directory and ZIP checks agree.</span></div>
+  <p class="release-note" data-fit>Actual local packaging and verification passed. Hosted GitHub and Vercel deployment were not run.</p>
+</section>
+
+<!-- === SECOND APPLICATION / ACTUAL TARGET-OWNED GUARDED WORKFLOW === -->
+<section class="slide" id="secondAppSlide" aria-labelledby="workorders-title" data-title="The same harness. Another app.">
+  <div class="chapter"><span class="eyebrow">Recorded second-app demo</span><span class="page">10 / 13</span></div>
+  <h2 class="heading workorders-heading reveal" id="workorders-title" data-fit>The same harness. Another app.</h2>
+  <p class="workorders-intro reveal delay-1" data-fit>A separate work-orders app owns its routes, rules, login and fake APIs.</p>
+  <figure class="demo-media workorders-media reveal delay-1">
+    <video id="workOrdersVideo" controls playsinline preload="metadata" poster="second-app-demo/02-requests.png" aria-label="Actual guarded work-orders test: sign in, complete a request, navigate to Completed, sign out and deny a protected revisit">
+      <source src="second-app-demo/work-orders-demo.webm" type="video/webm">
+      <track kind="captions" src="second-app-demo/work-orders-demo.vtt" srclang="en" label="English" default>
+      <a href="second-app-demo/work-orders-demo.webm">Open the recorded work-orders demo</a>.
+    </video>
+    <img class="print-poster" src="second-app-demo/04-completed.png" alt="The real work-orders Completed screen shows Replace lobby lamp after a visible navigation from Requests.">
+  </figure>
+  <div class="journey workorders-steps reveal delay-2">
+    <ol style="list-style:none;padding:0" aria-label="Second-app journey">
+      <li><span class="order">01</span><strong data-fit>Sign in to Requests</strong><p data-fit>A dispatcher sees their organization’s work.</p></li>
+      <li><span class="order">02</span><strong data-fit>Complete the request</strong><p data-fit>Open Completed through visible navigation.</p></li>
+      <li><span class="order">03</span><strong data-fit>Sign out and revisit</strong><p data-fit>The protected screen requires login again.</p></li>
+    </ol>
+    <div class="workorders-proof"><strong data-fit>31</strong><span data-fit>core files copied<br>without changes</span></div>
+  </div>
+  <p class="demo-caption workorders-caption" data-fit><span class="print-only">Static frame. </span>Recorded guarded test build · deterministic fake APIs · <a href="second-app-demo/README.md">Capture and adaptation evidence</a></p>
+</section>
+
+<!-- === GOVERNED COVERAGE / RAW CLASSIFIED SOURCE COUNTERS === -->
 <section class="slide" aria-labelledby="coverage-title" data-title="Coverage you can inspect.">
-  <div class="chapter"><span class="eyebrow">Evidence with boundaries</span><span class="page">08 / 10</span></div>
+  <div class="chapter"><span class="eyebrow">Evidence with boundaries</span><span class="page">11 / 13</span></div>
   <h2 class="heading coverage-heading reveal" id="coverage-title" data-edit="coverage-title" data-fit>Coverage you can inspect.</h2>
   <div class="coverage-summary reveal delay-1"><div class="metric-number">8 / 8</div><h3 data-edit="coverage-summary-title" data-fit>Governed groups<br>meet their gates</h3><p data-edit="coverage-summary-body" data-fit>Approved minimums can hold or rise.<br><br>A passing gate does not mean 100% coverage.</p></div>
   <figure class="coverage-chart reveal delay-2" aria-label="Source-group line coverage"><figcaption class="chart-overline">Exercised lines / classified source</figcaption><ul class="coverage-list">
-<li class="coverage-row" aria-label="Event delivery: 163 of 163 lines, 100.0 percent"><span class="bar-label" data-fit>Event delivery</span><div class="bar-track" title="163 / 163 lines"><div class="bar-fill" style="width:100.00000000%"></div></div><span class="bar-value" data-fit>100.0%</span></li><li class="coverage-row" aria-label="Policy commands: 349 of 354 lines, 98.6 percent"><span class="bar-label" data-fit>Policy commands</span><div class="bar-track" title="349 / 354 lines"><div class="bar-fill" style="width:98.58757062%"></div></div><span class="bar-value" data-fit>98.6%</span></li><li class="coverage-row" aria-label="Policy projections: 153 of 166 lines, 92.2 percent"><span class="bar-label" data-fit>Policy projections</span><div class="bar-track" title="153 / 166 lines"><div class="bar-fill" style="width:92.16867470%"></div></div><span class="bar-value" data-fit>92.2%</span></li><li class="coverage-row" aria-label="Finance: 479 of 479 lines, 100.0 percent"><span class="bar-label" data-fit>Finance</span><div class="bar-track" title="479 / 479 lines"><div class="bar-fill" style="width:100.00000000%"></div></div><span class="bar-value" data-fit>100.0%</span></li><li class="coverage-row" aria-label="Workflow runtime: 1191 of 1238 lines, 96.2 percent"><span class="bar-label" data-fit>Workflow runtime</span><div class="bar-track" title="1191 / 1238 lines"><div class="bar-fill" style="width:96.20355412%"></div></div><span class="bar-value" data-fit>96.2%</span></li><li class="coverage-row" aria-label="API contracts: 264 of 285 lines, 92.6 percent"><span class="bar-label" data-fit>API contracts</span><div class="bar-track" title="264 / 285 lines"><div class="bar-fill" style="width:92.63157895%"></div></div><span class="bar-value" data-fit>92.6%</span></li><li class="coverage-row" aria-label="Harness governance: 531 of 548 lines, 96.9 percent"><span class="bar-label" data-fit>Harness governance</span><div class="bar-track" title="531 / 548 lines"><div class="bar-fill" style="width:96.89781022%"></div></div><span class="bar-value" data-fit>96.9%</span></li><li class="coverage-row" aria-label="Execution safeguards: 443 of 771 lines, 57.5 percent"><span class="bar-label" data-fit>Execution safeguards</span><div class="bar-track" title="443 / 771 lines"><div class="bar-fill" style="width:57.45784695%"></div></div><span class="bar-value" data-fit>57.5%</span></li>
+<li class="coverage-row" aria-label="Event delivery: 163 of 163 lines, 100.0 percent"><span class="bar-label" data-fit>Event delivery</span><div class="bar-track" title="163 / 163 lines"><div class="bar-fill" style="width:100.00000000%"></div></div><span class="bar-value" data-fit>100.0%</span></li><li class="coverage-row" aria-label="Policy commands: 349 of 354 lines, 98.6 percent"><span class="bar-label" data-fit>Policy commands</span><div class="bar-track" title="349 / 354 lines"><div class="bar-fill" style="width:98.58757062%"></div></div><span class="bar-value" data-fit>98.6%</span></li><li class="coverage-row" aria-label="Policy projections: 153 of 166 lines, 92.2 percent"><span class="bar-label" data-fit>Policy projections</span><div class="bar-track" title="153 / 166 lines"><div class="bar-fill" style="width:92.16867470%"></div></div><span class="bar-value" data-fit>92.2%</span></li><li class="coverage-row" aria-label="Finance: 479 of 479 lines, 100.0 percent"><span class="bar-label" data-fit>Finance</span><div class="bar-track" title="479 / 479 lines"><div class="bar-fill" style="width:100.00000000%"></div></div><span class="bar-value" data-fit>100.0%</span></li><li class="coverage-row" aria-label="Workflow runtime: 1191 of 1238 lines, 96.2 percent"><span class="bar-label" data-fit>Workflow runtime</span><div class="bar-track" title="1191 / 1238 lines"><div class="bar-fill" style="width:96.20355412%"></div></div><span class="bar-value" data-fit>96.2%</span></li><li class="coverage-row" aria-label="API contracts: 264 of 285 lines, 92.6 percent"><span class="bar-label" data-fit>API contracts</span><div class="bar-track" title="264 / 285 lines"><div class="bar-fill" style="width:92.63157895%"></div></div><span class="bar-value" data-fit>92.6%</span></li><li class="coverage-row" aria-label="Harness governance: 531 of 548 lines, 96.9 percent"><span class="bar-label" data-fit>Harness governance</span><div class="bar-track" title="531 / 548 lines"><div class="bar-fill" style="width:96.89781022%"></div></div><span class="bar-value" data-fit>96.9%</span></li><li class="coverage-row" aria-label="Harness + release tools: 2636 of 3600 lines, 73.2 percent"><span class="bar-label" data-fit>Harness + release tools</span><div class="bar-track" title="2636 / 3600 lines"><div class="bar-fill" style="width:73.22222222%"></div></div><span class="bar-value" data-fit>73.2%</span></li>
 </ul></figure>
-  <div class="coverage-notes"><p data-fit>12 classified files; covered ÷ total lines. This is a subset, not global coverage. The gate checks each file across four metrics.</p><p data-fit>Execution safeguards includes runner 0/263 in its parent report; subprocess behavior has separate test evidence.</p></div>
+  <div class="coverage-notes"><p data-fit>23 classified files; covered ÷ total lines. This is a subset, not global coverage. The gate checks each file across four metrics.</p><p data-fit>Harness + release tools: parent coverage captures only part of subprocess execution; guarded behavior is tested separately.</p></div>
 </section>
 
-<!-- === SLIDE 08 / THE SAME FULL CHROMIUM WORKLOAD IN TWO OFFICIAL PASSES === -->
-<section class="slide ink" aria-labelledby="timing-title" data-title="A measured local baseline.">
-  <div class="chapter"><span class="eyebrow">Observed execution</span><span class="page">09 / 10</span></div>
-  <h2 class="heading timing-heading reveal" id="timing-title" data-edit="timing-title" data-fit>A measured local baseline.</h2>
-  <p class="timing-intro reveal delay-1" data-edit="timing-intro" data-fit>Two official passes of the same full Chromium suite.</p>
-  <div class="timing-chart reveal delay-2" role="img" aria-label="Canonical full Chromium suite, 43 tests and five workers: official Pass 1 took 14.1 seconds; Pass 2 took 14.5 seconds. Reporter durations exclude builds.">
-    <div class="timing-row"><div class="timing-pass">Pass 1</div><div class="timing-track"><div class="timing-fill" style="width:88.125%"></div></div><div class="timing-value">14.1s</div></div>
-    <div class="timing-row"><div class="timing-pass">Pass 2</div><div class="timing-track"><div class="timing-fill" style="width:90.625%"></div></div><div class="timing-value">14.5s</div></div>
-  </div>
-  <div class="timing-notes"><p data-fit>43 tests · five local workers · reporter durations · builds excluded</p><p data-fit>Observations from one machine. No speedup or complete-gate timing is claimed.</p></div>
+<!-- === CURRENT CLEARED-STATE VERIFICATION / COUNTED EVIDENCE, NOT A SPEEDUP BENCHMARK === -->
+<section class="slide" id="resultsSlide" aria-labelledby="results-title" data-title="The latest verification results.">
+  <div class="chapter"><span class="eyebrow">Verified implementation · 4feb057 · 5 November 2026 UTC</span><span class="page">12 / 13</span></div>
+  <h2 class="heading results-heading reveal" id="results-title" data-fit>The latest verification results.</h2>
+  <p class="results-intro reveal delay-1" data-fit>A full local run from cleared build, cache and report outputs.</p>
+  <div class="result-summary reveal delay-1"><div class="metric-number" data-fit>18 / 18</div><h3 data-fit>Verification steps passed</h3><p data-fit>Includes test execution, governance, portability and release bundle checks.</p></div>
+  <ul class="results-list">
+    <li class="reveal delay-1"><strong data-fit>536</strong><div><h3 data-fit>Unit tests passed</h3><p data-fit>49 test files across 11 targets</p></div></li>
+    <li class="reveal delay-2"><strong data-fit>43</strong><div><h3 data-fit>Chromium tests passed</h3><p data-fit>Separate scenario: 24 · shards: 12 + 12</p></div></li>
+    <li class="reveal delay-2"><strong data-fit>8 / 8</strong><div><h3 data-fit>Coverage groups passed</h3><p data-fit>23 classified files · prior minimums preserved</p></div></li>
+    <li class="reveal delay-3"><strong data-fit>10 / 10</strong><div><h3 data-fit>Second-app gates passed</h3><p data-fit>Includes 4 browser workflows and production checks</p></div></li>
+  </ul>
+  <p class="results-note" data-fit>Scenario and shard runs repeat tests from the full browser suite. Counts overlap.<br>Local CI-contract validation; no hosted workflow or deployment claimed. <a href="measurements.json">Measured results and sources</a></p>
 </section>
 
 <!-- === SLIDE 09 / PORTABILITY: REUSE CORE, ADAPT THE APPLICATION SEAMS === -->
 <section class="slide" aria-labelledby="adoption-title" data-title="Bring the proof to your app.">
-  <div class="chapter"><span class="eyebrow">Adopt the harness</span><span class="page">10 / 10</span></div>
+  <div class="chapter"><span class="eyebrow">Adopt the harness</span><span class="page">13 / 13</span></div>
   <h2 class="heading adoption-heading reveal" id="adoption-title" data-edit="adoption-title" data-fit>Bring the proof<br>to your app.</h2>
   <div class="adoption-grid reveal delay-1">
-    <div class="adoption-panel"><h3 data-edit="reuse-title" data-fit>Reuse Proofline</h3><p data-edit="reuse-body" data-fit>Selection · isolated scenarios<br>Coverage gates · retained evidence</p></div>
+    <div class="adoption-panel"><h3 data-edit="reuse-title" data-fit>Reuse Proofline</h3><p data-edit="reuse-body" data-fit>Selection · verified test outcomes<br>Coverage gates · retained evidence</p></div>
     <div class="adoption-panel"><h3 data-edit="adapt-title" data-fit>Connect your application</h3><p data-edit="adapt-body" data-fit>Routes · business rules · auth<br>APIs · deterministic provider fakes</p></div>
   </div>
   <div class="adoption-arrow" aria-hidden="true">→</div>
-  <p class="adoption-note reveal delay-2" data-edit="adoption-note" data-fit>Repository-native tooling to adapt for your React/Vite app.<br>The complete declared suite runs in Chromium. Firefox/WebKit smoke is opt-in.</p>
+  <p class="adoption-note reveal delay-2" data-edit="adoption-note" data-fit>Proven on the reference CRM and an independent work-orders app.<br>Connect your routes, rules and adapters. Keep the core unchanged.</p>
   <nav class="resource-links" aria-label="Supporting material"><a href="TECHNICAL_GUIDE.md">Technical guide</a><a href="proofline-overview.pdf">PDF edition</a><a href="measurements.json">Audited measurements</a><span class="next-label">Start with one critical journey.</span></nav>
 </section>
 </main>
@@ -352,7 +416,7 @@ svg {
 <!-- === ACCESSIBLE CONTROLS / all interface chrome lives outside the stage === -->
 <nav class="deck-controls" aria-label="Presentation controls">
   <button id="prevSlide" type="button" aria-label="Previous slide" title="Previous slide (Left arrow)">←</button>
-  <span class="deck-count" id="deckCount" aria-hidden="true">1 / 10</span>
+  <span class="deck-count" id="deckCount" aria-hidden="true">1 / 13</span>
   <button id="nextSlide" type="button" aria-label="Next slide" title="Next slide (Right arrow)">→</button>
   <button class="help-button" id="helpToggle" type="button" aria-label="Show navigation help" aria-expanded="false" aria-controls="helpPanel">?</button>
   <span class="deck-progress" id="deckProgress" aria-hidden="true"></span>
@@ -360,13 +424,13 @@ svg {
 <div class="edit-hotzone" aria-hidden="true"></div>
 <button class="edit-toggle" id="editToggle" type="button" aria-label="Toggle inline editing" aria-pressed="false" title="Edit text (E)">Edit text · E</button>
 <div class="edit-toolbar" role="toolbar" aria-label="Editing controls"><button id="saveHtml" type="button">Save HTML</button><button id="resetEdits" type="button">Reset text</button></div>
-<aside class="help-panel" id="helpPanel" aria-label="Navigation help"><strong>Explore the presentation</strong><p>Arrow keys, Space, Page Up / Down<br>Home / End · swipe · mouse wheel<br><br>Replay the bug on slide 4. Watch the CRM recording on slide 5.<br>Press E to edit text. Ctrl/Cmd + S saves a local HTML copy while editing.</p></aside>
+<aside class="help-panel" id="helpPanel" aria-label="Navigation help"><strong>Explore the presentation</strong><p>Arrow keys, Space, Page Up / Down<br>Home / End · swipe · mouse wheel<br><br>Replay the bug on slide 4. Watch the CRM recording on slide 5.<br>See the second app on slide 10; results on slide 12.<br>Press E to edit text. Ctrl/Cmd + S saves a local HTML copy while editing.</p></aside>
 <div class="sr-status" id="slideStatus" role="status" aria-live="polite" aria-atomic="true"></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script id="coverageSourceData" type="application/json">
 {
   "source": "measurements.json",
-  "testedHead": "4dc77a6ec005c710bd992b771a1c984b94b4e6a1",
+  "testedHead": "4feb0572fb8aa1a18fcfdfa0e9f5333b59d714e2",
   "aggregation": "sum raw covered / total line counters per group",
   "groups": [
     {
@@ -419,15 +483,16 @@ svg {
       "workspace": "tools/impact"
     },
     {
-      "label": "Execution safeguards",
-      "covered": 443,
-      "total": 771,
-      "percent": 57.5,
+      "label": "Harness + release tools",
+      "covered": 2636,
+      "total": 3600,
+      "percent": 73.2,
       "workspace": "tools/proofline"
     }
   ]
 }
 </script>
+<script id="workOrdersCaptions" type="application/json">"WEBVTT\n\n1\n00:00:00.000 --> 00:00:05.354\nThe protected Requests route requires a desk identity\n\n2\n00:00:05.354 --> 00:00:10.318\nThe north dispatcher sees only the north request\n\n3\n00:00:10.318 --> 00:00:13.787\nCompleting the lamp removes it from Requested work\n\n4\n00:00:13.787 --> 00:00:19.882\nVisible Completed navigation shows the completed lamp\n\n5\n00:00:19.882 --> 00:00:24.640\nAfter sign out, revisiting Completed requires authentication\n\n"</script>
 <script id="bugDemoEvidence" type="application/json">{"ruleId":"FIN-002","testId":"binding-9bb406121555e978c4ee","testTitle":"Finance service > cash_first_accrues_only_settled_premium","testFile":"packages/finance-service/src/finance-service.test.ts","sourceCommit":"90987ce90891babfb7fc2f610ae52ba9f8200f32","unchangedTestSha256":"d8e16e95d4f1fd8ffb17c3d21388f0d5cb220d9a1f901407cd1e439c6e7ba1ff","expectedCommissionCents":0,"actualBugCommissionCents":250,"depositCents":2500,"redCodeCondition":"if (event.type === \"finance.premium.payment.settled\" || event.type === \"finance.deposit.recorded\") {","fixedCodeCondition":"if (event.type === \"finance.premium.payment.settled\") {","runs":{"baseline":{"exitCode":0,"selectedTests":1,"passedTests":1,"failedTests":0,"skippedTests":23,"consoleExcerpt":" ✓ packages/finance-service/src/finance-service.test.ts > Finance service > cash_first_accrues_only_settled_premium 2ms\n Test Files  1 passed (1)\n      Tests  1 passed | 23 skipped (24)\n   Duration  209ms (transform 41ms, setup 0ms, collect 49ms, tests 2ms, environment 0ms, prepare 29ms)"},"regression":{"exitCode":1,"selectedTests":1,"passedTests":0,"failedTests":1,"skippedTests":23,"consoleExcerpt":" FAIL  packages/finance-service/src/finance-service.test.ts > Finance service > cash_first_accrues_only_settled_premium\nAssertionError: expected [ { …(8) } ] to deeply equal []\n- Expected\n+ Received\n- []\n+ [\n+   {\n+     \"amountCents\": 250,"},"fixed":{"exitCode":0,"selectedTests":1,"passedTests":1,"failedTests":0,"skippedTests":23,"consoleExcerpt":" ✓ packages/finance-service/src/finance-service.test.ts > Finance service > cash_first_accrues_only_settled_premium 2ms\n Test Files  1 passed (1)\n      Tests  1 passed | 23 skipped (24)\n   Duration  198ms (transform 50ms, setup 0ms, collect 54ms, tests 2ms, environment 0ms, prepare 46ms)"},"finance-suite":{"exitCode":0,"selectedTests":24,"passedTests":24,"failedTests":0,"skippedTests":0,"consoleExcerpt":" ✓ packages/finance-service/src/finance-service.test.ts > Finance service > cash_first_accrues_only_settled_premium 0ms\n Test Files  1 passed (1)\n      Tests  24 passed (24)\n   Duration  220ms (transform 44ms, setup 0ms, collect 50ms, tests 10ms, environment 0ms, prepare 30ms)"}}}</script>
 <script>
 /* === PRESENTATION CONTROLLER: fixed stage, keyboard, wheel and swipe === */
@@ -518,7 +583,7 @@ class SlidePresentation {
 class InlineEditor {
   constructor() {
     this.isActive = false;
-    this.key = 'proofline-warm-editorial-text-v2';
+    this.key = 'proofline-warm-editorial-enterprise-v3';
     this.elements = [...document.querySelectorAll('[data-edit]')];
     this.original = new Map(this.elements.map(element => [element.dataset.edit, element.innerHTML]));
     try {
@@ -585,7 +650,7 @@ class InlineEditor {
     const url = URL.createObjectURL(blob);const link = document.createElement('a');
     link.href=url;link.download='proofline-overview.html';document.body.appendChild(link);link.click();link.remove();
     setTimeout(() => URL.revokeObjectURL(url),1000);
-    this.toast('HTML saved · keep it beside the demo folder');
+    this.toast('HTML saved · keep it beside both demo folders');
   }
   toast(message) {
     const toast = document.getElementById('toast');toast.textContent=message;toast.classList.add('show');
@@ -597,6 +662,9 @@ const workflowCaptions = "WEBVTT\n\n1\n00:00:00.000 --> 00:00:07.230\nProtected 
 const captionUrl = URL.createObjectURL(new Blob([workflowCaptions],{type:'text/vtt'}));
 const captionTrack = document.querySelector('#workflowVideo track');
 captionTrack.src = captionUrl;
+const workOrdersCaptionUrl = URL.createObjectURL(new Blob([JSON.parse(document.getElementById('workOrdersCaptions').textContent)],{type:'text/vtt'}));
+document.querySelector('#workOrdersVideo track').src = workOrdersCaptionUrl;
+addEventListener('pagehide', () => URL.revokeObjectURL(workOrdersCaptionUrl),{once:true});
 addEventListener('pagehide', () => URL.revokeObjectURL(captionUrl),{once:true});
 window.deck = new SlidePresentation();
 window.editor = new InlineEditor();

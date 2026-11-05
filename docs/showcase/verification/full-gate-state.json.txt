@@ -1,0 +1,190 @@
+{
+  "mode": "LOCAL CI CONTRACT EMULATION; no actual GitHub run or deployment",
+  "head": "4feb0572fb8aa1a18fcfdfa0e9f5333b59d714e2",
+  "base": "cfe5f11630eac902210bce1999b7a34f9847d8fc",
+  "startedAt": "2026-11-05T02:37:27.864595+00:00",
+  "steps": [
+    {
+      "key": "lint",
+      "argv": [
+        "pnpm",
+        "lint"
+      ],
+      "exitCode": 0,
+      "seconds": 0.341
+    },
+    {
+      "key": "typecheck",
+      "argv": [
+        "pnpm",
+        "typecheck"
+      ],
+      "exitCode": 0,
+      "seconds": 8.408
+    },
+    {
+      "key": "manifest",
+      "argv": [
+        "pnpm",
+        "harness:validate"
+      ],
+      "exitCode": 0,
+      "seconds": 0.448
+    },
+    {
+      "key": "impactPreview",
+      "argv": [
+        "pnpm",
+        "test:impacted",
+        "--",
+        "--dry-run"
+      ],
+      "exitCode": 0,
+      "seconds": 17.875
+    },
+    {
+      "key": "impact",
+      "argv": [
+        "pnpm",
+        "test:impacted"
+      ],
+      "exitCode": 0,
+      "seconds": 201.721
+    },
+    {
+      "key": "unit",
+      "argv": [
+        "pnpm",
+        "test"
+      ],
+      "exitCode": 0,
+      "seconds": 153.397
+    },
+    {
+      "key": "browser",
+      "argv": [
+        "pnpm",
+        "e2e"
+      ],
+      "exitCode": 0,
+      "seconds": 28.063
+    },
+    {
+      "key": "coverage",
+      "argv": [
+        "pnpm",
+        "coverage"
+      ],
+      "exitCode": 0,
+      "seconds": 152.395
+    },
+    {
+      "key": "coverageCheck",
+      "argv": [
+        "pnpm",
+        "coverage:check"
+      ],
+      "exitCode": 0,
+      "seconds": 0.454
+    },
+    {
+      "key": "record",
+      "argv": [
+        "pnpm",
+        "record:check"
+      ],
+      "exitCode": 0,
+      "seconds": 0.527
+    },
+    {
+      "key": "production",
+      "argv": [
+        "pnpm",
+        "proofline:check-production"
+      ],
+      "exitCode": 0,
+      "seconds": 0.263
+    },
+    {
+      "key": "whitespace",
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exitCode": 0,
+      "seconds": 0.006
+    },
+    {
+      "key": "browserScenario",
+      "argv": [
+        "node",
+        "tools/proofline/canonical-runner.mjs",
+        "playwright",
+        "test",
+        "--config",
+        "apps/crm-e2e/playwright.config.ts",
+        "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+        "--project",
+        "chromium",
+        "--workers=2"
+      ],
+      "exitCode": 0,
+      "seconds": 4.531
+    },
+    {
+      "key": "browserScenarioShard1",
+      "argv": [
+        "node",
+        "tools/proofline/canonical-runner.mjs",
+        "playwright",
+        "test",
+        "--config",
+        "apps/crm-e2e/playwright.config.ts",
+        "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+        "--project",
+        "chromium",
+        "--shard=1/2"
+      ],
+      "exitCode": 0,
+      "seconds": 3.509
+    },
+    {
+      "key": "browserScenarioShard2",
+      "argv": [
+        "node",
+        "tools/proofline/canonical-runner.mjs",
+        "playwright",
+        "test",
+        "--config",
+        "apps/crm-e2e/playwright.config.ts",
+        "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+        "--project",
+        "chromium",
+        "--shard=2/2"
+      ],
+      "exitCode": 0,
+      "seconds": 2.998
+    },
+    {
+      "key": "portability",
+      "argv": [
+        "pnpm",
+        "proofline:validate-portability"
+      ],
+      "exitCode": 0,
+      "seconds": 20.086
+    },
+    {
+      "key": "bundle",
+      "exitCode": 0
+    },
+    {
+      "key": "bundleVerification",
+      "exitCode": 0
+    }
+  ],
+  "outcome": "passed",
+  "current": "bundle",
+  "finishedAt": "2026-11-05T02:47:23.854909+00:00"
+}

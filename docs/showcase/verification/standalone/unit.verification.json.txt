@@ -1,0 +1,71 @@
+{
+  "version": 1,
+  "invocationId": "0ec53e55-5a7f-4018-bb75-db40b4507ba8",
+  "runner": "aggregate",
+  "sourceCommit": "4b6f932eb8c9374efbeb767bffa4ada91b2528b2",
+  "repositoryRoot": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-work-orders-28jZj0",
+  "sessionId": "900000002-1",
+  "ciRunId": "900000002",
+  "ciRunAttempt": "1",
+  "repository": "deanmng1/proofline",
+  "workflow": "deanmng1/proofline/.github/workflows/verify.yml@refs/heads/main",
+  "gateKey": "portability:unit",
+  "gateExecutionId": "900000002-1-portability:unit",
+  "scope": "full",
+  "argv": [
+    "/Users/dio/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+    "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-work-orders-28jZj0/tools/proofline/canonical-runner.mjs",
+    "unit"
+  ],
+  "cwd": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-work-orders-28jZj0",
+  "exitCode": 0,
+  "outcome": "passed",
+  "expected": [
+    {
+      "file": "client/orders.test.ts",
+      "title": "work order rules > completes_a_request_once_and_replays_the_same_command"
+    },
+    {
+      "file": "client/orders.test.ts",
+      "title": "work order rules > denies_observers_and_foreign_organizations_without_mutation"
+    }
+  ],
+  "observed": [
+    {
+      "file": "client/orders.test.ts",
+      "title": "work order rules > completes_a_request_once_and_replays_the_same_command",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    },
+    {
+      "file": "client/orders.test.ts",
+      "title": "work order rules > denies_observers_and_foreign_organizations_without_mutation",
+      "project": "",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "mode": "run"
+    }
+  ],
+  "errors": [],
+  "children": [
+    {
+      "version": 1,
+      "invocationId": "dbf2e17c-cf14-4d9e-bb9a-e33c7e298af3",
+      "verification": "runs/dbf2e17c-cf14-4d9e-bb9a-e33c7e298af3/verification.json",
+      "sha256": "0f38e8b2100664aaf6359e8a54209cc8b8a6de76dde6763a755412cf983c2bcd"
+    }
+  ],
+  "artifacts": {},
+  "metadata": {
+    "projects": [],
+    "workers": null,
+    "shard": null
+  },
+  "gateComplete": true
+}

@@ -1,0 +1,69 @@
+{
+  "status": "passed",
+  "capturedAt": "2026-11-05T04:15:59.761Z",
+  "sourceWorkflow": "checks/browser/journeys.spec.ts:navigates_requests_to_completed_and_revokes_the_session",
+  "sourceFixture": "checks/browser/scenario.mjs",
+  "viewport": {
+    "width": 960,
+    "height": 540
+  },
+  "scenario": "71c83d35-b573-4cc4-bc86-b59c3b873e8a",
+  "origin": "http://127.0.0.1:59429",
+  "stages": [
+    {
+      "image": "01-sign-in.png",
+      "label": "The protected Requests route requires a desk identity",
+      "elapsedSeconds": 1.633,
+      "path": "/signin"
+    },
+    {
+      "image": "02-requests.png",
+      "label": "The north dispatcher sees only the north request",
+      "elapsedSeconds": 5.604,
+      "path": "/desk/requests"
+    },
+    {
+      "image": "03-request-completed.png",
+      "label": "Completing the lamp removes it from Requested work",
+      "elapsedSeconds": 10.568,
+      "path": "/desk/requests"
+    },
+    {
+      "image": "04-completed.png",
+      "label": "Visible Completed navigation shows the completed lamp",
+      "elapsedSeconds": 14.037,
+      "path": "/desk/completed"
+    },
+    {
+      "image": "05-signed-out.png",
+      "label": "After sign out, revisiting Completed requires authentication",
+      "elapsedSeconds": 20.132,
+      "path": "/signin"
+    }
+  ],
+  "state": [
+    {
+      "id": "north-1",
+      "organization": "north",
+      "title": "Replace lobby lamp",
+      "state": "completed"
+    },
+    {
+      "id": "south-1",
+      "organization": "south",
+      "title": "Inspect loading door",
+      "state": "requested"
+    }
+  ],
+  "assertions": {
+    "completedNorthOrders": 1,
+    "requestedSouthOrders": 1,
+    "mutations": 1,
+    "unexpectedRequests": 0,
+    "sessionAfterLogout": null,
+    "sessionCookieAfterLogout": false
+  },
+  "finalPath": "/signin",
+  "elapsedSeconds": 24.64,
+  "note": "Unchanged standalone target UI and target-owned test fixture; no injected UI or styles, provider connection, hosted CI, or deployment."
+}

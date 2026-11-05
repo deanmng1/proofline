@@ -1,0 +1,97 @@
+{
+  "commands": [
+    {
+      "name": "browser-runtime-skip",
+      "exitCode": 1,
+      "reference": {
+        "version": 1,
+        "invocationId": "9a483d9a-f597-4f45-8fcc-64c3288aa847",
+        "verification": "runs/9a483d9a-f597-4f45-8fcc-64c3288aa847/verification.json",
+        "sha256": "4202b836f65b07eb2368198e2084036347309b40c2dc19749b24bdac57226348"
+      },
+      "outcome": "failed",
+      "errors": [
+        "Required identity did not genuinely pass: [\"apps/crm-e2e/src/proofline/cross-browser-smoke.spec.ts\",\"runs_the_cross_browser_invariant_smoke @proofline-smoke\",\"chromium\"]"
+      ]
+    },
+    {
+      "name": "browser-restored",
+      "exitCode": 0,
+      "reference": {
+        "version": 1,
+        "invocationId": "5be29386-624f-4dbf-a1af-4f8ddda7409e",
+        "verification": "runs/5be29386-624f-4dbf-a1af-4f8ddda7409e/verification.json",
+        "sha256": "54b37139b7e9c1e0ea91aa9ad3075ec116464e80581a55fd3dd3861e44d92538"
+      },
+      "outcome": "passed",
+      "errors": []
+    },
+    {
+      "name": "browser-artifact-failure",
+      "exitCode": 1,
+      "reference": {
+        "version": 1,
+        "invocationId": "635e41de-55f2-4bfa-afc9-8659139a8d1a",
+        "verification": "runs/635e41de-55f2-4bfa-afc9-8659139a8d1a/verification.json",
+        "sha256": "073e8b6c207e58089afb9f18d14a03b287e849afa5590527c57ce03a37b83875"
+      },
+      "outcome": "failed",
+      "errors": [
+        "Required identity did not genuinely pass: [\"apps/crm-e2e/src/proofline/cross-browser-smoke.spec.ts\",\"runs_the_cross_browser_invariant_smoke @proofline-smoke\",\"chromium\"]",
+        "Runner exited 1"
+      ]
+    },
+    {
+      "name": "browser-artifact-success",
+      "exitCode": 0,
+      "reference": {
+        "version": 1,
+        "invocationId": "d77d6936-f81f-49bd-8d0b-ea453a044848",
+        "verification": "runs/d77d6936-f81f-49bd-8d0b-ea453a044848/verification.json",
+        "sha256": "0759dc7116cc4bb56f2513c341cbbaa395ecd3f8c8916fb753f817e8df496bc6"
+      },
+      "outcome": "passed",
+      "errors": []
+    }
+  ],
+  "preservedDirectory": "/Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed/artifacts/proofline/runs/635e41de-55f2-4bfa-afc9-8659139a8d1a",
+  "sha256Inventory": {
+    "discovery.stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr.log": "a30b438e1ff1b35fcfc7f0326b21e9f83238dde4d519e30bdaa3124daa945e27",
+    "discovery.json": "53f6343562a6fc237b7f246704f019d5962ab00db0f9111c3fe6d33172ac5040",
+    "stdout.log": "8ceeae888a961102e69c3d356e2c8bb06a8a73266e8fadb6efef76fbd427ccff",
+    "discovery.stdout.log": "27bdc2566e24ed85482445da3da32ffb2f9497a721eff5597f879d020b7a7dc2",
+    "native-report.json": "46995e06be21c39225399965b09530ba0736faf17744e0b489a5ea4edd8d1b96",
+    "verification.json": "073e8b6c207e58089afb9f18d14a03b287e849afa5590527c57ce03a37b83875",
+    "html-report/index.html": "1f2b78bc70d1b2b20928c983f87dd8a2dfa9bdf6164f16d3838b2d3c71d71d73",
+    "test-results/.last-run.json": "b47ef62ca8397c8fc1b3a8a334b7485bafe60349301d66c9776be59edc09d1a1",
+    "test-results/proofline-cross-browser-sm-fec05-riant-smoke-proofline-smoke-chromium/test-failed-2.png": "3878570f4a62a0d65f57cf1754e0269e56ec797f4e36e26b44c172eb6e800401",
+    "test-results/proofline-cross-browser-sm-fec05-riant-smoke-proofline-smoke-chromium/test-failed-1.png": "0055fa27a45739eea2886c7de0a7a740ef15a744559e58c5dd6da7d37892f8e3",
+    "test-results/proofline-cross-browser-sm-fec05-riant-smoke-proofline-smoke-chromium/trace.zip": "9cb0240b84020e05ec4efea534b4cb0bf7cbe21bc991132c48345bd8e29f9037",
+    "test-results/proofline-cross-browser-sm-fec05-riant-smoke-proofline-smoke-chromium/error-context.md": "93a19ea0cd2001261ee34e619252776a019fd8abc3c1f7b85c2313721520c52a",
+    "test-results/proofline-cross-browser-sm-fec05-riant-smoke-proofline-smoke-chromium/videos/page@59947e17adf3d7472989df2642e7c7ab.webm": "100dfa99e8d0062f13e5eaf96d7d2c03d106a06aed09c1b634e5e68311946ba5",
+    "html-report/trace/codeMirrorModule.-QdMvsKi.css": "20be824a82832b62cc04642d31da3c609fd280b23f1cdcb1e622c4f40aac5ab8",
+    "html-report/trace/defaultSettingsView.BLFoOugd.css": "72241b3112ab609ca0e06195e85e02cb373799217cd5f24a07d61d9273c4ad3e",
+    "html-report/trace/index.html": "e2218af9284b6e1c2ec3b547320857778a323fd1473d90620153e967223c5721",
+    "html-report/trace/snapshot.B_Jk1wbt.js": "d4d09e05451d107d8e1a6bbd041405fe518b9fd2833890e4ebaaad83b7f554f5",
+    "html-report/trace/index.KZ4wOW1K.js": "53e2227532161670bc601e241a7a9af00ac54826a9dd2ef9c15b8c1f77e92e63",
+    "html-report/trace/uiMode.Dzuouizj.js": "a584f96f0797144552430d7a04f7e3b84b1baaa0b781a664b1512339ec1c760b",
+    "html-report/trace/uiMode.C7UW1sC9.css": "c194e703ad4697e31c5e9b8d1e4f75f201a1fbe9940620fa6319dfa5543707b4",
+    "html-report/trace/codicon.DCmgc-ay.ttf": "0f1d5219934e96e83b8db162d60b4d8c09b5de1e7d38031cbafe4a3c0f2889c9",
+    "html-report/trace/snapshot.html": "c608c8899c95c5a74d3f556e20146c3d852b9df85ae2854c659a7cc773c9b727",
+    "html-report/trace/index.B_TqY17P.css": "08a212fcacae1866f44f065654afcc4c7d03409c68c74b3315c5bda17a0ca003",
+    "html-report/trace/xtermModule.kHJ-D0s7.css": "0dd60056134e6a2994a86b59a1e9789b9f04e92924da109aef8c923acaf08ce5",
+    "html-report/trace/manifest.webmanifest": "d8540500603a32a39fe7e5a0375dc0f9ebafd11118e06a846db7efc608223ab9",
+    "html-report/trace/sw.bundle.js": "cfd6662a71914516efe90a5a6f3da2bbe5db6e442939b868ca465f765d33723f",
+    "html-report/trace/uiMode.html": "32b260f173708fe088834efe8eff0f9d92af0c7e2e6c987cd8e197f0a066742f",
+    "html-report/trace/playwright-logo.svg": "6b0a4367bdeab10995bc239278f04c68c10e48adbec15e799e01909a0d66dcb9",
+    "html-report/data/68cbc3d5a5527a5f221b550e6f65f7c44704139b.md": "93a19ea0cd2001261ee34e619252776a019fd8abc3c1f7b85c2313721520c52a",
+    "html-report/data/78485ad26ab49de2007fe98b0854715a58aaf5b6.png": "3878570f4a62a0d65f57cf1754e0269e56ec797f4e36e26b44c172eb6e800401",
+    "html-report/data/093d075658c39077498aeb507b4d5102505c4876.zip": "9cb0240b84020e05ec4efea534b4cb0bf7cbe21bc991132c48345bd8e29f9037",
+    "html-report/data/2681fbb0c7481ab79305d6f099a154ef8115d42d.png": "0055fa27a45739eea2886c7de0a7a740ef15a744559e58c5dd6da7d37892f8e3",
+    "html-report/trace/assets/urlMatch-L3liM589.js": "1bc6321e32d11c31a452bc75896f0b344e6153321854d9f1658818be7f845c16",
+    "html-report/trace/assets/defaultSettingsView-B-dXF5JN.js": "2ce8be133fe21a4abd7d8330d9b443092dc2ce28826f191442c14989f9d55b15",
+    "html-report/trace/assets/codeMirrorModule-rXmQmLUY.js": "bb0f7c41f9889e4195c2504878e38061288881f426498434c9955479828f7e66"
+  },
+  "preserved": true
+}

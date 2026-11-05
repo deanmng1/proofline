@@ -1,0 +1,243 @@
+{
+  "version": 1,
+  "invocationId": "721c2811-e29a-476f-b934-e02b7e838746",
+  "runner": "playwright",
+  "sourceCommit": "4feb0572fb8aa1a18fcfdfa0e9f5333b59d714e2",
+  "repositoryRoot": "/Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed",
+  "sessionId": "900000002-1",
+  "ciRunId": "900000002",
+  "ciRunAttempt": "1",
+  "repository": "deanmng1/proofline",
+  "workflow": "deanmng1/proofline/.github/workflows/verify.yml@refs/heads/main",
+  "gateKey": "browserScenarioShard2",
+  "gateExecutionId": "900000002-1-browserScenarioShard2",
+  "scope": "subset",
+  "argv": [
+    "/Users/dio/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+    "/Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed/node_modules/@playwright/test/cli.js",
+    "test",
+    "--config",
+    "apps/crm-e2e/playwright.config.ts",
+    "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+    "--project",
+    "chromium",
+    "--shard=2/2",
+    "--reporter=list,json,html",
+    "--output=/Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed/artifacts/proofline/runs/721c2811-e29a-476f-b934-e02b7e838746/test-results"
+  ],
+  "requestedArgs": [
+    "test",
+    "--config",
+    "apps/crm-e2e/playwright.config.ts",
+    "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+    "--project",
+    "chromium",
+    "--shard=2/2"
+  ],
+  "cwd": "/Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed",
+  "exitCode": 0,
+  "outcome": "passed",
+  "expected": [
+    {
+      "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+      "title": "matches_an_operation_fault_once_to_an_opaque_ui_created_bind",
+      "project": "chromium"
+    },
+    {
+      "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+      "title": "rejects_role_and_cross_tenant_mutations_through_the_test_api",
+      "project": "chromium"
+    },
+    {
+      "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+      "title": "copies_identity_claims_and_rejects_conflicting_redefinitions",
+      "project": "chromium"
+    },
+    {
+      "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+      "title": "rolls_back_a_new_identity_after_context_setup_failure",
+      "project": "chromium"
+    },
+    {
+      "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+      "title": "reserves_pending_identity_claims_until_concurrent_context_setup_commits",
+      "project": "chromium"
+    },
+    {
+      "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+      "title": "scenario_reset_retains_failed_contexts_for_a_deterministic_retry",
+      "project": "chromium"
+    },
+    {
+      "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+      "title": "worker_setup_stops_the_server_when_bootstrap_close_fails",
+      "project": "chromium"
+    },
+    {
+      "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+      "title": "factory_teardown_rejects_an_unacknowledged_caught_denial",
+      "project": "chromium"
+    },
+    {
+      "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+      "title": "shard_a_isolates_runtime_and_storage",
+      "project": "chromium"
+    },
+    {
+      "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+      "title": "shard_b_isolates_runtime_and_storage",
+      "project": "chromium"
+    },
+    {
+      "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+      "title": "shard_a_uses_an_os_assigned_worker_port",
+      "project": "chromium"
+    },
+    {
+      "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+      "title": "shard_b_uses_an_os_assigned_worker_port",
+      "project": "chromium"
+    }
+  ],
+  "observed": [
+    {
+      "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+      "title": "matches_an_operation_fault_once_to_an_opaque_ui_created_bind",
+      "project": "chromium",
+      "expectedStatus": "passed",
+      "status": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "nativeStatus": "expected"
+    },
+    {
+      "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+      "title": "rejects_role_and_cross_tenant_mutations_through_the_test_api",
+      "project": "chromium",
+      "expectedStatus": "passed",
+      "status": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "nativeStatus": "expected"
+    },
+    {
+      "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+      "title": "copies_identity_claims_and_rejects_conflicting_redefinitions",
+      "project": "chromium",
+      "expectedStatus": "passed",
+      "status": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "nativeStatus": "expected"
+    },
+    {
+      "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+      "title": "rolls_back_a_new_identity_after_context_setup_failure",
+      "project": "chromium",
+      "expectedStatus": "passed",
+      "status": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "nativeStatus": "expected"
+    },
+    {
+      "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+      "title": "reserves_pending_identity_claims_until_concurrent_context_setup_commits",
+      "project": "chromium",
+      "expectedStatus": "passed",
+      "status": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "nativeStatus": "expected"
+    },
+    {
+      "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+      "title": "scenario_reset_retains_failed_contexts_for_a_deterministic_retry",
+      "project": "chromium",
+      "expectedStatus": "passed",
+      "status": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "nativeStatus": "expected"
+    },
+    {
+      "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+      "title": "worker_setup_stops_the_server_when_bootstrap_close_fails",
+      "project": "chromium",
+      "expectedStatus": "passed",
+      "status": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "nativeStatus": "expected"
+    },
+    {
+      "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+      "title": "factory_teardown_rejects_an_unacknowledged_caught_denial",
+      "project": "chromium",
+      "expectedStatus": "passed",
+      "status": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "nativeStatus": "expected"
+    },
+    {
+      "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+      "title": "shard_a_isolates_runtime_and_storage",
+      "project": "chromium",
+      "expectedStatus": "passed",
+      "status": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "nativeStatus": "expected"
+    },
+    {
+      "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+      "title": "shard_b_isolates_runtime_and_storage",
+      "project": "chromium",
+      "expectedStatus": "passed",
+      "status": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "nativeStatus": "expected"
+    },
+    {
+      "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+      "title": "shard_a_uses_an_os_assigned_worker_port",
+      "project": "chromium",
+      "expectedStatus": "passed",
+      "status": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "nativeStatus": "expected"
+    },
+    {
+      "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+      "title": "shard_b_uses_an_os_assigned_worker_port",
+      "project": "chromium",
+      "expectedStatus": "passed",
+      "status": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "nativeStatus": "expected"
+    }
+  ],
+  "errors": [],
+  "children": [],
+  "artifacts": {
+    "nativeReport": "runs/721c2811-e29a-476f-b934-e02b7e838746/native-report.json",
+    "stdout": "runs/721c2811-e29a-476f-b934-e02b7e838746/stdout.log",
+    "stderr": "runs/721c2811-e29a-476f-b934-e02b7e838746/stderr.log",
+    "discovery": "runs/721c2811-e29a-476f-b934-e02b7e838746/discovery.json"
+  },
+  "metadata": {
+    "projects": [
+      "chromium"
+    ],
+    "workers": "2",
+    "shard": {
+      "current": 2,
+      "total": 2
+    }
+  },
+  "gateComplete": true
+}

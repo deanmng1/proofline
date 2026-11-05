@@ -1,0 +1,243 @@
+{
+  "version": 1,
+  "invocationId": "84cd8ac0-bfa3-4a73-ac80-6780b3f0cc8c",
+  "runner": "playwright",
+  "sourceCommit": "4feb0572fb8aa1a18fcfdfa0e9f5333b59d714e2",
+  "repositoryRoot": "/Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed",
+  "sessionId": "900000002-1",
+  "ciRunId": "900000002",
+  "ciRunAttempt": "1",
+  "repository": "deanmng1/proofline",
+  "workflow": "deanmng1/proofline/.github/workflows/verify.yml@refs/heads/main",
+  "gateKey": "browserScenarioShard1",
+  "gateExecutionId": "900000002-1-browserScenarioShard1",
+  "scope": "subset",
+  "argv": [
+    "/Users/dio/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+    "/Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed/node_modules/@playwright/test/cli.js",
+    "test",
+    "--config",
+    "apps/crm-e2e/playwright.config.ts",
+    "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+    "--project",
+    "chromium",
+    "--shard=1/2",
+    "--reporter=list,json,html",
+    "--output=/Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed/artifacts/proofline/runs/84cd8ac0-bfa3-4a73-ac80-6780b3f0cc8c/test-results"
+  ],
+  "requestedArgs": [
+    "test",
+    "--config",
+    "apps/crm-e2e/playwright.config.ts",
+    "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+    "--project",
+    "chromium",
+    "--shard=1/2"
+  ],
+  "cwd": "/Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed",
+  "exitCode": 0,
+  "outcome": "passed",
+  "expected": [
+    {
+      "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+      "title": "starts_unauthenticated_and_logs_in_through_routed_auth",
+      "project": "chromium"
+    },
+    {
+      "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+      "title": "rotates_access_tokens_and_revokes_the_context_on_logout",
+      "project": "chromium"
+    },
+    {
+      "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+      "title": "fails_an_undeclared_browser_request_with_scenario_context",
+      "project": "chromium"
+    },
+    {
+      "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+      "title": "denies_an_undeclared_worker_request_with_scenario_context",
+      "project": "chromium"
+    },
+    {
+      "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+      "title": "blocks_service_worker_registration_and_cleans_registrations",
+      "project": "chromium"
+    },
+    {
+      "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+      "title": "denies_browser_websockets_with_deterministic_context",
+      "project": "chromium"
+    },
+    {
+      "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+      "title": "separate_scenarios_receive_distinct_runtime_ids_and_state",
+      "project": "chromium"
+    },
+    {
+      "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+      "title": "shares_one_runtime_only_across_explicit_contexts",
+      "project": "chromium"
+    },
+    {
+      "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+      "title": "cleans_up_after_a_failed_scenario_assertion",
+      "project": "chromium"
+    },
+    {
+      "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+      "title": "honors_declared_roles_and_one_shot_route_faults",
+      "project": "chromium"
+    },
+    {
+      "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+      "title": "keeps_context_contract_authority_faults_and_tenant_inspection_inside_the_adapter",
+      "project": "chromium"
+    },
+    {
+      "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+      "title": "binds_contract_requests_to_context_tokens_and_revokes_them_after_logout",
+      "project": "chromium"
+    }
+  ],
+  "observed": [
+    {
+      "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+      "title": "starts_unauthenticated_and_logs_in_through_routed_auth",
+      "project": "chromium",
+      "expectedStatus": "passed",
+      "status": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "nativeStatus": "expected"
+    },
+    {
+      "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+      "title": "rotates_access_tokens_and_revokes_the_context_on_logout",
+      "project": "chromium",
+      "expectedStatus": "passed",
+      "status": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "nativeStatus": "expected"
+    },
+    {
+      "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+      "title": "fails_an_undeclared_browser_request_with_scenario_context",
+      "project": "chromium",
+      "expectedStatus": "passed",
+      "status": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "nativeStatus": "expected"
+    },
+    {
+      "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+      "title": "denies_an_undeclared_worker_request_with_scenario_context",
+      "project": "chromium",
+      "expectedStatus": "passed",
+      "status": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "nativeStatus": "expected"
+    },
+    {
+      "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+      "title": "blocks_service_worker_registration_and_cleans_registrations",
+      "project": "chromium",
+      "expectedStatus": "passed",
+      "status": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "nativeStatus": "expected"
+    },
+    {
+      "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+      "title": "denies_browser_websockets_with_deterministic_context",
+      "project": "chromium",
+      "expectedStatus": "passed",
+      "status": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "nativeStatus": "expected"
+    },
+    {
+      "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+      "title": "separate_scenarios_receive_distinct_runtime_ids_and_state",
+      "project": "chromium",
+      "expectedStatus": "passed",
+      "status": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "nativeStatus": "expected"
+    },
+    {
+      "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+      "title": "shares_one_runtime_only_across_explicit_contexts",
+      "project": "chromium",
+      "expectedStatus": "passed",
+      "status": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "nativeStatus": "expected"
+    },
+    {
+      "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+      "title": "cleans_up_after_a_failed_scenario_assertion",
+      "project": "chromium",
+      "expectedStatus": "passed",
+      "status": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "nativeStatus": "expected"
+    },
+    {
+      "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+      "title": "honors_declared_roles_and_one_shot_route_faults",
+      "project": "chromium",
+      "expectedStatus": "passed",
+      "status": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "nativeStatus": "expected"
+    },
+    {
+      "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+      "title": "keeps_context_contract_authority_faults_and_tenant_inspection_inside_the_adapter",
+      "project": "chromium",
+      "expectedStatus": "passed",
+      "status": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "nativeStatus": "expected"
+    },
+    {
+      "file": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+      "title": "binds_contract_requests_to_context_tokens_and_revokes_them_after_logout",
+      "project": "chromium",
+      "expectedStatus": "passed",
+      "status": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "nativeStatus": "expected"
+    }
+  ],
+  "errors": [],
+  "children": [],
+  "artifacts": {
+    "nativeReport": "runs/84cd8ac0-bfa3-4a73-ac80-6780b3f0cc8c/native-report.json",
+    "stdout": "runs/84cd8ac0-bfa3-4a73-ac80-6780b3f0cc8c/stdout.log",
+    "stderr": "runs/84cd8ac0-bfa3-4a73-ac80-6780b3f0cc8c/stderr.log",
+    "discovery": "runs/84cd8ac0-bfa3-4a73-ac80-6780b3f0cc8c/discovery.json"
+  },
+  "metadata": {
+    "projects": [
+      "chromium"
+    ],
+    "workers": "2",
+    "shard": {
+      "current": 1,
+      "total": 2
+    }
+  },
+  "gateComplete": true
+}

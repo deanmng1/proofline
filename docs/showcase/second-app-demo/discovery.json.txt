@@ -1,0 +1,98 @@
+{
+  "config": {
+    "argv": [
+      "/Users/dio/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+      "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-work-orders-28jZj0/node_modules/@playwright/test/cli.js",
+      "test",
+      "--config",
+      "showcase-capture-b1078611-dd3c-4391-bcdd-bf71039c204e/playwright.config.mjs",
+      "--list",
+      "--reporter=json"
+    ],
+    "configFile": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-work-orders-28jZj0/showcase-capture-b1078611-dd3c-4391-bcdd-bf71039c204e/playwright.config.mjs",
+    "rootDir": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-work-orders-28jZj0/showcase-capture-b1078611-dd3c-4391-bcdd-bf71039c204e",
+    "failOnFlakyTests": false,
+    "forbidOnly": true,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {},
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-work-orders-28jZj0/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {},
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-work-orders-28jZj0/showcase-capture-b1078611-dd3c-4391-bcdd-bf71039c204e",
+        "testIgnore": [],
+        "testMatch": [
+          "capture-workflow.spec.ts"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.62.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "capture-workflow.spec.ts",
+      "file": "capture-workflow.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "records_the_target_owned_navigated_work_order_journey",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "4978ce354cf017bfca1b-f40fb2ef6991f4aae386",
+          "file": "capture-workflow.spec.ts",
+          "line": 27,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-05T04:15:34.179Z",
+    "duration": 34.908000000000015,
+    "expected": 0,
+    "skipped": 1,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

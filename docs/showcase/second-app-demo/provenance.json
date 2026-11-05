@@ -1,0 +1,361 @@
+{
+  "schemaVersion": 1,
+  "capturedAt": "2026-11-05T04:15:59.761Z",
+  "result": "passed",
+  "host": {
+    "repository": "deanmng1/proofline",
+    "contextualHead": "6324ffcdc3fb57e085e629e39346cbb85d13f378",
+    "verifiedImplementationHead": "4feb0572fb8aa1a18fcfdfa0e9f5333b59d714e2",
+    "portabilityResult": "artifacts/portability/latest.json",
+    "portabilityResultSha256": "6ca8db5a1b354c717e54b6b338863892362a512fbf3926e45fdb7fe6da2f9f76"
+  },
+  "target": {
+    "path": "/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-work-orders-28jZj0",
+    "commit": "4b6f932eb8c9374efbeb767bffa4ada91b2528b2",
+    "retainedVerifiedHead": "4b6f932eb8c9374efbeb767bffa4ada91b2528b2",
+    "runtime": "unrelated standalone work-orders React/Vite application",
+    "sourceSha256": {
+      "client/app.jsx": "10485b3db5d3f7b6ad20ffd31e006e6e40886c405df04559c2f3a5dfd2d17b36",
+      "client/index.html": "67309db24fc2239a5aaa4c4fdd6f2633b13bb822fd8e9aef6bff1c7752ce843d",
+      "client/main.jsx": "497c7426fa46ba08e45b8625c64b9f6c31c71b0a83cd791fb86d88e50b8afc94",
+      "client/orders.mjs": "e097c84325084c2b8c7d9f982e4f22a74777fe2b5ec03981554b996dfa4d61ac",
+      "client/orders.test.ts": "41f03b00cb4456c15c5915929d674b45a09288ab8db858c18d54283806d3b96a",
+      "client/test-entry.jsx": "a4b2d6a4879820b3c2eb76fb30ed6f9c99d3e9d2c339ad6f2e4a41c017a9ca64",
+      "client/test-globals.d.ts": "7c3bf1b437d579344f22d7221789f833019185d8508f242030a3ce87f45f1b2b",
+      "client/vite.config.mjs": "cdb054ede72be1667388a00fb71a2734905f45da757ab746814ffaa8f65a5ef4",
+      "client/vitest.config.mjs": "7164e5a921013f2daa7ba10183d909218b01cdbf329653e0a16de926ac10b635",
+      "checks/browser/api.mjs": "d853ca4503c78c78ad03c18e5e81580693118f3125dab1479a659bdc3a345b94",
+      "checks/browser/auth.mjs": "731069be4acb0df5cc41d984cbbb67f3d9054736efd5035c9716480e68979ff5",
+      "checks/browser/journeys.spec.ts": "8c408fb4ef78c9f01eac5ecff2a7de6bcb264f577c6026382dc64b0530c6b176",
+      "checks/browser/playwright.config.mjs": "4e60dcea731c495b167c49caacdc12eaaad2dc8879ec4e1c10a377c694ad1826",
+      "checks/browser/scenario.mjs": "6d6579c92c15e62549bcdf8672874191fab55c90d892ec641f546675997bfd3f",
+      "checks/build.mjs": "7d28724a89293f3a6fdb7d4ddf25bbe1bef3399341e61f5e2d929fbe611d1292",
+      "checks/static-check.mjs": "9eb8e5750234a9517dc2950d197c359fe14fc8fdc241a2365f08d58293d2f306",
+      "package.json": "963df0a22030ff22808c05030b585be93d30deb80849d3ff3be6c715c3b81994",
+      "proofline.harness.json": "534a8b9b513c73921501abdf7ac3fec6d2db0065fc90f3111e642614e1e8e4e2"
+    },
+    "testBuildSha256": {
+      ".proofline/modules.json": "35d11a29e73aa44572a8850f9b4749ce646d693606726b06cd1987247415063e",
+      ".vite/manifest.json": "713772d6a99e5526503294adf26a8c1c13fab3fa3f084e510c1f9c0d762e2fb6",
+      "assets/index-DiBr2A12.js": "14c6c76084647a1e6f411571f1258704d6e2d3ad4ca57014aba6659f28a2f293",
+      "assets/main-CO4F6mSJ.js": "d3abd15ab7bba349fb49cf867f1ded53123f9b7b9a48b2facff5fbed45ca3175",
+      "index.html": "7ca36ceab29e25afa1cb217f81c7a679b01b664c4dab8caa1f99f14d6b4e584e"
+    }
+  },
+  "runtime": {
+    "node": "v24.22.1",
+    "platform": "darwin-arm64",
+    "playwright": "1.62.1",
+    "browserProject": "chromium",
+    "viewport": {
+      "width": 960,
+      "height": 540
+    },
+    "vite": "6.4.3",
+    "vitest": "3.2.7",
+    "react": "19.2.8"
+  },
+  "command": {
+    "argv": [
+      "/Users/dio/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+      "tools/proofline/canonical-runner.mjs",
+      "playwright",
+      "test",
+      "--config",
+      "showcase-capture-b1078611-dd3c-4391-bcdd-bf71039c204e/playwright.config.mjs"
+    ],
+    "cwd": "/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-work-orders-28jZj0",
+    "exitCode": 0,
+    "nativeArgv": [
+      "/Users/dio/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+      "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-work-orders-28jZj0/node_modules/@playwright/test/cli.js",
+      "test",
+      "--config",
+      "showcase-capture-b1078611-dd3c-4391-bcdd-bf71039c204e/playwright.config.mjs",
+      "--reporter=list,json,html",
+      "--output=/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-work-orders-28jZj0/artifacts/proofline/runs/d8730503-03cf-4c94-a2ab-9d85ce09f81c/test-results"
+    ],
+    "scope": "subset",
+    "gateKey": "showcase:second-app",
+    "invocationId": "d8730503-03cf-4c94-a2ab-9d85ce09f81c",
+    "sessionId": "showcase-4f563af8-a3b7-4ba8-bfe3-eb07d98284ce"
+  },
+  "native": {
+    "stats": {
+      "startTime": "2026-11-05T04:15:34.421Z",
+      "duration": 25562.901,
+      "expected": 1,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "outcome": "passed",
+    "errors": [],
+    "observed": [
+      {
+        "file": "showcase-capture-b1078611-dd3c-4391-bcdd-bf71039c204e/capture-workflow.spec.ts",
+        "title": "records_the_target_owned_navigated_work_order_journey",
+        "project": "chromium",
+        "expectedStatus": "passed",
+        "status": "passed",
+        "retry": 0,
+        "repeats": 0,
+        "nativeStatus": "expected"
+      }
+    ],
+    "retained": {
+      "native-report.json.txt": {
+        "source": "/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-work-orders-28jZj0/artifacts/proofline/runs/d8730503-03cf-4c94-a2ab-9d85ce09f81c/native-report.json",
+        "sha256": "9b7236f3477d7b90282c28e29e85292b5980f7b0673b71e78c5467e8096e3643"
+      },
+      "verification.json.txt": {
+        "source": "/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-work-orders-28jZj0/artifacts/proofline/runs/d8730503-03cf-4c94-a2ab-9d85ce09f81c/verification.json",
+        "sha256": "8f087133806c80102fdab1c3b6cbfc35e95003c5e1cb04d9fed43a8a3c7a9538"
+      },
+      "discovery.json.txt": {
+        "source": "/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-work-orders-28jZj0/artifacts/proofline/runs/d8730503-03cf-4c94-a2ab-9d85ce09f81c/discovery.json",
+        "sha256": "6ab07c334a3eeaaba251d9e1a57fdbfcff7834ad2f10677079d18c0fbd0bc4b2"
+      },
+      "stdout.log.txt": {
+        "source": "/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-work-orders-28jZj0/artifacts/proofline/runs/d8730503-03cf-4c94-a2ab-9d85ce09f81c/stdout.log",
+        "sha256": "1be7d62c65cf7dc1b2339ffc0462022a389a395ab494871560de9d0cb875e907"
+      },
+      "stderr.log.txt": {
+        "source": "/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-work-orders-28jZj0/artifacts/proofline/runs/d8730503-03cf-4c94-a2ab-9d85ce09f81c/stderr.log",
+        "sha256": "371fed8125fe09bd7b97e79eb54dc779499fa7a1fdafa76182c5b9cbde630885"
+      }
+    }
+  },
+  "controls": {
+    "canonicalGuard": "unchanged tools/proofline/canonical-runner.mjs",
+    "targetOwnedFixture": "checks/browser/scenario.mjs",
+    "serviceWorkers": "block",
+    "externalRequests": "deny by default in fixture",
+    "webSockets": "deny by default in fixture",
+    "styleOrUiInjection": false,
+    "externalProviders": false,
+    "hostedCi": false,
+    "deployment": false
+  },
+  "unchanged": {
+    "coreFileCount": 31,
+    "coreBefore": {
+      "tools/impact/resolve-ci-revisions.mjs": "0be20bec78270e7e2967d3465ed66fd544a8ac1bcf691a54fbb764276f0bbbd4",
+      "tools/impact/src/changed-files.ts": "b27955cdc7b0ab71f7d88e0cadb01642e42bfed61b3fd16b9ee5e19888d23623",
+      "tools/impact/src/coverage-policy.ts": "37a4dcd3f7ab9a6e81fbbe12983943a6d153f2ec7ef888bc7a0a418340cd44a4",
+      "tools/impact/src/governance.ts": "ffebf481dc7c61ce341fdb989c088cfa98d7850bf1bd7ac7c9f53a7dd5cf63df",
+      "tools/impact/src/harness-manifest.ts": "0752ccc19389c1496b7ffb64eb02ba6429152bbadd25cfb20c37c7a32fdfde52",
+      "tools/impact/src/main.ts": "e303b7604fbd57fe8cbdac967b4f8ec2049c21820528bd925312cf62eeab2b1e",
+      "tools/impact/src/playwright-discovery.ts": "7fe3698bfd0c2f981be48e109fe3df355c8c497c7e1564403310996ea1835998",
+      "tools/impact/src/record-check.ts": "755081a79a4268fd78e6b34a1bc156f75e80bb4dcda2ae575d1baa8fa427309b",
+      "tools/impact/src/select.ts": "c88d73540ddff6e4f31f568ce25e3b954494fbc1246826aa20f93fd02d70822c",
+      "tools/impact/src/types.ts": "d6883d3eee7f17123b072c5a453ebdd1dcd7c54aee2d33185d447696a0a872aa",
+      "tools/impact/src/validate.ts": "01d07873298f6fd2f59bd77fc85f3e0c9645af9b23f14cb3f5762595f6a71861",
+      "tools/impact/src/workspaces.ts": "06e1b2fae3562247475287251619cb3618fd1ba344d91d54968de61d3fca4865",
+      "tools/impact/test-fixtures/git.ts": "eb627bdf8f1963465ab962ea990448feccda4d65fb68aa5d7a33a262b6ce5085",
+      "tools/proofline/canonical-runner.mjs": "c01aae85e5c6b592089dfdbbb07668d7609f00b1a7bcebbb365f7c396c876604",
+      "tools/proofline/check-production.mjs": "d1f04a9d2a00797104e69cf9b08b689ae4f9c8b4f86814f36fdcd513c130bc31",
+      "tools/proofline/egress-guard.mjs": "87ede0e08571c74f3c6df9aee32ede65d351dcd4189f0394a064af743ab44230",
+      "tools/proofline/execution-artifacts.mjs": "04aae7ffa7afa4ad64c8c03a33e10678f6a2d6e6cb177ae7bde69bcc397b10a5",
+      "tools/proofline/execution-verification.mjs": "6e66db04d9cb2d7e68a29f910a00e27217b64a96ddb05755c5cefa05eda99243",
+      "tools/proofline/guard-policy.mjs": "77bb0e9839c8eae2fc3a66b854761b91341759d8c4698a97f5057f479d4fee19",
+      "tools/proofline/portability-result.mjs": "29d290be3e6fb837aa1f3917a3534db5aaa9c121e61dc402a5ee0d30775e1911",
+      "tools/proofline/release-archive.mjs": "1023ccc62afac4b4509b16e0f0583993850e9855b200383349b6412722342401",
+      "tools/proofline/release-bundle.mjs": "d67a04e1ce1febc7ba0beecba1e2925b999ad3a22390b0732f81b2b6c0eada89",
+      "tools/proofline/release-evidence.mjs": "bf124fa8a751d6559f726a6a291197201bcd6ce22c9ddbd0d161956998c8d5f8",
+      "tools/proofline/release-verify.mjs": "e60203b58016158ce8a71204c33a2719bd216243626f01e5367f634faccd1d26",
+      "tools/proofline/run-guarded.d.mts": "850f29fe28f13a30341abb8a441df79c800bdaf0321a44d62ec85bdb9091d01e",
+      "tools/proofline/run-guarded.mjs": "a7f2d6775d77535ae83d08b4b41fc47c653da7a2b368f467ada39f0e6b08a253",
+      "tools/proofline/serve-test-app.mjs": "0324907358331ebb1acc0b30952b1bf38ea8ac9be993f4f69c03365c508d4e7b",
+      "tools/proofline/src/production-negative.ts": "54c10d16c5aeb2fefa9b7e22e8154ea514692c05fff560269b9f1a85df68a37d",
+      "tools/proofline/validate-portability.mjs": "448cf1fc445e675304caa2c497fcb2381932faf34dd2716ae880efae102a364a",
+      "tools/proofline/vitest-execution.mjs": "33e328ff119389cc2e31d8c09b892da7e063ff2bd3e4683515a1dd486137a9f3",
+      "tools/proofline/vitest-native-reporter.mjs": "819129c045a3691464cc5d5c0ecf8d2d58064a5c659a957a97ce93b844e3848e"
+    },
+    "coreAfter": {
+      "tools/impact/resolve-ci-revisions.mjs": "0be20bec78270e7e2967d3465ed66fd544a8ac1bcf691a54fbb764276f0bbbd4",
+      "tools/impact/src/changed-files.ts": "b27955cdc7b0ab71f7d88e0cadb01642e42bfed61b3fd16b9ee5e19888d23623",
+      "tools/impact/src/coverage-policy.ts": "37a4dcd3f7ab9a6e81fbbe12983943a6d153f2ec7ef888bc7a0a418340cd44a4",
+      "tools/impact/src/governance.ts": "ffebf481dc7c61ce341fdb989c088cfa98d7850bf1bd7ac7c9f53a7dd5cf63df",
+      "tools/impact/src/harness-manifest.ts": "0752ccc19389c1496b7ffb64eb02ba6429152bbadd25cfb20c37c7a32fdfde52",
+      "tools/impact/src/main.ts": "e303b7604fbd57fe8cbdac967b4f8ec2049c21820528bd925312cf62eeab2b1e",
+      "tools/impact/src/playwright-discovery.ts": "7fe3698bfd0c2f981be48e109fe3df355c8c497c7e1564403310996ea1835998",
+      "tools/impact/src/record-check.ts": "755081a79a4268fd78e6b34a1bc156f75e80bb4dcda2ae575d1baa8fa427309b",
+      "tools/impact/src/select.ts": "c88d73540ddff6e4f31f568ce25e3b954494fbc1246826aa20f93fd02d70822c",
+      "tools/impact/src/types.ts": "d6883d3eee7f17123b072c5a453ebdd1dcd7c54aee2d33185d447696a0a872aa",
+      "tools/impact/src/validate.ts": "01d07873298f6fd2f59bd77fc85f3e0c9645af9b23f14cb3f5762595f6a71861",
+      "tools/impact/src/workspaces.ts": "06e1b2fae3562247475287251619cb3618fd1ba344d91d54968de61d3fca4865",
+      "tools/impact/test-fixtures/git.ts": "eb627bdf8f1963465ab962ea990448feccda4d65fb68aa5d7a33a262b6ce5085",
+      "tools/proofline/canonical-runner.mjs": "c01aae85e5c6b592089dfdbbb07668d7609f00b1a7bcebbb365f7c396c876604",
+      "tools/proofline/check-production.mjs": "d1f04a9d2a00797104e69cf9b08b689ae4f9c8b4f86814f36fdcd513c130bc31",
+      "tools/proofline/egress-guard.mjs": "87ede0e08571c74f3c6df9aee32ede65d351dcd4189f0394a064af743ab44230",
+      "tools/proofline/execution-artifacts.mjs": "04aae7ffa7afa4ad64c8c03a33e10678f6a2d6e6cb177ae7bde69bcc397b10a5",
+      "tools/proofline/execution-verification.mjs": "6e66db04d9cb2d7e68a29f910a00e27217b64a96ddb05755c5cefa05eda99243",
+      "tools/proofline/guard-policy.mjs": "77bb0e9839c8eae2fc3a66b854761b91341759d8c4698a97f5057f479d4fee19",
+      "tools/proofline/portability-result.mjs": "29d290be3e6fb837aa1f3917a3534db5aaa9c121e61dc402a5ee0d30775e1911",
+      "tools/proofline/release-archive.mjs": "1023ccc62afac4b4509b16e0f0583993850e9855b200383349b6412722342401",
+      "tools/proofline/release-bundle.mjs": "d67a04e1ce1febc7ba0beecba1e2925b999ad3a22390b0732f81b2b6c0eada89",
+      "tools/proofline/release-evidence.mjs": "bf124fa8a751d6559f726a6a291197201bcd6ce22c9ddbd0d161956998c8d5f8",
+      "tools/proofline/release-verify.mjs": "e60203b58016158ce8a71204c33a2719bd216243626f01e5367f634faccd1d26",
+      "tools/proofline/run-guarded.d.mts": "850f29fe28f13a30341abb8a441df79c800bdaf0321a44d62ec85bdb9091d01e",
+      "tools/proofline/run-guarded.mjs": "a7f2d6775d77535ae83d08b4b41fc47c653da7a2b368f467ada39f0e6b08a253",
+      "tools/proofline/serve-test-app.mjs": "0324907358331ebb1acc0b30952b1bf38ea8ac9be993f4f69c03365c508d4e7b",
+      "tools/proofline/src/production-negative.ts": "54c10d16c5aeb2fefa9b7e22e8154ea514692c05fff560269b9f1a85df68a37d",
+      "tools/proofline/validate-portability.mjs": "448cf1fc445e675304caa2c497fcb2381932faf34dd2716ae880efae102a364a",
+      "tools/proofline/vitest-execution.mjs": "33e328ff119389cc2e31d8c09b892da7e063ff2bd3e4683515a1dd486137a9f3",
+      "tools/proofline/vitest-native-reporter.mjs": "819129c045a3691464cc5d5c0ecf8d2d58064a5c659a957a97ce93b844e3848e"
+    },
+    "targetSourceAndBuild": true,
+    "priorNativeEvidenceFiles": 86,
+    "priorNativeEvidence": true,
+    "portabilityLatestJson": true
+  },
+  "assertions": {
+    "completedNorthOrders": 1,
+    "requestedSouthOrders": 1,
+    "mutations": 1,
+    "unexpectedRequests": 0,
+    "sessionAfterLogout": null,
+    "sessionCookieAfterLogout": false
+  },
+  "video": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "codec_name": "vp8",
+        "width": 960,
+        "height": 540,
+        "r_frame_rate": "25/1"
+      }
+    ],
+    "format": {
+      "duration": "25.000000",
+      "size": "146543"
+    },
+    "aspectRatio": "16:9",
+    "audio": false,
+    "autoplay": false
+  },
+  "stages": [
+    {
+      "image": "01-sign-in.png",
+      "label": "The protected Requests route requires a desk identity",
+      "elapsedSeconds": 1.633,
+      "path": "/signin"
+    },
+    {
+      "image": "02-requests.png",
+      "label": "The north dispatcher sees only the north request",
+      "elapsedSeconds": 5.604,
+      "path": "/desk/requests"
+    },
+    {
+      "image": "03-request-completed.png",
+      "label": "Completing the lamp removes it from Requested work",
+      "elapsedSeconds": 10.568,
+      "path": "/desk/requests"
+    },
+    {
+      "image": "04-completed.png",
+      "label": "Visible Completed navigation shows the completed lamp",
+      "elapsedSeconds": 14.037,
+      "path": "/desk/completed"
+    },
+    {
+      "image": "05-signed-out.png",
+      "label": "After sign out, revisiting Completed requires authentication",
+      "elapsedSeconds": 20.132,
+      "path": "/signin"
+    }
+  ],
+  "assets": {
+    "01-sign-in.png": {
+      "sha256": "ecaa51a1219e6e588c18ff3489d6f507ecd1a4645488ac85a698d7ab48a57451",
+      "bytes": 11995
+    },
+    "02-requests.png": {
+      "sha256": "2edafabfd99b4d5462e8f09f9981902c6225a4814163bb95a964e01fbc1773b8",
+      "bytes": 18402
+    },
+    "03-request-completed.png": {
+      "sha256": "bfb44342b44cce17a69a81995ddeca8af792bb11646c59468501eaf2b659f10d",
+      "bytes": 13447
+    },
+    "04-completed.png": {
+      "sha256": "86bfe045e56475d6e50b133f3f852baedd5ee4b9f686eb854141b8973b99d40b",
+      "bytes": 16201
+    },
+    "05-signed-out.png": {
+      "sha256": "eb3e716cd0084d9fc9e4a15c09766b736b540c638ef6f387b2c6cd6afe1f433c",
+      "bytes": 10611
+    },
+    "work-orders-demo.webm": {
+      "sha256": "decbf23ed90a2b30e95ae50fb1602d1f2e856621a74f41ed3fe92878c4d2a27c",
+      "bytes": 146543
+    },
+    "work-orders-demo.vtt": {
+      "sha256": "4fb4c4cdb9764fe07ad2ec8d4fd5afe53075b225fdf342383876005e44475e33",
+      "bytes": 442
+    },
+    "inspection.json": {
+      "sha256": "09cb19cc409a9dd41afd860b3467aec54c7bf71803eb0cc4a2b8ba7d6f65b946",
+      "bytes": 1988
+    },
+    "capture_demo.mjs": {
+      "sha256": "c740df8b94c4b0cc582f88dc405b9afd8083c83acf20686b7c51107c68efc737",
+      "bytes": 12735
+    },
+    "capture-workflow.ts.txt": {
+      "sha256": "7291fb8ec946637b67b0460bcd875e003c3e2a2773cf89c15c22ecdce3b7f9d1",
+      "bytes": 6083
+    },
+    "capture-config.mjs.txt": {
+      "sha256": "8461ba259ad4d69d2865bfdba5c53a150e0a257cb690d0b0b62eb0b5cd5b4f3c",
+      "bytes": 436
+    },
+    "capture.log.txt": {
+      "sha256": "dbb31930ce3188658629c5c4c1c825fe08a6f06e2e3671d78dc42d992dada47c",
+      "bytes": 1136
+    },
+    "native-report.json.txt": {
+      "sha256": "9b7236f3477d7b90282c28e29e85292b5980f7b0673b71e78c5467e8096e3643",
+      "bytes": 5050
+    },
+    "verification.json.txt": {
+      "sha256": "8f087133806c80102fdab1c3b6cbfc35e95003c5e1cb04d9fed43a8a3c7a9538",
+      "bytes": 2442
+    },
+    "discovery.json.txt": {
+      "sha256": "6ab07c334a3eeaaba251d9e1a57fdbfcff7834ad2f10677079d18c0fbd0bc4b2",
+      "bytes": 2897
+    },
+    "stdout.log.txt": {
+      "sha256": "1be7d62c65cf7dc1b2339ffc0462022a389a395ab494871560de9d0cb875e907",
+      "bytes": 654
+    },
+    "stderr.log.txt": {
+      "sha256": "371fed8125fe09bd7b97e79eb54dc779499fa7a1fdafa76182c5b9cbde630885",
+      "bytes": 164
+    }
+  },
+  "reproduction": "From the host checkout, use Node24 and installed offline dependencies; execute node docs/showcase/second-app-demo/capture_demo.mjs. It reuses the successful isolated target in artifacts/portability/latest.json and creates only an ephemeral capture spec/config there. A missing target fails closed; this script does not recreate or rerun portability validation.",
+  "limitation": "One local narrated-by-captions happy-path capture; the retained full portability result separately proves four browser workflows and ten gates. No hosted CI, provider, deployment, or broader compatibility claim.",
+  "postCaptureNormalization": {
+    "command": "pnpm exec biome check --write docs/showcase/second-app-demo/capture_demo.mjs docs/showcase/second-app-demo/inspection.json docs/showcase/second-app-demo/provenance.json",
+    "note": "Launcher formatting was normalized after capture. The exact executed capture spec, config, and retained native byte copies are unchanged. No capture or test rerun was performed for this formatting-only normalization.",
+    "changedCapturedAssets": ["capture_demo.mjs"],
+    "originalLauncherSha256": "bc44d20d8c8a0c262cadd9111f7a516bdf844e6ca90dea707d5352e1eaf19270",
+    "retainedLauncherSha256": "c740df8b94c4b0cc582f88dc405b9afd8083c83acf20686b7c51107c68efc737",
+    "unchangedCapturedSourceAndNativeHashes": {
+      "capture-workflow.ts.txt": "7291fb8ec946637b67b0460bcd875e003c3e2a2773cf89c15c22ecdce3b7f9d1",
+      "capture-config.mjs.txt": "8461ba259ad4d69d2865bfdba5c53a150e0a257cb690d0b0b62eb0b5cd5b4f3c",
+      "capture.log.txt": "dbb31930ce3188658629c5c4c1c825fe08a6f06e2e3671d78dc42d992dada47c",
+      "native-report.json.txt": "9b7236f3477d7b90282c28e29e85292b5980f7b0673b71e78c5467e8096e3643",
+      "verification.json.txt": "8f087133806c80102fdab1c3b6cbfc35e95003c5e1cb04d9fed43a8a3c7a9538",
+      "discovery.json.txt": "6ab07c334a3eeaaba251d9e1a57fdbfcff7834ad2f10677079d18c0fbd0bc4b2",
+      "stdout.log.txt": "1be7d62c65cf7dc1b2339ffc0462022a389a395ab494871560de9d0cb875e907",
+      "stderr.log.txt": "371fed8125fe09bd7b97e79eb54dc779499fa7a1fdafa76182c5b9cbde630885"
+    }
+  }
+}

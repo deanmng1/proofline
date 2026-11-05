@@ -1,0 +1,67 @@
+{
+  "version": 1,
+  "invocationId": "d8730503-03cf-4c94-a2ab-9d85ce09f81c",
+  "runner": "playwright",
+  "sourceCommit": "4b6f932eb8c9374efbeb767bffa4ada91b2528b2",
+  "repositoryRoot": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-work-orders-28jZj0",
+  "sessionId": "showcase-4f563af8-a3b7-4ba8-bfe3-eb07d98284ce",
+  "ciRunId": null,
+  "ciRunAttempt": null,
+  "repository": null,
+  "workflow": null,
+  "gateKey": "showcase:second-app",
+  "gateExecutionId": "8f98c97c-a61d-4bdb-a8f3-5d81ea084bcd",
+  "scope": "subset",
+  "argv": [
+    "/Users/dio/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+    "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-work-orders-28jZj0/node_modules/@playwright/test/cli.js",
+    "test",
+    "--config",
+    "showcase-capture-b1078611-dd3c-4391-bcdd-bf71039c204e/playwright.config.mjs",
+    "--reporter=list,json,html",
+    "--output=/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-work-orders-28jZj0/artifacts/proofline/runs/d8730503-03cf-4c94-a2ab-9d85ce09f81c/test-results"
+  ],
+  "requestedArgs": [
+    "test",
+    "--config",
+    "showcase-capture-b1078611-dd3c-4391-bcdd-bf71039c204e/playwright.config.mjs"
+  ],
+  "cwd": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-work-orders-28jZj0",
+  "exitCode": 0,
+  "outcome": "passed",
+  "expected": [
+    {
+      "file": "showcase-capture-b1078611-dd3c-4391-bcdd-bf71039c204e/capture-workflow.spec.ts",
+      "title": "records_the_target_owned_navigated_work_order_journey",
+      "project": "chromium"
+    }
+  ],
+  "observed": [
+    {
+      "file": "showcase-capture-b1078611-dd3c-4391-bcdd-bf71039c204e/capture-workflow.spec.ts",
+      "title": "records_the_target_owned_navigated_work_order_journey",
+      "project": "chromium",
+      "expectedStatus": "passed",
+      "status": "passed",
+      "retry": 0,
+      "repeats": 0,
+      "nativeStatus": "expected"
+    }
+  ],
+  "errors": [],
+  "children": [],
+  "artifacts": {
+    "nativeReport": "runs/d8730503-03cf-4c94-a2ab-9d85ce09f81c/native-report.json",
+    "stdout": "runs/d8730503-03cf-4c94-a2ab-9d85ce09f81c/stdout.log",
+    "stderr": "runs/d8730503-03cf-4c94-a2ab-9d85ce09f81c/stderr.log",
+    "discovery": "runs/d8730503-03cf-4c94-a2ab-9d85ce09f81c/discovery.json"
+  },
+  "metadata": {
+    "projects": [
+      "chromium"
+    ],
+    "workers": "1",
+    "shard": null
+  },
+  "gateComplete": true
+}

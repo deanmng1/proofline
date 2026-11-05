@@ -1,0 +1,317 @@
+{
+  "version": 1,
+  "outcome": "passed",
+  "repository": "deanmng1/proofline",
+  "workflow": "deanmng1/proofline/.github/workflows/verify.yml@refs/heads/main",
+  "sourceCommit": "4feb0572fb8aa1a18fcfdfa0e9f5333b59d714e2",
+  "sessionId": "900000002-1",
+  "gateKey": "portability",
+  "gateExecutionId": "900000002-1-portability",
+  "ciRunId": "900000002",
+  "ciRunAttempt": "1",
+  "artifactDirectory": "artifacts/portability/2026-11-05T02-47-03-199Z-2ff8a94d-8e71-4df8-9a3d-33dffaf4f10b",
+  "target": "/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-work-orders-28jZj0",
+  "compatibility": {
+    "vite": "6.4.3",
+    "vitest": "3.2.7",
+    "react": "19.2.8",
+    "playwright": "1.62.1",
+    "node": "v24.22.1",
+    "platform": "darwin-arm64",
+    "browser": "chromium"
+  },
+  "coreHashes": {
+    "tools/impact/resolve-ci-revisions.mjs": "0be20bec78270e7e2967d3465ed66fd544a8ac1bcf691a54fbb764276f0bbbd4",
+    "tools/impact/src/changed-files.ts": "b27955cdc7b0ab71f7d88e0cadb01642e42bfed61b3fd16b9ee5e19888d23623",
+    "tools/impact/src/coverage-policy.ts": "37a4dcd3f7ab9a6e81fbbe12983943a6d153f2ec7ef888bc7a0a418340cd44a4",
+    "tools/impact/src/governance.ts": "ffebf481dc7c61ce341fdb989c088cfa98d7850bf1bd7ac7c9f53a7dd5cf63df",
+    "tools/impact/src/harness-manifest.ts": "0752ccc19389c1496b7ffb64eb02ba6429152bbadd25cfb20c37c7a32fdfde52",
+    "tools/impact/src/main.ts": "e303b7604fbd57fe8cbdac967b4f8ec2049c21820528bd925312cf62eeab2b1e",
+    "tools/impact/src/playwright-discovery.ts": "7fe3698bfd0c2f981be48e109fe3df355c8c497c7e1564403310996ea1835998",
+    "tools/impact/src/record-check.ts": "755081a79a4268fd78e6b34a1bc156f75e80bb4dcda2ae575d1baa8fa427309b",
+    "tools/impact/src/select.ts": "c88d73540ddff6e4f31f568ce25e3b954494fbc1246826aa20f93fd02d70822c",
+    "tools/impact/src/types.ts": "d6883d3eee7f17123b072c5a453ebdd1dcd7c54aee2d33185d447696a0a872aa",
+    "tools/impact/src/validate.ts": "01d07873298f6fd2f59bd77fc85f3e0c9645af9b23f14cb3f5762595f6a71861",
+    "tools/impact/src/workspaces.ts": "06e1b2fae3562247475287251619cb3618fd1ba344d91d54968de61d3fca4865",
+    "tools/impact/test-fixtures/git.ts": "eb627bdf8f1963465ab962ea990448feccda4d65fb68aa5d7a33a262b6ce5085",
+    "tools/proofline/canonical-runner.mjs": "c01aae85e5c6b592089dfdbbb07668d7609f00b1a7bcebbb365f7c396c876604",
+    "tools/proofline/check-production.mjs": "d1f04a9d2a00797104e69cf9b08b689ae4f9c8b4f86814f36fdcd513c130bc31",
+    "tools/proofline/egress-guard.mjs": "87ede0e08571c74f3c6df9aee32ede65d351dcd4189f0394a064af743ab44230",
+    "tools/proofline/execution-artifacts.mjs": "04aae7ffa7afa4ad64c8c03a33e10678f6a2d6e6cb177ae7bde69bcc397b10a5",
+    "tools/proofline/execution-verification.mjs": "6e66db04d9cb2d7e68a29f910a00e27217b64a96ddb05755c5cefa05eda99243",
+    "tools/proofline/guard-policy.mjs": "77bb0e9839c8eae2fc3a66b854761b91341759d8c4698a97f5057f479d4fee19",
+    "tools/proofline/portability-result.mjs": "29d290be3e6fb837aa1f3917a3534db5aaa9c121e61dc402a5ee0d30775e1911",
+    "tools/proofline/release-archive.mjs": "1023ccc62afac4b4509b16e0f0583993850e9855b200383349b6412722342401",
+    "tools/proofline/release-bundle.mjs": "d67a04e1ce1febc7ba0beecba1e2925b999ad3a22390b0732f81b2b6c0eada89",
+    "tools/proofline/release-evidence.mjs": "bf124fa8a751d6559f726a6a291197201bcd6ce22c9ddbd0d161956998c8d5f8",
+    "tools/proofline/release-verify.mjs": "e60203b58016158ce8a71204c33a2719bd216243626f01e5367f634faccd1d26",
+    "tools/proofline/run-guarded.d.mts": "850f29fe28f13a30341abb8a441df79c800bdaf0321a44d62ec85bdb9091d01e",
+    "tools/proofline/run-guarded.mjs": "a7f2d6775d77535ae83d08b4b41fc47c653da7a2b368f467ada39f0e6b08a253",
+    "tools/proofline/serve-test-app.mjs": "0324907358331ebb1acc0b30952b1bf38ea8ac9be993f4f69c03365c508d4e7b",
+    "tools/proofline/src/production-negative.ts": "54c10d16c5aeb2fefa9b7e22e8154ea514692c05fff560269b9f1a85df68a37d",
+    "tools/proofline/validate-portability.mjs": "448cf1fc445e675304caa2c497fcb2381932faf34dd2716ae880efae102a364a",
+    "tools/proofline/vitest-execution.mjs": "33e328ff119389cc2e31d8c09b892da7e063ff2bd3e4683515a1dd486137a9f3",
+    "tools/proofline/vitest-native-reporter.mjs": "819129c045a3691464cc5d5c0ecf8d2d58064a5c659a957a97ce93b844e3848e"
+  },
+  "gates": [
+    {
+      "key": "static",
+      "argv": [
+        "node",
+        "tools/impact/src/main.ts",
+        "--validate-harness"
+      ],
+      "exitCode": 0,
+      "log": "/Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed/artifacts/portability/2026-11-05T02-47-03-199Z-2ff8a94d-8e71-4df8-9a3d-33dffaf4f10b/static.log",
+      "logPath": "static.log",
+      "logSha256": "71092f4d236ce17a4e98ada4ed116d4a26c3b9dda702f718a8efcf0bb922e268"
+    },
+    {
+      "key": "typecheck",
+      "argv": [
+        "node",
+        "checks/static-check.mjs"
+      ],
+      "exitCode": 0,
+      "log": "/Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed/artifacts/portability/2026-11-05T02-47-03-199Z-2ff8a94d-8e71-4df8-9a3d-33dffaf4f10b/typecheck.log",
+      "logPath": "typecheck.log",
+      "logSha256": "757441666616590f66a75081b69e2a35fffca8f43cf59a83b705704bb6160f74"
+    },
+    {
+      "key": "discovery",
+      "argv": [
+        "node",
+        "tools/impact/src/main.ts",
+        "--dry-run"
+      ],
+      "exitCode": 0,
+      "log": "/Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed/artifacts/portability/2026-11-05T02-47-03-199Z-2ff8a94d-8e71-4df8-9a3d-33dffaf4f10b/discovery.log",
+      "logPath": "discovery.log",
+      "logSha256": "2ca4fd0bdf238a5a62c07e7975e915d8c80c77a22e093398523607132d8ee657"
+    },
+    {
+      "key": "selected",
+      "argv": [
+        "node",
+        "tools/impact/src/main.ts"
+      ],
+      "exitCode": 0,
+      "log": "/Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed/artifacts/portability/2026-11-05T02-47-03-199Z-2ff8a94d-8e71-4df8-9a3d-33dffaf4f10b/selected.log",
+      "logPath": "selected.log",
+      "logSha256": "be7ac3936cb0c6eae4dc10f93540e79b63c57fd238e11d53fcde8e8a1db98735"
+    },
+    {
+      "key": "unit",
+      "argv": [
+        "node",
+        "tools/proofline/canonical-runner.mjs",
+        "unit"
+      ],
+      "exitCode": 0,
+      "log": "/Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed/artifacts/portability/2026-11-05T02-47-03-199Z-2ff8a94d-8e71-4df8-9a3d-33dffaf4f10b/unit.log",
+      "logPath": "unit.log",
+      "logSha256": "1d2e27620566e21e59722516802997089abb2cf738cf78facb4e9e45b391f174"
+    },
+    {
+      "key": "browser",
+      "argv": [
+        "node",
+        "tools/proofline/canonical-runner.mjs",
+        "browser"
+      ],
+      "exitCode": 0,
+      "log": "/Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed/artifacts/portability/2026-11-05T02-47-03-199Z-2ff8a94d-8e71-4df8-9a3d-33dffaf4f10b/browser.log",
+      "logPath": "browser.log",
+      "logSha256": "282b4434238b7258e7dc0f34645856a104b49f7e21932884181b7e881ee625c4"
+    },
+    {
+      "key": "coverage",
+      "argv": [
+        "node",
+        "tools/proofline/canonical-runner.mjs",
+        "vitest",
+        "run",
+        "--config",
+        "client/vitest.config.mjs",
+        "--coverage",
+        "--coverage.provider=v8",
+        "--coverage.reportsDirectory=artifacts/coverage/work-orders",
+        "--coverage.reporter=json-summary",
+        "--coverage.include=client/**/*.{mjs,jsx,ts,tsx}",
+        "--coverage.exclude=client/**/*.test.ts",
+        "--coverage.exclude=client/**/*.d.ts",
+        "--coverage.exclude=client/app.jsx",
+        "--coverage.exclude=client/main.jsx",
+        "--coverage.exclude=client/test-entry.jsx",
+        "--coverage.exclude=client/*config.mjs"
+      ],
+      "exitCode": 0,
+      "log": "/Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed/artifacts/portability/2026-11-05T02-47-03-199Z-2ff8a94d-8e71-4df8-9a3d-33dffaf4f10b/coverage.log",
+      "logPath": "coverage.log",
+      "logSha256": "f67cb24536d8d3e94a30fee017047339ca4b6a25f26acf746665d962ff56e2f2"
+    },
+    {
+      "key": "coverageCheck",
+      "argv": [
+        "node",
+        "--experimental-strip-types",
+        "tools/impact/src/coverage-policy.ts"
+      ],
+      "exitCode": 0,
+      "log": "/Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed/artifacts/portability/2026-11-05T02-47-03-199Z-2ff8a94d-8e71-4df8-9a3d-33dffaf4f10b/coverageCheck.log",
+      "logPath": "coverageCheck.log",
+      "logSha256": "e36b27cefdee7d5718e18829ab1b1d9179dd280669a78a8b0cdbac2bfe45621b"
+    },
+    {
+      "key": "recordCheck",
+      "argv": [
+        "node",
+        "--experimental-strip-types",
+        "tools/impact/src/record-check.ts"
+      ],
+      "exitCode": 0,
+      "log": "/Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed/artifacts/portability/2026-11-05T02-47-03-199Z-2ff8a94d-8e71-4df8-9a3d-33dffaf4f10b/recordCheck.log",
+      "logPath": "recordCheck.log",
+      "logSha256": "d50172def8cd31b6e8d7ab2cf423ec88d9ed90b6d8841bd931b7b58768486c8c"
+    },
+    {
+      "key": "production",
+      "argv": [
+        "node",
+        "tools/proofline/check-production.mjs"
+      ],
+      "exitCode": 0,
+      "log": "/Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed/artifacts/portability/2026-11-05T02-47-03-199Z-2ff8a94d-8e71-4df8-9a3d-33dffaf4f10b/production.log",
+      "logPath": "production.log",
+      "logSha256": "f5b7516a3dafeb0cba8d5c96121bcf621f54f1ec083f4843b57043aa1a39b27d"
+    }
+  ],
+  "artifacts": "/Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed/artifacts/portability/2026-11-05T02-47-03-199Z-2ff8a94d-8e71-4df8-9a3d-33dffaf4f10b",
+  "source": {
+    "bootstrap": "7b5cb942f9f8c1bdef985348e6bfbf1bb22b7ad6",
+    "base": "bdfd8041a1ef65d69fda37464ac0e87275e41103",
+    "head": "bafd473dbf06f55a7a86c9d0b7e944247b9f116d",
+    "verifiedHead": "4b6f932eb8c9374efbeb767bffa4ada91b2528b2"
+  },
+  "selection": {
+    "fallback": "none",
+    "vitest": 2,
+    "playwright": 4
+  },
+  "nativeArtifactHashes": {
+    "artifacts/proofline/runs/8e923818-7d5b-4db4-9189-b6a8a38026b8/native-report.json": "ce4b912722544707570e6f100bf927a6000524d9401b95a4db7886b6f442aad4",
+    "artifacts/proofline/runs/8e923818-7d5b-4db4-9189-b6a8a38026b8/stdout.log": "99a5648cd8b642561c4fb68ea6e56b80f820d02d4f5ad8760276101ca511a332",
+    "artifacts/proofline/runs/8e923818-7d5b-4db4-9189-b6a8a38026b8/stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/proofline/runs/8e923818-7d5b-4db4-9189-b6a8a38026b8/discovery.json": "bf5a556af720ecf4110070a38c8ff0c2b8354466ae57553c146547be90ab866d",
+    "artifacts/proofline/runs/8e923818-7d5b-4db4-9189-b6a8a38026b8/native-events.json": "be6773b9e75e1ee128b629da44ec394cf1744c1125553f838d655bf36445df45",
+    "artifacts/proofline/runs/de16d001-fb93-49d5-bf36-6a2190a8198d/native-report.json": "c897cb13c98ad98c55fde77e4cdf4f8f33c2f398befe5aaded43d7ab7d406a56",
+    "artifacts/proofline/runs/de16d001-fb93-49d5-bf36-6a2190a8198d/stdout.log": "ce63b4a6b6375113e6e89a325c8fb843acbabcd16a1671158b84cd987b2a45a0",
+    "artifacts/proofline/runs/de16d001-fb93-49d5-bf36-6a2190a8198d/stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/proofline/runs/de16d001-fb93-49d5-bf36-6a2190a8198d/discovery.json": "46f6a211bea879980af8ca29dc371d095730c9825442ca8407f2c0523c528b39",
+    "artifacts/proofline/runs/de16d001-fb93-49d5-bf36-6a2190a8198d/native-events.json": "9cb7e77d4b50e33228fad37534541dac242bd3c6d8b9061c0402675f355487b3",
+    "artifacts/proofline/runs/31a662dc-fbd4-4f1b-bae3-1e1da5ef402a/native-report.json": "edf9e88897fdd2cd52b09ed0aba67d356ceab8969b879056f7002df37b305505",
+    "artifacts/proofline/runs/31a662dc-fbd4-4f1b-bae3-1e1da5ef402a/stdout.log": "a5fdcc2e95ea40fb79c756847678e369378b45ff93ab1848d91fad3053c3b2bf",
+    "artifacts/proofline/runs/31a662dc-fbd4-4f1b-bae3-1e1da5ef402a/stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/proofline/runs/31a662dc-fbd4-4f1b-bae3-1e1da5ef402a/discovery.json": "205c898673795ccc879116f7f9dac46af366b2cde2c4fe27526e18275dc7d836",
+    "artifacts/proofline/runs/31a662dc-fbd4-4f1b-bae3-1e1da5ef402a/native-events.json": "5790c7380e0d7b5c1f90c074d582ae3d734fd8e7048e9c66886b828fa788f402",
+    "artifacts/proofline/runs/87e5e587-a40f-4311-a317-ebb481c74f82/native-report.json": "013b782714552fb3e2ced88dc61481b221265e4c4df1ff56fab486409e8f2ba3",
+    "artifacts/proofline/runs/87e5e587-a40f-4311-a317-ebb481c74f82/stdout.log": "ca96d2f79eace949e277c56448b76dcc1cc62f3eda99759e486032da97bf7f1b",
+    "artifacts/proofline/runs/87e5e587-a40f-4311-a317-ebb481c74f82/stderr.log": "2447e35c8b58e0d855d1b7fdc15e91a3873cc4615a6c127008f1f4dbe01b8ca6",
+    "artifacts/proofline/runs/87e5e587-a40f-4311-a317-ebb481c74f82/discovery.json": "d0808a725c96fee6c5a774ae74579940d8c0b38b68f2c395d24b6df8d3f13e7d",
+    "artifacts/proofline/runs/9a5218c0-d785-4aed-b482-3e104bd8549d/native-report.json": "d908b36b223c16b7e106bde1c459029f0e9ae7aebabf9f7b980f9771f21012fa",
+    "artifacts/proofline/runs/9a5218c0-d785-4aed-b482-3e104bd8549d/stdout.log": "96ef8e705e34ed30cf289f5326dc2f1c8ba93422ef95ec54441525fa5ab5b41c",
+    "artifacts/proofline/runs/9a5218c0-d785-4aed-b482-3e104bd8549d/stderr.log": "f3a99776bc7a3d803c5b436ad840f011a673266ac948fb7956666cff845ee4f1",
+    "artifacts/proofline/runs/9a5218c0-d785-4aed-b482-3e104bd8549d/discovery.json": "c31049db5e655a9b901ce4b9aec6b578a75a69e53152974e831e7f7d4d4d7f52",
+    "artifacts/proofline/runs/7ec58620-8c02-4fc3-849f-3dd8977ef3ed/native-report.json": "2fe23076dd7cf22ae59987b72fda79a9fb26874f92c7a4aa53955823ce35240c",
+    "artifacts/proofline/runs/7ec58620-8c02-4fc3-849f-3dd8977ef3ed/stdout.log": "4150ea1fb257edc06d0cae7531d8cb76c37d822a8a82331c8b4a76b7f71c0b62",
+    "artifacts/proofline/runs/7ec58620-8c02-4fc3-849f-3dd8977ef3ed/stderr.log": "0f63e037dfde6f1a9bd7fa3385745239c3f1b8a36249fb9a93aa224ad15ea572",
+    "artifacts/proofline/runs/7ec58620-8c02-4fc3-849f-3dd8977ef3ed/discovery.json": "9d044ef2a57fab62d8282066cc7fec348aae63fbaf89612b698bf4ff74a9db4c",
+    "artifacts/proofline/runs/6f3e3b05-3b37-49dc-be36-781622804a33/native-report.json": "b92b075db800df8b1297120c3174780f9c3ab507c016c1d8268221b26697a69f",
+    "artifacts/proofline/runs/6f3e3b05-3b37-49dc-be36-781622804a33/stdout.log": "79df676cebbc37cf22294200afa34e789de8beed033940261539f35eed7c7443",
+    "artifacts/proofline/runs/6f3e3b05-3b37-49dc-be36-781622804a33/stderr.log": "183ef634c3da04af40e80961f052de4912ac9f70a5010095bc273ef1d0188b0b",
+    "artifacts/proofline/runs/6f3e3b05-3b37-49dc-be36-781622804a33/discovery.json": "747d7a8046d71f9e275766a66b784e7af394a0fad33dbe3559ad9ba59cb1cd1a",
+    "artifacts/proofline/runs/dbf2e17c-cf14-4d9e-bb9a-e33c7e298af3/native-report.json": "bdf9b73eb5bd447c996d7cba90e864bcf17b680cdb4ece4916acc24410ddb997",
+    "artifacts/proofline/runs/dbf2e17c-cf14-4d9e-bb9a-e33c7e298af3/stdout.log": "6c7ac53983ed5b8ad3aea58675e4d5ce5ac75e7fd516525f7387b48383693ba0",
+    "artifacts/proofline/runs/dbf2e17c-cf14-4d9e-bb9a-e33c7e298af3/stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/proofline/runs/dbf2e17c-cf14-4d9e-bb9a-e33c7e298af3/discovery.json": "bf5a556af720ecf4110070a38c8ff0c2b8354466ae57553c146547be90ab866d",
+    "artifacts/proofline/runs/dbf2e17c-cf14-4d9e-bb9a-e33c7e298af3/native-events.json": "be6773b9e75e1ee128b629da44ec394cf1744c1125553f838d655bf36445df45",
+    "artifacts/proofline/runs/62cf274c-452f-4d2e-bf6c-67b2b7d2d93a/native-report.json": "d20c0d292309933b19575398de0d3b0a4496d689b2b5f387f8c57b4ea754a3fa",
+    "artifacts/proofline/runs/62cf274c-452f-4d2e-bf6c-67b2b7d2d93a/stdout.log": "df7f9d8a8ce04fbb9997b20976b90dd16131ef5d388c9205c3a765ea56ded27a",
+    "artifacts/proofline/runs/62cf274c-452f-4d2e-bf6c-67b2b7d2d93a/stderr.log": "aa3e86882b5802d27ef90bba7401f0a977f1d86ba3e8d4b838a039d0a0d57e2c",
+    "artifacts/proofline/runs/62cf274c-452f-4d2e-bf6c-67b2b7d2d93a/discovery.json": "67aea38f64e952f97fe3265347a47ca888e3f93b94beb97578bcc32c5e96e4f9",
+    "artifacts/proofline/runs/2da6b422-6d4d-43bb-b9e9-3d1b3458ee39/native-report.json": "e079a15fdec50c039776393201860a6c13189fc736c77e150b7149c363a7df6b",
+    "artifacts/proofline/runs/2da6b422-6d4d-43bb-b9e9-3d1b3458ee39/stdout.log": "ff757182af8f07059637a4456be1116d2981d5f22c70c8c0286ec52e084052fa",
+    "artifacts/proofline/runs/2da6b422-6d4d-43bb-b9e9-3d1b3458ee39/stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/proofline/runs/2da6b422-6d4d-43bb-b9e9-3d1b3458ee39/discovery.json": "bf5a556af720ecf4110070a38c8ff0c2b8354466ae57553c146547be90ab866d",
+    "artifacts/proofline/runs/2da6b422-6d4d-43bb-b9e9-3d1b3458ee39/native-events.json": "be6773b9e75e1ee128b629da44ec394cf1744c1125553f838d655bf36445df45"
+  },
+  "executionGates": {
+    "selected": [
+      {
+        "version": 1,
+        "invocationId": "de16d001-fb93-49d5-bf36-6a2190a8198d",
+        "verification": "runs/de16d001-fb93-49d5-bf36-6a2190a8198d/verification.json",
+        "sha256": "40e182585b06a220bd776fe351d83fb8fe943fc3047f60778f24d5474196c362"
+      },
+      {
+        "version": 1,
+        "invocationId": "31a662dc-fbd4-4f1b-bae3-1e1da5ef402a",
+        "verification": "runs/31a662dc-fbd4-4f1b-bae3-1e1da5ef402a/verification.json",
+        "sha256": "2b738672e9b482cef02c99125fcc80694915205a63f608aa8cd05f481715bec7"
+      },
+      {
+        "version": 1,
+        "invocationId": "87e5e587-a40f-4311-a317-ebb481c74f82",
+        "verification": "runs/87e5e587-a40f-4311-a317-ebb481c74f82/verification.json",
+        "sha256": "0aeb1ed80456732d0052f5c4403c511c52f8be6d88b2756020eb071609ce5607"
+      },
+      {
+        "version": 1,
+        "invocationId": "9a5218c0-d785-4aed-b482-3e104bd8549d",
+        "verification": "runs/9a5218c0-d785-4aed-b482-3e104bd8549d/verification.json",
+        "sha256": "39c2557b8be1f78b3da8b836293998e89862e81fa81c51b50fb21a3423c84f22"
+      },
+      {
+        "version": 1,
+        "invocationId": "7ec58620-8c02-4fc3-849f-3dd8977ef3ed",
+        "verification": "runs/7ec58620-8c02-4fc3-849f-3dd8977ef3ed/verification.json",
+        "sha256": "5bfb6c704ac905403e7f00f3ab1e1ab7ca2b109ed0124329e1fb26c3be0b96a7"
+      },
+      {
+        "version": 1,
+        "invocationId": "6f3e3b05-3b37-49dc-be36-781622804a33",
+        "verification": "runs/6f3e3b05-3b37-49dc-be36-781622804a33/verification.json",
+        "sha256": "224fb6ffa81a8b3b52d3b029c69cf57fb7c67db3c919cd847ef2c6d696fc0c3e"
+      }
+    ],
+    "unit": {
+      "version": 1,
+      "invocationId": "0ec53e55-5a7f-4018-bb75-db40b4507ba8",
+      "verification": "runs/0ec53e55-5a7f-4018-bb75-db40b4507ba8/verification.json",
+      "sha256": "dbbd8a4c1be525f1cf75c7f8e0812b4bfde8bb508626260467051b7139fc16c5"
+    },
+    "browser": {
+      "version": 1,
+      "invocationId": "62cf274c-452f-4d2e-bf6c-67b2b7d2d93a",
+      "verification": "runs/62cf274c-452f-4d2e-bf6c-67b2b7d2d93a/verification.json",
+      "sha256": "43de9f7068c97e58ceb42dce88dd7c8a5bbc1c61029d8359807ff3a57706329f"
+    },
+    "coverage": {
+      "version": 1,
+      "invocationId": "2da6b422-6d4d-43bb-b9e9-3d1b3458ee39",
+      "verification": "runs/2da6b422-6d4d-43bb-b9e9-3d1b3458ee39/verification.json",
+      "sha256": "3279e5ddefe77862b02a1aa4fdae18463eebaf5e7e8104b2caddabde08425d36"
+    }
+  },
+  "evidenceHashes": {
+    "artifacts/harness/validation.json": "339acc3b09add3c3d0e689adf17878a1bd264d3a3f00fccce7db538630e20066",
+    "artifacts/impact/discovery.json": "3544766ccc9eb818b6735abd457b22f6b21956c6e2e670bcc1652e1227c1e27e",
+    "artifacts/impact/selection.json": "56521b290dd82868b261358e3aee281b3f02cca64ce95bf0a9558cba2ab263bf",
+    "artifacts/coverage/ratchet.json": "d61c17bbb103fc602f20c23e6289a9f474c333a4c86f43f3198d09f3e05cdbe3",
+    "artifacts/record/check.json": "47a0819ced46bcc8cba074511610b86bf888bdfa005195739947230cd0c2ab3d",
+    "artifacts/proofline/execution-index.jsonl": "deb5a313c92478bafa7f267e6cfbda834199ab0ede1207ef8ad4d6b91f38c268",
+    "dist/work-orders/.proofline/modules.json": "0b455979dec66e9dba5ce822e049433325d09c7f9faa727900b3c93c8c1b3fa6",
+    "dist/work-orders/.vite/manifest.json": "c99ab346a63eea4070f1c3c923e12e13e8a8e01d0382a5d7642950c4e0edbfae",
+    "target/proofline.harness.json": "534a8b9b513c73921501abdf7ac3fec6d2db0065fc90f3111e642614e1e8e4e2"
+  }
+}

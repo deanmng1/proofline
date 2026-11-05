@@ -1,0 +1,956 @@
+{
+  "config": {
+    "argv": [
+      "/Users/dio/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+      "/Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed/node_modules/@playwright/test/cli.js",
+      "test",
+      "--config",
+      "apps/crm-e2e/playwright.config.ts",
+      "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+      "--project",
+      "chromium",
+      "--workers=2",
+      "--reporter=list,json,html",
+      "--output=/Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed/artifacts/proofline/runs/9456990c-2db0-4803-bc1c-c6efad1e556b/test-results"
+    ],
+    "configFile": "/Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed/apps/crm-e2e/playwright.config.ts",
+    "rootDir": "/Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed/apps/crm-e2e/src",
+    "failOnFlakyTests": true,
+    "forbidOnly": true,
+    "fullyParallel": true,
+    "globalSetup": "/Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed/apps/crm-e2e/src/fixtures/scenario-global-setup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 2
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed/artifacts/proofline/runs/9456990c-2db0-4803-bc1c-c6efad1e556b/test-results",
+        "repeatEach": 1,
+        "retries": 2,
+        "metadata": {
+          "actualWorkers": 2
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/Users/dio/Documents/Codex/2026-10-27/new-chat/insurance-crm-testbed/apps/crm-e2e/src",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ],
+      [
+        "html"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.62.1",
+    "workers": 2,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "fixtures/scenario-contract.spec.ts",
+      "file": "fixtures/scenario-contract.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "starts_unauthenticated_and_logs_in_through_routed_auth",
+          "ok": true,
+          "tags": [
+            "scenario"
+          ],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 662,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-05T02:46:52.815Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6cac6c3b723ad12828e2-a0a53d83e2df6551e153",
+          "file": "fixtures/scenario-contract.spec.ts",
+          "line": 115,
+          "column": 1
+        },
+        {
+          "title": "rotates_access_tokens_and_revokes_the_context_on_logout",
+          "ok": true,
+          "tags": [
+            "authority"
+          ],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 1,
+                  "status": "passed",
+                  "duration": 189,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-05T02:46:52.816Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6cac6c3b723ad12828e2-0762c66e3fff82669e30",
+          "file": "fixtures/scenario-contract.spec.ts",
+          "line": 129,
+          "column": 1
+        },
+        {
+          "title": "fails_an_undeclared_browser_request_with_scenario_context",
+          "ok": true,
+          "tags": [
+            "egress"
+          ],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 1,
+                  "status": "passed",
+                  "duration": 106,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-05T02:46:53.447Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6cac6c3b723ad12828e2-6ea56b2884b2764aa6a3",
+          "file": "fixtures/scenario-contract.spec.ts",
+          "line": 181,
+          "column": 1
+        },
+        {
+          "title": "denies_an_undeclared_worker_request_with_scenario_context",
+          "ok": true,
+          "tags": [
+            "egress"
+          ],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 1,
+                  "status": "passed",
+                  "duration": 157,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-05T02:46:53.558Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6cac6c3b723ad12828e2-9854e27925d1918ebd08",
+          "file": "fixtures/scenario-contract.spec.ts",
+          "line": 201,
+          "column": 1
+        },
+        {
+          "title": "blocks_service_worker_registration_and_cleans_registrations",
+          "ok": true,
+          "tags": [
+            "egress"
+          ],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 1,
+                  "status": "passed",
+                  "duration": 148,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-05T02:46:53.719Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6cac6c3b723ad12828e2-5ed006db386bb3b5a174",
+          "file": "fixtures/scenario-contract.spec.ts",
+          "line": 226,
+          "column": 1
+        },
+        {
+          "title": "denies_browser_websockets_with_deterministic_context",
+          "ok": true,
+          "tags": [
+            "egress"
+          ],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 1,
+                  "status": "passed",
+                  "duration": 191,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-05T02:46:53.871Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6cac6c3b723ad12828e2-dbb389b79eaf7e832e1c",
+          "file": "fixtures/scenario-contract.spec.ts",
+          "line": 243,
+          "column": 1
+        },
+        {
+          "title": "separate_scenarios_receive_distinct_runtime_ids_and_state",
+          "ok": true,
+          "tags": [
+            "isolation"
+          ],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 490,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-05T02:46:53.922Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6cac6c3b723ad12828e2-2b2d4554bd273640315a",
+          "file": "fixtures/scenario-contract.spec.ts",
+          "line": 262,
+          "column": 1
+        },
+        {
+          "title": "shares_one_runtime_only_across_explicit_contexts",
+          "ok": true,
+          "tags": [
+            "isolation"
+          ],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 1,
+                  "status": "passed",
+                  "duration": 280,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-05T02:46:54.070Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6cac6c3b723ad12828e2-bb935dad15df188a54da",
+          "file": "fixtures/scenario-contract.spec.ts",
+          "line": 291,
+          "column": 1
+        },
+        {
+          "title": "cleans_up_after_a_failed_scenario_assertion",
+          "ok": true,
+          "tags": [
+            "scenario"
+          ],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 1,
+                  "status": "passed",
+                  "duration": 238,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-05T02:46:54.356Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6cac6c3b723ad12828e2-8b93041a95dcc72eddfb",
+          "file": "fixtures/scenario-contract.spec.ts",
+          "line": 325,
+          "column": 1
+        },
+        {
+          "title": "honors_declared_roles_and_one_shot_route_faults",
+          "ok": true,
+          "tags": [
+            "scenario"
+          ],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 182,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-05T02:46:54.417Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6cac6c3b723ad12828e2-b76be5fd819e955fc38c",
+          "file": "fixtures/scenario-contract.spec.ts",
+          "line": 341,
+          "column": 1
+        },
+        {
+          "title": "keeps_context_contract_authority_faults_and_tenant_inspection_inside_the_adapter",
+          "ok": true,
+          "tags": [
+            "authority"
+          ],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 1,
+                  "status": "passed",
+                  "duration": 116,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-05T02:46:54.600Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6cac6c3b723ad12828e2-53c837e1e662b1639adc",
+          "file": "fixtures/scenario-contract.spec.ts",
+          "line": 368,
+          "column": 1
+        },
+        {
+          "title": "binds_contract_requests_to_context_tokens_and_revokes_them_after_logout",
+          "ok": true,
+          "tags": [
+            "authority"
+          ],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 372,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-05T02:46:54.603Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6cac6c3b723ad12828e2-3e2a51b85bd7c34192c9",
+          "file": "fixtures/scenario-contract.spec.ts",
+          "line": 386,
+          "column": 1
+        },
+        {
+          "title": "matches_an_operation_fault_once_to_an_opaque_ui_created_bind",
+          "ok": true,
+          "tags": [
+            "scenario"
+          ],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 1,
+                  "status": "passed",
+                  "duration": 277,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-05T02:46:54.720Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6cac6c3b723ad12828e2-7351214f40d9b2ebe81f",
+          "file": "fixtures/scenario-contract.spec.ts",
+          "line": 450,
+          "column": 1
+        },
+        {
+          "title": "rejects_role_and_cross_tenant_mutations_through_the_test_api",
+          "ok": true,
+          "tags": [
+            "authority"
+          ],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 267,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-05T02:46:54.979Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6cac6c3b723ad12828e2-3622150b0eda290395d9",
+          "file": "fixtures/scenario-contract.spec.ts",
+          "line": 528,
+          "column": 1
+        },
+        {
+          "title": "copies_identity_claims_and_rejects_conflicting_redefinitions",
+          "ok": true,
+          "tags": [
+            "authority"
+          ],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 1,
+                  "status": "passed",
+                  "duration": 204,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-05T02:46:55.003Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6cac6c3b723ad12828e2-02a12ab2258587845307",
+          "file": "fixtures/scenario-contract.spec.ts",
+          "line": 600,
+          "column": 1
+        },
+        {
+          "title": "rolls_back_a_new_identity_after_context_setup_failure",
+          "ok": true,
+          "tags": [
+            "authority"
+          ],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 1,
+                  "status": "passed",
+                  "duration": 11,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-05T02:46:55.214Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6cac6c3b723ad12828e2-0ce1d04592008ce66ec3",
+          "file": "fixtures/scenario-contract.spec.ts",
+          "line": 654,
+          "column": 1
+        },
+        {
+          "title": "reserves_pending_identity_claims_until_concurrent_context_setup_commits",
+          "ok": true,
+          "tags": [
+            "authority"
+          ],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 1,
+                  "status": "passed",
+                  "duration": 8,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-05T02:46:55.229Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6cac6c3b723ad12828e2-d4c2add5cda87ba33018",
+          "file": "fixtures/scenario-contract.spec.ts",
+          "line": 689,
+          "column": 1
+        },
+        {
+          "title": "scenario_reset_retains_failed_contexts_for_a_deterministic_retry",
+          "ok": true,
+          "tags": [
+            "scenario"
+          ],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 1,
+                  "status": "passed",
+                  "duration": 9,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-05T02:46:55.242Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6cac6c3b723ad12828e2-bbff2415c9d279196d1a",
+          "file": "fixtures/scenario-contract.spec.ts",
+          "line": 737,
+          "column": 1
+        },
+        {
+          "title": "worker_setup_stops_the_server_when_bootstrap_close_fails",
+          "ok": true,
+          "tags": [
+            "scenario"
+          ],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 261,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-05T02:46:55.250Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6cac6c3b723ad12828e2-b3fc739c70e663d508d0",
+          "file": "fixtures/scenario-contract.spec.ts",
+          "line": 758,
+          "column": 1
+        },
+        {
+          "title": "factory_teardown_rejects_an_unacknowledged_caught_denial",
+          "ok": true,
+          "tags": [
+            "egress"
+          ],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 1,
+                  "status": "passed",
+                  "duration": 125,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-05T02:46:55.255Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6cac6c3b723ad12828e2-4c2a1d5d32a8ccef2596",
+          "file": "fixtures/scenario-contract.spec.ts",
+          "line": 785,
+          "column": 1
+        },
+        {
+          "title": "shard_a_isolates_runtime_and_storage",
+          "ok": true,
+          "tags": [
+            "isolation"
+          ],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 1,
+                  "status": "passed",
+                  "duration": 364,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-05T02:46:55.384Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6cac6c3b723ad12828e2-f2ab1b40a072dc210241",
+          "file": "fixtures/scenario-contract.spec.ts",
+          "line": 800,
+          "column": 1
+        },
+        {
+          "title": "shard_b_isolates_runtime_and_storage",
+          "ok": true,
+          "tags": [
+            "isolation"
+          ],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 382,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-05T02:46:55.516Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6cac6c3b723ad12828e2-8927a4dacceba292e9d0",
+          "file": "fixtures/scenario-contract.spec.ts",
+          "line": 808,
+          "column": 1
+        },
+        {
+          "title": "shard_a_uses_an_os_assigned_worker_port",
+          "ok": true,
+          "tags": [
+            "isolation"
+          ],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 1,
+                  "status": "passed",
+                  "duration": 357,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-05T02:46:55.753Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6cac6c3b723ad12828e2-72e89065e4673f244dfb",
+          "file": "fixtures/scenario-contract.spec.ts",
+          "line": 816,
+          "column": 1
+        },
+        {
+          "title": "shard_b_uses_an_os_assigned_worker_port",
+          "ok": true,
+          "tags": [
+            "isolation"
+          ],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 350,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-05T02:46:55.908Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6cac6c3b723ad12828e2-f11618a27e03b18b14e9",
+          "file": "fixtures/scenario-contract.spec.ts",
+          "line": 824,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-05T02:46:52.539Z",
+    "duration": 3757.196,
+    "expected": 24,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

@@ -1,0 +1,22 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:05.354
+The protected Requests route requires a desk identity
+
+2
+00:00:05.354 --> 00:00:10.318
+The north dispatcher sees only the north request
+
+3
+00:00:10.318 --> 00:00:13.787
+Completing the lamp removes it from Requested work
+
+4
+00:00:13.787 --> 00:00:19.882
+Visible Completed navigation shows the completed lamp
+
+5
+00:00:19.882 --> 00:00:24.640
+After sign out, revisiting Completed requires authentication
+

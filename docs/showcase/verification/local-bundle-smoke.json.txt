@@ -1,0 +1,27 @@
+{
+  "mode": "local integration smoke; synthetic CI identity, no API/deployment",
+  "sourceCommit": "4feb0572fb8aa1a18fcfdfa0e9f5333b59d714e2",
+  "outcome": "passed",
+  "files": 664,
+  "archiveBytes": 4929029,
+  "digest": "sha256:679961e6a970cfe5b5f809985af2572f00970981fea5b481d7eaa81ee67dc7b4",
+  "gateKeys": [
+    "lint",
+    "typecheck",
+    "manifest",
+    "impactPreview",
+    "impact",
+    "unit",
+    "browser",
+    "coverage",
+    "coverageCheck",
+    "record",
+    "production",
+    "whitespace",
+    "browserScenario",
+    "browserScenarioShard1",
+    "browserScenarioShard2",
+    "portability"
+  ],
+  "sameInventory": true
+}

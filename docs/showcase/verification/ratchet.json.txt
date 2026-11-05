@@ -1,0 +1,888 @@
+{
+  "revisions": {
+    "requestedBase": "cfe5f11630eac902210bce1999b7a34f9847d8fc",
+    "requestedHead": "HEAD",
+    "resolvedBase": "cfe5f11630eac902210bce1999b7a34f9847d8fc",
+    "resolvedHead": "4feb0572fb8aa1a18fcfdfa0e9f5333b59d714e2",
+    "mergeBase": "cfe5f11630eac902210bce1999b7a34f9847d8fc",
+    "checkoutHead": "4feb0572fb8aa1a18fcfdfa0e9f5333b59d714e2",
+    "historyComplete": true,
+    "errors": []
+  },
+  "groups": [
+    {
+      "workspace": "packages/service-bus",
+      "provider": "v8",
+      "providerVersion": "3.2.7",
+      "report": "artifacts/coverage/service-bus/coverage-summary.json",
+      "reportFormat": "istanbul-json-summary",
+      "aggregation": "per-file",
+      "metrics": [
+        "lines",
+        "functions",
+        "branches",
+        "statements"
+      ],
+      "sourceGlobs": [
+        "packages/service-bus/src/*.ts"
+      ],
+      "exclusions": [
+        {
+          "glob": "packages/service-bus/src/immutable-delivery.test.ts",
+          "reason": "Test sources are not instrumented production sources."
+        },
+        {
+          "glob": "packages/service-bus/src/service-bus.test.ts",
+          "reason": "Test sources are not instrumented production sources."
+        },
+        {
+          "glob": "packages/service-bus/src/index.ts",
+          "reason": "Barrel exports contain no service behavior."
+        }
+      ],
+      "sources": [
+        "packages/service-bus/src/service-bus.ts"
+      ],
+      "excluded": [
+        "packages/service-bus/src/immutable-delivery.test.ts",
+        "packages/service-bus/src/index.ts",
+        "packages/service-bus/src/service-bus.test.ts"
+      ],
+      "measurements": {
+        "packages/service-bus/src/service-bus.ts": {
+          "lines": 100,
+          "branches": 98.41,
+          "functions": 100,
+          "statements": 100
+        }
+      },
+      "provenance": {
+        "commandSource": {
+          "kind": "nx-target",
+          "target": "coverage"
+        },
+        "command": "node tools/proofline/canonical-runner.mjs vitest run packages/service-bus/src --coverage --coverage.all --coverage.provider=v8 --coverage.reportOnFailure --coverage.reportsDirectory=artifacts/coverage/service-bus --coverage.reporter=text --coverage.reporter=html --coverage.reporter=lcov --coverage.reporter=json-summary --coverage.include='packages/service-bus/src/**/*.{ts,tsx}' --coverage.exclude='**/*.test.{ts,tsx}' --coverage.exclude='**/*.d.ts'",
+        "argv": [
+          "node",
+          "tools/proofline/canonical-runner.mjs",
+          "vitest",
+          "run",
+          "packages/service-bus/src",
+          "--coverage",
+          "--coverage.all",
+          "--coverage.provider=v8",
+          "--coverage.reportOnFailure",
+          "--coverage.reportsDirectory=artifacts/coverage/service-bus",
+          "--coverage.reporter=text",
+          "--coverage.reporter=html",
+          "--coverage.reporter=lcov",
+          "--coverage.reporter=json-summary",
+          "--coverage.include=packages/service-bus/src/**/*.{ts,tsx}",
+          "--coverage.exclude=**/*.test.{ts,tsx}",
+          "--coverage.exclude=**/*.d.ts"
+        ],
+        "cwd": ".",
+        "adapter": "vitest",
+        "implementation": "vitest-v8",
+        "provider": "v8",
+        "providerPackage": "@vitest/coverage-v8",
+        "declaredVersion": "3.2.7",
+        "resolvedVersion": "3.2.7"
+      },
+      "errors": []
+    },
+    {
+      "workspace": "packages/policy-service",
+      "provider": "v8",
+      "providerVersion": "3.2.7",
+      "report": "artifacts/coverage/policy-service/coverage-summary.json",
+      "reportFormat": "istanbul-json-summary",
+      "aggregation": "per-file",
+      "metrics": [
+        "lines",
+        "functions",
+        "branches",
+        "statements"
+      ],
+      "sourceGlobs": [
+        "packages/policy-service/src/*.ts"
+      ],
+      "exclusions": [
+        {
+          "glob": "packages/policy-service/src/policy-service.test.ts",
+          "reason": "Test sources are not instrumented production sources."
+        },
+        {
+          "glob": "packages/policy-service/src/index.ts",
+          "reason": "Barrel exports contain no policy behavior."
+        }
+      ],
+      "sources": [
+        "packages/policy-service/src/policy-service.ts"
+      ],
+      "excluded": [
+        "packages/policy-service/src/index.ts",
+        "packages/policy-service/src/policy-service.test.ts"
+      ],
+      "measurements": {
+        "packages/policy-service/src/policy-service.ts": {
+          "lines": 98.58,
+          "branches": 83,
+          "functions": 100,
+          "statements": 98.58
+        }
+      },
+      "provenance": {
+        "commandSource": {
+          "kind": "nx-target",
+          "target": "coverage"
+        },
+        "command": "node tools/proofline/canonical-runner.mjs vitest run packages/policy-service/src --coverage --coverage.all --coverage.provider=v8 --coverage.reportOnFailure --coverage.reportsDirectory=artifacts/coverage/policy-service --coverage.reporter=text --coverage.reporter=html --coverage.reporter=lcov --coverage.reporter=json-summary --coverage.include='packages/policy-service/src/**/*.{ts,tsx}' --coverage.exclude='**/*.test.{ts,tsx}' --coverage.exclude='**/*.d.ts'",
+        "argv": [
+          "node",
+          "tools/proofline/canonical-runner.mjs",
+          "vitest",
+          "run",
+          "packages/policy-service/src",
+          "--coverage",
+          "--coverage.all",
+          "--coverage.provider=v8",
+          "--coverage.reportOnFailure",
+          "--coverage.reportsDirectory=artifacts/coverage/policy-service",
+          "--coverage.reporter=text",
+          "--coverage.reporter=html",
+          "--coverage.reporter=lcov",
+          "--coverage.reporter=json-summary",
+          "--coverage.include=packages/policy-service/src/**/*.{ts,tsx}",
+          "--coverage.exclude=**/*.test.{ts,tsx}",
+          "--coverage.exclude=**/*.d.ts"
+        ],
+        "cwd": ".",
+        "adapter": "vitest",
+        "implementation": "vitest-v8",
+        "provider": "v8",
+        "providerPackage": "@vitest/coverage-v8",
+        "declaredVersion": "3.2.7",
+        "resolvedVersion": "3.2.7"
+      },
+      "errors": []
+    },
+    {
+      "workspace": "packages/policy-state-service",
+      "provider": "v8",
+      "providerVersion": "3.2.7",
+      "report": "artifacts/coverage/policy-state-service/coverage-summary.json",
+      "reportFormat": "istanbul-json-summary",
+      "aggregation": "per-file",
+      "metrics": [
+        "lines",
+        "functions",
+        "branches",
+        "statements"
+      ],
+      "sourceGlobs": [
+        "packages/policy-state-service/src/*.ts"
+      ],
+      "exclusions": [
+        {
+          "glob": "packages/policy-state-service/src/policy-state-service.test.ts",
+          "reason": "Test sources are not instrumented production sources."
+        },
+        {
+          "glob": "packages/policy-state-service/src/index.ts",
+          "reason": "Barrel exports contain no projection behavior."
+        }
+      ],
+      "sources": [
+        "packages/policy-state-service/src/policy-state-service.ts"
+      ],
+      "excluded": [
+        "packages/policy-state-service/src/index.ts",
+        "packages/policy-state-service/src/policy-state-service.test.ts"
+      ],
+      "measurements": {
+        "packages/policy-state-service/src/policy-state-service.ts": {
+          "lines": 92.16,
+          "branches": 80.7,
+          "functions": 100,
+          "statements": 92.16
+        }
+      },
+      "provenance": {
+        "commandSource": {
+          "kind": "nx-target",
+          "target": "coverage"
+        },
+        "command": "node tools/proofline/canonical-runner.mjs vitest run packages/policy-state-service/src --coverage --coverage.all --coverage.provider=v8 --coverage.reportOnFailure --coverage.reportsDirectory=artifacts/coverage/policy-state-service --coverage.reporter=text --coverage.reporter=html --coverage.reporter=lcov --coverage.reporter=json-summary --coverage.include='packages/policy-state-service/src/**/*.{ts,tsx}' --coverage.exclude='**/*.test.{ts,tsx}' --coverage.exclude='**/*.d.ts'",
+        "argv": [
+          "node",
+          "tools/proofline/canonical-runner.mjs",
+          "vitest",
+          "run",
+          "packages/policy-state-service/src",
+          "--coverage",
+          "--coverage.all",
+          "--coverage.provider=v8",
+          "--coverage.reportOnFailure",
+          "--coverage.reportsDirectory=artifacts/coverage/policy-state-service",
+          "--coverage.reporter=text",
+          "--coverage.reporter=html",
+          "--coverage.reporter=lcov",
+          "--coverage.reporter=json-summary",
+          "--coverage.include=packages/policy-state-service/src/**/*.{ts,tsx}",
+          "--coverage.exclude=**/*.test.{ts,tsx}",
+          "--coverage.exclude=**/*.d.ts"
+        ],
+        "cwd": ".",
+        "adapter": "vitest",
+        "implementation": "vitest-v8",
+        "provider": "v8",
+        "providerPackage": "@vitest/coverage-v8",
+        "declaredVersion": "3.2.7",
+        "resolvedVersion": "3.2.7"
+      },
+      "errors": []
+    },
+    {
+      "workspace": "packages/finance-service",
+      "provider": "v8",
+      "providerVersion": "3.2.7",
+      "report": "artifacts/coverage/finance-service/coverage-summary.json",
+      "reportFormat": "istanbul-json-summary",
+      "aggregation": "per-file",
+      "metrics": [
+        "lines",
+        "functions",
+        "branches",
+        "statements"
+      ],
+      "sourceGlobs": [
+        "packages/finance-service/src/*.ts"
+      ],
+      "exclusions": [
+        {
+          "glob": "packages/finance-service/src/finance-service.test.ts",
+          "reason": "Test sources are not instrumented production sources."
+        },
+        {
+          "glob": "packages/finance-service/src/index.ts",
+          "reason": "Barrel exports contain no finance behavior."
+        }
+      ],
+      "sources": [
+        "packages/finance-service/src/finance-service.ts"
+      ],
+      "excluded": [
+        "packages/finance-service/src/finance-service.test.ts",
+        "packages/finance-service/src/index.ts"
+      ],
+      "measurements": {
+        "packages/finance-service/src/finance-service.ts": {
+          "lines": 100,
+          "branches": 93.86,
+          "functions": 100,
+          "statements": 100
+        }
+      },
+      "provenance": {
+        "commandSource": {
+          "kind": "nx-target",
+          "target": "coverage"
+        },
+        "command": "node tools/proofline/canonical-runner.mjs vitest run packages/finance-service/src --coverage --coverage.all --coverage.provider=v8 --coverage.reportOnFailure --coverage.reportsDirectory=artifacts/coverage/finance-service --coverage.reporter=text --coverage.reporter=html --coverage.reporter=lcov --coverage.reporter=json-summary --coverage.include='packages/finance-service/src/**/*.{ts,tsx}' --coverage.exclude='**/*.test.{ts,tsx}' --coverage.exclude='**/*.d.ts'",
+        "argv": [
+          "node",
+          "tools/proofline/canonical-runner.mjs",
+          "vitest",
+          "run",
+          "packages/finance-service/src",
+          "--coverage",
+          "--coverage.all",
+          "--coverage.provider=v8",
+          "--coverage.reportOnFailure",
+          "--coverage.reportsDirectory=artifacts/coverage/finance-service",
+          "--coverage.reporter=text",
+          "--coverage.reporter=html",
+          "--coverage.reporter=lcov",
+          "--coverage.reporter=json-summary",
+          "--coverage.include=packages/finance-service/src/**/*.{ts,tsx}",
+          "--coverage.exclude=**/*.test.{ts,tsx}",
+          "--coverage.exclude=**/*.d.ts"
+        ],
+        "cwd": ".",
+        "adapter": "vitest",
+        "implementation": "vitest-v8",
+        "provider": "v8",
+        "providerPackage": "@vitest/coverage-v8",
+        "declaredVersion": "3.2.7",
+        "resolvedVersion": "3.2.7"
+      },
+      "errors": []
+    },
+    {
+      "workspace": "packages/insurance-runtime",
+      "provider": "v8",
+      "providerVersion": "3.2.7",
+      "report": "artifacts/coverage/insurance-runtime/coverage-summary.json",
+      "reportFormat": "istanbul-json-summary",
+      "aggregation": "per-file",
+      "metrics": [
+        "lines",
+        "functions",
+        "branches",
+        "statements"
+      ],
+      "sourceGlobs": [
+        "packages/insurance-runtime/src/*.ts"
+      ],
+      "exclusions": [
+        {
+          "glob": "packages/insurance-runtime/src/runtime.test.ts",
+          "reason": "Test sources are not instrumented production sources."
+        },
+        {
+          "glob": "packages/insurance-runtime/src/timestamps.test.ts",
+          "reason": "Test sources are not instrumented production sources."
+        },
+        {
+          "glob": "packages/insurance-runtime/src/index.ts",
+          "reason": "Barrel exports contain no runtime behavior."
+        },
+        {
+          "glob": "packages/insurance-runtime/src/test-fixtures.ts",
+          "reason": "Deterministic test fixtures are validated by behavior tests rather than production coverage."
+        }
+      ],
+      "sources": [
+        "packages/insurance-runtime/src/runtime.ts"
+      ],
+      "excluded": [
+        "packages/insurance-runtime/src/index.ts",
+        "packages/insurance-runtime/src/runtime.test.ts",
+        "packages/insurance-runtime/src/test-fixtures.ts",
+        "packages/insurance-runtime/src/timestamps.test.ts"
+      ],
+      "measurements": {
+        "packages/insurance-runtime/src/runtime.ts": {
+          "lines": 96.2,
+          "branches": 83.79,
+          "functions": 97.67,
+          "statements": 96.2
+        }
+      },
+      "provenance": {
+        "commandSource": {
+          "kind": "nx-target",
+          "target": "coverage"
+        },
+        "command": "node tools/proofline/canonical-runner.mjs vitest run packages/insurance-runtime/src --coverage --coverage.all --coverage.provider=v8 --coverage.reportOnFailure --coverage.reportsDirectory=artifacts/coverage/insurance-runtime --coverage.reporter=text --coverage.reporter=html --coverage.reporter=lcov --coverage.reporter=json-summary --coverage.include='packages/insurance-runtime/src/**/*.{ts,tsx}' --coverage.exclude='**/*.test.{ts,tsx}' --coverage.exclude='**/*.d.ts'",
+        "argv": [
+          "node",
+          "tools/proofline/canonical-runner.mjs",
+          "vitest",
+          "run",
+          "packages/insurance-runtime/src",
+          "--coverage",
+          "--coverage.all",
+          "--coverage.provider=v8",
+          "--coverage.reportOnFailure",
+          "--coverage.reportsDirectory=artifacts/coverage/insurance-runtime",
+          "--coverage.reporter=text",
+          "--coverage.reporter=html",
+          "--coverage.reporter=lcov",
+          "--coverage.reporter=json-summary",
+          "--coverage.include=packages/insurance-runtime/src/**/*.{ts,tsx}",
+          "--coverage.exclude=**/*.test.{ts,tsx}",
+          "--coverage.exclude=**/*.d.ts"
+        ],
+        "cwd": ".",
+        "adapter": "vitest",
+        "implementation": "vitest-v8",
+        "provider": "v8",
+        "providerPackage": "@vitest/coverage-v8",
+        "declaredVersion": "3.2.7",
+        "resolvedVersion": "3.2.7"
+      },
+      "errors": []
+    },
+    {
+      "workspace": "packages/api-contracts",
+      "provider": "v8",
+      "providerVersion": "3.2.7",
+      "report": "artifacts/coverage/api-contracts/coverage-summary.json",
+      "reportFormat": "istanbul-json-summary",
+      "aggregation": "per-file",
+      "metrics": [
+        "lines",
+        "functions",
+        "branches",
+        "statements"
+      ],
+      "sourceGlobs": [
+        "packages/api-contracts/src/*.ts"
+      ],
+      "exclusions": [
+        {
+          "glob": "packages/api-contracts/src/test-api.test.ts",
+          "reason": "Test sources are not instrumented production sources."
+        },
+        {
+          "glob": "packages/api-contracts/src/contracts.ts",
+          "reason": "Declarative contract types remain outside the critical Test API ratchet."
+        },
+        {
+          "glob": "packages/api-contracts/src/handlers.ts",
+          "reason": "HTTP handler wiring remains outside the critical Test API ratchet."
+        },
+        {
+          "glob": "packages/api-contracts/src/index.ts",
+          "reason": "Barrel exports contain no Test API behavior."
+        }
+      ],
+      "sources": [
+        "packages/api-contracts/src/test-api.ts"
+      ],
+      "excluded": [
+        "packages/api-contracts/src/contracts.ts",
+        "packages/api-contracts/src/handlers.ts",
+        "packages/api-contracts/src/index.ts",
+        "packages/api-contracts/src/test-api.test.ts"
+      ],
+      "measurements": {
+        "packages/api-contracts/src/test-api.ts": {
+          "lines": 92.63,
+          "branches": 78.46,
+          "functions": 100,
+          "statements": 92.63
+        }
+      },
+      "provenance": {
+        "commandSource": {
+          "kind": "nx-target",
+          "target": "coverage"
+        },
+        "command": "node tools/proofline/canonical-runner.mjs vitest run packages/api-contracts/src --coverage --coverage.all --coverage.provider=v8 --coverage.reportOnFailure --coverage.reportsDirectory=artifacts/coverage/api-contracts --coverage.reporter=text --coverage.reporter=html --coverage.reporter=lcov --coverage.reporter=json-summary --coverage.include='packages/api-contracts/src/**/*.{ts,tsx}' --coverage.exclude='**/*.test.{ts,tsx}' --coverage.exclude='**/*.d.ts'",
+        "argv": [
+          "node",
+          "tools/proofline/canonical-runner.mjs",
+          "vitest",
+          "run",
+          "packages/api-contracts/src",
+          "--coverage",
+          "--coverage.all",
+          "--coverage.provider=v8",
+          "--coverage.reportOnFailure",
+          "--coverage.reportsDirectory=artifacts/coverage/api-contracts",
+          "--coverage.reporter=text",
+          "--coverage.reporter=html",
+          "--coverage.reporter=lcov",
+          "--coverage.reporter=json-summary",
+          "--coverage.include=packages/api-contracts/src/**/*.{ts,tsx}",
+          "--coverage.exclude=**/*.test.{ts,tsx}",
+          "--coverage.exclude=**/*.d.ts"
+        ],
+        "cwd": ".",
+        "adapter": "vitest",
+        "implementation": "vitest-v8",
+        "provider": "v8",
+        "providerPackage": "@vitest/coverage-v8",
+        "declaredVersion": "3.2.7",
+        "resolvedVersion": "3.2.7"
+      },
+      "errors": []
+    },
+    {
+      "workspace": "tools/impact",
+      "provider": "v8",
+      "providerVersion": "3.2.7",
+      "report": "artifacts/coverage/impact-tools/coverage-summary.json",
+      "reportFormat": "istanbul-json-summary",
+      "aggregation": "per-file",
+      "metrics": [
+        "lines",
+        "functions",
+        "branches",
+        "statements"
+      ],
+      "sourceGlobs": [
+        "tools/impact/src/*.ts"
+      ],
+      "exclusions": [
+        {
+          "glob": "tools/impact/src/contract.test.ts",
+          "reason": "Test sources are not instrumented production sources."
+        },
+        {
+          "glob": "tools/impact/src/governance.test.ts",
+          "reason": "Test sources are not instrumented production sources."
+        },
+        {
+          "glob": "tools/impact/src/harness-manifest.test.ts",
+          "reason": "Test sources are not instrumented production sources."
+        },
+        {
+          "glob": "tools/impact/src/main-selection.test.ts",
+          "reason": "Test sources are not instrumented production sources."
+        },
+        {
+          "glob": "tools/impact/src/playwright-discovery.test.ts",
+          "reason": "Test sources are not instrumented production sources."
+        },
+        {
+          "glob": "tools/impact/src/policy.test.ts",
+          "reason": "Test sources are not instrumented production sources."
+        },
+        {
+          "glob": "tools/impact/src/select.test.ts",
+          "reason": "Test sources are not instrumented production sources."
+        },
+        {
+          "glob": "tools/impact/src/validate.test.ts",
+          "reason": "Test sources are not instrumented production sources."
+        },
+        {
+          "glob": "tools/impact/src/changed-files.ts",
+          "reason": "Revision discovery is covered by focused governance tests outside the validator ratchet."
+        },
+        {
+          "glob": "tools/impact/src/coverage-policy.ts",
+          "reason": "Coverage governance is protected by adversarial policy tests outside the validator ratchet."
+        },
+        {
+          "glob": "tools/impact/src/harness-manifest.ts",
+          "reason": "Manifest validation has focused tests outside the legacy validator ratchet."
+        },
+        {
+          "glob": "tools/impact/src/main.ts",
+          "reason": "CLI orchestration is covered by integration tests outside the validator ratchet."
+        },
+        {
+          "glob": "tools/impact/src/playwright-discovery.ts",
+          "reason": "Playwright discovery has focused tests outside the validator ratchet."
+        },
+        {
+          "glob": "tools/impact/src/record-check.ts",
+          "reason": "Record governance is protected by adversarial tests outside the validator ratchet."
+        },
+        {
+          "glob": "tools/impact/src/select.ts",
+          "reason": "Impact selection has focused tests outside the validator ratchet."
+        },
+        {
+          "glob": "tools/impact/src/types.ts",
+          "reason": "Type-only declarations emit no runtime behavior."
+        },
+        {
+          "glob": "tools/impact/src/workspaces.ts",
+          "reason": "Workspace discovery has integration coverage outside the validator ratchet."
+        },
+        {
+          "glob": "tools/impact/src/real-manifest-selection.test.ts",
+          "reason": "Repository-level real-runner integration test sources are not instrumented production sources."
+        }
+      ],
+      "sources": [
+        "tools/impact/src/governance.ts",
+        "tools/impact/src/validate.ts"
+      ],
+      "excluded": [
+        "tools/impact/src/changed-files.ts",
+        "tools/impact/src/contract.test.ts",
+        "tools/impact/src/coverage-policy.ts",
+        "tools/impact/src/governance.test.ts",
+        "tools/impact/src/harness-manifest.test.ts",
+        "tools/impact/src/harness-manifest.ts",
+        "tools/impact/src/main-selection.test.ts",
+        "tools/impact/src/main.ts",
+        "tools/impact/src/playwright-discovery.test.ts",
+        "tools/impact/src/playwright-discovery.ts",
+        "tools/impact/src/policy.test.ts",
+        "tools/impact/src/real-manifest-selection.test.ts",
+        "tools/impact/src/record-check.ts",
+        "tools/impact/src/select.test.ts",
+        "tools/impact/src/select.ts",
+        "tools/impact/src/types.ts",
+        "tools/impact/src/validate.test.ts",
+        "tools/impact/src/workspaces.ts"
+      ],
+      "measurements": {
+        "tools/impact/src/governance.ts": {
+          "lines": 96,
+          "branches": 89.22,
+          "functions": 100,
+          "statements": 96
+        },
+        "tools/impact/src/validate.ts": {
+          "lines": 98.84,
+          "branches": 96.66,
+          "functions": 100,
+          "statements": 98.84
+        }
+      },
+      "provenance": {
+        "commandSource": {
+          "kind": "nx-target",
+          "target": "coverage"
+        },
+        "command": "node tools/proofline/canonical-runner.mjs vitest run tools/impact/src --coverage --coverage.all --coverage.provider=v8 --coverage.reportOnFailure --coverage.reportsDirectory=artifacts/coverage/impact-tools --coverage.reporter=text --coverage.reporter=html --coverage.reporter=lcov --coverage.reporter=json-summary --coverage.include='tools/impact/src/**/*.{ts,tsx}' --coverage.exclude='**/*.test.{ts,tsx}' --coverage.exclude='**/*.d.ts'",
+        "argv": [
+          "node",
+          "tools/proofline/canonical-runner.mjs",
+          "vitest",
+          "run",
+          "tools/impact/src",
+          "--coverage",
+          "--coverage.all",
+          "--coverage.provider=v8",
+          "--coverage.reportOnFailure",
+          "--coverage.reportsDirectory=artifacts/coverage/impact-tools",
+          "--coverage.reporter=text",
+          "--coverage.reporter=html",
+          "--coverage.reporter=lcov",
+          "--coverage.reporter=json-summary",
+          "--coverage.include=tools/impact/src/**/*.{ts,tsx}",
+          "--coverage.exclude=**/*.test.{ts,tsx}",
+          "--coverage.exclude=**/*.d.ts"
+        ],
+        "cwd": ".",
+        "adapter": "vitest",
+        "implementation": "vitest-v8",
+        "provider": "v8",
+        "providerPackage": "@vitest/coverage-v8",
+        "declaredVersion": "3.2.7",
+        "resolvedVersion": "3.2.7"
+      },
+      "errors": []
+    },
+    {
+      "workspace": "tools/proofline",
+      "provider": "v8",
+      "providerVersion": "3.2.7",
+      "report": "artifacts/coverage/proofline-tools/coverage-summary.json",
+      "reportFormat": "istanbul-json-summary",
+      "aggregation": "per-file",
+      "metrics": [
+        "lines",
+        "functions",
+        "branches",
+        "statements"
+      ],
+      "sourceGlobs": [
+        "tools/proofline/**/*.ts",
+        "tools/proofline/**/*.mts",
+        "tools/proofline/**/*.mjs"
+      ],
+      "exclusions": [
+        {
+          "glob": "tools/proofline/src/egress-guard.test.ts",
+          "reason": "Test sources are not instrumented production sources."
+        },
+        {
+          "glob": "tools/proofline/src/production-negative.test.ts",
+          "reason": "Test sources are not instrumented production sources."
+        },
+        {
+          "glob": "tools/proofline/run-guarded.d.mts",
+          "reason": "Type-only declarations emit no runtime behavior."
+        },
+        {
+          "glob": "tools/proofline/check-production.mjs",
+          "reason": "The repository adapter CLI is exercised by the canonical production build-and-audit integration gate; Vitest V8 cannot attribute its separate Node process."
+        },
+        {
+          "glob": "tools/proofline/egress-guard.mjs",
+          "reason": "The preload must execute in isolated real child processes; Vitest V8 does not merge child-process instrumentation, so focused process tests own every enabled plane and bypass regression."
+        },
+        {
+          "glob": "tools/proofline/serve-test-app.mjs",
+          "reason": "The real loopback server is exercised in a separate Node process for missing, wrong, accepted, and replayed capability behavior; Vitest V8 cannot attribute that child process."
+        },
+        {
+          "glob": "tools/proofline/src/product-e2e-boundary.test.ts",
+          "reason": "Static regression test sources are not instrumented production sources."
+        },
+        {
+          "glob": "tools/proofline/src/canonical-runner-egress.test.ts",
+          "reason": "Canonical runner integration test sources are not instrumented production sources."
+        },
+        {
+          "glob": "tools/proofline/src/execution-artifacts.test.ts",
+          "reason": "Test sources are not instrumented production sources."
+        },
+        {
+          "glob": "tools/proofline/src/portability.test.ts",
+          "reason": "Test sources are not instrumented production sources."
+        },
+        {
+          "glob": "tools/proofline/src/release-verification.test.ts",
+          "reason": "Test sources are not instrumented production sources."
+        },
+        {
+          "glob": "tools/proofline/src/required-execution.test.ts",
+          "reason": "Test sources are not instrumented production sources."
+        }
+      ],
+      "sources": [
+        "tools/proofline/canonical-runner.mjs",
+        "tools/proofline/execution-artifacts.mjs",
+        "tools/proofline/execution-verification.mjs",
+        "tools/proofline/guard-policy.mjs",
+        "tools/proofline/portability-result.mjs",
+        "tools/proofline/release-archive.mjs",
+        "tools/proofline/release-bundle.mjs",
+        "tools/proofline/release-evidence.mjs",
+        "tools/proofline/release-verify.mjs",
+        "tools/proofline/run-guarded.mjs",
+        "tools/proofline/src/production-negative.ts",
+        "tools/proofline/test-fixtures/runner.ts",
+        "tools/proofline/validate-portability.mjs",
+        "tools/proofline/vitest-execution.mjs",
+        "tools/proofline/vitest-native-reporter.mjs"
+      ],
+      "excluded": [
+        "tools/proofline/check-production.mjs",
+        "tools/proofline/egress-guard.mjs",
+        "tools/proofline/run-guarded.d.mts",
+        "tools/proofline/serve-test-app.mjs",
+        "tools/proofline/src/canonical-runner-egress.test.ts",
+        "tools/proofline/src/egress-guard.test.ts",
+        "tools/proofline/src/execution-artifacts.test.ts",
+        "tools/proofline/src/portability.test.ts",
+        "tools/proofline/src/product-e2e-boundary.test.ts",
+        "tools/proofline/src/production-negative.test.ts",
+        "tools/proofline/src/release-verification.test.ts",
+        "tools/proofline/src/required-execution.test.ts"
+      ],
+      "measurements": {
+        "tools/proofline/canonical-runner.mjs": {
+          "lines": 18.21,
+          "branches": 84.61,
+          "functions": 6.66,
+          "statements": 18.21
+        },
+        "tools/proofline/execution-artifacts.mjs": {
+          "lines": 60.81,
+          "branches": 87.5,
+          "functions": 50,
+          "statements": 60.81
+        },
+        "tools/proofline/execution-verification.mjs": {
+          "lines": 100,
+          "branches": 82.07,
+          "functions": 100,
+          "statements": 100
+        },
+        "tools/proofline/guard-policy.mjs": {
+          "lines": 89.72,
+          "branches": 81.33,
+          "functions": 92.85,
+          "statements": 89.72
+        },
+        "tools/proofline/portability-result.mjs": {
+          "lines": 96.81,
+          "branches": 100,
+          "functions": 94.73,
+          "statements": 96.81
+        },
+        "tools/proofline/release-archive.mjs": {
+          "lines": 97.84,
+          "branches": 88.88,
+          "functions": 100,
+          "statements": 97.84
+        },
+        "tools/proofline/release-bundle.mjs": {
+          "lines": 85.07,
+          "branches": 70.58,
+          "functions": 100,
+          "statements": 85.07
+        },
+        "tools/proofline/release-evidence.mjs": {
+          "lines": 100,
+          "branches": 95.17,
+          "functions": 100,
+          "statements": 100
+        },
+        "tools/proofline/release-verify.mjs": {
+          "lines": 86.22,
+          "branches": 97.14,
+          "functions": 66.66,
+          "statements": 86.22
+        },
+        "tools/proofline/run-guarded.mjs": {
+          "lines": 70.22,
+          "branches": 83.33,
+          "functions": 85.71,
+          "statements": 70.22
+        },
+        "tools/proofline/src/production-negative.ts": {
+          "lines": 99.45,
+          "branches": 83.72,
+          "functions": 100,
+          "statements": 99.45
+        },
+        "tools/proofline/test-fixtures/runner.ts": {
+          "lines": 100,
+          "branches": 100,
+          "functions": 100,
+          "statements": 100
+        },
+        "tools/proofline/validate-portability.mjs": {
+          "lines": 27.5,
+          "branches": 90,
+          "functions": 80,
+          "statements": 27.5
+        },
+        "tools/proofline/vitest-execution.mjs": {
+          "lines": 0,
+          "branches": 0,
+          "functions": 0,
+          "statements": 0
+        },
+        "tools/proofline/vitest-native-reporter.mjs": {
+          "lines": 0,
+          "branches": 0,
+          "functions": 0,
+          "statements": 0
+        }
+      },
+      "provenance": {
+        "commandSource": {
+          "kind": "nx-target",
+          "target": "coverage"
+        },
+        "command": "node tools/proofline/canonical-runner.mjs vitest run tools/proofline/src --coverage --coverage.all --coverage.provider=v8 --coverage.reportOnFailure --coverage.reportsDirectory=artifacts/coverage/proofline-tools --coverage.reporter=text --coverage.reporter=html --coverage.reporter=lcov --coverage.reporter=json-summary --coverage.include='tools/proofline/**/*.{ts,mjs}' --coverage.exclude='**/*.test.ts' --coverage.exclude='**/*.d.ts' --coverage.exclude='tools/proofline/check-production.mjs' --coverage.exclude='tools/proofline/egress-guard.mjs' --coverage.exclude='tools/proofline/serve-test-app.mjs'",
+        "argv": [
+          "node",
+          "tools/proofline/canonical-runner.mjs",
+          "vitest",
+          "run",
+          "tools/proofline/src",
+          "--coverage",
+          "--coverage.all",
+          "--coverage.provider=v8",
+          "--coverage.reportOnFailure",
+          "--coverage.reportsDirectory=artifacts/coverage/proofline-tools",
+          "--coverage.reporter=text",
+          "--coverage.reporter=html",
+          "--coverage.reporter=lcov",
+          "--coverage.reporter=json-summary",
+          "--coverage.include=tools/proofline/**/*.{ts,mjs}",
+          "--coverage.exclude=**/*.test.ts",
+          "--coverage.exclude=**/*.d.ts",
+          "--coverage.exclude=tools/proofline/check-production.mjs",
+          "--coverage.exclude=tools/proofline/egress-guard.mjs",
+          "--coverage.exclude=tools/proofline/serve-test-app.mjs"
+        ],
+        "cwd": ".",
+        "adapter": "vitest",
+        "implementation": "vitest-v8",
+        "provider": "v8",
+        "providerPackage": "@vitest/coverage-v8",
+        "declaredVersion": "3.2.7",
+        "resolvedVersion": "3.2.7"
+      },
+      "errors": []
+    }
+  ],
+  "errors": []
+}

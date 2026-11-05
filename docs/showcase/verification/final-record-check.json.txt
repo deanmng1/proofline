@@ -1,0 +1,299 @@
+{
+  "revisions": {
+    "requestedBase": "cfe5f11630eac902210bce1999b7a34f9847d8fc",
+    "requestedHead": "HEAD",
+    "resolvedBase": "cfe5f11630eac902210bce1999b7a34f9847d8fc",
+    "resolvedHead": "6324ffcdc3fb57e085e629e39346cbb85d13f378",
+    "mergeBase": "cfe5f11630eac902210bce1999b7a34f9847d8fc",
+    "checkoutHead": "6324ffcdc3fb57e085e629e39346cbb85d13f378",
+    "historyComplete": true,
+    "errors": []
+  },
+  "proposedRecord": {
+    "path": "test-impact/execution-record.jsonl",
+    "status": "read",
+    "bytes": 214247,
+    "validationErrors": []
+  },
+  "appendedRecordIds": [
+    "2026-11-04.enterprise-verification-plan",
+    "2026-11-04.required-test-execution-and-artifacts",
+    "2026-11-04.required-test-fix-review",
+    "2026-11-04.standalone-work-orders-portability",
+    "2026-11-04.standalone-portability-independent-review",
+    "2026-11-04.verified-release-artifacts",
+    "2026-11-04.verified-release-independent-review",
+    "2026-11-04.enterprise-shared-governance",
+    "2026-11-04.enterprise-fresh-gate-attempt-1",
+    "2026-11-04.enterprise-portability-ci-coverage-repair",
+    "2026-11-04.enterprise-full-completion"
+  ],
+  "changedFiles": [
+    {
+      "path": ".codex/environments/environment.toml",
+      "status": "untracked"
+    },
+    {
+      "path": ".github/workflows/deploy-demo.yml",
+      "status": "modified"
+    },
+    {
+      "path": ".github/workflows/verify.yml",
+      "status": "modified"
+    },
+    {
+      "path": "apps/crm-e2e/playwright.config.ts",
+      "status": "modified"
+    },
+    {
+      "path": "apps/crm-e2e/src/fixtures/scenario-contract.spec.ts",
+      "status": "modified"
+    },
+    {
+      "path": "apps/crm-e2e/src/fixtures/test.ts",
+      "status": "modified"
+    },
+    {
+      "path": "docs/AGENT_HANDOFF.md",
+      "status": "modified"
+    },
+    {
+      "path": "docs/PORTABLE_TEST_AUTOMATION.md",
+      "status": "modified"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-11-04-enterprise-verification.md",
+      "status": "added"
+    },
+    {
+      "path": "docs/superpowers/specs/2026-11-04-enterprise-verification-design.md",
+      "status": "added"
+    },
+    {
+      "path": "docs/TESTING.md",
+      "status": "modified"
+    },
+    {
+      "path": "examples/work-orders/.gitignore",
+      "status": "added"
+    },
+    {
+      "path": "examples/work-orders/checks/browser/api.mjs",
+      "status": "added"
+    },
+    {
+      "path": "examples/work-orders/checks/browser/auth.mjs",
+      "status": "added"
+    },
+    {
+      "path": "examples/work-orders/checks/browser/journeys.spec.ts",
+      "status": "added"
+    },
+    {
+      "path": "examples/work-orders/checks/browser/playwright.config.mjs",
+      "status": "added"
+    },
+    {
+      "path": "examples/work-orders/checks/browser/scenario.mjs",
+      "status": "added"
+    },
+    {
+      "path": "examples/work-orders/checks/build.mjs",
+      "status": "added"
+    },
+    {
+      "path": "examples/work-orders/checks/static-check.mjs",
+      "status": "added"
+    },
+    {
+      "path": "examples/work-orders/client/app.jsx",
+      "status": "added"
+    },
+    {
+      "path": "examples/work-orders/client/index.html",
+      "status": "added"
+    },
+    {
+      "path": "examples/work-orders/client/main.jsx",
+      "status": "added"
+    },
+    {
+      "path": "examples/work-orders/client/orders.mjs",
+      "status": "added"
+    },
+    {
+      "path": "examples/work-orders/client/orders.test.ts",
+      "status": "added"
+    },
+    {
+      "path": "examples/work-orders/client/test-entry.jsx",
+      "status": "added"
+    },
+    {
+      "path": "examples/work-orders/client/test-globals.d.ts",
+      "status": "added"
+    },
+    {
+      "path": "examples/work-orders/client/vite.config.mjs",
+      "status": "added"
+    },
+    {
+      "path": "examples/work-orders/client/vitest.config.mjs",
+      "status": "added"
+    },
+    {
+      "path": "examples/work-orders/package.json",
+      "status": "added"
+    },
+    {
+      "path": "examples/work-orders/proofline.harness.json",
+      "status": "added"
+    },
+    {
+      "path": "examples/work-orders/README.md",
+      "status": "added"
+    },
+    {
+      "path": "examples/work-orders/test-impact/coverage-baseline.json",
+      "status": "added"
+    },
+    {
+      "path": "examples/work-orders/test-impact/lifecycle-matrix.json",
+      "status": "added"
+    },
+    {
+      "path": "examples/work-orders/test-impact/rules.json",
+      "status": "added"
+    },
+    {
+      "path": "examples/work-orders/test-impact/workflows/work-orders.json",
+      "status": "added"
+    },
+    {
+      "path": "package.json",
+      "status": "modified"
+    },
+    {
+      "path": "proofline.harness.json",
+      "status": "modified"
+    },
+    {
+      "path": "README.md",
+      "status": "modified"
+    },
+    {
+      "path": "test-impact/coverage-baseline.json",
+      "status": "modified"
+    },
+    {
+      "path": "test-impact/execution-record.jsonl",
+      "status": "modified"
+    },
+    {
+      "path": "test-impact/rules.json",
+      "status": "modified"
+    },
+    {
+      "path": "test-impact/rules.md",
+      "status": "modified"
+    },
+    {
+      "path": "tools/impact/src/contract.test.ts",
+      "status": "modified"
+    },
+    {
+      "path": "tools/impact/src/harness-manifest.test.ts",
+      "status": "modified"
+    },
+    {
+      "path": "tools/impact/src/harness-manifest.ts",
+      "status": "modified"
+    },
+    {
+      "path": "tools/impact/src/main-selection.test.ts",
+      "status": "modified"
+    },
+    {
+      "path": "tools/impact/src/main.ts",
+      "status": "modified"
+    },
+    {
+      "path": "tools/proofline/canonical-runner.mjs",
+      "status": "modified"
+    },
+    {
+      "path": "tools/proofline/check-production.mjs",
+      "status": "modified"
+    },
+    {
+      "path": "tools/proofline/execution-artifacts.mjs",
+      "status": "added"
+    },
+    {
+      "path": "tools/proofline/execution-verification.mjs",
+      "status": "added"
+    },
+    {
+      "path": "tools/proofline/portability-result.mjs",
+      "status": "added"
+    },
+    {
+      "path": "tools/proofline/release-archive.mjs",
+      "status": "added"
+    },
+    {
+      "path": "tools/proofline/release-bundle.mjs",
+      "status": "added"
+    },
+    {
+      "path": "tools/proofline/release-evidence.mjs",
+      "status": "added"
+    },
+    {
+      "path": "tools/proofline/release-verify.mjs",
+      "status": "added"
+    },
+    {
+      "path": "tools/proofline/src/canonical-runner-egress.test.ts",
+      "status": "modified"
+    },
+    {
+      "path": "tools/proofline/src/execution-artifacts.test.ts",
+      "status": "added"
+    },
+    {
+      "path": "tools/proofline/src/portability.test.ts",
+      "status": "added"
+    },
+    {
+      "path": "tools/proofline/src/release-verification.test.ts",
+      "status": "added"
+    },
+    {
+      "path": "tools/proofline/src/required-execution.test.ts",
+      "status": "added"
+    },
+    {
+      "path": "tools/proofline/test-fixtures/portability-native.json",
+      "status": "added"
+    },
+    {
+      "path": "tools/proofline/test-fixtures/runner.ts",
+      "status": "added"
+    },
+    {
+      "path": "tools/proofline/validate-portability.mjs",
+      "status": "added"
+    },
+    {
+      "path": "tools/proofline/vitest-execution.mjs",
+      "status": "added"
+    },
+    {
+      "path": "tools/proofline/vitest-native-reporter.mjs",
+      "status": "added"
+    }
+  ],
+  "excludedGeneratedPaths": [],
+  "errors": []
+}
