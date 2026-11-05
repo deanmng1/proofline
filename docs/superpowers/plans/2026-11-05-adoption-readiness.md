@@ -33,10 +33,10 @@
 
 **Interfaces:** Existing canonical runner CLI and executable authority remain unchanged. Resolve companions from actual Playwright-installed layouts instead of a literal `ms-playwright` segment. Parent task/CI and target validation consume this behavior without overrides.
 
-- [ ] Add failing regression for arbitrary cache basename and exact headless-shell/video companion authorization; include a negative unrelated executable and missing optional browser case.
-- [ ] Preserve RED, implement minimal discovery repair, preserve GREEN and focused lint/typecheck results.
-- [ ] Run a real guarded Chromium smoke with a custom cache and verify retained native outcomes; include video/FFmpeg behavior.
-- [ ] Independently review spec compliance/quality, address material findings, integrate and commit.
+- [x] Add failing regression for arbitrary cache basename and exact headless-shell/video companion authorization; include a negative unrelated executable and missing optional browser case.
+- [x] Preserve RED, implement minimal discovery repair, preserve GREEN and focused lint/typecheck results.
+- [x] Run a real guarded Chromium smoke with a custom cache and verify retained native outcomes; include video/FFmpeg behavior.
+- [x] Independently review spec compliance/quality, address material findings, integrate and commit.
 
 ### Task 2: Make work-orders independently installable (A03)
 
@@ -44,10 +44,10 @@
 
 **Interfaces:** Extend `prepareTarget({ repositoryRoot, temporaryRoot, dependencyMode })` with explicit `reuse` (existing) and `independent` modes. Independent preparation has no host dependency symlink. Keep `main()` default compatibility mode unless an explicit new install option is specified. Provide a repeatable command/preparation recipe that a fresh adopter can execute; report installation separately from guarded test execution.
 
-- [ ] Add failing tests for independent preparation without dependency links and complete direct dependency/build-install configuration.
-- [ ] Add pinned dependency/runtime/package-manager/install policy and lockfile; implement explicit independent preparation/CLI interface and document Git/catalog/evidence initialization.
-- [ ] Run a public-registry independent target install into a new store plus its ten deterministic gates; retain source/core hash checks and native evidence.
-- [ ] Independently review spec compliance/quality, address findings, integrate and commit.
+- [x] Add failing tests for independent preparation without dependency links and complete direct dependency/build-install configuration.
+- [x] Add pinned dependency/runtime/package-manager/install policy and lockfile; implement explicit independent preparation/CLI interface and document Git/catalog/evidence initialization.
+- [x] Run a public-registry independent target install into a new store plus its ten deterministic gates; retain source/core hash checks and native evidence.
+- [x] Independently review spec compliance/quality, address findings, integrate and commit.
 
 ### Task 3: Supply a capability-gated interactive CRM demo (A04)
 
@@ -55,10 +55,10 @@
 
 **Interfaces:** `pnpm demo` launches the separately built local test artifact, prints a fresh loopback capability URL, supports deterministic shutdown, and uses the existing seeded legacy adapter for a human browser. It must not import reference-specific code into portable core or production entrypoints. `pnpm dev` remains backend integration mode.
 
-- [ ] Add failing launcher/guard or integration assertions for no-backend login, loopback/capability handling and cleanup.
-- [ ] Implement minimal launcher around existing guarded server/build contracts; provide exact package alias/arguments to controller.
-- [ ] Prove actual sign-in, protected visible navigation and logout/revisit with no backend; run production audit and preserve native/RED/GREEN evidence.
-- [ ] Independently review spec compliance/quality, address findings, integrate and commit.
+- [x] Add failing launcher/guard or integration assertions for no-backend login, loopback/capability handling and cleanup.
+- [x] Implement minimal launcher around existing guarded server/build contracts; provide exact package alias/arguments to controller.
+- [x] Prove actual sign-in, protected visible navigation and logout/revisit with no backend; run production audit and preserve native/RED/GREEN evidence.
+- [x] Independently review spec compliance/quality, address findings, integrate and commit.
 
 ### Task 4: Consolidate public setup and CI (A01, A05)
 
@@ -66,9 +66,9 @@
 
 **Interfaces:** One complete Node24 verification workflow with Chromium before browser-dependent unit execution. Exact root `demo` alias comes from Task 3. Independent adaptation command comes from Task 2.
 
-- [ ] Retire duplicate CI; check canonical prerequisites and preserve all complete verification/release gates.
-- [ ] Align version prerequisites, clone URL, frozen dependency/browser setup, guarded per-file test examples and production/backend versus demo commands.
-- [ ] Verify documentation/commands/config parity and obtain independent spec/quality review.
+- [x] Retire duplicate CI; check canonical prerequisites and preserve all complete verification/release gates.
+- [x] Align version prerequisites, clone URL, frozen dependency/browser setup, guarded per-file test examples and production/backend versus demo commands.
+- [x] Verify documentation/commands/config parity and obtain independent spec/quality review.
 
 ### Task 5: Publish clone-complete status and preview policy (A06, A07)
 
@@ -76,16 +76,16 @@
 
 **Interfaces:** Tracked status points to the current plan and actual completion/review evidence. Version is unpublished `0.9.0-preview.1`, manifest schema remains 1. Old template history is explicitly historical.
 
-- [ ] Make every mandatory resume reference available in a clean clone; remove contradictory current-status claims.
-- [ ] Align package/badge/changelog and scope support/security/compatibility/upgrade/artifact-expiry policy without claiming remote publication.
-- [ ] Validate clone-visible links/status and obtain independent spec/quality review.
+- [x] Make every mandatory resume reference available in a clean clone; remove contradictory current-status claims.
+- [x] Align package/badge/changelog and scope support/security/compatibility/upgrade/artifact-expiry policy without claiming remote publication.
+- [x] Validate clone-visible links/status and obtain independent spec/quality review.
 
 ### Task 6: Shared integration and fresh install completion
 
 **Files:** Controller owns manifest/catalog/baseline, authored record, tracked status/plan and generated verification controller scripts under ignored output.
 
-- [ ] Integrate all source ownership/exact bindings and classify new source coverage without lowering minima; refresh generated rules and canonical command docs.
-- [ ] Append all RED/GREEN/review evidence and make small clean local implementation commits.
+- [x] Integrate all source ownership/exact bindings and classify new source coverage without lowering minima; refresh generated rules and canonical command docs.
+- [x] Append all RED/GREEN/review evidence and make small clean local implementation commits.
 - [ ] Create a fresh full-history CRM clone outside the checkout, use empty HOME/store/browser cache, frozen public installation and exact pinned runtime; verify the documented demo and arbitrary-cache execution.
 - [ ] Prepare/install work-orders independently with a separate store and no host dependency links; verify all ten adaptation gates and core byte equality.
 - [ ] Run the full original twelve-command Task 8 chain from cleared generated state at the committed implementation head with `IMPACT_BASE=d8fef7175f7b9cdf52903821764ec85782a6aa4a` and `IMPACT_HEAD=HEAD`: lint, typecheck, manifest, impact dry-run/execution, unit, browser, coverage/check, record, production and whitespace.

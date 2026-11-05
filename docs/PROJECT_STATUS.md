@@ -13,7 +13,7 @@ Resume from the first unchecked item in that tracked checklist. No ignored local
 | Original portable hybrid harness | Complete at `4dc77a6` | Original design/plan and append-only execution record |
 | Required outcomes, failure artifacts, release verification, second app | Complete at `4feb057` | Fresh 18-step local gate; record closeout `6324ffc` |
 | Showcase and genuine second-app recording | Complete at `d8fef71` | Dated source snapshot in showcase measurements |
-| A01–A07 adoption-readiness repairs | In progress | Active plan above; fresh-install and independent reassessment still required |
+| A01–A07 adoption-readiness repairs | Implementation and scoped reviews complete at `c6747b5`; verification in progress | Fresh-install/full completion gate and new independent rating remain required |
 
 The existing full-gate evidence is local execution under explicitly synthetic CI identity. It does not establish a hosted GitHub workflow, Vercel deployment or untested platform compatibility. This source preview has not been pushed, tagged or published by the current work.
 
