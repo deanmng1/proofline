@@ -104,7 +104,7 @@
 
 ### Task 7: Fresh source and hosted verification
 
-- [ ] Run two fresh independent public installations, full original twelve-command gate, worker/both shards, compatibility receipt and actual local release directory/ZIP at committed implementation head with base `024aa838ade882fdcca46e63a4ae665569c16fd0`; preserve all failed attempts.
+- [x] Run two fresh independent public installations, full original twelve-command gate, worker/both shards, compatibility receipt and actual local release directory/ZIP at committed implementation head with base `024aa838ade882fdcca46e63a4ae665569c16fd0`; preserve all failed attempts (25 steps passed at `10dde98`; whole-project evaluator independently accepted actual fresh evidence).
 - [ ] Independently review the concrete source before publishing it for the authorized hosted milestone. Push a `codex/` candidate branch, create a reviewable PR and exercise real PR checks; repair failures through normal tests/review.
 - [ ] Advance main without force only after required checks/review, run actual canonical main verification and both declared cells, and fetch/audit the exact eligible hosted artifact with new read-only verifier. Keep actual IDs/attempt/digest/native evidence.
 - [ ] Verify and document the prepared preview workflow; the user explicitly chose to leave live staging pending. Do not invoke Vercel, request deployment credentials, perform production deployment, change remote settings or publish tags/releases implicitly.
@@ -140,7 +140,7 @@ Fresh attempt 4 at `67d8366` passed impact/unit/browser, then rejected an unhand
 - [x] Integrate exact identities, new100%helperfloor, production exclusions and exact generated-MSW ignore; preserve24oldfloors and232196baseauthoredbytes.
 - [x] Pass exact full tools coverage292/292 and all21measured tools floors after fix1.
 - [x] Obtain the original evaluator's all-five closure against one committed cohort (`8c7614f`; all R1–R5 closed).
-- [ ] Pass a new complete fresh root/work-orders gate, compatibility receipt and actual local release ZIP at that implementation head.
+- [x] Pass a new complete fresh root/work-orders gate, compatibility receipt and actual local release ZIP at that implementation head (`10dde98`, 25 steps; all four failed attempts preserved).
 - [x] Upgrade Roomboard once to the audited37-file core plus target-owned initializer registration, reverify/review and replace the recommended own-history bundle (target `aeaf7a0`, including independently reviewed setup cleanup).
 - [ ] Execute reviewed hosted bootstrap PR/main sequence and strict actual API/native artifact audit.
 - [ ] Complete final independent weighted rating and tracked docs/evidence closeout.
