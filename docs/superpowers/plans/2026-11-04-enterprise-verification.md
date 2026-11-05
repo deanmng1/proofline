@@ -83,11 +83,17 @@ Run focused: `node tools/proofline/canonical-runner.mjs vitest run tools/proofli
 
 - [x] Integrate manifest execution/production metadata, exact ownership/bindings, classify all new production sources and append scoped red/green/review evidence. Preserve baseline minima and committed record prefix.
 - [x] Obtain independent spec-compliance and code-quality review of Tasks 1–4, fix material findings with scoped re-review, and commit small local changes.
-- [ ] Run isolated second-app validation, all focused covering tests, lint/typecheck/manifest/record checks and inspect actual evidence.
-- [ ] Obtain independent whole-change review from base `cfe5f11630eac902210bce1999b7a34f9847d8fc` to final implementation head, including shared integration and scope limits.
-- [ ] From cleared generated build/cache/report/test outputs, run the original full Task 8 chain with `IMPACT_BASE=cfe5f11630eac902210bce1999b7a34f9847d8fc` and `IMPACT_HEAD=HEAD`: `pnpm lint && pnpm typecheck && pnpm harness:validate && pnpm test:impacted -- --dry-run && pnpm test:impacted && pnpm test && pnpm e2e && pnpm coverage && pnpm coverage:check && pnpm record:check && pnpm proofline:check-production && git diff --check`.
-- [ ] Append final verification evidence, commit locally, validate committed-head record governance and confirm only pre-existing .codex/ remains untracked. Do not push/deploy.
+- [x] Run isolated second-app validation, all focused covering tests, lint/typecheck/manifest/record checks and inspect actual evidence.
+- [x] Obtain independent whole-change review from base `cfe5f11630eac902210bce1999b7a34f9847d8fc` to final implementation head, including shared integration and scope limits.
+- [x] From cleared generated build/cache/report/test outputs, run the original full Task 8 chain with `IMPACT_BASE=cfe5f11630eac902210bce1999b7a34f9847d8fc` and `IMPACT_HEAD=HEAD`: `pnpm lint && pnpm typecheck && pnpm harness:validate && pnpm test:impacted -- --dry-run && pnpm test:impacted && pnpm test && pnpm e2e && pnpm coverage && pnpm coverage:check && pnpm record:check && pnpm proofline:check-production && git diff --check`.
+- [x] Append final verification evidence, commit locally, validate committed-head record governance and confirm only pre-existing .codex/ remains untracked. Do not push/deploy.
 
 ## Self-review
 
 Every authorized priority has one acceptance-owning task, focused red/green tests and independent review. Tasks 1–2 intentionally share one implementer/runner ownership; Task 3 owns both workflows, Task 4 owns the standalone target and production checker, and controller integrates shared metadata. Task 5 verifies interoperability and the original completion chain. No production database, hosted analytics, extra browsers, security scans or mutation framework is added by this increment.
+
+## Completion evidence
+
+The fresh-state completion chain passed at committed implementation head `4feb0572fb8aa1a18fcfdfa0e9f5333b59d714e2` on 2026-11-05 UTC. All 18 controller steps exited zero: the original 12-command chain, explicit two-worker scenario and both shards, standalone adaptation, release packaging and directory/real-ZIP verification. Full unit evidence contains 536 genuine passes across 11 children; Chromium passes 43, multiworker 24, and each shard 12. Eight coverage groups pass without lowering any prior baseline. The standalone work-orders target passes all ten gates with 31 unchanged copied core files and exact 2-unit/4-browser selection. The release smoke verifies 664 inventoried files with identical directory/archive inventories.
+
+Independent task spec/quality reviews, whole-change review, scoped coverage-repair review and final evidence review are approved. Reports and original failure/success evidence are retained under `.superpowers/sdd/2026-11-04-enterprise-verification/`, including `evidence/fresh-attempt-1/` and `evidence/fresh-attempt-2/`. The successful run uses synthetic local run 900000002/attempt 1; it is actual local testing and bundle verification, without a hosted GitHub run, API deployment, push or publication. Final closeout appends the authored record and validates the resulting committed head; implementation-head artifacts retain their original provenance.
