@@ -43,7 +43,6 @@ jobs:
     runs-on: ${{ matrix.runner }}
     env:
       PROOFLINE_COMPATIBILITY_CELL: ${{ matrix.id }}
-      PLAYWRIGHT_BROWSERS_PATH: ${{ runner.temp }}/proofline-browser-cache-${{ runner.arch }}
       PROOFLINE_SESSION_ID: ${{ github.run_id }}-${{ github.run_attempt }}
       PROOFLINE_CI_RUN_ID: ${{ github.run_id }}
       PROOFLINE_CI_RUN_ATTEMPT: ${{ github.run_attempt }}
@@ -55,6 +54,10 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - name: Set isolated browser cache from runner environment
+        shell: bash
+        run: echo "PLAYWRIGHT_BROWSERS_PATH=${RUNNER_TEMP}/proofline-browser-cache-${RUNNER_ARCH}" >> "$GITHUB_ENV"
 
       - name: Fetch trusted manual impact base
         if: ${{ github.event_name == 'workflow_dispatch' }}
