@@ -8,10 +8,10 @@ import {
   statSync,
   writeFileSync,
 } from "node:fs";
+import { createRequire } from "node:module";
 import { createServer } from "node:net";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { chromium, firefox, webkit } from "@playwright/test";
 import { parseCLI } from "vitest/node";
 import {
   allocateInvocation,
@@ -164,49 +164,61 @@ export const validateExecutionMetadata = (manifest = harness, root = repositoryR
   return execution;
 };
 
-const playwrightChildren = () => {
-  const candidates = [chromium.executablePath(), firefox.executablePath(), webkit.executablePath()];
-  const marker = `${path.sep}ms-playwright${path.sep}`;
-  const browserPath = candidates.find((candidate) => candidate.includes(marker));
-  const cacheRoot = browserPath
-    ? `${browserPath.slice(0, browserPath.indexOf(marker))}${path.sep}ms-playwright`
-    : "";
-  const chromiumRevision = browserPath?.match(/chromium-(\d+)/)?.[1];
-  // Video recording is a declared scenario capability. The package pins the revision; only exact
-  // installed browser/ffmpeg files are admitted at this native child boundary.
-  if (existsSync(cacheRoot))
-    for (const entry of readdirSync(cacheRoot, { withFileTypes: true })) {
-      if (entry.isDirectory() && entry.name.startsWith("ffmpeg-")) {
-        for (const child of readdirSync(path.join(cacheRoot, entry.name))) {
-          const executable = path.join(cacheRoot, entry.name, child);
-          if (child.startsWith("ffmpeg") && statSync(executable).isFile())
-            candidates.push(executable);
-        }
-      } else if (
-        entry.isDirectory() &&
-        chromiumRevision &&
-        entry.name === `chromium_headless_shell-${chromiumRevision}`
-      ) {
-        const walk = (directory) => {
-          for (const child of readdirSync(directory, { withFileTypes: true })) {
-            const absolute = path.join(directory, child.name);
-            if (child.isDirectory()) walk(absolute);
-            else if (
-              child.isFile() &&
-              ["chrome-headless-shell", "headless_shell", "headless_shell.exe"].includes(child.name)
-            )
-              candidates.push(absolute);
-          }
-        };
-        walk(path.join(cacheRoot, entry.name));
-      }
+export const playwrightChildren = (installedRegistry) => {
+  // Resolve through the test runner's own dependency graph: an independent target need not
+  // declare playwright-core directly. Its package-pinned registry owns revisions and platform
+  // layouts, including PLAYWRIGHT_BROWSERS_PATH=0; never scan a cache for executable lookalikes.
+  let registry = installedRegistry;
+  if (registry === undefined) {
+    try {
+      const testRequire = createRequire(import.meta.resolve("@playwright/test"));
+      const playwrightRequire = createRequire(testRequire.resolve("playwright/package.json"));
+      registry = playwrightRequire("playwright-core/lib/coreBundle").registry.registry;
+    } catch (cause) {
+      throw new Error(
+        "Proofline cannot load the installed Playwright executable registry. Use the verified Playwright version or review its registry API before upgrading.",
+        { cause },
+      );
     }
-  return [...new Set(candidates.filter(existsSync))].map((executable) => ({
-    executable,
-    purpose: path.basename(executable).startsWith("ffmpeg")
-      ? "playwright-ffmpeg"
-      : "playwright-browser",
-  }));
+  }
+  if (typeof registry?.findExecutable !== "function")
+    throw new Error("Proofline requires the installed Playwright executable registry API.");
+  const capabilities = [];
+  for (const name of ["chromium", "chromium-headless-shell", "firefox", "webkit", "ffmpeg"]) {
+    const entry = registry.findExecutable(name);
+    if (typeof entry?.directory !== "string" || typeof entry?.executablePath !== "function")
+      throw new Error(`Proofline requires Playwright registry metadata for ${name}.`);
+    const executable = entry.executablePath();
+    // Unsupported platforms have no executable path. Uninstalled optional browsers do not
+    // acquire authority; attempting to launch any missing binary still fails normally.
+    if (executable === undefined || executable === "") continue;
+    if (
+      typeof executable !== "string" ||
+      !path.isAbsolute(executable) ||
+      !path.isAbsolute(entry.directory)
+    )
+      throw new Error(`Proofline requires absolute Playwright registry paths for ${name}.`);
+    if (!existsSync(executable)) continue;
+    const resolved = realpathSync(executable);
+    const directory = realpathSync(entry.directory);
+    const installation = path.relative(realpathSync(path.dirname(entry.directory)), directory);
+    if (
+      installation === ".." ||
+      installation.startsWith(`..${path.sep}`) ||
+      path.isAbsolute(installation)
+    )
+      throw new Error(`Proofline Playwright ${name} installation resolves outside its cache.`);
+    const relative = path.relative(directory, resolved);
+    if (relative === ".." || relative.startsWith(`..${path.sep}`) || path.isAbsolute(relative))
+      throw new Error(`Proofline Playwright ${name} executable resolves outside its installation.`);
+    if (!statSync(resolved).isFile())
+      throw new Error(`Proofline Playwright ${name} executable must resolve to a regular file.`);
+    capabilities.push({
+      executable: resolved,
+      purpose: name === "ffmpeg" ? "playwright-ffmpeg" : "playwright-browser",
+    });
+  }
+  return capabilities;
 };
 
 const transformChildren = () => {
