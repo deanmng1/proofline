@@ -72,4 +72,10 @@ pnpm lint && pnpm typecheck && pnpm harness:validate && pnpm test:impacted -- --
 
 CI checks out full history, supplies explicit base/head authority, runs the same deterministic Node/shell/JSON gates, and never invokes an agent or model. Chromium is mandatory. An opt-in workflow input installs Firefox/WebKit and runs only the smoke projects. Playwright retries aid diagnostics, but `failOnFlakyTests` makes a retry-pass fail CI.
 
-CI retains `artifacts/harness/`, `artifacts/impact/`, `artifacts/record/`, `artifacts/coverage/`, production output/module manifests, unit/browser logs, `playwright-report/`, and `test-results/` under `always()`. Failures retain trace, screenshot, video, and network/route diagnostics for review.
+CI retains `artifacts/harness/`, `artifacts/impact/`, `artifacts/record/`, `artifacts/coverage/`, production output/module manifests, unit/browser logs, `artifacts/proofline/`, `artifacts/portability/`, and legacy `playwright-report/` / `test-results/` paths under `always()`. Failures retain trace, screenshot, video, and network/route diagnostics for review.
+
+## Execution and release evidence
+
+Required outcomes are verified from native reports and Vitest task events, including runtime skip, expected-failure and retry semantics. Every invocation owns a unique `artifacts/proofline/runs/` directory; inspect `artifacts/proofline/execution-index.jsonl` to locate its native report, verification JSON and retained browser diagnostics. Preserve the whole directory when sharing a failed run.
+
+Run `pnpm proofline:validate-portability` for the independent work-order application. The [portable automation guide](PORTABLE_TEST_AUTOMATION.md#independent-application-validation) describes its isolated repository, copied-core checks and measured compatibility scope. The [release contract](PORTABLE_TEST_AUTOMATION.md#release-verification) binds deployable output to the exact successful verification run and source commit.

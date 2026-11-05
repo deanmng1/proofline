@@ -35,11 +35,11 @@
 
 **Interfaces:** Consume optional manifest `execution` shape defined in spec; canonical execution requires it. Produce per-invocation native results and versioned verification JSON containing runner/sourceCommit/session/gate/run-attempt/scope/argv/cwd/exitCode/outcome/expected/observed/errors and aggregate-to-child references, plus generated execution index. Export a pure report reconciler for deterministic tests and release validation. Publish exact interface to controller before Task 3 integration.
 
-- [ ] Write failing tests for required runtime skip/fixme, expected failure, zero/missing/malformed/duplicate/wrong-project results, omitted unit target, valid focused/full/subset/shard outcomes, and no required identities in the explicit empty target.
-- [ ] Run focused tests and preserve RED logs in this plan's evidence directory.
-- [ ] Implement native-report plus Vitest native-event sidecar reconciliation (expected-failure, retries and project identity), pre-execution applicability, canonical aggregate unit checks, selected Playwright enforcement, manifest-owned unit/build/browser arguments, and validation. Keep guards installed and exact argv behavior; reject unsupported metadata.
-- [ ] Run focused tests plus real reproduced bound-smoke baseline/skip/fix: baseline passes, injected inline runtime skip returns nonzero, restored test passes. Preserve logs/native reports and restore source exactly.
-- [ ] Self-review and report files, tests, exact exported evidence interface, and required shared integration. Controller commits after integration and requests independent review.
+- [x] Write failing tests for required runtime skip/fixme, expected failure, zero/missing/malformed/duplicate/wrong-project results, omitted unit target, valid focused/full/subset/shard outcomes, and no required identities in the explicit empty target.
+- [x] Run focused tests and preserve RED logs in this plan's evidence directory.
+- [x] Implement native-report plus Vitest native-event sidecar reconciliation (expected-failure, retries and project identity), pre-execution applicability, canonical aggregate unit checks, selected Playwright enforcement, manifest-owned unit/build/browser arguments, and validation. Keep guards installed and exact argv behavior; reject unsupported metadata.
+- [x] Run focused tests plus real reproduced bound-smoke baseline/skip/fix: baseline passes, injected inline runtime skip returns nonzero, restored test passes. Preserve logs/native reports and restore source exactly.
+- [x] Self-review and report files, tests, exact exported evidence interface, and required shared integration. Controller commits after integration and requests independent review.
 
 Run focused: `node tools/proofline/canonical-runner.mjs vitest run tools/proofline/src/required-execution.test.ts tools/impact/src/contract.test.ts tools/impact/src/harness-manifest.test.ts` (use existing runner before metadata integration when necessary; retain actual command).
 
@@ -49,10 +49,10 @@ Run focused: `node tools/proofline/canonical-runner.mjs vitest run tools/proofli
 
 **Interfaces:** Allocate each command below `artifacts/proofline/runs/<unique-id>/`; append invocation references to `artifacts/proofline/execution-index.jsonl`. Native report, verification JSON, stdout/stderr and browser report/test artifacts remain invocation-local. Release worker consumes validated index/records and CI uploads entire root.
 
-- [ ] Write and run failing preservation/collision/parallel/missing-report tests before implementing output allocation.
-- [ ] Implement isolated report/output locations before spawn, preserving failed-command evidence. Reject conflicting output overrides or control them safely. Publish field names to release worker.
-- [ ] Run real browser failure followed by real success; assert prior report, trace, screenshot, video and diagnostic bytes survive unchanged. Verify two distinct command/shard invocations cannot collide.
-- [ ] Run focused tests, self-review, and report separate Task 2 verdict/evidence. Controller obtains independent spec and quality review for both Tasks 1 and 2.
+- [x] Write and run failing preservation/collision/parallel/missing-report tests before implementing output allocation.
+- [x] Implement isolated report/output locations before spawn, preserving failed-command evidence. Reject conflicting output overrides or control them safely. Publish field names to release worker.
+- [x] Run real browser failure followed by real success; assert prior report, trace, screenshot, video and diagnostic bytes survive unchanged. Verify two distinct command/shard invocations cannot collide.
+- [x] Run focused tests, self-review, and report separate Task 2 verdict/evidence. Controller obtains independent spec and quality review for both Tasks 1 and 2.
 
 ### Task 3: Publish and verify immutable release bundles
 
@@ -60,10 +60,10 @@ Run focused: `node tools/proofline/canonical-runner.mjs vitest run tools/proofli
 
 **Interfaces:** Consume Task 1–2 execution evidence. Produce audited Vercel Build Output plus strict inventory/provenance/gate manifest, uploaded only after successful full verification. Deployment consumes trusted API run/artifact metadata and downloaded archive bytes, verifies digest before safe extraction, then deploys exact prebuilt static output with pinned tooling. Inject API/archive inputs for offline tests.
 
-- [ ] Write and run failing tests covering missing/failed/wrong-SHA/workflow/repository/attempt, expired/tampered/wrong artifact, unsafe archive path/symlink, missing/extra inventory files, missing execution/gate evidence, stale same-SHA or wrong-run/attempt summaries, incomplete aggregate references, dirty tracked source and valid bundle.
-- [ ] Implement packaging, exact trusted-run resolution, strict archive/inventory/execution validation, trusted verifier checkout, pinned deploy tooling and no-rebuild workflow. No live API/provider/deploy command is executed locally.
-- [ ] Add explicit multi-worker/shard gates and always-uploaded invocation diagnostics to verify workflow. Preserve existing complete gates and trusted revision authority.
-- [ ] Run focused offline release tests and workflow contract checks; self-review and report verification limitations and shared integration needs. Controller obtains independent review.
+- [x] Write and run failing tests covering missing/failed/wrong-SHA/workflow/repository/attempt, expired/tampered/wrong artifact, unsafe archive path/symlink, missing/extra inventory files, missing execution/gate evidence, stale same-SHA or wrong-run/attempt summaries, incomplete aggregate references, dirty tracked source and valid bundle.
+- [x] Implement packaging, exact trusted-run resolution, strict archive/inventory/execution validation, trusted verifier checkout, pinned deploy tooling and no-rebuild workflow. No live API/provider/deploy command is executed locally.
+- [x] Add explicit multi-worker/shard gates and always-uploaded invocation diagnostics to verify workflow. Preserve existing complete gates and trusted revision authority.
+- [x] Run focused offline release tests and workflow contract checks; self-review and report verification limitations and shared integration needs. Controller obtains independent review.
 
 ### Task 4: Validate an unrelated standalone application
 
@@ -71,18 +71,18 @@ Run focused: `node tools/proofline/canonical-runner.mjs vitest run tools/proofli
 
 **Interfaces:** Consume manifest-owned execution metadata and Task 1–2 evidence. Produce a standalone copied target repository with byte-identical reusable core, independent app/adapters/config/rules, deterministic unit and genuine navigated browser workflows, measured compatible coverage and append-only evidence. Produce a machine-readable compatibility/results record under generated artifacts.
 
-- [ ] Write and run failing portability tests for absent execution config/CRM-specific assumptions, changed copied core, missing target evidence and unsupported metadata.
-- [ ] Implement the work-orders app with dispatcher/observer roles, organization boundaries, `/desk/requests` to `/desk/completed` visible navigation and request completion. Keep target auth/API fakes absent from production output.
-- [ ] Implement offline disposable-repository preparation and target gates: manifest validation, exact discovery/selection after a real source change, full unit/browser, coverage/ratchet, record governance and production-negative verification. Preserve guard authority and copy core without edits.
-- [ ] Run isolated adaptation end to end with actual installed runtime/dependency versions, retain reports and verify no CRM import/route/rule dependency. Add browser failure-artifact check if not covered by shared runner integration.
-- [ ] Self-review and report complete commands, outcomes, source hashes, compatibility scope and shared integration requirements. Controller obtains independent review.
+- [x] Write and run failing portability tests for absent execution config/CRM-specific assumptions, changed copied core, missing target evidence and unsupported metadata.
+- [x] Implement the work-orders app with dispatcher/observer roles, organization boundaries, `/desk/requests` to `/desk/completed` visible navigation and request completion. Keep target auth/API fakes absent from production output.
+- [x] Implement offline disposable-repository preparation and target gates: manifest validation, exact discovery/selection after a real source change, full unit/browser, coverage/ratchet, record governance and production-negative verification. Preserve guard authority and copy core without edits.
+- [x] Run isolated adaptation end to end with actual installed runtime/dependency versions, retain reports and verify no CRM import/route/rule dependency. Add browser failure-artifact check if not covered by shared runner integration.
+- [x] Self-review and report complete commands, outcomes, source hashes, compatibility scope and shared integration requirements. Controller obtains independent review.
 
 ### Task 5: Shared integration and completion
 
 **Files:** Controller owns `proofline.harness.json`, `test-impact/rules.json`, `test-impact/rules.md`, `test-impact/coverage-baseline.json`, `test-impact/execution-record.jsonl`, `docs/TESTING.md`, `docs/PORTABLE_TEST_AUTOMATION.md`, `README.md`, plan/spec.
 
-- [ ] Integrate manifest execution/production metadata, exact ownership/bindings, classify all new production sources and append scoped red/green/review evidence. Preserve baseline minima and committed record prefix.
-- [ ] Obtain independent spec-compliance and code-quality review of Tasks 1–4, fix material findings with scoped re-review, and commit small local changes.
+- [x] Integrate manifest execution/production metadata, exact ownership/bindings, classify all new production sources and append scoped red/green/review evidence. Preserve baseline minima and committed record prefix.
+- [x] Obtain independent spec-compliance and code-quality review of Tasks 1–4, fix material findings with scoped re-review, and commit small local changes.
 - [ ] Run isolated second-app validation, all focused covering tests, lint/typecheck/manifest/record checks and inspect actual evidence.
 - [ ] Obtain independent whole-change review from base `cfe5f11630eac902210bce1999b7a34f9847d8fc` to final implementation head, including shared integration and scope limits.
 - [ ] From cleared generated build/cache/report/test outputs, run the original full Task 8 chain with `IMPACT_BASE=cfe5f11630eac902210bce1999b7a34f9847d8fc` and `IMPACT_HEAD=HEAD`: `pnpm lint && pnpm typecheck && pnpm harness:validate && pnpm test:impacted -- --dry-run && pnpm test:impacted && pnpm test && pnpm e2e && pnpm coverage && pnpm coverage:check && pnpm record:check && pnpm proofline:check-production && git diff --check`.

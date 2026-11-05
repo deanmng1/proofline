@@ -13,6 +13,10 @@ The portable default is hybrid:
 - Coverage ratchets and an append-only JSONL execution record prevent silent weakening.
 - Optional state-machine generation is parked for target applications whose lifecycle complexity justifies it.
 
+## Current hardening increment
+
+The original eight-task portable harness implementation completed its fresh-state gate at `4dc77a6`. The user subsequently authorized four additional priorities: required-test execution verification, preserved invocation failure artifacts, verified release artifacts and standalone second-app validation. The active design is [enterprise verification](superpowers/specs/2026-11-04-enterprise-verification-design.md), with its [execution plan](superpowers/plans/2026-11-04-enterprise-verification.md) and recovery ledger at `.superpowers/sdd/2026-11-04-enterprise-verification/progress.md`. The original design remains binding. This increment starts at `cfe5f11`; no push or deployment is authorized.
+
 ## Durable source of truth
 
 - Design: `docs/superpowers/specs/2026-10-28-portable-hybrid-workflow-harness-design.md`

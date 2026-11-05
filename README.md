@@ -49,6 +49,10 @@ The selector retains exact ownership and dynamic-import edge reasons and falls b
 
 Chromium runs the full visible matrix: authenticated deep-link restoration, sidebar customer/property/quote/bind/finance/logout, response-loss recovery, role denial, tenant isolation, and refund/correction. Firefox and WebKit are opt-in and run only the `@proofline-smoke` invariant. The fixture rotates access tokens; its `refreshToken` value is a refresh-capability marker, while an independent refresh-credential protocol remains outside this harness delivery.
 
+## Execution confidence and portability
+
+Proofline checks actual required test outcomes and retains separate diagnostics for each invocation. The release workflow verifies the exact tested artifact before deployment. Run `pnpm proofline:validate-portability` to exercise the reusable core against the independent work-order application; see the [execution, portability and release contracts](docs/PORTABLE_TEST_AUTOMATION.md#required-execution-and-preserved-diagnostics).
+
 ## Visual guides
 
 Start with the [ten-slide browser presentation](docs/showcase/proofline-overview.html) for a plain-language introduction, a real test catching a controlled regression and passing after the fix, a recorded product workflow, and measured charts. A [PDF copy](docs/showcase/proofline-overview.pdf) is available for reading and sharing. Read the [technical companion](docs/showcase/TECHNICAL_GUIDE.md) for editable architecture diagrams, execution contracts, adaptation steps, and measurement sources.
