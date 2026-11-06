@@ -291,6 +291,8 @@ export const applyOnboarding = (input) => {
   for (const file of writes.keys())
     if (fileHash(path.join(options.destination, file)) !== before[file])
       throw new Error(`Destination bytes changed before promotion: ${file}`);
+  if (fileHash(path.join(options.destination, receiptName)) !== plan.priorReceiptHash)
+    throw new Error("Installation receipt changed before target promotion");
   if (!existsSync(options.destination)) mkdirSync(options.destination);
   const promotionIdentity = identity(options.destination);
   writeFileSync(

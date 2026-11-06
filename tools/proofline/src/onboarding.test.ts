@@ -335,6 +335,53 @@ describe("safe source-native onboarding", () => {
       "user replacement\n",
     );
   });
+  it("preflights a receipt replaced during staging before any upgrade target mutation", () => {
+    const f = fixture();
+    mkdirSync(f.destination);
+    onboarding.applyOnboarding(f.options);
+    write(f.destination, "user.txt", "untouched\n");
+    write(f.root, "tools/impact/core.ts", "upgrade\n");
+    const source = commitGitFixture(f.root, "Upgrade staging receipt conflict");
+    expect(() =>
+      onboarding.applyOnboarding({
+        ...f.options,
+        source,
+        upgrade: true,
+        onPhase: (phase: string) => {
+          if (phase === "staged")
+            write(f.destination, ".proofline-receipt.json", "user receipt replacement\n");
+        },
+      }),
+    ).toThrow(/receipt.*changed|changed.*receipt/i);
+    expect(readFileSync(path.join(f.destination, "tools/impact/core.ts"), "utf8")).toBe(
+      "export const portable = true;\n",
+    );
+    expect(readFileSync(path.join(f.destination, ".proofline-receipt.json"), "utf8")).toBe(
+      "user receipt replacement\n",
+    );
+    expect(readFileSync(path.join(f.destination, "user.txt"), "utf8")).toBe("untouched\n");
+    expect(existsSync(path.join(f.destination, ".proofline-installing.json"))).toBe(false);
+  });
+  it("preflights a receipt introduced during staging before any initial installation target mutation", () => {
+    const f = fixture();
+    mkdirSync(f.destination);
+    write(f.destination, "user.txt", "untouched\n");
+    expect(() =>
+      onboarding.applyOnboarding({
+        ...f.options,
+        onPhase: (phase: string) => {
+          if (phase === "staged")
+            write(f.destination, ".proofline-receipt.json", "new user receipt\n");
+        },
+      }),
+    ).toThrow(/receipt.*changed|changed.*receipt/i);
+    expect(existsSync(path.join(f.destination, "tools"))).toBe(false);
+    expect(readFileSync(path.join(f.destination, ".proofline-receipt.json"), "utf8")).toBe(
+      "new user receipt\n",
+    );
+    expect(readFileSync(path.join(f.destination, "user.txt"), "utf8")).toBe("untouched\n");
+    expect(existsSync(path.join(f.destination, ".proofline-installing.json"))).toBe(false);
+  });
   it("rejects untrusted staged inventories and target edits during interrupted recovery", () => {
     const f = fixture();
     mkdirSync(f.destination);
