@@ -23,6 +23,12 @@ For this CRM reference, monetary examples use integer USD cents and integer basi
 | UI Vitest | Forms, visible values, route guards, validation, and recoverable states. |
 | Playwright | A small set of true multi-screen user workflows. |
 
+## Reference UI fixture timing
+
+The CRM unit server uses the same MSW handlers and payloads as the browser demo, with an asynchronous immediate response scheduler. Browser/demo handlers retain their real default delays. This is a reference-app fixture policy, outside the portable core.
+
+Tests of loading or request ordering should hold their own response with an explicit Promise and release it during cleanup. Keep real providers and HTTP interception; incidental demo timers are not a synchronization signal. Count one logical HTTP retry separately from additional page-query reads. The handler factory retains the existing module-owned state and reset lifecycle; constructing another factory does not create an independent store. See the [contracts and preserved boundaries](verification/2026-11-05-unit-fixture-policy.md).
+
 ## Portable contracts
 
 `pnpm harness:validate` validates structured commands without executing them; workspace membership; capability-gated test entrypoint and adapters; browser matrix; coverage groups; exact ownership; rule registry; and lifecycle/golden matrices. Each browser workspace has one `browserDiscoveryCommand` for exact discovery/execution; its worker and shard commands remain separate canonical-full gates. Missing or ambiguous metadata fails closed and writes `artifacts/harness/validation.json`.

@@ -166,8 +166,11 @@ D `a8b201a6` passed its own PR 2/all sixteen gates in both cells and received in
 - [x] Independently review bounded handler-factory timing injection; require six transport/provider-order contracts, preserve original bodies and browser delays.
 - [x] Implement RED/GREEN contracts and exact resolver/default/core preservation; independently review spec and quality.
 - [x] Register all new required identities with correct ownership and actual anchors; preserve floors and append-only history.
-- [ ] Pass a new committed full fresh root/work-orders gate and obtain exact successor source-publication approval.
+- [x] Pass a new committed full fresh root/work-orders gate (E0 `f2b960d`, independently accepted all25).
+- [ ] Obtain exact documentation-successor source-publication approval.
 - [ ] Pass successor's own full PR against D/main, independently approve exact refs/source, then normally advance main and pass actual main/API/native/archive audit.
 - [ ] Publish final independent weighted rating and accurate tracked closeout. Live staging remains pending.
 
 Scoped final approval covers five files, six new contracts and two causally corrected old cases (112 other callbacks preserved). Final author normal/coverage120/120, independent focus22/22, three actual zero-cache builds, production-negative and rebuilt launcher4/4 pass. FIX-001 additionally requires original overview/users/401 identities: actual186unit/34browser census. Full fresh7 at the new committed source, publication, actual main/API proof and weighted review remain unchecked.
+
+Fresh7 at committed E0 `f2b960d34d5ce0ed7472a6d1b646f4ecb90e52bc` passes all25 and independent whole-project audit: unit186required/683observed, browser34/47, workers24/shards12+12, root464/target127downloads0reuse,62root/11target records, all30floors/original24/232196prefix, core37 and actualZIP22788882bytesSHA12d8056706a1ec0eec7695c1012b1bf088ec4890d8c689317ea46d3273b6f50f/inventory719/all16success. See [current fresh evidence](../../verification/2026-11-05-fresh-fixture-successor.md). Documentation-only successor records this named E0 result; exact publication/own PR against D/full main/API and weighted review remain outstanding.
