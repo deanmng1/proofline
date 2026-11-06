@@ -25,7 +25,7 @@ For this CRM reference, monetary examples use integer USD cents and integer basi
 
 ## Reference UI fixture timing
 
-The CRM unit server uses the same MSW handlers and payloads as the browser demo, with an asynchronous immediate response scheduler. Browser/demo handlers retain their real default delays. This is a reference-app fixture policy, outside the portable core.
+The CRM unit server uses the same MSW handlers and payloads as the browser demo, with an asynchronous immediate response scheduler. Browser/demo handlers retain their real default delays. This is a reference-app fixture policy, outside the portable core. The accessibility fixture also imports the real overview module during collection, preparing its actual lazy dependency before the UI query starts. This collection work is outside the per-test deadline; browser gates retain cold navigation coverage.
 
 Tests of loading or request ordering should hold their own response with an explicit Promise and release it during cleanup. Keep real providers and HTTP interception; incidental demo timers are not a synchronization signal. Count one logical HTTP retry separately from additional page-query reads. The handler factory retains the existing module-owned state and reset lifecycle; constructing another factory does not create an independent store. See the [contracts and preserved boundaries](verification/2026-11-05-unit-fixture-policy.md).
 

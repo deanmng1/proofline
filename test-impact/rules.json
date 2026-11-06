@@ -1657,12 +1657,12 @@
         {
           "file": "apps/crm-web/src/test/a11y.test.tsx",
           "title": "accessibility > overview page has no detectable violations",
-          "line": 35
+          "line": 36
         },
         {
           "file": "apps/crm-web/src/test/a11y.test.tsx",
           "title": "accessibility > users page has no detectable violations",
-          "line": 43
+          "line": 44
         },
         {
           "file": "apps/crm-web/src/test/auth.test.tsx",

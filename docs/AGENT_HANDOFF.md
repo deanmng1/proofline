@@ -8,6 +8,8 @@ The seven adoption findings are complete at verified implementation `b368d85`; t
 
 The last published main source is `a8b201a6` (D). The local fixture-policy repair E0 `f2b960d` has independent scoped approval and passes its [new independently accepted 25-step fresh gate](verification/2026-11-05-fresh-fixture-successor.md). Its actual full PR passed, but actual main run `42146835227` failed a macOS impact overview heading query before axe; the native hosted verifier rejected the run despite Linux's release-named archive. Resume the [reviewed unit-fixture repair](verification/2026-11-05-unit-fixture-policy.md), then exact successor publication, its own full PR/main/API sequence and final independent rating. Preserve the failed evidence and all original timing/security assertions.
 
+Current PR3 source E `291c1f8d` failed macOS coverage on the overview heading, despite earlier passing impact/full unit/browser gates. Linux passed. Resume the [reviewed real-module preparation repair](verification/2026-11-05-overview-module-preparation.md); preserve the original callback and timing constants, refresh literal anchors, obtain scoped review and a new full fresh gate before updating the same owned PR. Remote main remains D; exact main authority and final rating are pending.
+
 ## Product and boundaries
 
 Proofline is portable regression-testing tooling for React/Vite applications. The insurance CRM is a reference proof, not product code to copy into the reusable core. Target rules, pages, adapters and tests belong to their application.

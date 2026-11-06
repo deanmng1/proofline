@@ -174,3 +174,16 @@ D `a8b201a6` passed its own PR 2/all sixteen gates in both cells and received in
 Scoped final approval covers five files, six new contracts and two causally corrected old cases (112 other callbacks preserved). Final author normal/coverage120/120, independent focus22/22, three actual zero-cache builds, production-negative and rebuilt launcher4/4 pass. FIX-001 additionally requires original overview/users/401 identities: actual186unit/34browser census. Full fresh7 at the new committed source, publication, actual main/API proof and weighted review remain unchecked.
 
 Fresh7 at committed E0 `f2b960d34d5ce0ed7472a6d1b646f4ecb90e52bc` passes all25 and independent whole-project audit: unit186required/683observed, browser34/47, workers24/shards12+12, root464/target127downloads0reuse,62root/11target records, all30floors/original24/232196prefix, core37 and actualZIP22788882bytesSHA12d8056706a1ec0eec7695c1012b1bf088ec4890d8c689317ea46d3273b6f50f/inventory719/all16success. See [current fresh evidence](../../verification/2026-11-05-fresh-fixture-successor.md). Documentation-only successor records this named E0 result; exact publication/own PR against D/full main/API and weighted review remain outstanding.
+
+## Actual E PR coverage finding and module preparation
+
+Actual E PR3 run42153668145attempt1 completes with Linux success and macOS coverage119/120: originaloverviewheadingquery fails beforeaxe in routeSuspense. Downstream ratchet errors follow unnormalized reports after coverage fails. All eight authenticated archives and both logs are preserved; main remains D. See [controlled evidence and boundary](../../verification/2026-11-05-overview-module-preparation.md).
+
+- [x] Capture failed native evidence, reproduce with real-module-only transform delay and independently review all six controls.
+- [x] Approve one real static import for unit-file collection, preserving case bodies/providers/timeouts/browser code and fail-closed selection.
+- [x] Implement import, refresh exact anchors/catalog, pass affected normal/coverage/selection checks and independent spec/quality review.
+- [ ] Pass a new committed full fresh gate and obtain exact successor publication approval.
+- [ ] Normally update the same owned PR3 against unchanged D/main; require both full cells/current-head authority before normal main advancement.
+- [ ] Pass actual successful main/API/native/compatibility/archive audit and final weighted review/local closeout. Staging remains pending.
+
+Scoped one-import implementation passes accessibility14normal/coverage, CRM120normal/coverage, real selection discovery683/47 with conservative canonical-full/no execution block, static/type/lint checks and independent14focus7c154e37. Independent spec/quality review has zero findings. All120 callbacks are byte-identical to E; only four metadata anchors move one line. The next committed full fresh gate remains required; no source has advanced main.
