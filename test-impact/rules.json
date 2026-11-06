@@ -921,6 +921,11 @@
           "file": "tools/proofline/src/egress-guard.test.ts",
           "title": "Proofline egress guard > protects_in_process_nx_environment_in_default_overridden_and_nested_launches",
           "line": 1784
+        },
+        {
+          "file": "tools/proofline/src/product-e2e-boundary.test.ts",
+          "title": "Proofline product E2E boundary > canonical_test_commands_and_manifest_validate_with_the_declared_runner_egress_adapter",
+          "line": 145
         }
       ],
       "playwright": [
@@ -1448,7 +1453,8 @@
       "paths": [
         "tools/proofline/validate-portability.mjs",
         "tools/proofline/check-production.mjs",
-        "tools/proofline/portability-result.mjs"
+        "tools/proofline/portability-result.mjs",
+        "tools/proofline/core-inventory.mjs"
       ],
       "vitest": [
         {
@@ -1485,6 +1491,26 @@
           "file": "tools/proofline/src/portability.test.ts",
           "title": "additive native runtime provenance > rejects unknown metadata and malformed additive runtime",
           "line": 931
+        },
+        {
+          "file": "tools/proofline/src/core-inventory.test.ts",
+          "title": "portability generator copies the shared core inventory without source operator tooling",
+          "line": 10
+        },
+        {
+          "file": "tools/proofline/src/core-inventory.test.ts",
+          "title": "core inventory selects reusable files while keeping source operators and target products out",
+          "line": 58
+        },
+        {
+          "file": "tools/proofline/src/core-inventory.test.ts",
+          "title": "core inventory rejects unsafe or duplicate source paths before returning an inventory",
+          "line": 105
+        },
+        {
+          "file": "tools/proofline/src/core-inventory.test.ts",
+          "title": "core inventory preserves input and gives deterministic sorted output",
+          "line": 123
         }
       ],
       "playwright": []
@@ -1668,6 +1694,623 @@
           "file": "apps/crm-web/src/test/auth.test.tsx",
           "title": "auth & session > retries a 401 with a refreshed token and resolves the request",
           "line": 11
+        }
+      ],
+      "playwright": []
+    },
+    {
+      "id": "REPO-001",
+      "description": "Repository minimum safeguards require exact CI identities and effective main protections; unknown, inactive or bypassed observations cannot establish enforcement.",
+      "criticality": "critical",
+      "paths": ["tools/proofline/repository-safeguards.mjs"],
+      "vitest": [
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 114,
+          "title": "repository safeguard policy and effective audit > accepts the checked-in exact policy and preserves stricter observations without mutation"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 135,
+          "title": "repository safeguard policy and effective audit > rejects wrong repository in minimum policy"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 144,
+          "title": "repository safeguard policy and effective audit > rejects wrong ref in minimum policy"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 153,
+          "title": "repository safeguard policy and effective audit > rejects missing check in minimum policy"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 162,
+          "title": "repository safeguard policy and effective audit > rejects wrong source app in minimum policy"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 171,
+          "title": "repository safeguard policy and effective audit > rejects duplicate check in minimum policy"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 180,
+          "title": "repository safeguard policy and effective audit > rejects unknown policy field in minimum policy"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 189,
+          "title": "repository safeguard policy and effective audit > rejects unknown control in minimum policy"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 198,
+          "title": "repository safeguard policy and effective audit > rejects missing control in minimum policy"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 207,
+          "title": "repository safeguard policy and effective audit > rejects weakened control in minimum policy"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 216,
+          "title": "repository safeguard policy and effective audit > rejects invalid approval count in minimum policy"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 225,
+          "title": "repository safeguard policy and effective audit > fails closed on wrong observation repository"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 236,
+          "title": "repository safeguard policy and effective audit > fails closed on wrong observation ref"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 247,
+          "title": "repository safeguard policy and effective audit > fails closed on wrong API repository"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 258,
+          "title": "repository safeguard policy and effective audit > fails closed on wrong API path"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 269,
+          "title": "repository safeguard policy and effective audit > fails closed on wrong API branch"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 280,
+          "title": "repository safeguard policy and effective audit > fails closed on unprotected branch"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 291,
+          "title": "repository safeguard policy and effective audit > fails closed on missing protection"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 303,
+          "title": "repository safeguard policy and effective audit > fails closed on unavailable enforcement"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 314,
+          "title": "repository safeguard policy and effective audit > fails closed on missing check"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 325,
+          "title": "repository safeguard policy and effective audit > fails closed on wrong check context"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 336,
+          "title": "repository safeguard policy and effective audit > fails closed on wrong check app"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 347,
+          "title": "repository safeguard policy and effective audit > fails closed on unbound check app"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 358,
+          "title": "repository safeguard policy and effective audit > fails closed on stale checks"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 369,
+          "title": "repository safeguard policy and effective audit > fails closed on missing PR control"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 380,
+          "title": "repository safeguard policy and effective audit > fails closed on administrator bypass"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 391,
+          "title": "repository safeguard policy and effective audit > fails closed on PR bypass actor"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 405,
+          "title": "repository safeguard policy and effective audit > fails closed on missing bypass evidence"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 419,
+          "title": "repository safeguard policy and effective audit > fails closed on deletion allowed"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 430,
+          "title": "repository safeguard policy and effective audit > fails closed on force allowed"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 441,
+          "title": "repository safeguard policy and effective audit > fails closed on unresolved conversations"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 452,
+          "title": "repository safeguard policy and effective audit > fails closed on missing critical field"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 463,
+          "title": "repository safeguard policy and effective audit > fails closed on disabled reporting"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 474,
+          "title": "repository safeguard policy and effective audit > fails closed on unknown reporting"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 485,
+          "title": "repository safeguard policy and effective audit > fails closed on truncated rules"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 496,
+          "title": "repository safeguard policy and effective audit > fails closed on missing active-rules response"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 507,
+          "title": "repository safeguard policy and effective audit > fails closed on unknown input field"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 518,
+          "title": "repository safeguard policy and effective audit > fails closed on invalid timestamp"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 529,
+          "title": "repository safeguard policy and effective audit > reports every absent minimum and provides an additive ruleset payload with explicit recovery"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 558,
+          "title": "repository safeguard policy and effective audit > accepts applicable active rulesets and retains additional signature controls"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 573,
+          "title": "repository safeguard policy and effective audit > accepts explicit 404/null protection absence with sufficient active rules"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 578,
+          "title": "repository safeguard policy and effective audit > rejects malformed protection 200/null despite sufficient alternate enforcement"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 591,
+          "title": "repository safeguard policy and effective audit > rejects malformed protection 200/false despite sufficient alternate enforcement"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 604,
+          "title": "repository safeguard policy and effective audit > rejects malformed protection 200/zero despite sufficient alternate enforcement"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 617,
+          "title": "repository safeguard policy and effective audit > rejects malformed protection 200/empty string despite sufficient alternate enforcement"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 630,
+          "title": "repository safeguard policy and effective audit > rejects malformed protection 200/array despite sufficient alternate enforcement"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 643,
+          "title": "repository safeguard policy and effective audit > rejects malformed protection 200/empty object despite sufficient alternate enforcement"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 656,
+          "title": "repository safeguard policy and effective audit > rejects malformed protection 404/object despite sufficient alternate enforcement"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 669,
+          "title": "repository safeguard policy and effective audit > rejects malformed protection 404/false despite sufficient alternate enforcement"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 682,
+          "title": "repository safeguard policy and effective audit > rejects malformed protection 404/zero despite sufficient alternate enforcement"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 695,
+          "title": "repository safeguard policy and effective audit > rejects malformed protection 404/empty string despite sufficient alternate enforcement"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 708,
+          "title": "repository safeguard policy and effective audit > rejects malformed protection 404/array despite sufficient alternate enforcement"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 721,
+          "title": "repository safeguard policy and effective audit > rejects malformed protection 403/null despite sufficient alternate enforcement"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 734,
+          "title": "repository safeguard policy and effective audit > withholds absence-dependent PUT for malformed protection 200/null"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 743,
+          "title": "repository safeguard policy and effective audit > withholds absence-dependent PUT for malformed protection 404/object"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 752,
+          "title": "repository safeguard policy and effective audit > withholds absence-dependent PUT for malformed protection 404/false"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 761,
+          "title": "repository safeguard policy and effective audit > withholds absence-dependent PUT for malformed protection 404/zero"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 770,
+          "title": "repository safeguard policy and effective audit > withholds absence-dependent PUT for malformed protection 404/empty string"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 779,
+          "title": "repository safeguard policy and effective audit > withholds absence-dependent PUT for malformed protection 404/array"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 788,
+          "title": "repository safeguard policy and effective audit > does not accept inert/ambiguous rules: evaluate"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 797,
+          "title": "repository safeguard policy and effective audit > does not accept inert/ambiguous rules: disabled"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 806,
+          "title": "repository safeguard policy and effective audit > does not accept inert/ambiguous rules: tag target"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 815,
+          "title": "repository safeguard policy and effective audit > does not accept inert/ambiguous rules: inapplicable ref"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 826,
+          "title": "repository safeguard policy and effective audit > does not accept inert/ambiguous rules: excluded ref"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 837,
+          "title": "repository safeguard policy and effective audit > does not accept inert/ambiguous rules: bypass"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 848,
+          "title": "repository safeguard policy and effective audit > does not accept inert/ambiguous rules: unknown bypasses"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 857,
+          "title": "repository safeguard policy and effective audit > does not accept inert/ambiguous rules: wrong source"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 866,
+          "title": "repository safeguard policy and effective audit > does not accept inert/ambiguous rules: missing detail"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 875,
+          "title": "repository safeguard policy and effective audit > does not accept inert/ambiguous rules: inactive rules absent from effective API"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 884,
+          "title": "repository safeguard policy and effective audit > does not accept inert/ambiguous rules: missing rule"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 893,
+          "title": "repository safeguard policy and effective audit > does not accept inert/ambiguous rules: wrong app"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 908,
+          "title": "repository safeguard policy and effective audit > does not accept inert/ambiguous rules: unknown rule"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 922,
+          "title": "repository safeguard policy and effective audit > exposes bypass as a failed minimum"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 931,
+          "title": "repository safeguard policy and effective audit > offers PUT only for absent protection and empty active rules"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 967,
+          "title": "repository safeguard policy and effective audit > validates stronger policy approvals and preserves ruleset approval requirements"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 981,
+          "title": "repository safeguard policy and effective audit > retains high positive approval counts as a stronger minimum"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 989,
+          "title": "repository safeguard policy and effective audit > importing the module performs no audit or network operation"
+        },
+        {
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 1002,
+          "title": "repository safeguard policy and effective audit > CLI is offline, explicit, non-mutating and exits nonzero for a failed observation"
+        }
+      ],
+      "playwright": []
+    },
+    {
+      "id": "ADOPT-001",
+      "description": "Source-pinned onboarding plans are read-only and explicit installs/upgrades preserve target-owned bytes, trusted inventories, receipts and interrupted evidence.",
+      "criticality": "critical",
+      "paths": ["tools/proofline/onboarding.mjs", "tools/proofline/onboarding-source.mjs"],
+      "vitest": [
+        {
+          "file": "tools/proofline/src/onboarding.test.ts",
+          "title": "safe source-native onboarding > plans read-only and installs exact pinned core without app config or dependency reuse",
+          "line": 70
+        },
+        {
+          "file": "tools/proofline/src/onboarding.test.ts",
+          "title": "safe source-native onboarding > creates a new starter with separately pinned templates and initial evidence but no Git or installs",
+          "line": 91
+        },
+        {
+          "file": "tools/proofline/src/onboarding.test.ts",
+          "title": "safe source-native onboarding > rejects non-full commits dirty relevant bytes missing pins and added untracked core",
+          "line": 115
+        },
+        {
+          "file": "tools/proofline/src/onboarding.test.ts",
+          "title": "safe source-native onboarding > preflights every collision before writing any target files",
+          "line": 129
+        },
+        {
+          "file": "tools/proofline/src/onboarding.test.ts",
+          "title": "safe source-native onboarding > plans changed added removed core and upgrades only unchanged prior installation",
+          "line": 142
+        },
+        {
+          "file": "tools/proofline/src/onboarding.test.ts",
+          "title": "safe source-native onboarding > refuses user edits partial installs forged receipt paths and missing prior Git authority",
+          "line": 167
+        },
+        {
+          "file": "tools/proofline/src/onboarding.test.ts",
+          "title": "safe source-native onboarding > rejects traversal overlap symlink source and destination paths",
+          "line": 213
+        },
+        {
+          "file": "tools/proofline/src/onboarding.test.ts",
+          "title": "safe source-native onboarding > retains incomplete staging and safely resumes final receipt promotion without deleting user bytes",
+          "line": 239
+        },
+        {
+          "file": "tools/proofline/src/onboarding.test.ts",
+          "title": "safe source-native onboarding > revalidates physical paths and target bytes before promotion and recognizes completed receipt interruption",
+          "line": 257
+        },
+        {
+          "file": "tools/proofline/src/onboarding.test.ts",
+          "title": "safe source-native onboarding > parses explicit source and destination with plan default and rejects arbitrary commands",
+          "line": 286
+        },
+        {
+          "file": "tools/proofline/src/onboarding.test.ts",
+          "title": "safe source-native onboarding > refuses receipt edits during upgrade promotion and untrusted pure upgrade inventories",
+          "line": 313
+        },
+        {
+          "file": "tools/proofline/src/onboarding.test.ts",
+          "title": "safe source-native onboarding > preflights a receipt replaced during staging before any upgrade target mutation",
+          "line": 338
+        },
+        {
+          "file": "tools/proofline/src/onboarding.test.ts",
+          "title": "safe source-native onboarding > preflights a receipt introduced during staging before any initial installation target mutation",
+          "line": 365
+        },
+        {
+          "file": "tools/proofline/src/onboarding.test.ts",
+          "title": "safe source-native onboarding > rejects untrusted staged inventories and target edits during interrupted recovery",
+          "line": 385
+        },
+        {
+          "file": "tools/proofline/src/onboarding.test.ts",
+          "title": "safe source-native onboarding > rejects physical destination replacement before receipt and finishes cleanup after completed receipt",
+          "line": 412
+        }
+      ],
+      "playwright": []
+    },
+    {
+      "id": "OBS-001",
+      "description": "Supplementary reliability observations preserve original attempts and known terminal facts, expose unknowns and reject malformed, moving or truncated GitHub history without becoming release authority.",
+      "criticality": "critical",
+      "paths": ["tools/proofline/reliability.mjs", "tools/proofline/reliability-api.mjs"],
+      "vitest": [
+        {
+          "file": "tools/proofline/src/reliability.test.ts",
+          "title": "supplementary canonical verification reliability > preserves an original failure and later retry pass with separate identities and gate counts",
+          "line": 226
+        },
+        {
+          "file": "tools/proofline/src/reliability.test.ts",
+          "title": "supplementary canonical verification reliability > keeps a later different source success from rewriting an original failed run",
+          "line": 263
+        },
+        {
+          "file": "tools/proofline/src/reliability.test.ts",
+          "title": "supplementary canonical verification reliability > reports unavailable first attempts and sparse retries as unknown denominators",
+          "line": 277
+        },
+        {
+          "file": "tools/proofline/src/reliability.test.ts",
+          "title": "supplementary canonical verification reliability > keeps cancelled and pending outcomes separate and does not call absent gates successful",
+          "line": 304
+        },
+        {
+          "file": "tools/proofline/src/reliability.test.ts",
+          "title": "supplementary canonical verification reliability > retains failure evidence before required gates without inventing an infrastructure cause",
+          "line": 319
+        },
+        {
+          "file": "tools/proofline/src/reliability.test.ts",
+          "title": "supplementary canonical verification reliability > retains pending evolution and idempotent duplicates but rejects conflicting terminal facts",
+          "line": 341
+        },
+        {
+          "file": "tools/proofline/src/reliability.test.ts",
+          "title": "supplementary canonical verification reliability > excludes PR runs while requiring exact repository workflow branch and run identity",
+          "line": 366
+        },
+        {
+          "file": "tools/proofline/src/reliability.test.ts",
+          "title": "supplementary canonical verification reliability > excludes valid fork PRs named main before applying selected-run origin restrictions",
+          "line": 397
+        },
+        {
+          "file": "tools/proofline/src/reliability.test.ts",
+          "title": "supplementary canonical verification reliability > preserves completed and partial pending terminal facts through later unavailable job snapshots",
+          "line": 408
+        },
+        {
+          "file": "tools/proofline/src/reliability.test.ts",
+          "title": "supplementary canonical verification reliability > rejects child timestamps outside run and job intervals in collection and imported summaries while preserving null unknowns",
+          "line": 449
+        },
+        {
+          "file": "tools/proofline/src/reliability.test.ts",
+          "title": "supplementary canonical verification reliability > accepts stable endpoint-specific update timestamps without weakening identity state or reread advancement checks",
+          "line": 517
+        },
+        {
+          "file": "tools/proofline/src/reliability.test.ts",
+          "title": "supplementary canonical verification reliability > rejects substituted terminal jobs and loss of already observed terminal gate facts",
+          "line": 575
+        },
+        {
+          "file": "tools/proofline/src/reliability.test.ts",
+          "title": "supplementary canonical verification reliability > fails closed on malformed imported observations rather than reporting invented healthy denominators",
+          "line": 601
+        },
+        {
+          "file": "tools/proofline/src/reliability.test.ts",
+          "title": "supplementary canonical verification reliability > rejects invalid timestamps, contradictory attempt jobs and concurrently advancing runs",
+          "line": 625
+        },
+        {
+          "file": "tools/proofline/src/reliability.test.ts",
+          "title": "supplementary canonical verification reliability > paginates complete histories and rejects truncation missing pages and conflicting duplicates",
+          "line": 651
+        },
+        {
+          "file": "tools/proofline/src/reliability.test.ts",
+          "title": "supplementary canonical verification reliability > rejects malformed jobs steps status and unknown metadata rather than silently accepting green",
+          "line": 675
+        },
+        {
+          "file": "tools/proofline/src/reliability.test.ts",
+          "title": "supplementary canonical verification reliability > requires an explicit bounded window and does not forward API error secrets",
+          "line": 705
+        },
+        {
+          "file": "tools/proofline/src/reliability.test.ts",
+          "title": "supplementary canonical verification reliability > writes exclusive immutable observations and readable finite-sample summaries in real temporary directories",
+          "line": 732
+        },
+        {
+          "file": "tools/proofline/src/reliability.test.ts",
+          "title": "supplementary canonical verification reliability > parses only explicit secret-free CLI inputs with no ambient repository or output",
+          "line": 754
+        },
+        {
+          "file": "tools/proofline/src/reliability.test.ts",
+          "title": "read-only reliability API transport > uses only fixed-origin allowlisted GET routes without redirects or credential forwarding",
+          "line": 786
+        },
+        {
+          "file": "tools/proofline/src/reliability.test.ts",
+          "title": "read-only reliability API transport > distinguishes unavailable attempt metadata from fatal API and bounded body failures",
+          "line": 809
+        },
+        {
+          "file": "tools/proofline/src/reliability.test.ts",
+          "title": "read-only reliability API transport > sanitizes hostile response accessors and enforces request deadlines and complete response lengths",
+          "line": 834
+        },
+        {
+          "file": "tools/proofline/src/reliability.test.ts",
+          "title": "trusted reliability workflow controls > accepts canonical completion only by exact identity path repository push and actual default branch",
+          "line": 873
+        },
+        {
+          "file": "tools/proofline/src/reliability.test.ts",
+          "title": "trusted reliability workflow controls > orchestrates only approved triggers into immutable output using trusted metadata and fixed bounded window",
+          "line": 925
+        },
+        {
+          "file": "tools/proofline/src/reliability.test.ts",
+          "title": "trusted reliability workflow controls > workflow uses pinned read-only trusted checkout and exports unique artifacts without executing event head",
+          "line": 973
         }
       ],
       "playwright": []

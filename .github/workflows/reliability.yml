@@ -1,0 +1,75 @@
+name: Observe canonical verification reliability
+
+on:
+  schedule:
+    - cron: '17 7 * * *'
+  workflow_dispatch:
+  workflow_run:
+    workflows: [Verify Proofline regression harness]
+    types: [completed]
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  collect:
+    if: >-
+      github.event_name != 'workflow_run' ||
+      (github.event.workflow_run.event == 'push' &&
+       github.event.workflow_run.repository.full_name == github.repository &&
+       github.event.workflow_run.head_repository.full_name == github.repository &&
+       github.event.workflow_run.head_branch == github.event.repository.default_branch &&
+       github.event.workflow_run.path == '.github/workflows/verify.yml')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Checkout trusted default branch collector
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 24.22.1
+
+      - name: Collect bounded supplementary history using canonical API identity
+        id: collect
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          node --input-type=module <<'NODE'
+          import { readFileSync, appendFileSync } from 'node:fs';
+          import path from 'node:path';
+          import { collectReliabilityForTrigger } from './tools/proofline/reliability.mjs';
+          import { createGithubReliabilityApi } from './tools/proofline/reliability-api.mjs';
+          try {
+            const output = path.join(process.env.RUNNER_TEMP, `proofline-reliability-${process.env.GITHUB_RUN_ID}-${process.env.GITHUB_RUN_ATTEMPT}`);
+            const result = await collectReliabilityForTrigger({
+              eventName: process.env.GITHUB_EVENT_NAME,
+              event: JSON.parse(readFileSync(process.env.GITHUB_EVENT_PATH, 'utf8')),
+              repository: process.env.GITHUB_REPOSITORY,
+              api: createGithubReliabilityApi({ token: process.env.GH_TOKEN }), output
+            });
+            appendFileSync(process.env.GITHUB_OUTPUT, `collected=${result.collected}\noutput=${output}\n`);
+          } catch {
+            console.error('Supplementary reliability collection failed; no credential details emitted.');
+            process.exitCode = 1;
+          }
+          NODE
+
+      - name: Preserve immutable supplementary observation
+        if: ${{ steps.collect.outputs.collected == 'true' }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: proofline-reliability-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ steps.collect.outputs.output }}
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Surface collection failure
+        if: ${{ failure() }}
+        run: echo 'Supplementary reliability collection failed; canonical verification outcomes are unchanged.' >> "$GITHUB_STEP_SUMMARY"

@@ -1,44 +1,55 @@
 # Proofline project status
 
-## Current work
+## Active increment
 
-The original portable harness, four enterprise verification improvements and all seven adoption-readiness repairs are complete. Fresh independent installations and the full gate passed at `b368d854fb4e3ffb8f0b4e7f65b3851ad7e48b0b`; [independent reassessment](reviews/2026-11-05-adoption-readiness.md) rated that unpublished source preview **8.0/10**, up from 6.0/10.
+The user authorized parallel implementation of repository safeguards, self-service onboarding and reliability tracking, followed by complete testing and an independent reassessment. The active [design](superpowers/specs/2026-11-06-adopter-confidence-design.md) and [execution checklist](superpowers/plans/2026-11-06-adopter-confidence.md) define that work; resume from their first unchecked task. All three source workstreams and scoped repairs now have independent spec/quality approval. Shared integration and the original fresh completion gate remain in progress; the previous8.6 rating is historical until the new increment is independently reassessed.
 
-The user has authorized parallel work on hosted CI/release proof, declared compatibility and independent adoption, and reliability/security with maintenance evidence. The original runtime increment passed its [fresh local gate](verification/2026-11-05-fresh-production-readiness.md) at `10dde98`. The latest module-preparation repair passes a [new independently accepted 25-step fresh gate](verification/2026-11-05-fresh-overview-successor.md) at `389513c`; eligible hosted main/API proof and a new independent rating remain pending. The user chose to prepare/test staging workflows while leaving live staging pending.
+The source-native [onboarding guide](GETTING_STARTED.md), [effective repository audit](REPOSITORY_SAFEGUARDS.md) and [reliability tracker](RELIABILITY.md) are implemented. The [first actual supplementary history snapshot](verification/2026-11-06-reliability-snapshot.md) preserves two failed historical main runs and the later success. Source-operator modules are excluded from the adopted core; the shared inventory retains all37 previous paths plus its generic selector,38 total. New exact regressions and six measured coverage floors are integrated without reducing the original30 floors or rewriting authored history.
 
-The first blind Roomboard trial stopped on an absent-tenancy schema gap; the blocked report and assisted retries remain preserved. All five runtime findings are closed and the 25-step local gate at `10dde98` is independently accepted. [Roomboard's reviewed own-history fixture](pilots/roomboard-adoption.md) passes 17 unit outcomes, two browser workflows and 19 checks at `aeaf7a0` with the unchanged 37-file portable core.
+Integration retained and repaired ambiguous parameterized test bindings, an aggregate test-budget failure and starter preflight ordering. The manifest now validates; full proofline-tools coverage passes422 tests under unchanged per-test deadlines. These local component results do not establish the full project/fresh/hosted gate. Actual main protection/private-reporting activation, normal required-check PR/main verification and final independent rating remain pending.
 
-Historically, C4 `63ae8d6` passed both actual PR cells/all sixteen gates and advanced main normally. Its first migration run rejected the legacy missing manifest and exposed two additional macOS timing failures. Those independently reviewed test repairs passed a new complete fresh gate at D0 `dfe62fc`: 177 required/677 observed unit and 34 required/47 browser outcomes, workers/shards, both installations, all floors and archive verification. D `a8b201a6` recorded that accepted result, passed its own full PR and advanced main normally. Its subsequent main failure and the active repair are recorded below. All earlier failures remain preserved.
+The first clean clone at candidate `d1d2f42` passed unit, browser and coverage execution, then correctly stopped at coverage governance: four new test-only exclusion descriptions lacked the established classification wording. The correction uses the existing policy without changing validator code, exclusion paths or any floor. The complete fresh gate will run again at the corrected committed source; the failed run remains retained.
 
-Active design: [production-readiness evidence](superpowers/specs/2026-11-05-production-readiness-design.md).
-Active execution checklist: [production-readiness plan](superpowers/plans/2026-11-05-production-readiness.md).
-Resume from the first unchecked item in that tracked checklist. No ignored local ledger or chat history is required to recover this status.
+The next clean clone at `16f55c5` passed all preceding full gates, worker/shard checks and independent work-orders validation, then compatibility rejected a duplicated core inventory. Its older scanner included five source-operator modules that the canonical installer correctly excluded. Compatibility is being joined to the shared selector with retained causal regression tests; no compatibility or release success is credited to that failed run. Full fresh verification will repeat after the reviewed repair.
 
-| Milestone | Status | Evidence |
-| --- | --- | --- |
-| Original portable hybrid harness | Complete at `4dc77a6` | Original design/plan and append-only execution record |
-| Required outcomes, failure artifacts, release verification, second app | Complete at `4feb057` | Fresh 18-step local gate; record closeout `6324ffc` |
-| Showcase and genuine second-app recording | Complete at `d8fef71` | Dated source snapshot in showcase measurements |
-| A01–A07 adoption-readiness repairs | Complete at verified implementation `b368d85` | Fresh 22-step local pass, independent command/evidence checks, [8.0/10 reassessment](reviews/2026-11-05-adoption-readiness.md) |
-| Hosted/compatibility/adoption/reliability readiness | Implementation, current-core third-app bundle and latest 25-step local gate independently accepted; successor publication pending | D passed both full PR cells; actual D main failed a readiness query; fixture repair E0 passes its new fresh gate; E PR coverage failed; module preparation repair F0 passes its fresh gate; updated PR/main/API verification and final rating pending |
+Live staging remains pending. This increment does not add human adoption, elapsed operating history, a support SLA or package/tag/release publication claims. Actual repository safeguards and any necessary source PR are separate recorded operations after review and local verification.
 
-An earlier hosted observation is [D's failed main run and reviewed fixture policy](verification/2026-11-05-unit-fixture-policy.md). D passed both PR cells/all sixteen gates, then main passed Linux and failed a macOS impact heading query before axe. All nine archives are retained; the actual hosted verifier rejected its release-named archive. The causally reproduced, independently designed Vitest-only fixture policy now passes all120 affected normal/coverage outcomes; its two exposed timing assumptions have reviewed test-boundary corrections. Independent implementation and the new committed full fresh gate are accepted at E0 `f2b960d`. Published main is D; no eligible main result or final rating is claimed.
+## Previous verified outcome
 
-Actual PR3 at E `291c1f8d` passes Linux but fails macOS coverage on the original overview heading query before axe (119/120). Earlier impact/full unit/browser gates pass. All eight failed archives are retained; main remains D. A [controlled and independently reviewed one-import preparation repair](verification/2026-11-05-overview-module-preparation.md) has independent scoped approval and passes affected normal/coverage and real selection checks. The new committed fresh gate at F0 `389513c` is independently accepted; exact publication and hosted verification remain required. E0 remains an earlier accepted snapshot.
+The approved production-readiness increment is complete at **verified executable source `775c62087aa2f443fc409aba750911215ba2aa2e` (F)**. The independent reassessment is **8.6/10**, up from 8.0 with the same weights. Source/spec quality, fresh validation and actual hosted release evidence are accepted, with no unresolved material finding in this scope. See the [independent review](reviews/2026-11-05-production-readiness.md) and [actual main/API audit](verification/2026-11-05-hosted-main-verification.md).
 
-## Latest completed verification
+The administrative local documentation closeout names verified F. It does not claim a later executable revision was run. Public GitHub main is F; package/tag/GitHub Release publication and deployment remain separate maintainer actions. The user explicitly chose to prepare/test staging while leaving live staging pending.
 
-The latest [25-step local result](verification/2026-11-05-fresh-overview-successor.md) is F0 `389513c`: 186 required/683 observed unit outcomes, 34 required/47 browser outcomes, worker24/shards12+12, both independent fresh installations, all30 floors and a verified22,682,946-byte ZIP. Independent audit accepts62root/11target native records, runtime/source, actual zero-reuse root464/target127 installs and the719-file inventory. Core37 and24original floors remain unchanged.
+| Milestone | Verified outcome |
+| --- | --- |
+| Original portable harness | Complete at `4dc77a6`, with the original fresh completion gate |
+| Required outcomes, failure artifacts, release verification and second app | Complete at `4feb057`; authored closeout `6324ffc` |
+| Showcase and second-app recording | Complete at `d8fef71`; dated presentation measurements retain their own source |
+| Seven adoption-readiness repairs | Complete at `b368d85`; earlier independent rating 8.0 |
+| Hosted proof and compatibility | Actual F PR/main both pass all 16 gates per platform; native GitHub acquisition and artifact/native/compatibility audits accepted |
+| Independent adoption and maintenance | Reviewed Roomboard own-history bundle, current37-file core, upgrade/mutation/repetition evidence; agent assistance remains explicit |
+| Final independent reassessment | 8.6/10 at F; implementation and evidence accepted |
 
-This is actual local execution under explicitly synthetic identity `900000023-1`; compatibility retains local provenance. Exact documentation-successor publication, updated PR3/full two-cell checks against D/main, successful actual main/API audit and final independent rating remain pending. No tag, package release, live staging or production deployment has occurred.
+## Latest verification
 
-Earlier accepted [E0](verification/2026-11-05-fresh-fixture-successor.md), [D0](verification/2026-11-05-fresh-repair-successor.md) and [Q](verification/2026-11-05-fresh-production-readiness.md) results remain attributed to their own sources. All failed observations remain preserved.
+[Fresh F0 `389513c`](verification/2026-11-05-fresh-overview-successor.md) passes all 25 steps in a new clone with separate HOME/stores/browser cache. Root/target installs download 464/127 packages with zero reuse;52/11 direct dependency paths remain inside their own installations. F differs only in documentation/history, with identical executable/test/manifest inputs.
+
+[Actual main run42163108445](https://github.com/deanmng1/proofline/actions/runs/42163108445), attempt1, passes Linux x64/Ubuntu 24.04 and Darwin arm64/macOS 15 at exact F. Each cell independently reconciles186 required / 683 observed unit and34 required / 47 observed Chromium passes, 24-case scenario and 12+12 shards,62 root / 11 target native records, independent work-orders10 gates / 2 unit / 4 browser outcomes and37 matching core files. All30 coverage floors in9 groups pass;24 original floors and the original 232,196-byte record prefix remain unchanged.
+
+The native hosted-proof CLI completes real authenticated GitHub acquisition. Release artifact 13478931649 is 25,227,522 bytes, SHA-256 `1874e23ca6e855af34af112b6db31cfc425f102e65a92e01de701481c1401084`, with 719 inventoried files and16 successful embedded gates. Independent audit accepts both source-bound compatibility observations and all 5 authority / 4 diagnostic archives. Stored receipt flags remain supplemental; external API/log/native corroboration supplies the hosted finding.
+
+All earlier local, PR and main failures remain preserved. Their original outcomes are not rewritten. Earlier [E0](verification/2026-11-05-fresh-fixture-successor.md), [D0](verification/2026-11-05-fresh-repair-successor.md) and [Q](verification/2026-11-05-fresh-production-readiness.md) snapshots remain separately attributed.
+
+## Scope and next evidence
+
+[Roomboard](pilots/roomboard-adoption.md) retains its own baseline/history and reviewed 17 unit / 2 browser outcomes / 19 checks with37 identical core files. Its initial blind agent trial was blocked and later adoption was assisted; no unassisted human or external-organization adoption is claimed. Maintenance drills are bounded samples, not long-term operating history.
+
+Live staging remains pending by user choice. Other platforms/browsers/version tuples, human onboarding, longer reliability history, packaged distribution and stronger support commitments remain outside demonstrated evidence. Main is unprotected and private vulnerability reporting disabled at the final read-only inspection; no settings changes were made. The runtime guard is not an OS sandbox. The review records these limits without treating them as unfinished authorized code work.
 
 ## Durable authorities
 
-- [Agent instructions](../AGENTS.md) and [handoff](AGENT_HANDOFF.md).
-- [Original design](superpowers/specs/2026-10-28-portable-hybrid-workflow-harness-design.md) and [enterprise design](superpowers/specs/2026-11-04-enterprise-verification-design.md).
-- [Append-only authored outcomes](../test-impact/execution-record.jsonl).
-- [Portable execution contract](PORTABLE_TEST_AUTOMATION.md).
+- [Agent instructions](../AGENTS.md), [handoff](AGENT_HANDOFF.md), completed [readiness design](superpowers/specs/2026-11-05-production-readiness-design.md) and [execution checklist](superpowers/plans/2026-11-05-production-readiness.md).
+- [Original portable design](superpowers/specs/2026-10-28-portable-hybrid-workflow-harness-design.md) and [enterprise design](superpowers/specs/2026-11-04-enterprise-verification-design.md).
+- [Append-only authored outcomes](../test-impact/execution-record.jsonl) and [portable contract](PORTABLE_TEST_AUTOMATION.md).
 
-Historical plans and dated measurement snapshots describe their own milestones. Their original checkboxes or ignored working ledgers do not override this current tracked status and active plan.
+There is no unfinished implementation task in that previous approved increment. The new active increment is linked above. Historical plans and measurement snapshots describe their named sources; ignored logs supplement the clone-visible reports rather than define the current action queue.

@@ -3,9 +3,11 @@
 A portable regression-testing harness for React/Vite applications. Proofline runs deterministic Vitest and Playwright checks, verifies that required tests actually pass, preserves failure evidence, and checks the exact build before release.
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-2563eb)](LICENSE)
-[![Source preview](https://img.shields.io/badge/preview-0.9.0--preview.1-2563eb)](CHANGELOG.md)
+[![Source preview](https://img.shields.io/badge/preview-0.9.0--preview.2-2563eb)](CHANGELOG.md)
 
-**Distribution:** unpublished source preview `0.9.0-preview.2`, manifest schema 1. The historical dashboard `v0.8.0` tag predates Proofline. Use the source commit shown by `git rev-parse HEAD`; do not treat that old tag as a harness release. See [project status](docs/PROJECT_STATUS.md) and [preview support](.github/SUPPORT.md).
+**Distribution:** public GitHub source preview `0.9.0-preview.2`, manifest schema 1. The historical dashboard `v0.8.0` tag predates Proofline. Use the source commit shown by `git rev-parse HEAD`; do not treat that old tag as a harness release. See [project status](docs/PROJECT_STATUS.md) and [preview support](.github/SUPPORT.md).
+
+Verified source `775c6208` passes both full Linux/macOS main cells and the [actual API/native/release-artifact audit](docs/verification/2026-11-05-hosted-main-verification.md). The [independent reassessment](docs/reviews/2026-11-05-production-readiness.md) rates the scoped preview **8.6/10**. Package publication and live staging remain pending.
 
 The [Roomboard agent-adoption trial](docs/pilots/roomboard-adoption.md) retains a third app’s own-history source bundle, reported onboarding gaps and the reviewed final-core upgrade. Its baseline is separate from the insurance CRM and work-orders reference.
 
@@ -83,7 +85,7 @@ Missing or ambiguous ownership/revision metadata broadens selection to the regis
 
 ## Adapt another application
 
-Start with [the adaptation contract](docs/PORTABLE_TEST_AUTOMATION.md) and [independently installed work-orders recipe](examples/work-orders/README.md). Supply your routes, roles, tenant boundaries, business rules, auth/API/provider adapters, tests and manifest. Keep the portable core unchanged.
+Start with [the source-pinned onboarding guide](docs/GETTING_STARTED.md): inspect a read-only plan, explicitly create a runnable work-orders starter or install core into an existing app, then run its gates. The installer verifies source/core hashes and refuses conflicting files; it does not install dependencies or author your application's adaptation. [The adaptation contract](docs/PORTABLE_TEST_AUTOMATION.md) and [independently installed work-orders recipe](examples/work-orders/README.md) explain target-owned routes, roles, tenant boundaries, business rules, auth/API/provider adapters, tests and manifest.
 
 ```sh
 pnpm proofline:validate-portability -- --independent-install
@@ -97,12 +99,13 @@ The single complete workflow is [Verify Proofline regression harness](.github/wo
 
 Release packaging requires complete current-run gates and audited production output. Deployment verifies trusted source/run/attempt, archive digest, inventory and native evidence before deploying the same prebuilt bytes. [The release contract](docs/PORTABLE_TEST_AUTOMATION.md#release-verification) explains the 14-day artifact window and recovery. Local verification does not establish an actual hosted run or deployment.
 
-The recorded compatibility is the stated Node/React/Vite/Vitest/Playwright stack on Darwin arm64 with Chromium. Other OSes, versions, Firefox/WebKit beyond optional smoke, live providers and production database durability need their own validation. The guard is an execution boundary, not a hostile-code OS sandbox.
+The recorded compatibility is the stated Node/React/Vite/Vitest/Playwright stack on Linux x64/Ubuntu 24.04 and Darwin arm64/macOS 15 with Chromium. Other OSes, versions, Firefox/WebKit beyond optional smoke, live providers and production database durability need their own validation. The guard is an execution boundary, not a hostile-code OS sandbox.
 
 ## Guides and contributing
 
 - [13-slide browser presentation](docs/showcase/proofline-overview.html) and [PDF](docs/showcase/proofline-overview.pdf): an introduction, a caught regression and recordings of both apps. Their dated measurements are captured snapshots.
 - [Technical companion](docs/showcase/TECHNICAL_GUIDE.md): diagrams, contracts and measurement sources.
+- [Source-pinned onboarding](docs/GETTING_STARTED.md), [repository safeguards](docs/REPOSITORY_SAFEGUARDS.md) and [reliability tracking](docs/RELIABILITY.md): installation plans, effective-setting audits and supplementary verification history. The tracking guide distinguishes observed samples from long-term reliability evidence.
 - [Current project status](docs/PROJECT_STATUS.md), [contributor setup](CONTRIBUTING.md), [support](.github/SUPPORT.md), and [security reporting](.github/SECURITY.md).
 
 MIT licensed; see [LICENSE](LICENSE). The reference UI retains the original admin dashboard template's attribution and historical changelog.

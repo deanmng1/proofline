@@ -602,10 +602,10 @@ const nativeRuntime = () => ({
 });
 const prepareCompatibilityFixture = () => {
   const f = fixture();
-  mkdirSync(path.join(f.root, "tools/impact"), { recursive: true });
-  mkdirSync(path.join(f.root, "tools/proofline"), { recursive: true });
-  writeFileSync(path.join(f.root, "tools/impact/core.mjs"), "export const core = true;\n");
-  writeFileSync(path.join(f.root, "tools/proofline/core.mjs"), "export const runner = true;\n");
+  // Source operators coexist with generic core in a source repository.
+  // Include nested basenames, harmless near-matches and fixture exclusions.
+  // Keep the receipt's literal copied inventory independent of source selection.
+  writeCompatibilityCoreFixture(f.root);
   json(path.join(f.root, "package.json"), { private: true, type: "module" });
   symlinkSync(path.resolve("node_modules"), path.join(f.root, "node_modules"));
   const artifactRoot = path.join(f.root, "artifacts/portability/run");
@@ -629,7 +629,7 @@ const prepareCompatibilityFixture = () => {
     playwright: "1.62.1",
   };
   record.coreHashes = Object.fromEntries(
-    ["tools/impact/core.mjs", "tools/proofline/core.mjs"].map((file) => [
+    compatibilityFixtureCorePaths().map((file) => [
       file,
       hash(readFileSync(path.join(f.root, file))),
     ]),
@@ -683,7 +683,7 @@ describe("source-bound native compatibility collection", () => {
       summarizeCompatibility({ declaration: declaration(), evidence: [receipt] }).sourceCommit,
     ).toBe(f.auth.sourceCommit);
     expect(Object.keys(receipt.native)).toHaveLength(5);
-    expect(Object.keys(receipt.coreHashes)).toHaveLength(2);
+    expectCompatibilityCoreHashes(receipt.coreHashes);
     expect(
       summarizeCompatibility({ declaration: declaration(), evidence: [receipt] }).cells.every(
         (cell: { status: string }) => cell.status === "not-observed",
@@ -772,6 +772,13 @@ describe("source-bound native compatibility collection", () => {
       "target-runtime-child",
       "tuple",
       "core",
+      "core-missing",
+      "core-invented",
+      "core-source-changed",
+      "core-source-missing",
+      "core-symlink",
+      "core-directory-symlink",
+      "core-operator-symlink",
       "authority",
       "runtime-cell",
       "pnpm",
@@ -784,6 +791,26 @@ describe("source-bound native compatibility collection", () => {
       if (mutation === "tuple") options.portabilityRecord.compatibility.react = "19.0.0";
       if (mutation === "core")
         options.portabilityRecord.coreHashes["tools/impact/core.mjs"] = "f".repeat(64);
+      if (mutation === "core-missing")
+        delete options.portabilityRecord.coreHashes["tools/proofline/core-inventory.mjs"];
+      if (mutation === "core-invented")
+        options.portabilityRecord.coreHashes["tools/proofline/invented.mjs"] = "f".repeat(64);
+      if (mutation === "core-source-changed")
+        writeFileSync(path.join(f.root, "tools/impact/core.mjs"), "changed core\n");
+      if (mutation === "core-source-missing") rmSync(path.join(f.root, "tools/impact/core.mjs"));
+      if (["core-symlink", "core-directory-symlink", "core-operator-symlink"].includes(mutation)) {
+        const relative =
+          mutation === "core-directory-symlink"
+            ? "tools/proofline/operators"
+            : mutation === "core-operator-symlink"
+              ? "tools/proofline/reliability.mjs"
+              : "tools/impact/core.mjs";
+        rmSync(path.join(f.root, relative), { recursive: true });
+        symlinkSync(
+          path.join(f.root, mutation === "core-directory-symlink" ? "tools/impact" : "source.txt"),
+          path.join(f.root, relative),
+        );
+      }
       if (mutation === "authority")
         options.authority = { ...options.authority, sourceCommit: "f".repeat(40) };
       if (mutation === "runtime-cell")
@@ -826,7 +853,81 @@ describe("source-bound native compatibility collection", () => {
           readFileSync(path.join(f.root, "artifacts/portability/latest.json"), "utf8"),
         );
       }
-      await expect(collectCompatibilityEvidence(options), mutation).rejects.toThrow();
+      await expect(collectCompatibilityEvidence(options), mutation).rejects.toThrow(
+        mutation.includes("symlink")
+          ? /symlink/i
+          : mutation.startsWith("core")
+            ? /core/i
+            : undefined,
+      );
     }
   });
 });
+
+function compatibilityFixtureCorePaths() {
+  return [
+    "tools/impact/core.mjs",
+    "tools/impact/operators/reliability-api.mjs",
+    "tools/impact/test-fixtures/git.ts",
+    "tools/proofline/core-inventory.mjs",
+    "tools/proofline/core.mjs",
+    "tools/proofline/operators/my-reliability.mjs",
+    "tools/proofline/operators/onboardingish.mjs",
+    "tools/proofline/operators/repository-safeguardsish.mjs",
+    "tools/proofline/reliability/shared.mjs",
+  ];
+}
+
+function writeCompatibilityCoreFixture(root: string) {
+  const entries = [
+    ["tools/impact/core.mjs", "export const core = true;\n"],
+    ["tools/impact/operators/reliability-api.mjs", "export const impact = true;\n"],
+    ["tools/impact/test-fixtures/git.ts", "export const fixture = true;\n"],
+    [
+      "tools/proofline/core-inventory.mjs",
+      readFileSync(new URL("../core-inventory.mjs", import.meta.url), "utf8"),
+    ],
+    ["tools/proofline/core.mjs", "export const runner = true;\n"],
+    ["tools/proofline/operators/my-reliability.mjs", "export const helper = true;\n"],
+    ["tools/proofline/operators/onboardingish.mjs", "export const helper = true;\n"],
+    ["tools/proofline/operators/repository-safeguardsish.mjs", "export const helper = true;\n"],
+    ["tools/proofline/reliability/shared.mjs", "export const shared = true;\n"],
+    ["tools/impact/fixtures/not-core.mjs", "excluded fixture\n"],
+    ["tools/impact/project.json", "{}\n"],
+    ["tools/proofline/fixtures/not-core.mjs", "excluded fixture\n"],
+    ["tools/proofline/test-fixtures/not-core.mjs", "excluded fixture\n"],
+    ["tools/proofline/src/not-core.test.ts", "excluded test\n"],
+    ["tools/proofline/project.json", "{}\n"],
+  ];
+  for (const basename of [
+    "onboarding",
+    "onboarding-files",
+    "reliability",
+    "reliability-api",
+    "repository-safeguards",
+    "repository-safeguards-api",
+  ]) {
+    entries.push([`tools/proofline/${basename}.mjs`, "source operator only\n"]);
+    entries.push([`tools/proofline/operators/deep/${basename}.mjs`, "source operator only\n"]);
+  }
+  for (const [file, bytes] of entries) {
+    mkdirSync(path.dirname(path.join(root, file)), { recursive: true });
+    writeFileSync(path.join(root, file), bytes);
+  }
+}
+
+function expectCompatibilityCoreHashes(actual: Record<string, string>) {
+  expect(actual).toEqual({
+    "tools/impact/core.mjs": hash("export const core = true;\n"),
+    "tools/impact/operators/reliability-api.mjs": hash("export const impact = true;\n"),
+    "tools/impact/test-fixtures/git.ts": hash("export const fixture = true;\n"),
+    "tools/proofline/core-inventory.mjs": hash(
+      readFileSync(new URL("../core-inventory.mjs", import.meta.url)),
+    ),
+    "tools/proofline/core.mjs": hash("export const runner = true;\n"),
+    "tools/proofline/operators/my-reliability.mjs": hash("export const helper = true;\n"),
+    "tools/proofline/operators/onboardingish.mjs": hash("export const helper = true;\n"),
+    "tools/proofline/operators/repository-safeguardsish.mjs": hash("export const helper = true;\n"),
+    "tools/proofline/reliability/shared.mjs": hash("export const shared = true;\n"),
+  });
+}

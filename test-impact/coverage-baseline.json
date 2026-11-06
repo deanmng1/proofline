@@ -210,6 +210,48 @@
       "statements": 100,
       "functions": 100,
       "branches": 100
+    },
+    "tools/proofline/core-inventory.mjs": {
+      "report": "artifacts/coverage/proofline-tools/coverage-summary.json",
+      "lines": 100,
+      "branches": 100,
+      "functions": 100,
+      "statements": 100
+    },
+    "tools/proofline/onboarding-source.mjs": {
+      "report": "artifacts/coverage/proofline-tools/coverage-summary.json",
+      "lines": 100,
+      "branches": 82.02,
+      "functions": 100,
+      "statements": 100
+    },
+    "tools/proofline/onboarding.mjs": {
+      "report": "artifacts/coverage/proofline-tools/coverage-summary.json",
+      "lines": 92.48,
+      "branches": 84.14,
+      "functions": 95,
+      "statements": 92.48
+    },
+    "tools/proofline/reliability-api.mjs": {
+      "report": "artifacts/coverage/proofline-tools/coverage-summary.json",
+      "lines": 97.67,
+      "branches": 78.87,
+      "functions": 100,
+      "statements": 97.67
+    },
+    "tools/proofline/reliability.mjs": {
+      "report": "artifacts/coverage/proofline-tools/coverage-summary.json",
+      "lines": 98.47,
+      "branches": 97.23,
+      "functions": 100,
+      "statements": 98.47
+    },
+    "tools/proofline/repository-safeguards.mjs": {
+      "report": "artifacts/coverage/proofline-tools/coverage-summary.json",
+      "lines": 94.21,
+      "branches": 96.26,
+      "functions": 95,
+      "statements": 94.21
     }
   }
 }

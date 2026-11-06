@@ -47,6 +47,8 @@ Impact selection records the requested and resolved base/head plus the unique me
 
 Coverage groups declare compatible source globs, exact exclusions, report format, aggregation, producer command, adapter, provider, and installed provider version. The merge-base manifest and baseline are immutable comparison authority. Every critical metric is monotonic in ordinary changes. `artifacts/coverage/ratchet.json` records measurements and failures.
 
+For a newly added `.test.ts`, `.test.tsx`, `.spec.ts` or `.spec.tsx` source, an exact test-only exclusion uses the established reason `Test sources are not instrumented production sources.` The existing governance rule requires that explicit classification; a custom description that omits it fails closed. This does not permit new wildcard exclusions, hidden runtime sources or lower coverage floors. Test files still execute through their declared canonical commands and required bindings.
+
 `test-impact/execution-record.jsonl` is append-only. Each line uses repository-relative scopes/artifacts and records real outcomes, including failures and review decisions. `pnpm record:check -- --base <trusted-base> --head <head>` proves byte-exact merge-base prefix preservation, schema validity, one trailing LF, new evidence for every changed governed path, generated rule parity, and the command-table parity below. Old or unrelated records cannot authorize a new change.
 
 ## Canonical command contract
@@ -107,6 +109,8 @@ The implemented reference rows are flagship intake/bind/finance/logout, accepted
 CI retains harness, impact, record, coverage, production module manifests, full-unit/browser logs, Playwright HTML, traces, screenshots, videos, and `test-results/` under `always()`. A controlled failure verifies these are real usable outputs. The completion authority is the full lint, typecheck, manifest, selected dry-run/execution, Vitest, Chromium, coverage/ratchet, record, production-negative, and diff-check chain with explicit revision authority.
 
 ## Measurement scope
+
+The canonical reusable-core selector is shared by source-pinned onboarding, portability generation and compatibility reconciliation. Source-operator CLIs and their helpers stay outside adopted core. Compatibility still checks the full selected file/hash inventory against the immutable source; a matching count alone is insufficient.
 
 The existing critical coverage thresholds are unchanged. New helper thresholds start at the whole-percent floor of their measured V8 counters. The native execution shim and reporter execute in child processes and remain zero in the parent coverage report; real child-process regressions separately prove their behavior. These explicit measurement limits do not imply whole-product or browser coverage. The standalone lifecycle runtime has its own fixed 100% four-metric baseline.
 

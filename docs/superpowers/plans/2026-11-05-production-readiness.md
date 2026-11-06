@@ -106,18 +106,26 @@
 
 - [x] Run two fresh independent public installations, full original twelve-command gate, worker/both shards, compatibility receipt and actual local release directory/ZIP at committed implementation head with base `024aa838ade882fdcca46e63a4ae665569c16fd0`; preserve all failed attempts (25 steps passed at `10dde98`; whole-project evaluator independently accepted actual fresh evidence).
 - [x] Independently review the concrete source before publishing it for the authorized hosted milestone. Push a `codex/` candidate branch, create a reviewable PR and exercise real PR checks; repair failures through normal tests/review (C4 passed actual run `42133726936`, both full cells/all 16 gates; independent API/ref/archive/native approval).
-- [ ] Advance main without force only after required checks/review, run actual canonical main verification and both declared cells, and fetch/audit the exact eligible hosted artifact with new read-only verifier. Keep actual IDs/attempt/digest/native evidence.
+- [x] Advance main without force only after required checks/review, run actual canonical main verification and both declared cells, and fetch/audit the exact eligible hosted artifact with new read-only verifier. Keep actual IDs/attempt/digest/native evidence.
 - [x] Verify and document the prepared preview workflow (offline workflow contracts, actual prerequisite shell cases and semantic validation; no provider invocation); the user explicitly chose to leave live staging pending. Do not invoke Vercel, request deployment credentials, perform production deployment, change remote settings or publish tags/releases implicitly.
 
 ### Task 8: Fresh whole-project review and closeout
 
-- [ ] Commission a new independent agent to inspect integrated source and actual local/hosted/pilot/drill results and rerate with the original weights: correctness30, portability20, onboarding15, CI/release15, docs10, support10.
-- [ ] Reproduce/fix/re-review material findings and repeat affected required gates; never target an inflated score or manufacture human/operational history.
-- [ ] Append final outcomes and exact remaining external limits, update tracked status/plan/handoff, commit locally and validate committed-head governance/whitespace/clean tracked state. Preserve all evidence and user files.
+- [x] Commission a new independent agent to inspect integrated source and actual local/hosted/pilot/drill results and rerate with the original weights: correctness30, portability20, onboarding15, CI/release15, docs10, support10.
+- [x] Reproduce/fix/re-review material findings and repeat affected required gates; never target an inflated score or manufacture human/operational history.
+- [x] Append final outcomes and exact remaining external limits, update tracked status/plan/handoff, commit locally and validate committed-head governance/whitespace/clean tracked state. Preserve all evidence and user files.
 
 ## Self-review and preflight
 
 The spec's three milestones map to Tasks 1–3 and 6–7, with independent discovery in Tasks 4–5 and final review in Task 8. Boundary fixes do not overlap release/compatibility worker files; the controller owns every shared governance file. New operational helpers remain in the dynamic copied core inventory, and work-orders v1 stays unchanged. Offline fixtures, genuine local execution and actual hosted/provider observations are separate evidence classes. External prerequisites cannot be checked off as implemented code.
+
+## Final accepted outcome
+
+The approved increment is complete at executable source F `775c62087aa2f443fc409aba750911215ba2aa2e`. Fresh F0 `389513c` passes all25; F has identical executable/test/manifest inputs. PR3 run42160268263 and actual main run42163108445, both attempt1, pass both full16-gate cells. The actual native GitHub CLI and independent API/log/digest/native/compatibility/strict719-file-inventory audit accept the exact main artifact. The [independent reassessment](../../reviews/2026-11-05-production-readiness.md) is8.6/10 (unrounded8.625), with no material unresolved finding in scope.
+
+The controller's local documentation closeout preserves verified F as the executed source, retains all earlier failures and full authored prefixes, and changes no executable/manifest/coverage/workflow/pilot input. Live staging remains explicitly pending; no package/tag/GitHub Release, deployment, SLA, human-adoption history or remote settings change is claimed. See [actual hosted acceptance](../../verification/2026-11-05-hosted-main-verification.md).
+
+The observations below are chronological records of their named sources. Their earlier pending states do not define the current action queue; all required implementation, review and evidence work is closed above.
 
 ## Recorded execution adjustment: truthful absent-tenancy declaration
 
@@ -144,8 +152,8 @@ Fresh attempt 4 at `67d8366` passed impact/unit/browser, then rejected an unhand
 - [x] Obtain the original evaluator's all-five closure against one committed cohort (`8c7614f`; all R1–R5 closed).
 - [x] Pass a new complete fresh root/work-orders gate, compatibility receipt and actual local release ZIP at that implementation head (`10dde98`, 25 steps; all four failed attempts preserved).
 - [x] Upgrade Roomboard once to the audited37-file core plus target-owned initializer registration, reverify/review and replace the recommended own-history bundle (target `aeaf7a0`, including independently reviewed setup cleanup).
-- [ ] Execute reviewed hosted bootstrap PR/main sequence and strict actual API/native artifact audit.
-- [ ] Complete final independent weighted rating and tracked docs/evidence closeout.
+- [x] Execute reviewed hosted bootstrap PR/main sequence and strict actual API/native artifact audit.
+- [x] Complete final independent weighted rating and tracked docs/evidence closeout.
 
 ## Actual first-main findings and bounded repair successor
 
@@ -168,8 +176,8 @@ D `a8b201a6` passed its own PR 2/all sixteen gates in both cells and received in
 - [x] Register all new required identities with correct ownership and actual anchors; preserve floors and append-only history.
 - [x] Pass a new committed full fresh root/work-orders gate (E0 `f2b960d`, independently accepted all25).
 - [x] Obtain exact E documentation-successor source-publication approval (published as PR3).
-- [ ] Pass successor's own full PR against D/main, independently approve exact refs/source, then normally advance main and pass actual main/API/native/archive audit.
-- [ ] Publish final independent weighted rating and accurate tracked closeout. Live staging remains pending.
+- [x] Pass successor's own full PR against D/main, independently approve exact refs/source, then normally advance main and pass actual main/API/native/archive audit.
+- [x] Publish final independent weighted rating and accurate tracked closeout. Live staging remains pending.
 
 Scoped final approval covers five files, six new contracts and two causally corrected old cases (112 other callbacks preserved). Final author normal/coverage120/120, independent focus22/22, three actual zero-cache builds, production-negative and rebuilt launcher4/4 pass. FIX-001 additionally requires original overview/users/401 identities: actual186unit/34browser census. At scoped approval, fresh7/publication/main/API/weighted review were still pending; the subsequent fresh7 acceptance and E publication are recorded below.
 
@@ -183,10 +191,14 @@ Actual E PR3 run42153668145attempt1 completes with Linux success and macOS cover
 - [x] Approve one real static import for unit-file collection, preserving case bodies/providers/timeouts/browser code and fail-closed selection.
 - [x] Implement import, refresh exact anchors/catalog, pass affected normal/coverage/selection checks and independent spec/quality review.
 - [x] Pass a new committed full fresh gate (F0 `389513c`, independently accepted all25).
-- [ ] Obtain exact F documentation-successor publication approval.
-- [ ] Normally update the same owned PR3 against unchanged D/main; require both full cells/current-head authority before normal main advancement.
-- [ ] Pass actual successful main/API/native/compatibility/archive audit and final weighted review/local closeout. Staging remains pending.
+- [x] Obtain exact F documentation-successor publication approval.
+- [x] Normally update the same owned PR3 against unchanged D/main; require both full cells/current-head authority before normal main advancement.
+- [x] Pass actual successful main/API/native/compatibility/archive audit and final weighted review/local closeout. Staging remains pending.
 
 Scoped one-import implementation passes accessibility14normal/coverage, CRM120normal/coverage, real selection discovery683/47 with conservative canonical-full/no execution block, static/type/lint checks and independent14focus7c154e37. Independent spec/quality review has zero findings. All120 callbacks are byte-identical to E; only four metadata anchors move one line. The next committed full fresh gate remains required; no source has advanced main.
 
 Fresh8 exactF0 `389513c2d14bcffa3b992cd7b89989c0ebaedd6d` passes all25 and independent whole-project audit: unit186/683, browser34/47, workers24/shards12+12, root464/target127downloads0reuse,62root/11target records, core37/all10targetgates, all30floors/original24/232196prefix and strictZIP22682946bytesSHA4c034bf8fa3df10bfffa074d9939d0f7d038725fc95ccde293f179317f466db4/inventory719/all16success. See [current fresh evidence](../../verification/2026-11-05-fresh-overview-successor.md). The documentation-only successor records named F0 evidence with identical executable inputs; exact F publication, same-PR update/full cells, actual main/API and weighted review remain required.
+
+## Administrative local closeout
+
+Adopt the independent8.6 report and exact-F hosted acceptance in clone-visible docs, update current status/handoff/support/distribution statements and append source-bound outcomes. Required final checks are committed-head record governance, unchanged original floors/prefix/core and executable-input equivalence, relative links and patch whitespace. The closeout is documentation/history only; hosted claims continue to name F. No additional source publication or deployment is part of this local closeout.
