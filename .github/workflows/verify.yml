@@ -29,8 +29,20 @@ concurrency:
 
 jobs:
   verify:
-    runs-on: ubuntu-latest
+    name: verify (${{ matrix.id }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - id: linux-x64-chromium
+            runner: ubuntu-24.04
+            release: true
+          - id: darwin-arm64-chromium
+            runner: macos-15
+            release: false
+    runs-on: ${{ matrix.runner }}
     env:
+      PROOFLINE_COMPATIBILITY_CELL: ${{ matrix.id }}
       PROOFLINE_SESSION_ID: ${{ github.run_id }}-${{ github.run_attempt }}
       PROOFLINE_CI_RUN_ID: ${{ github.run_id }}
       PROOFLINE_CI_RUN_ATTEMPT: ${{ github.run_attempt }}
@@ -42,6 +54,10 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - name: Set isolated browser cache from runner environment
+        shell: bash
+        run: echo "PLAYWRIGHT_BROWSERS_PATH=${RUNNER_TEMP}/proofline-browser-cache-${RUNNER_ARCH}" >> "$GITHUB_ENV"
 
       - name: Fetch trusted manual impact base
         if: ${{ github.event_name == 'workflow_dispatch' }}
@@ -73,8 +89,11 @@ jobs:
           node-version: 24.22.1
           cache: pnpm
 
+      - name: Check source prerequisites without installing or changing files
+        run: node tools/proofline/doctor.mjs --stage source --base "$IMPACT_BASE" --head "$IMPACT_HEAD"
+
       - name: Start fresh current-run evidence
-        run: rm -rf artifacts/proofline artifacts/portability artifacts/release-bundle
+        run: rm -rf artifacts/proofline artifacts/portability artifacts/release-bundle artifacts/compatibility
 
       - name: Install dependencies
         id: dependencies
@@ -113,12 +132,15 @@ jobs:
         if: ${{ !cancelled() && steps.dependencies.outcome == 'success' && github.event_name == 'workflow_dispatch' && inputs.cross_browser }}
         run: pnpm exec playwright install --with-deps firefox webkit
 
+      - name: Check installed dependencies and browser prerequisites
+        run: node tools/proofline/doctor.mjs --stage installed --base "$IMPACT_BASE" --head "$IMPACT_HEAD"
+
       - name: Preview impact selection
         id: impactPreview
         shell: bash
         run: |
           pnpm test:impacted -- --dry-run --base "$IMPACT_BASE" --head "$IMPACT_HEAD"
-          echo "fallback=$(node -p \"require('./artifacts/impact/selection.json').fallback\")" >> "$GITHUB_OUTPUT"
+          echo "fallback=$(node -p 'require("./artifacts/impact/selection.json").fallback')" >> "$GITHUB_OUTPUT"
 
       - name: Run impact-selected tests
         id: impact
@@ -210,15 +232,52 @@ jobs:
           PROOFLINE_GATE_EXECUTION_ID: ${{ github.run_id }}-${{ github.run_attempt }}-portability
         run: pnpm proofline:validate-portability -- --independent-install
 
-      - name: Package audited immutable production release
+      - name: Collect source-bound compatibility observation (main only; external hosted audit still required)
+        id: compatibility
         if: ${{ success() && github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/compatibility
+          node --input-type=module <<'NODE'
+          import { writeFileSync } from 'node:fs';
+          writeFileSync('artifacts/compatibility/authority.json', JSON.stringify({
+            repository: process.env.GITHUB_REPOSITORY,
+            sourceCommit: process.env.IMPACT_HEAD,
+            workflow: '.github/workflows/verify.yml',
+            runId: process.env.GITHUB_RUN_ID,
+            runAttempt: process.env.GITHUB_RUN_ATTEMPT,
+            sessionId: process.env.PROOFLINE_SESSION_ID
+          }, null, 2) + '\n');
+          NODE
+          node tools/proofline/compatibility.mjs \
+            --cell "$PROOFLINE_COMPATIBILITY_CELL" --mode hosted \
+            --authority artifacts/compatibility/authority.json \
+            --native "$(pwd)/artifacts/proofline" \
+            --portability artifacts/portability/latest.json \
+            > "artifacts/compatibility/$PROOFLINE_COMPATIBILITY_CELL.json"
+
+      - name: Preserve per-cell compatibility observation
+        if: ${{ always() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: proofline-compatibility-${{ matrix.id }}-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            artifacts/compatibility/
+            proofline.compatibility.json
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Package audited immutable production release
+        if: ${{ success() && matrix.release && github.event_name == 'push' && github.ref == 'refs/heads/main' }}
         env:
           PROOFLINE_GATE_OUTCOMES: >-
             {"lint":"${{ steps.lint.outcome }}","typecheck":"${{ steps.typecheck.outcome }}","manifest":"${{ steps.manifest.outcome }}","production":"${{ steps.production.outcome }}","record":"${{ steps.record.outcome }}","impactPreview":"${{ steps.impactPreview.outcome }}","impact":"${{ steps.impact.outcome }}","unit":"${{ steps.unit.outcome }}","browser":"${{ steps.browser.outcome }}","browserScenario":"${{ steps.browserScenario.outcome }}","browserScenarioShard1":"${{ steps.browserScenarioShard1.outcome }}","browserScenarioShard2":"${{ steps.browserScenarioShard2.outcome }}","coverage":"${{ steps.coverage.outcome }}","coverageCheck":"${{ steps.coverageCheck.outcome }}","whitespace":"${{ steps.whitespace.outcome }}","portability":"${{ steps.portability.outcome }}"}
         run: node tools/proofline/release-bundle.mjs
 
       - name: Publish successful immutable release bundle
-        if: ${{ success() && github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+        if: ${{ success() && matrix.release && github.event_name == 'push' && github.ref == 'refs/heads/main' }}
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: proofline-release-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
@@ -231,7 +290,7 @@ jobs:
         if: ${{ always() }}
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: execution-evidence-${{ github.run_id }}-${{ github.run_attempt }}
+          name: execution-evidence-${{ matrix.id }}-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
             artifacts/proofline/
             artifacts/portability/
@@ -243,7 +302,7 @@ jobs:
         if: ${{ always() }}
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: coverage-baseline
+          name: coverage-baseline-${{ matrix.id }}-${{ github.run_id }}-${{ github.run_attempt }}
           if-no-files-found: warn
           retention-days: 14
           path: |
@@ -254,7 +313,7 @@ jobs:
         if: ${{ always() }}
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: verification-diagnostics
+          name: verification-diagnostics-${{ matrix.id }}-${{ github.run_id }}-${{ github.run_attempt }}
           if-no-files-found: warn
           retention-days: 14
           path: |

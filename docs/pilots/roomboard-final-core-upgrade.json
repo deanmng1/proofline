@@ -1,0 +1,974 @@
+{
+  "version": 1,
+  "kind": "roomboard-compatible-final-core-upgrade",
+  "classification": "controller-assisted-upgrade-not-new-blind-or-human-trial",
+  "status": "all-configured-local-gates-passed-final-independent-review-pending",
+  "assisted": true,
+  "humanEvidence": false,
+  "hostedEvidence": false,
+  "baseCommit": "9102d0d14701777a97cfa15bff20f5fd5b37db61",
+  "upgradeCommit": "e0c9fbd754e9a0665ba439c3974770f5673cae4d",
+  "author": "Synthetic Roomboard Adoption Agent <synthetic-roomboard-adopter@example.invalid>",
+  "coreSourceCommit": "d3b80ced47449ed0fa910de80faa2c3fd0351b26",
+  "oldCoreSourceCommit": "1804725126000ec79603add98b3cabb22700c6f1",
+  "copiedCoreCount": 36,
+  "allCoreBytesMatchImmutableSnapshot": true,
+  "changedCoreFiles": ["tools/proofline/doctor.mjs", "tools/impact/src/validate.ts"],
+  "changedTargetFiles": [
+    "proofline-core-hashes.json",
+    "test-impact/execution-record.jsonl",
+    "test-impact/rules.md",
+    "tools/impact/src/validate.ts",
+    "tools/proofline/doctor.mjs"
+  ],
+  "unchanged": [
+    "app source and all tests",
+    "package and lock",
+    "manifest and command table",
+    "rules JSON and exact bindings",
+    "lifecycle and golden workflow metadata",
+    "coverage floors",
+    "original licenses/history",
+    "original reports and dated inventories"
+  ],
+  "preservedPilotSha256": {
+    "ADOPTION_RETRY_REPORT.md": "430e302f6d4dc1b70817d5b2633a0d5a0ff10ac794be041ae0464fcff1626992",
+    "ADOPTION_RETRY_RESULT.json": "76ac85097bdd2a52d3a217225b6125eeeeb4c4cd1e07cbd8307797b72652ca0c",
+    "ADOPTION_RETRY_SOURCE_INVENTORY.json": "83220052e771d268c96aa6b9a00af343ba60462b86d19f6c9b57719bbccd425e",
+    "ADOPTION_RETRY_ARTIFACT_INVENTORY.json": "1e346c8264db65f31c7c848b8615f96709f8b4c4272db0f4c6f4c55efcfb7346",
+    "ADOPTION_REPORT.md": "3d1e72ffef781586fd37854656ed9dcabfb2374ecbf6730da5b9367570579963",
+    "ADOPTION_RESULT.json": "a7236851fe643217d2725ab3e7939cc934f4aad22cbdb5ddae6b0c605bf00886",
+    "ARTIFACT_INVENTORY.json": "1809cb8118d3bd4b3865e0d8faffab9550037c22e8da04926fbb4ff49814b2fe"
+  },
+  "coreHashTransition": "evidence-final-core-upgrade/core-transition.json",
+  "integrity": "evidence-final-core-upgrade/final-integrity.json",
+  "setup": {
+    "mode": "reuse-own-original-genuine-fresh-setup-and-browser-cache",
+    "newInstallOrBrowserDownloads": false,
+    "hostNodeModulesLink": false,
+    "node": "v24.22.1",
+    "execPath": "/Users/dio/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+    "pnpm": "11.24.0",
+    "git": "git version 2.51.0",
+    "platform": "darwin",
+    "arch": "arm64",
+    "directDependencyRealpaths": {
+      "react": {
+        "file": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard/node_modules/.pnpm/react@19.2.8/node_modules/react/package.json",
+        "version": "19.2.8"
+      },
+      "react-dom": {
+        "file": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard/node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/package.json",
+        "version": "19.2.8"
+      },
+      "@types/react": {
+        "file": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard/node_modules/.pnpm/@types+react@19.2.18/node_modules/@types/react/package.json",
+        "version": "19.2.18"
+      },
+      "@types/react-dom": {
+        "file": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard/node_modules/.pnpm/@types+react-dom@19.2.4_@types+react@19.2.18/node_modules/@types/react-dom/package.json",
+        "version": "19.2.4"
+      },
+      "typescript": {
+        "file": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard/node_modules/.pnpm/typescript@5.8.3/node_modules/typescript/package.json",
+        "version": "5.8.3"
+      },
+      "vite": {
+        "file": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard/node_modules/.pnpm/vite@6.4.3/node_modules/vite/package.json",
+        "version": "6.4.3"
+      },
+      "vitest": {
+        "file": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard/node_modules/.pnpm/vitest@3.2.7_jsdom@26.1.0_supports-color@7.2.0__supports-color@7.2.0/node_modules/vitest/package.json",
+        "version": "3.2.7"
+      },
+      "@playwright/test": {
+        "file": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard/node_modules/.pnpm/@playwright+test@1.62.1/node_modules/@playwright/test/package.json",
+        "version": "1.62.1"
+      },
+      "@vitest/coverage-v8": {
+        "file": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard/node_modules/.pnpm/@vitest+coverage-v8@3.2.7_supports-color@7.2.0_vitest@3.2.7_jsdom@26.1.0_supports-color@7.2.0__supports-color@7.2.0_/node_modules/@vitest/coverage-v8/package.json",
+        "version": "3.2.7"
+      },
+      "@testing-library/react": {
+        "file": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard/node_modules/.pnpm/@testing-library+react@16.3.0_@testing-library+dom@10.4.2_@types+react-dom@19.2.4_@type_f42b88b2c9694863faaa771e348410e8/node_modules/@testing-library/react/package.json",
+        "version": "16.3.0"
+      },
+      "jsdom": {
+        "file": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard/node_modules/.pnpm/jsdom@26.1.0_supports-color@7.2.0/node_modules/jsdom/package.json",
+        "version": "26.1.0"
+      },
+      "zod": {
+        "file": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard/node_modules/.pnpm/zod@3.24.2/node_modules/zod/package.json",
+        "version": "3.24.2"
+      }
+    }
+  },
+  "session": {
+    "sessionId": "75fad987-6ff7-4496-a797-91bb407535d7",
+    "base": "9102d0d14701777a97cfa15bff20f5fd5b37db61",
+    "head": "e0c9fbd754e9a0665ba439c3974770f5673cae4d",
+    "cwd": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard",
+    "startedAt": "2026-11-05T20:45:44.868Z"
+  },
+  "finalChecks": [
+    {
+      "key": "doctor-source",
+      "argv": [
+        "node",
+        "tools/proofline/doctor.mjs",
+        "--stage",
+        "source",
+        "--json",
+        "--base",
+        "9102d0d14701777a97cfa15bff20f5fd5b37db61",
+        "--head",
+        "e0c9fbd754e9a0665ba439c3974770f5673cae4d"
+      ],
+      "cwd": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard",
+      "startedAt": "2026-11-05T20:45:44.869Z",
+      "finishedAt": "2026-11-05T20:45:45.121Z",
+      "exitCode": 0,
+      "error": null,
+      "log": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/evidence-final-core-upgrade/final-doctor-source.log",
+      "sourceCommit": "e0c9fbd754e9a0665ba439c3974770f5673cae4d",
+      "sessionId": "75fad987-6ff7-4496-a797-91bb407535d7"
+    },
+    {
+      "key": "doctor-installed",
+      "argv": [
+        "node",
+        "tools/proofline/doctor.mjs",
+        "--stage",
+        "installed",
+        "--independent",
+        "--json",
+        "--base",
+        "9102d0d14701777a97cfa15bff20f5fd5b37db61",
+        "--head",
+        "e0c9fbd754e9a0665ba439c3974770f5673cae4d"
+      ],
+      "cwd": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard",
+      "startedAt": "2026-11-05T20:45:45.122Z",
+      "finishedAt": "2026-11-05T20:45:45.596Z",
+      "exitCode": 0,
+      "error": null,
+      "log": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/evidence-final-core-upgrade/final-doctor-installed.log",
+      "sourceCommit": "e0c9fbd754e9a0665ba439c3974770f5673cae4d",
+      "sessionId": "75fad987-6ff7-4496-a797-91bb407535d7"
+    },
+    {
+      "key": "lint",
+      "argv": ["node", "tools/roomboard/lint.mjs"],
+      "cwd": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard",
+      "startedAt": "2026-11-05T20:45:45.596Z",
+      "finishedAt": "2026-11-05T20:45:45.761Z",
+      "exitCode": 0,
+      "error": null,
+      "log": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/evidence-final-core-upgrade/final-lint.log",
+      "sourceCommit": "e0c9fbd754e9a0665ba439c3974770f5673cae4d",
+      "sessionId": "75fad987-6ff7-4496-a797-91bb407535d7"
+    },
+    {
+      "key": "typecheck",
+      "argv": ["pnpm", "typecheck"],
+      "cwd": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard",
+      "startedAt": "2026-11-05T20:45:45.762Z",
+      "finishedAt": "2026-11-05T20:45:46.265Z",
+      "exitCode": 0,
+      "error": null,
+      "log": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/evidence-final-core-upgrade/final-typecheck.log",
+      "sourceCommit": "e0c9fbd754e9a0665ba439c3974770f5673cae4d",
+      "sessionId": "75fad987-6ff7-4496-a797-91bb407535d7"
+    },
+    {
+      "key": "manifest",
+      "argv": ["pnpm", "harness:validate"],
+      "cwd": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard",
+      "startedAt": "2026-11-05T20:45:46.265Z",
+      "finishedAt": "2026-11-05T20:45:46.643Z",
+      "exitCode": 0,
+      "error": null,
+      "log": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/evidence-final-core-upgrade/final-manifest.log",
+      "sourceCommit": "e0c9fbd754e9a0665ba439c3974770f5673cae4d",
+      "sessionId": "75fad987-6ff7-4496-a797-91bb407535d7"
+    },
+    {
+      "key": "fallback-execute",
+      "argv": [
+        "node",
+        "tools/impact/src/main.ts",
+        "--base",
+        "9102d0d14701777a97cfa15bff20f5fd5b37db61",
+        "--head",
+        "e0c9fbd754e9a0665ba439c3974770f5673cae4d"
+      ],
+      "cwd": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard",
+      "startedAt": "2026-11-05T20:45:46.644Z",
+      "finishedAt": "2026-11-05T20:45:58.706Z",
+      "exitCode": 0,
+      "error": null,
+      "log": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/evidence-final-core-upgrade/final-fallback-execute.log",
+      "sourceCommit": "e0c9fbd754e9a0665ba439c3974770f5673cae4d",
+      "sessionId": "75fad987-6ff7-4496-a797-91bb407535d7"
+    },
+    {
+      "key": "unit",
+      "argv": ["node", "tools/proofline/canonical-runner.mjs", "unit"],
+      "cwd": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard",
+      "startedAt": "2026-11-05T20:45:58.708Z",
+      "finishedAt": "2026-11-05T20:46:00.121Z",
+      "exitCode": 0,
+      "error": null,
+      "log": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/evidence-final-core-upgrade/final-unit.log",
+      "sourceCommit": "e0c9fbd754e9a0665ba439c3974770f5673cae4d",
+      "sessionId": "75fad987-6ff7-4496-a797-91bb407535d7"
+    },
+    {
+      "key": "browser",
+      "argv": ["node", "tools/proofline/canonical-runner.mjs", "browser"],
+      "cwd": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard",
+      "startedAt": "2026-11-05T20:46:00.121Z",
+      "finishedAt": "2026-11-05T20:46:02.227Z",
+      "exitCode": 0,
+      "error": null,
+      "log": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/evidence-final-core-upgrade/final-browser.log",
+      "sourceCommit": "e0c9fbd754e9a0665ba439c3974770f5673cae4d",
+      "sessionId": "75fad987-6ff7-4496-a797-91bb407535d7"
+    },
+    {
+      "key": "browserWorkers",
+      "argv": [
+        "node",
+        "tools/proofline/canonical-runner.mjs",
+        "playwright",
+        "test",
+        "--config",
+        "playwright.config.mjs",
+        "--workers=2"
+      ],
+      "cwd": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard",
+      "startedAt": "2026-11-05T20:46:02.227Z",
+      "finishedAt": "2026-11-05T20:46:03.660Z",
+      "exitCode": 0,
+      "error": null,
+      "log": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/evidence-final-core-upgrade/final-browserWorkers.log",
+      "sourceCommit": "e0c9fbd754e9a0665ba439c3974770f5673cae4d",
+      "sessionId": "75fad987-6ff7-4496-a797-91bb407535d7"
+    },
+    {
+      "key": "browserShard1",
+      "argv": [
+        "node",
+        "tools/proofline/canonical-runner.mjs",
+        "playwright",
+        "test",
+        "--config",
+        "playwright.config.mjs",
+        "--shard=1/2"
+      ],
+      "cwd": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard",
+      "startedAt": "2026-11-05T20:46:03.660Z",
+      "finishedAt": "2026-11-05T20:46:05.046Z",
+      "exitCode": 0,
+      "error": null,
+      "log": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/evidence-final-core-upgrade/final-browserShard1.log",
+      "sourceCommit": "e0c9fbd754e9a0665ba439c3974770f5673cae4d",
+      "sessionId": "75fad987-6ff7-4496-a797-91bb407535d7"
+    },
+    {
+      "key": "browserShard2",
+      "argv": [
+        "node",
+        "tools/proofline/canonical-runner.mjs",
+        "playwright",
+        "test",
+        "--config",
+        "playwright.config.mjs",
+        "--shard=2/2"
+      ],
+      "cwd": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard",
+      "startedAt": "2026-11-05T20:46:05.046Z",
+      "finishedAt": "2026-11-05T20:46:06.282Z",
+      "exitCode": 0,
+      "error": null,
+      "log": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/evidence-final-core-upgrade/final-browserShard2.log",
+      "sourceCommit": "e0c9fbd754e9a0665ba439c3974770f5673cae4d",
+      "sessionId": "75fad987-6ff7-4496-a797-91bb407535d7"
+    },
+    {
+      "key": "coverage",
+      "argv": [
+        "node",
+        "tools/proofline/canonical-runner.mjs",
+        "vitest",
+        "run",
+        "--coverage",
+        "--coverage.provider=v8",
+        "--coverage.reportsDirectory=coverage",
+        "--coverage.reporter=json-summary",
+        "--coverage.include=src/{model.mjs,main.jsx,test-mode.mjs}"
+      ],
+      "cwd": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard",
+      "startedAt": "2026-11-05T20:46:06.282Z",
+      "finishedAt": "2026-11-05T20:46:07.861Z",
+      "exitCode": 0,
+      "error": null,
+      "log": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/evidence-final-core-upgrade/final-coverage.log",
+      "sourceCommit": "e0c9fbd754e9a0665ba439c3974770f5673cae4d",
+      "sessionId": "75fad987-6ff7-4496-a797-91bb407535d7"
+    },
+    {
+      "key": "coverage-normalize",
+      "argv": ["node", "tools/impact/src/coverage-policy.ts", "--normalize-reports"],
+      "cwd": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard",
+      "startedAt": "2026-11-05T20:46:07.861Z",
+      "finishedAt": "2026-11-05T20:46:08.031Z",
+      "exitCode": 0,
+      "error": null,
+      "log": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/evidence-final-core-upgrade/final-coverage-normalize.log",
+      "sourceCommit": "e0c9fbd754e9a0665ba439c3974770f5673cae4d",
+      "sessionId": "75fad987-6ff7-4496-a797-91bb407535d7"
+    },
+    {
+      "key": "coverageCheck",
+      "argv": [
+        "node",
+        "tools/impact/src/coverage-policy.ts",
+        "--base",
+        "9102d0d14701777a97cfa15bff20f5fd5b37db61",
+        "--head",
+        "e0c9fbd754e9a0665ba439c3974770f5673cae4d"
+      ],
+      "cwd": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard",
+      "startedAt": "2026-11-05T20:46:08.031Z",
+      "finishedAt": "2026-11-05T20:46:08.235Z",
+      "exitCode": 0,
+      "error": null,
+      "log": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/evidence-final-core-upgrade/final-coverageCheck.log",
+      "sourceCommit": "e0c9fbd754e9a0665ba439c3974770f5673cae4d",
+      "sessionId": "75fad987-6ff7-4496-a797-91bb407535d7"
+    },
+    {
+      "key": "recordCheck",
+      "argv": [
+        "node",
+        "tools/impact/src/record-check.ts",
+        "--base",
+        "9102d0d14701777a97cfa15bff20f5fd5b37db61",
+        "--head",
+        "e0c9fbd754e9a0665ba439c3974770f5673cae4d"
+      ],
+      "cwd": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard",
+      "startedAt": "2026-11-05T20:46:08.235Z",
+      "finishedAt": "2026-11-05T20:46:08.465Z",
+      "exitCode": 0,
+      "error": null,
+      "log": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/evidence-final-core-upgrade/final-recordCheck.log",
+      "sourceCommit": "e0c9fbd754e9a0665ba439c3974770f5673cae4d",
+      "sessionId": "75fad987-6ff7-4496-a797-91bb407535d7"
+    },
+    {
+      "key": "buildProduction",
+      "argv": ["pnpm", "build"],
+      "cwd": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard",
+      "startedAt": "2026-11-05T20:46:08.465Z",
+      "finishedAt": "2026-11-05T20:46:09.098Z",
+      "exitCode": 0,
+      "error": null,
+      "log": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/evidence-final-core-upgrade/final-buildProduction.log",
+      "sourceCommit": "e0c9fbd754e9a0665ba439c3974770f5673cae4d",
+      "sessionId": "75fad987-6ff7-4496-a797-91bb407535d7"
+    },
+    {
+      "key": "checkProduction",
+      "argv": ["node", "tools/proofline/check-production.mjs"],
+      "cwd": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard",
+      "startedAt": "2026-11-05T20:46:09.099Z",
+      "finishedAt": "2026-11-05T20:46:09.153Z",
+      "exitCode": 0,
+      "error": null,
+      "log": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/evidence-final-core-upgrade/final-checkProduction.log",
+      "sourceCommit": "e0c9fbd754e9a0665ba439c3974770f5673cae4d",
+      "sessionId": "75fad987-6ff7-4496-a797-91bb407535d7"
+    },
+    {
+      "key": "diffCheck",
+      "argv": ["git", "diff", "--check"],
+      "cwd": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard",
+      "startedAt": "2026-11-05T20:46:09.153Z",
+      "finishedAt": "2026-11-05T20:46:09.158Z",
+      "exitCode": 0,
+      "error": null,
+      "log": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/evidence-final-core-upgrade/final-diffCheck.log",
+      "sourceCommit": "e0c9fbd754e9a0665ba439c3974770f5673cae4d",
+      "sessionId": "75fad987-6ff7-4496-a797-91bb407535d7"
+    },
+    {
+      "key": "gitClean",
+      "argv": ["git", "status", "--porcelain"],
+      "cwd": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard",
+      "startedAt": "2026-11-05T20:46:09.158Z",
+      "finishedAt": "2026-11-05T20:46:09.164Z",
+      "exitCode": 0,
+      "error": null,
+      "log": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/evidence-final-core-upgrade/final-gitClean.log",
+      "sourceCommit": "e0c9fbd754e9a0665ba439c3974770f5673cae4d",
+      "sessionId": "75fad987-6ff7-4496-a797-91bb407535d7"
+    }
+  ],
+  "nativeRecords": [
+    {
+      "invocationId": "40b03f4b-324b-4ab0-b7cb-4d0f4072f55e",
+      "verification": "artifacts/proofline/runs/40b03f4b-324b-4ab0-b7cb-4d0f4072f55e/verification.json",
+      "sha256": "4e0ec6bbd2de8af88610956c0be848b70a66c97c2db5c29e43651f8a109b55c5",
+      "runner": "vitest",
+      "scope": "full",
+      "gateKey": "unit",
+      "gateComplete": false,
+      "expectedCount": 11,
+      "observedCount": 11,
+      "children": [],
+      "metadata": {
+        "projects": [""],
+        "workers": null,
+        "shard": null,
+        "runtime": {
+          "nodeVersion": "v24.22.1",
+          "platform": "darwin",
+          "arch": "arm64",
+          "execPath": "/Users/dio/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node"
+        }
+      },
+      "outcome": "passed"
+    },
+    {
+      "invocationId": "4e20805c-2c95-4328-a2ad-9acc354c0a5b",
+      "verification": "artifacts/proofline/runs/4e20805c-2c95-4328-a2ad-9acc354c0a5b/verification.json",
+      "sha256": "3ad7f87e4d0e8c6fe3456835654fde2f2f3c4212a5cf83e0761733a2f5dd9b96",
+      "runner": "aggregate",
+      "scope": "full",
+      "gateKey": "unit",
+      "gateComplete": true,
+      "expectedCount": 11,
+      "observedCount": 11,
+      "children": [
+        {
+          "version": 1,
+          "invocationId": "40b03f4b-324b-4ab0-b7cb-4d0f4072f55e",
+          "verification": "runs/40b03f4b-324b-4ab0-b7cb-4d0f4072f55e/verification.json",
+          "sha256": "4e0ec6bbd2de8af88610956c0be848b70a66c97c2db5c29e43651f8a109b55c5"
+        }
+      ],
+      "metadata": {
+        "projects": [],
+        "workers": null,
+        "shard": null,
+        "runtime": {
+          "nodeVersion": "v24.22.1",
+          "platform": "darwin",
+          "arch": "arm64",
+          "execPath": "/Users/dio/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node"
+        }
+      },
+      "outcome": "passed"
+    },
+    {
+      "invocationId": "b4e359e9-764f-49fa-b7ab-93f4432f3ad2",
+      "verification": "artifacts/proofline/runs/b4e359e9-764f-49fa-b7ab-93f4432f3ad2/verification.json",
+      "sha256": "80db8cec326edad048f89f30aafdef68a1fc4cd45be1446eeb1757e4c6230552",
+      "runner": "playwright",
+      "scope": "full",
+      "gateKey": "browser",
+      "gateComplete": true,
+      "expectedCount": 2,
+      "observedCount": 2,
+      "children": [],
+      "metadata": {
+        "projects": ["chromium"],
+        "workers": "2",
+        "shard": null,
+        "runtime": {
+          "nodeVersion": "v24.22.1",
+          "platform": "darwin",
+          "arch": "arm64",
+          "execPath": "/Users/dio/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node"
+        }
+      },
+      "outcome": "passed"
+    },
+    {
+      "invocationId": "46f1bf5e-77fd-4bea-8370-13cf90fe4c5a",
+      "verification": "artifacts/proofline/runs/46f1bf5e-77fd-4bea-8370-13cf90fe4c5a/verification.json",
+      "sha256": "0f4402969cf55256e51c9403fcfee9a78af213e046f2eae3fd88ad6f42abe9f8",
+      "runner": "vitest",
+      "scope": "selected",
+      "gateKey": "vitest",
+      "gateComplete": false,
+      "expectedCount": 11,
+      "observedCount": 11,
+      "children": [],
+      "metadata": {
+        "projects": [""],
+        "workers": null,
+        "shard": null,
+        "runtime": {
+          "nodeVersion": "v24.22.1",
+          "platform": "darwin",
+          "arch": "arm64",
+          "execPath": "/Users/dio/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node"
+        }
+      },
+      "outcome": "passed"
+    },
+    {
+      "invocationId": "7018776c-edeb-4fe5-9f4d-1c4b9b771dcf",
+      "verification": "artifacts/proofline/runs/7018776c-edeb-4fe5-9f4d-1c4b9b771dcf/verification.json",
+      "sha256": "cd16ee14eeeb844b345e1e7b509620b9e9a535737cee47fd772162d7b9f0b6db",
+      "runner": "playwright",
+      "scope": "subset",
+      "gateKey": "playwright",
+      "gateComplete": true,
+      "expectedCount": 2,
+      "observedCount": 2,
+      "children": [],
+      "metadata": {
+        "projects": ["chromium"],
+        "workers": "2",
+        "shard": null,
+        "runtime": {
+          "nodeVersion": "v24.22.1",
+          "platform": "darwin",
+          "arch": "arm64",
+          "execPath": "/Users/dio/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node"
+        }
+      },
+      "outcome": "passed"
+    },
+    {
+      "invocationId": "807d2baf-79c8-4598-8e93-dea6b003960f",
+      "verification": "artifacts/proofline/runs/807d2baf-79c8-4598-8e93-dea6b003960f/verification.json",
+      "sha256": "577451dff883b47997ff3988de1348ccce02f4e1741cc48faef3c1565bcf1660",
+      "runner": "playwright",
+      "scope": "subset",
+      "gateKey": "playwright",
+      "gateComplete": true,
+      "expectedCount": 2,
+      "observedCount": 2,
+      "children": [],
+      "metadata": {
+        "projects": ["chromium"],
+        "workers": "2",
+        "shard": null,
+        "runtime": {
+          "nodeVersion": "v24.22.1",
+          "platform": "darwin",
+          "arch": "arm64",
+          "execPath": "/Users/dio/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node"
+        }
+      },
+      "outcome": "passed"
+    },
+    {
+      "invocationId": "c037b075-0a75-4018-959a-5ba5c52db637",
+      "verification": "artifacts/proofline/runs/c037b075-0a75-4018-959a-5ba5c52db637/verification.json",
+      "sha256": "9f55460998ef084dd0ab9281b26c38e112aefa751999fa098a92dc0e59ecbb71",
+      "runner": "playwright",
+      "scope": "subset",
+      "gateKey": "playwright",
+      "gateComplete": true,
+      "expectedCount": 1,
+      "observedCount": 1,
+      "children": [],
+      "metadata": {
+        "projects": ["chromium"],
+        "workers": "2",
+        "shard": {
+          "current": 1,
+          "total": 2
+        },
+        "runtime": {
+          "nodeVersion": "v24.22.1",
+          "platform": "darwin",
+          "arch": "arm64",
+          "execPath": "/Users/dio/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node"
+        }
+      },
+      "outcome": "passed"
+    },
+    {
+      "invocationId": "ab3f2ec8-8af0-4e72-be05-238d85c43b86",
+      "verification": "artifacts/proofline/runs/ab3f2ec8-8af0-4e72-be05-238d85c43b86/verification.json",
+      "sha256": "644fcaa8b96d843cce22f99725817a4c5c3ae83db3a4f9bc37478037d1be1c7d",
+      "runner": "playwright",
+      "scope": "subset",
+      "gateKey": "playwright",
+      "gateComplete": true,
+      "expectedCount": 1,
+      "observedCount": 1,
+      "children": [],
+      "metadata": {
+        "projects": ["chromium"],
+        "workers": "2",
+        "shard": {
+          "current": 2,
+          "total": 2
+        },
+        "runtime": {
+          "nodeVersion": "v24.22.1",
+          "platform": "darwin",
+          "arch": "arm64",
+          "execPath": "/Users/dio/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node"
+        }
+      },
+      "outcome": "passed"
+    },
+    {
+      "invocationId": "73ca2b29-e1c1-45e2-bca9-4d757360f360",
+      "verification": "artifacts/proofline/runs/73ca2b29-e1c1-45e2-bca9-4d757360f360/verification.json",
+      "sha256": "0ac6f528d7ef0f2e3ed63b24756f0198ad7f135335aaaca1822713e6f3797649",
+      "runner": "vitest",
+      "scope": "full",
+      "gateKey": "unit",
+      "gateComplete": false,
+      "expectedCount": 11,
+      "observedCount": 11,
+      "children": [],
+      "metadata": {
+        "projects": [""],
+        "workers": null,
+        "shard": null,
+        "runtime": {
+          "nodeVersion": "v24.22.1",
+          "platform": "darwin",
+          "arch": "arm64",
+          "execPath": "/Users/dio/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node"
+        }
+      },
+      "outcome": "passed"
+    },
+    {
+      "invocationId": "be650a6b-d642-4a94-9c05-936acb4718b8",
+      "verification": "artifacts/proofline/runs/be650a6b-d642-4a94-9c05-936acb4718b8/verification.json",
+      "sha256": "50e992973c06dc5a51e4a43c085481e3069f624172a5f7c9fecfff340a6a64d1",
+      "runner": "aggregate",
+      "scope": "full",
+      "gateKey": "unit",
+      "gateComplete": true,
+      "expectedCount": 11,
+      "observedCount": 11,
+      "children": [
+        {
+          "version": 1,
+          "invocationId": "73ca2b29-e1c1-45e2-bca9-4d757360f360",
+          "verification": "runs/73ca2b29-e1c1-45e2-bca9-4d757360f360/verification.json",
+          "sha256": "0ac6f528d7ef0f2e3ed63b24756f0198ad7f135335aaaca1822713e6f3797649"
+        }
+      ],
+      "metadata": {
+        "projects": [],
+        "workers": null,
+        "shard": null,
+        "runtime": {
+          "nodeVersion": "v24.22.1",
+          "platform": "darwin",
+          "arch": "arm64",
+          "execPath": "/Users/dio/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node"
+        }
+      },
+      "outcome": "passed"
+    },
+    {
+      "invocationId": "f76bb109-a23e-45c1-8160-8c5267d3a919",
+      "verification": "artifacts/proofline/runs/f76bb109-a23e-45c1-8160-8c5267d3a919/verification.json",
+      "sha256": "4e82544f5cdd971d1d2735e6bffc9480c24e308aef1b3ea63dde7c888d9a31dd",
+      "runner": "playwright",
+      "scope": "full",
+      "gateKey": "browser",
+      "gateComplete": true,
+      "expectedCount": 2,
+      "observedCount": 2,
+      "children": [],
+      "metadata": {
+        "projects": ["chromium"],
+        "workers": "2",
+        "shard": null,
+        "runtime": {
+          "nodeVersion": "v24.22.1",
+          "platform": "darwin",
+          "arch": "arm64",
+          "execPath": "/Users/dio/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node"
+        }
+      },
+      "outcome": "passed"
+    },
+    {
+      "invocationId": "3007462b-5e1a-47fb-8528-a9b4c4958e8b",
+      "verification": "artifacts/proofline/runs/3007462b-5e1a-47fb-8528-a9b4c4958e8b/verification.json",
+      "sha256": "812f1e0e049e5f857f4a34b1acf3c0bfdd01721fa999107328a24807cb48ad1e",
+      "runner": "playwright",
+      "scope": "subset",
+      "gateKey": "playwright",
+      "gateComplete": true,
+      "expectedCount": 2,
+      "observedCount": 2,
+      "children": [],
+      "metadata": {
+        "projects": ["chromium"],
+        "workers": "2",
+        "shard": null,
+        "runtime": {
+          "nodeVersion": "v24.22.1",
+          "platform": "darwin",
+          "arch": "arm64",
+          "execPath": "/Users/dio/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node"
+        }
+      },
+      "outcome": "passed"
+    },
+    {
+      "invocationId": "33d3823d-5f5c-4b58-b201-a4b9fad2d052",
+      "verification": "artifacts/proofline/runs/33d3823d-5f5c-4b58-b201-a4b9fad2d052/verification.json",
+      "sha256": "d4fbb0b8a589b02f233bc2911e28d839e880eef3b33eb42123fb0959bdb2ceb0",
+      "runner": "playwright",
+      "scope": "subset",
+      "gateKey": "playwright",
+      "gateComplete": true,
+      "expectedCount": 1,
+      "observedCount": 1,
+      "children": [],
+      "metadata": {
+        "projects": ["chromium"],
+        "workers": "2",
+        "shard": {
+          "current": 1,
+          "total": 2
+        },
+        "runtime": {
+          "nodeVersion": "v24.22.1",
+          "platform": "darwin",
+          "arch": "arm64",
+          "execPath": "/Users/dio/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node"
+        }
+      },
+      "outcome": "passed"
+    },
+    {
+      "invocationId": "908bc612-ba24-42a3-b402-0f5aad8b870e",
+      "verification": "artifacts/proofline/runs/908bc612-ba24-42a3-b402-0f5aad8b870e/verification.json",
+      "sha256": "0c2b742c0228760dde05c266d437f9e3caf9cb13005e2c9e77440ec47b0a54b3",
+      "runner": "playwright",
+      "scope": "subset",
+      "gateKey": "playwright",
+      "gateComplete": true,
+      "expectedCount": 1,
+      "observedCount": 1,
+      "children": [],
+      "metadata": {
+        "projects": ["chromium"],
+        "workers": "2",
+        "shard": {
+          "current": 2,
+          "total": 2
+        },
+        "runtime": {
+          "nodeVersion": "v24.22.1",
+          "platform": "darwin",
+          "arch": "arm64",
+          "execPath": "/Users/dio/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node"
+        }
+      },
+      "outcome": "passed"
+    },
+    {
+      "invocationId": "e775b68d-8ad5-4ada-86c5-88b0825881a2",
+      "verification": "artifacts/proofline/runs/e775b68d-8ad5-4ada-86c5-88b0825881a2/verification.json",
+      "sha256": "10fbcdd9fb15bd88764a5f155afb85c4700e472d9df05bf541352ac158537291",
+      "runner": "vitest",
+      "scope": "selected",
+      "gateKey": "vitest",
+      "gateComplete": false,
+      "expectedCount": 11,
+      "observedCount": 11,
+      "children": [],
+      "metadata": {
+        "projects": [""],
+        "workers": null,
+        "shard": null,
+        "runtime": {
+          "nodeVersion": "v24.22.1",
+          "platform": "darwin",
+          "arch": "arm64",
+          "execPath": "/Users/dio/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node"
+        }
+      },
+      "outcome": "passed"
+    }
+  ],
+  "coverage": {
+    "total": {
+      "lines": {
+        "total": 240,
+        "covered": 237,
+        "skipped": 0,
+        "pct": 98.75
+      },
+      "statements": {
+        "total": 240,
+        "covered": 237,
+        "skipped": 0,
+        "pct": 98.75
+      },
+      "functions": {
+        "total": 18,
+        "covered": 14,
+        "skipped": 0,
+        "pct": 77.77
+      },
+      "branches": {
+        "total": 82,
+        "covered": 75,
+        "skipped": 0,
+        "pct": 91.46
+      },
+      "branchesTrue": {
+        "total": 0,
+        "covered": 0,
+        "skipped": 0,
+        "pct": "Unknown"
+      }
+    },
+    "src/main.jsx": {
+      "lines": {
+        "total": 156,
+        "covered": 153,
+        "skipped": 0,
+        "pct": 98.07
+      },
+      "functions": {
+        "total": 12,
+        "covered": 8,
+        "skipped": 0,
+        "pct": 66.66
+      },
+      "statements": {
+        "total": 156,
+        "covered": 153,
+        "skipped": 0,
+        "pct": 98.07
+      },
+      "branches": {
+        "total": 39,
+        "covered": 34,
+        "skipped": 0,
+        "pct": 87.17
+      }
+    },
+    "src/model.mjs": {
+      "lines": {
+        "total": 78,
+        "covered": 78,
+        "skipped": 0,
+        "pct": 100
+      },
+      "functions": {
+        "total": 5,
+        "covered": 5,
+        "skipped": 0,
+        "pct": 100
+      },
+      "statements": {
+        "total": 78,
+        "covered": 78,
+        "skipped": 0,
+        "pct": 100
+      },
+      "branches": {
+        "total": 37,
+        "covered": 36,
+        "skipped": 0,
+        "pct": 97.29
+      }
+    },
+    "src/test-mode.mjs": {
+      "lines": {
+        "total": 6,
+        "covered": 6,
+        "skipped": 0,
+        "pct": 100
+      },
+      "functions": {
+        "total": 1,
+        "covered": 1,
+        "skipped": 0,
+        "pct": 100
+      },
+      "statements": {
+        "total": 6,
+        "covered": 6,
+        "skipped": 0,
+        "pct": 100
+      },
+      "branches": {
+        "total": 6,
+        "covered": 5,
+        "skipped": 0,
+        "pct": 83.33
+      }
+    }
+  },
+  "ratchet": "evidence-final-core-upgrade/final-ratchet.json",
+  "recordGovernance": "evidence-final-core-upgrade/final-record-check.json",
+  "recordPrefixPreserved": true,
+  "fallback": {
+    "executed": true,
+    "selection": "evidence-final-core-upgrade/impact-fallback-execute.json",
+    "reason": "core/generated metadata upgrade and real temporary unmapped source require canonical full"
+  },
+  "exactSelection": {
+    "classification": "historical proof preserved, not rerun or relabeled by upgrade",
+    "base": "170e9e785a887d93be6c6ac3a85a4430491ba92f",
+    "head": "af8afaacd18b15b9b15339b69f8ca425da1d1763",
+    "evidence": "evidence-retry/impact-controlled-execute"
+  },
+  "failures": {
+    "newUpgradeGateFailures": [],
+    "priorFailuresRetained": true,
+    "oldDoctorExportFailure": "evidence-retry/doctor-installed.json",
+    "note": "Optional user-event remains removed as target choice. Supplied upstream Doctor fix independently reviewed by controller; this target rechecks its actual installed direct dependencies without readding that helper."
+  },
+  "limits": [
+    "Controller-assisted compatible upgrade; no new blind-adoption/human evidence.",
+    "Local Darwin arm64 Chromium scope only; no hosted deployment or remote writes.",
+    "Absent auth/roles/tenancy/provider/backend/database contracts remain absent.",
+    "Coverage scope/minima unchanged; UI callbacks below100 remain measured.",
+    "Final independent review pending."
+  ],
+  "timing": {
+    "startedAt": "2026-11-05T20:45:44.413453+00:00",
+    "finishedAt": "2026-11-05T20:47:09.954106+00:00"
+  },
+  "paths": {
+    "target": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard",
+    "evidence": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/evidence-final-core-upgrade",
+    "nativeExecution": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard/artifacts/proofline"
+  },
+  "snapshotDelivery": "locally supplied immutable Git source snapshot; no remote publication verified",
+  "historicalNativePreservation": {
+    "priorInventory": "ADOPTION_RETRY_ARTIFACT_INVENTORY.json",
+    "priorInventoryFileCount": 1056,
+    "immutablePriorNativeRunFiles": 905,
+    "allPriorNativeRunFileHashesUnchanged": true,
+    "historicalExecutionIndexPrefixBytes": 10608,
+    "historicalExecutionIndexPrefixSha256": "fc76e4f3457f9e9172ed9ac05c8c0de6dc58015ace15ef49a1db7029923f34fb",
+    "historicalExecutionIndexPrefixMatches": true,
+    "unchangedPriorArtifactCount": 1051,
+    "changedGeneratedPaths": [
+      "roomboard/artifacts/coverage/ratchet.json",
+      "roomboard/artifacts/impact/manifest.json",
+      "roomboard/artifacts/impact/selection.json",
+      "roomboard/artifacts/proofline/execution-index.jsonl",
+      "roomboard/artifacts/record/check.json"
+    ],
+    "explanation": "Old inventory is a dated snapshot. Shared generated index (append-only), ratchet, record, impact and coverage outputs may change in later gated runs; copied prior retry results and immutable original run directories remain preserved."
+  }
+}

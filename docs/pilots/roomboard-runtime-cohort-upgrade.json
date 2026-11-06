@@ -1,0 +1,1067 @@
+{
+  "version": 1,
+  "kind": "roomboard-post-review-cohort-upgrade",
+  "classification": "controller-assisted-maintenance-not-new-blind-fresh-human-or-hosted-trial",
+  "status": "all19-local-source-bound-checks-passed-frozen-for-independent-review",
+  "assisted": true,
+  "freshInstallEvidence": false,
+  "humanEvidence": false,
+  "hostedEvidence": false,
+  "baseCommit": "bc487b371dfd5dabe52daee05a6a9553f0877268",
+  "upgradeCommit": "ee6b8518d72d1ea37e30f2abb594e06fbc9134cd",
+  "oldCoreSourceCommit": "6c8fcd1eb02bcb638ac13589218f861de8dcf95a",
+  "coreSourceCommit": "8c7614f16e69cb578ef880be961bdd33118e729f",
+  "sourceAuthority": "Locally supplied public-only immutable cohort H snapshot; controller reports completed approved original source review, conditional on fresh/current/hosted evidence classes. This target supplies reused-setup current-target evidence only.",
+  "copiedCoreCount": 37,
+  "suppliedInventoryFileCount": 44,
+  "allCoreHashesMatchImmutableSource": true,
+  "changedCoreFiles": [
+    "tools/proofline/browser-runtime-boundary.mjs",
+    "tools/proofline/canonical-runner.mjs",
+    "tools/proofline/egress-guard.mjs",
+    "tools/proofline/guard-policy.mjs",
+    "tools/proofline/run-guarded.mjs"
+  ],
+  "addedCoreFiles": ["tools/proofline/browser-runtime-boundary.mjs"],
+  "changedTargetPaths": [
+    "e2e/reservations.spec.mjs",
+    "e2e/scenario.mjs",
+    "proofline-core-hashes.json",
+    "proofline.harness.json",
+    "test-impact/execution-record.jsonl",
+    "tools/proofline/browser-runtime-boundary.mjs",
+    "tools/proofline/canonical-runner.mjs",
+    "tools/proofline/egress-guard.mjs",
+    "tools/proofline/guard-policy.mjs",
+    "tools/proofline/run-guarded.mjs"
+  ],
+  "appSourceLockFloorsUnitAndBrowserIdentitiesUnchanged": true,
+  "manifestChange": "Only add tools/proofline/browser-runtime-boundary.mjs to production.forbiddenModules",
+  "catalogAndBindingsUnchanged": true,
+  "contexts": {
+    "main": "e2e/scenario.mjs: addInitScript before first page, exact-origin HTTP and WebSocket routes, serviceWorkers block, cleanup",
+    "bootstrap": "e2e/reservations.spec.mjs: imported initializer before first page, exact-origin HTTP and WebSocket routes, serviceWorkers block, cleanup",
+    "browserWorkerContract": "Worker and SharedWorker immutable blocking constructors; Playwright parallel workers/shards remain supported"
+  },
+  "redGreen": {
+    "redMain": "evidence-cohort-upgrade/red-main-worker-boundary.log",
+    "redBootstrap": "evidence-cohort-upgrade/red-bootstrap-worker-boundary.log",
+    "green": "evidence-cohort-upgrade/green-browser-worker-boundaries.log",
+    "nativeReceipts": [
+      {
+        "sessionId": "roomboard-cohort-red-main",
+        "invocationId": "02a5d919-d13f-41d2-a8e5-c7bfdedd10bc",
+        "sourceCommit": "bc487b371dfd5dabe52daee05a6a9553f0877268",
+        "outcome": "failed",
+        "verification": "roomboard/artifacts/proofline/runs/02a5d919-d13f-41d2-a8e5-c7bfdedd10bc/verification.json",
+        "sha256": "605f9da184c8d1ed774f01914839b09e08b3442fe457827e59b6dd6ce4c804fa",
+        "errors": [
+          "Required identity did not genuinely pass: [\"e2e/reservations.spec.mjs\",\"reserve conflict cancel rebook through visible navigation @roomboard\",\"chromium\"]",
+          "Required identity did not genuinely pass: [\"e2e/reservations.spec.mjs\",\"fresh context starts empty and launch capability cannot be replayed @roomboard-isolation\",\"chromium\"]",
+          "Runner exited 1"
+        ]
+      },
+      {
+        "sessionId": "roomboard-cohort-red-bootstrap",
+        "invocationId": "c397efc0-fbca-4964-b076-a13b4863222f",
+        "sourceCommit": "bc487b371dfd5dabe52daee05a6a9553f0877268",
+        "outcome": "failed",
+        "verification": "roomboard/artifacts/proofline/runs/c397efc0-fbca-4964-b076-a13b4863222f/verification.json",
+        "sha256": "3ef909c6234891774834e06da3626a0551462938cbfeb366e95ab511366e8a8f",
+        "errors": [
+          "Required identity did not genuinely pass: [\"e2e/reservations.spec.mjs\",\"fresh context starts empty and launch capability cannot be replayed @roomboard-isolation\",\"chromium\"]",
+          "Runner exited 1"
+        ]
+      },
+      {
+        "sessionId": "roomboard-cohort-fixture-green",
+        "invocationId": "e27d5443-efde-4247-8d7b-1c4340bb7a98",
+        "sourceCommit": "bc487b371dfd5dabe52daee05a6a9553f0877268",
+        "outcome": "passed",
+        "verification": "roomboard/artifacts/proofline/runs/e27d5443-efde-4247-8d7b-1c4340bb7a98/verification.json",
+        "sha256": "27938263a648e3ea7ceda274369a7ba5c117e5d7cad59c113627c7abf069c871",
+        "errors": []
+      }
+    ],
+    "note": "Both failure stages precede corresponding own initializer implementation. They ran against dirty target fixture drafts at historical base commit, retained externally; final19 gates run on clean committed upgradehead."
+  },
+  "recordPrefixPreserved": true,
+  "preservedPriorReportFiles": {
+    "ADOPTION_FINAL_CORE_UPGRADE_ARTIFACT_INVENTORY.json": "7f570059453311dbe9aaf242bf356fe3c3099998ef60e45c71b967911f983b1f",
+    "ADOPTION_FINAL_CORE_UPGRADE_REPORT.md": "2fdf35764a70bffbd8bf6a0a523c51b95b0ee7c4723e6a3c97aa5c44f196708e",
+    "ADOPTION_FINAL_CORE_UPGRADE_RESULT.json": "f4c6e70ef8adf10ed5769e64441f5fcf88f8e0b0cbadcebb436ebd6fe809f114",
+    "ADOPTION_FINAL_CORE_UPGRADE_SOURCE_INVENTORY.json": "066d9ab5f272e84a6bea6a655fb4e80dcd06d8842b50c17e0e3a3610a5dc4357",
+    "ADOPTION_REPORT.md": "3d1e72ffef781586fd37854656ed9dcabfb2374ecbf6730da5b9367570579963",
+    "ADOPTION_RESULT.json": "a7236851fe643217d2725ab3e7939cc934f4aad22cbdb5ddae6b0c605bf00886",
+    "ADOPTION_RETRY_ARTIFACT_INVENTORY.json": "1e346c8264db65f31c7c848b8615f96709f8b4c4272db0f4c6f4c55efcfb7346",
+    "ADOPTION_RETRY_REPORT.md": "430e302f6d4dc1b70817d5b2633a0d5a0ff10ac794be041ae0464fcff1626992",
+    "ADOPTION_RETRY_RESULT.json": "76ac85097bdd2a52d3a217225b6125eeeeb4c4cd1e07cbd8307797b72652ca0c",
+    "ADOPTION_RETRY_SOURCE_INVENTORY.json": "83220052e771d268c96aa6b9a00af343ba60462b86d19f6c9b57719bbccd425e",
+    "ADOPTION_STARTUP_REPAIR_UPGRADE_ARTIFACT_INVENTORY.json": "ef091fb4e044f428b4caf43b65adf4d3807cb1d54bbd787747e6076ea0ceb9e5",
+    "ADOPTION_STARTUP_REPAIR_UPGRADE_REPORT.md": "a2a0f4512ad98944e32331a5f650a3d41dedffb771b22d1b178eff99bce6c836",
+    "ADOPTION_STARTUP_REPAIR_UPGRADE_RESULT.json": "e98253b8e32546152248db46f72eaa0581eedcc5f8867ecd8de439ccdf505e74",
+    "ADOPTION_STARTUP_REPAIR_UPGRADE_SOURCE_INVENTORY.json": "d166b88f7d0e70a2cdd53951ee22ea4aae608c97cf50a0706d162feb807ebe26",
+    "ARTIFACT_INVENTORY.json": "1809cb8118d3bd4b3865e0d8faffab9550037c22e8da04926fbb4ff49814b2fe"
+  },
+  "historicalNativePreservation": [
+    {
+      "priorInventory": "ADOPTION_RETRY_ARTIFACT_INVENTORY.json",
+      "priorFileCount": 1056,
+      "immutableNativeRunFileCount": 905,
+      "allNativeRunHashesUnchanged": true,
+      "executionIndexPrefixBytes": 10608,
+      "executionIndexPrefixSha256": "fc76e4f3457f9e9172ed9ac05c8c0de6dc58015ace15ef49a1db7029923f34fb",
+      "prefixMatches": true,
+      "changedGeneratedPaths": [
+        "roomboard/artifacts/coverage/ratchet.json",
+        "roomboard/artifacts/impact/manifest.json",
+        "roomboard/artifacts/impact/selection.json",
+        "roomboard/artifacts/proofline/execution-index.jsonl",
+        "roomboard/artifacts/record/check.json"
+      ],
+      "datedSnapshotNotFullCurrentWorktreeMatch": true
+    },
+    {
+      "priorInventory": "ADOPTION_FINAL_CORE_UPGRADE_ARTIFACT_INVENTORY.json",
+      "priorFileCount": 1441,
+      "immutableNativeRunFileCount": 1252,
+      "allNativeRunHashesUnchanged": true,
+      "executionIndexPrefixBytes": 13923,
+      "executionIndexPrefixSha256": "ad5431c682d6dbe9c1336b83ba1899164a5217723d1c57d17963d677c2f1499e",
+      "prefixMatches": true,
+      "changedGeneratedPaths": [
+        "roomboard/artifacts/coverage/ratchet.json",
+        "roomboard/artifacts/impact/manifest.json",
+        "roomboard/artifacts/impact/selection.json",
+        "roomboard/artifacts/proofline/execution-index.jsonl",
+        "roomboard/artifacts/record/check.json"
+      ],
+      "datedSnapshotNotFullCurrentWorktreeMatch": true
+    },
+    {
+      "priorInventory": "ADOPTION_STARTUP_REPAIR_UPGRADE_ARTIFACT_INVENTORY.json",
+      "priorFileCount": 1825,
+      "immutableNativeRunFileCount": 1599,
+      "allNativeRunHashesUnchanged": true,
+      "executionIndexPrefixBytes": 17238,
+      "executionIndexPrefixSha256": "d019cb06a7ae42de4453ced4c77c65ab1f9d527d7a30b4fb5497eb0057d7784a",
+      "prefixMatches": true,
+      "changedGeneratedPaths": [
+        "roomboard/artifacts/coverage/ratchet.json",
+        "roomboard/artifacts/impact/manifest.json",
+        "roomboard/artifacts/impact/selection.json",
+        "roomboard/artifacts/proofline/execution-index.jsonl",
+        "roomboard/artifacts/record/check.json"
+      ],
+      "datedSnapshotNotFullCurrentWorktreeMatch": true
+    }
+  ],
+  "setup": {
+    "mode": "reuse-own-original-genuine-fresh-setup-and-browser-cache",
+    "newNetworkInstallOrDownloads": false,
+    "hostDependencyLink": false,
+    "node": "v24.22.1",
+    "execPath": "/Users/dio/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+    "pnpm": "11.24.0",
+    "git": "git version 2.51.0",
+    "platform": "darwin",
+    "arch": "arm64",
+    "dependencyRealpaths": {
+      "react": {
+        "file": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard/node_modules/.pnpm/react@19.2.8/node_modules/react/package.json",
+        "version": "19.2.8"
+      },
+      "react-dom": {
+        "file": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard/node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/package.json",
+        "version": "19.2.8"
+      },
+      "@types/react": {
+        "file": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard/node_modules/.pnpm/@types+react@19.2.18/node_modules/@types/react/package.json",
+        "version": "19.2.18"
+      },
+      "@types/react-dom": {
+        "file": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard/node_modules/.pnpm/@types+react-dom@19.2.4_@types+react@19.2.18/node_modules/@types/react-dom/package.json",
+        "version": "19.2.4"
+      },
+      "typescript": {
+        "file": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard/node_modules/.pnpm/typescript@5.8.3/node_modules/typescript/package.json",
+        "version": "5.8.3"
+      },
+      "vite": {
+        "file": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard/node_modules/.pnpm/vite@6.4.3/node_modules/vite/package.json",
+        "version": "6.4.3"
+      },
+      "vitest": {
+        "file": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard/node_modules/.pnpm/vitest@3.2.7_jsdom@26.1.0_supports-color@7.2.0__supports-color@7.2.0/node_modules/vitest/package.json",
+        "version": "3.2.7"
+      },
+      "@playwright/test": {
+        "file": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard/node_modules/.pnpm/@playwright+test@1.62.1/node_modules/@playwright/test/package.json",
+        "version": "1.62.1"
+      },
+      "@vitest/coverage-v8": {
+        "file": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard/node_modules/.pnpm/@vitest+coverage-v8@3.2.7_supports-color@7.2.0_vitest@3.2.7_jsdom@26.1.0_supports-color@7.2.0__supports-color@7.2.0_/node_modules/@vitest/coverage-v8/package.json",
+        "version": "3.2.7"
+      },
+      "@testing-library/react": {
+        "file": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard/node_modules/.pnpm/@testing-library+react@16.3.0_@testing-library+dom@10.4.2_@types+react-dom@19.2.4_@type_f42b88b2c9694863faaa771e348410e8/node_modules/@testing-library/react/package.json",
+        "version": "16.3.0"
+      },
+      "jsdom": {
+        "file": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard/node_modules/.pnpm/jsdom@26.1.0_supports-color@7.2.0/node_modules/jsdom/package.json",
+        "version": "26.1.0"
+      },
+      "zod": {
+        "file": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard/node_modules/.pnpm/zod@3.24.2/node_modules/zod/package.json",
+        "version": "3.24.2"
+      }
+    }
+  },
+  "session": {
+    "sessionId": "559e7752-268b-4817-b452-4c7607c24127",
+    "base": "bc487b371dfd5dabe52daee05a6a9553f0877268",
+    "head": "ee6b8518d72d1ea37e30f2abb594e06fbc9134cd",
+    "cwd": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard",
+    "startedAt": "2026-11-05T22:08:38.460Z"
+  },
+  "finalChecks": [
+    {
+      "key": "doctor-source",
+      "argv": [
+        "node",
+        "tools/proofline/doctor.mjs",
+        "--stage",
+        "source",
+        "--json",
+        "--base",
+        "bc487b371dfd5dabe52daee05a6a9553f0877268",
+        "--head",
+        "ee6b8518d72d1ea37e30f2abb594e06fbc9134cd"
+      ],
+      "cwd": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard",
+      "startedAt": "2026-11-05T22:08:38.461Z",
+      "finishedAt": "2026-11-05T22:08:38.712Z",
+      "exitCode": 0,
+      "error": null,
+      "log": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/evidence-cohort-upgrade/final-doctor-source.log",
+      "sourceCommit": "ee6b8518d72d1ea37e30f2abb594e06fbc9134cd",
+      "sessionId": "559e7752-268b-4817-b452-4c7607c24127"
+    },
+    {
+      "key": "doctor-installed",
+      "argv": [
+        "node",
+        "tools/proofline/doctor.mjs",
+        "--stage",
+        "installed",
+        "--independent",
+        "--json",
+        "--base",
+        "bc487b371dfd5dabe52daee05a6a9553f0877268",
+        "--head",
+        "ee6b8518d72d1ea37e30f2abb594e06fbc9134cd"
+      ],
+      "cwd": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard",
+      "startedAt": "2026-11-05T22:08:38.713Z",
+      "finishedAt": "2026-11-05T22:08:39.169Z",
+      "exitCode": 0,
+      "error": null,
+      "log": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/evidence-cohort-upgrade/final-doctor-installed.log",
+      "sourceCommit": "ee6b8518d72d1ea37e30f2abb594e06fbc9134cd",
+      "sessionId": "559e7752-268b-4817-b452-4c7607c24127"
+    },
+    {
+      "key": "lint",
+      "argv": ["node", "tools/roomboard/lint.mjs"],
+      "cwd": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard",
+      "startedAt": "2026-11-05T22:08:39.170Z",
+      "finishedAt": "2026-11-05T22:08:39.341Z",
+      "exitCode": 0,
+      "error": null,
+      "log": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/evidence-cohort-upgrade/final-lint.log",
+      "sourceCommit": "ee6b8518d72d1ea37e30f2abb594e06fbc9134cd",
+      "sessionId": "559e7752-268b-4817-b452-4c7607c24127"
+    },
+    {
+      "key": "typecheck",
+      "argv": ["pnpm", "typecheck"],
+      "cwd": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard",
+      "startedAt": "2026-11-05T22:08:39.341Z",
+      "finishedAt": "2026-11-05T22:08:39.867Z",
+      "exitCode": 0,
+      "error": null,
+      "log": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/evidence-cohort-upgrade/final-typecheck.log",
+      "sourceCommit": "ee6b8518d72d1ea37e30f2abb594e06fbc9134cd",
+      "sessionId": "559e7752-268b-4817-b452-4c7607c24127"
+    },
+    {
+      "key": "manifest",
+      "argv": ["pnpm", "harness:validate"],
+      "cwd": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard",
+      "startedAt": "2026-11-05T22:08:39.867Z",
+      "finishedAt": "2026-11-05T22:08:40.257Z",
+      "exitCode": 0,
+      "error": null,
+      "log": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/evidence-cohort-upgrade/final-manifest.log",
+      "sourceCommit": "ee6b8518d72d1ea37e30f2abb594e06fbc9134cd",
+      "sessionId": "559e7752-268b-4817-b452-4c7607c24127"
+    },
+    {
+      "key": "fallback-execute",
+      "argv": [
+        "node",
+        "tools/impact/src/main.ts",
+        "--base",
+        "bc487b371dfd5dabe52daee05a6a9553f0877268",
+        "--head",
+        "ee6b8518d72d1ea37e30f2abb594e06fbc9134cd"
+      ],
+      "cwd": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard",
+      "startedAt": "2026-11-05T22:08:40.258Z",
+      "finishedAt": "2026-11-05T22:08:52.580Z",
+      "exitCode": 0,
+      "error": null,
+      "log": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/evidence-cohort-upgrade/final-fallback-execute.log",
+      "sourceCommit": "ee6b8518d72d1ea37e30f2abb594e06fbc9134cd",
+      "sessionId": "559e7752-268b-4817-b452-4c7607c24127"
+    },
+    {
+      "key": "unit",
+      "argv": ["node", "tools/proofline/canonical-runner.mjs", "unit"],
+      "cwd": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard",
+      "startedAt": "2026-11-05T22:08:52.582Z",
+      "finishedAt": "2026-11-05T22:08:54.450Z",
+      "exitCode": 0,
+      "error": null,
+      "log": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/evidence-cohort-upgrade/final-unit.log",
+      "sourceCommit": "ee6b8518d72d1ea37e30f2abb594e06fbc9134cd",
+      "sessionId": "559e7752-268b-4817-b452-4c7607c24127"
+    },
+    {
+      "key": "browser",
+      "argv": ["node", "tools/proofline/canonical-runner.mjs", "browser"],
+      "cwd": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard",
+      "startedAt": "2026-11-05T22:08:54.451Z",
+      "finishedAt": "2026-11-05T22:08:57.283Z",
+      "exitCode": 0,
+      "error": null,
+      "log": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/evidence-cohort-upgrade/final-browser.log",
+      "sourceCommit": "ee6b8518d72d1ea37e30f2abb594e06fbc9134cd",
+      "sessionId": "559e7752-268b-4817-b452-4c7607c24127"
+    },
+    {
+      "key": "browserWorkers",
+      "argv": [
+        "node",
+        "tools/proofline/canonical-runner.mjs",
+        "playwright",
+        "test",
+        "--config",
+        "playwright.config.mjs",
+        "--workers=2"
+      ],
+      "cwd": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard",
+      "startedAt": "2026-11-05T22:08:57.283Z",
+      "finishedAt": "2026-11-05T22:08:59.207Z",
+      "exitCode": 0,
+      "error": null,
+      "log": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/evidence-cohort-upgrade/final-browserWorkers.log",
+      "sourceCommit": "ee6b8518d72d1ea37e30f2abb594e06fbc9134cd",
+      "sessionId": "559e7752-268b-4817-b452-4c7607c24127"
+    },
+    {
+      "key": "browserShard1",
+      "argv": [
+        "node",
+        "tools/proofline/canonical-runner.mjs",
+        "playwright",
+        "test",
+        "--config",
+        "playwright.config.mjs",
+        "--shard=1/2"
+      ],
+      "cwd": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard",
+      "startedAt": "2026-11-05T22:08:59.207Z",
+      "finishedAt": "2026-11-05T22:09:01.172Z",
+      "exitCode": 0,
+      "error": null,
+      "log": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/evidence-cohort-upgrade/final-browserShard1.log",
+      "sourceCommit": "ee6b8518d72d1ea37e30f2abb594e06fbc9134cd",
+      "sessionId": "559e7752-268b-4817-b452-4c7607c24127"
+    },
+    {
+      "key": "browserShard2",
+      "argv": [
+        "node",
+        "tools/proofline/canonical-runner.mjs",
+        "playwright",
+        "test",
+        "--config",
+        "playwright.config.mjs",
+        "--shard=2/2"
+      ],
+      "cwd": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard",
+      "startedAt": "2026-11-05T22:09:01.172Z",
+      "finishedAt": "2026-11-05T22:09:03.546Z",
+      "exitCode": 0,
+      "error": null,
+      "log": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/evidence-cohort-upgrade/final-browserShard2.log",
+      "sourceCommit": "ee6b8518d72d1ea37e30f2abb594e06fbc9134cd",
+      "sessionId": "559e7752-268b-4817-b452-4c7607c24127"
+    },
+    {
+      "key": "coverage",
+      "argv": [
+        "node",
+        "tools/proofline/canonical-runner.mjs",
+        "vitest",
+        "run",
+        "--coverage",
+        "--coverage.provider=v8",
+        "--coverage.reportsDirectory=coverage",
+        "--coverage.reporter=json-summary",
+        "--coverage.include=src/{model.mjs,main.jsx,test-mode.mjs}"
+      ],
+      "cwd": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard",
+      "startedAt": "2026-11-05T22:09:03.546Z",
+      "finishedAt": "2026-11-05T22:09:06.679Z",
+      "exitCode": 0,
+      "error": null,
+      "log": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/evidence-cohort-upgrade/final-coverage.log",
+      "sourceCommit": "ee6b8518d72d1ea37e30f2abb594e06fbc9134cd",
+      "sessionId": "559e7752-268b-4817-b452-4c7607c24127"
+    },
+    {
+      "key": "coverage-normalize",
+      "argv": ["node", "tools/impact/src/coverage-policy.ts", "--normalize-reports"],
+      "cwd": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard",
+      "startedAt": "2026-11-05T22:09:06.680Z",
+      "finishedAt": "2026-11-05T22:09:06.938Z",
+      "exitCode": 0,
+      "error": null,
+      "log": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/evidence-cohort-upgrade/final-coverage-normalize.log",
+      "sourceCommit": "ee6b8518d72d1ea37e30f2abb594e06fbc9134cd",
+      "sessionId": "559e7752-268b-4817-b452-4c7607c24127"
+    },
+    {
+      "key": "coverageCheck",
+      "argv": [
+        "node",
+        "tools/impact/src/coverage-policy.ts",
+        "--base",
+        "bc487b371dfd5dabe52daee05a6a9553f0877268",
+        "--head",
+        "ee6b8518d72d1ea37e30f2abb594e06fbc9134cd"
+      ],
+      "cwd": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard",
+      "startedAt": "2026-11-05T22:09:06.938Z",
+      "finishedAt": "2026-11-05T22:09:07.294Z",
+      "exitCode": 0,
+      "error": null,
+      "log": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/evidence-cohort-upgrade/final-coverageCheck.log",
+      "sourceCommit": "ee6b8518d72d1ea37e30f2abb594e06fbc9134cd",
+      "sessionId": "559e7752-268b-4817-b452-4c7607c24127"
+    },
+    {
+      "key": "recordCheck",
+      "argv": [
+        "node",
+        "tools/impact/src/record-check.ts",
+        "--base",
+        "bc487b371dfd5dabe52daee05a6a9553f0877268",
+        "--head",
+        "ee6b8518d72d1ea37e30f2abb594e06fbc9134cd"
+      ],
+      "cwd": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard",
+      "startedAt": "2026-11-05T22:09:07.295Z",
+      "finishedAt": "2026-11-05T22:09:07.649Z",
+      "exitCode": 0,
+      "error": null,
+      "log": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/evidence-cohort-upgrade/final-recordCheck.log",
+      "sourceCommit": "ee6b8518d72d1ea37e30f2abb594e06fbc9134cd",
+      "sessionId": "559e7752-268b-4817-b452-4c7607c24127"
+    },
+    {
+      "key": "buildProduction",
+      "argv": ["pnpm", "build"],
+      "cwd": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard",
+      "startedAt": "2026-11-05T22:09:07.649Z",
+      "finishedAt": "2026-11-05T22:09:08.658Z",
+      "exitCode": 0,
+      "error": null,
+      "log": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/evidence-cohort-upgrade/final-buildProduction.log",
+      "sourceCommit": "ee6b8518d72d1ea37e30f2abb594e06fbc9134cd",
+      "sessionId": "559e7752-268b-4817-b452-4c7607c24127"
+    },
+    {
+      "key": "checkProduction",
+      "argv": ["node", "tools/proofline/check-production.mjs"],
+      "cwd": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard",
+      "startedAt": "2026-11-05T22:09:08.658Z",
+      "finishedAt": "2026-11-05T22:09:08.729Z",
+      "exitCode": 0,
+      "error": null,
+      "log": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/evidence-cohort-upgrade/final-checkProduction.log",
+      "sourceCommit": "ee6b8518d72d1ea37e30f2abb594e06fbc9134cd",
+      "sessionId": "559e7752-268b-4817-b452-4c7607c24127"
+    },
+    {
+      "key": "diffCheck",
+      "argv": ["git", "diff", "--check"],
+      "cwd": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard",
+      "startedAt": "2026-11-05T22:09:08.729Z",
+      "finishedAt": "2026-11-05T22:09:08.735Z",
+      "exitCode": 0,
+      "error": null,
+      "log": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/evidence-cohort-upgrade/final-diffCheck.log",
+      "sourceCommit": "ee6b8518d72d1ea37e30f2abb594e06fbc9134cd",
+      "sessionId": "559e7752-268b-4817-b452-4c7607c24127"
+    },
+    {
+      "key": "gitClean",
+      "argv": ["git", "status", "--porcelain"],
+      "cwd": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard",
+      "startedAt": "2026-11-05T22:09:08.736Z",
+      "finishedAt": "2026-11-05T22:09:08.742Z",
+      "exitCode": 0,
+      "error": null,
+      "log": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/evidence-cohort-upgrade/final-gitClean.log",
+      "sourceCommit": "ee6b8518d72d1ea37e30f2abb594e06fbc9134cd",
+      "sessionId": "559e7752-268b-4817-b452-4c7607c24127"
+    }
+  ],
+  "nativeRecords": [
+    {
+      "invocationId": "2de4375b-9e82-4cf7-be3d-5271dadde00a",
+      "verification": "artifacts/proofline/runs/2de4375b-9e82-4cf7-be3d-5271dadde00a/verification.json",
+      "sha256": "7577609c6d4908b7008271b1d2e54637adc7c1888ce93468d5ea4fc5446d80f1",
+      "runner": "vitest",
+      "scope": "full",
+      "gateKey": "unit",
+      "gateComplete": false,
+      "expectedCount": 11,
+      "observedCount": 11,
+      "children": [],
+      "metadata": {
+        "projects": [""],
+        "workers": null,
+        "shard": null,
+        "runtime": {
+          "nodeVersion": "v24.22.1",
+          "platform": "darwin",
+          "arch": "arm64",
+          "execPath": "/Users/dio/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node"
+        }
+      },
+      "outcome": "passed"
+    },
+    {
+      "invocationId": "2e9d1152-ced0-43b3-b9ca-7858633b133d",
+      "verification": "artifacts/proofline/runs/2e9d1152-ced0-43b3-b9ca-7858633b133d/verification.json",
+      "sha256": "c467098cb34755cc8037f6e41b4f8e3a2feac90d32a4c3fa745404e0caa6016d",
+      "runner": "aggregate",
+      "scope": "full",
+      "gateKey": "unit",
+      "gateComplete": true,
+      "expectedCount": 11,
+      "observedCount": 11,
+      "children": [
+        {
+          "version": 1,
+          "invocationId": "2de4375b-9e82-4cf7-be3d-5271dadde00a",
+          "verification": "runs/2de4375b-9e82-4cf7-be3d-5271dadde00a/verification.json",
+          "sha256": "7577609c6d4908b7008271b1d2e54637adc7c1888ce93468d5ea4fc5446d80f1"
+        }
+      ],
+      "metadata": {
+        "projects": [],
+        "workers": null,
+        "shard": null,
+        "runtime": {
+          "nodeVersion": "v24.22.1",
+          "platform": "darwin",
+          "arch": "arm64",
+          "execPath": "/Users/dio/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node"
+        }
+      },
+      "outcome": "passed"
+    },
+    {
+      "invocationId": "1f506f02-f932-43f8-bc7a-0383f7f69ee1",
+      "verification": "artifacts/proofline/runs/1f506f02-f932-43f8-bc7a-0383f7f69ee1/verification.json",
+      "sha256": "1d39ded46c7aac2e9bc66ad00df4b1da295a165bf0b6abe9b87850d99d22e1cb",
+      "runner": "playwright",
+      "scope": "full",
+      "gateKey": "browser",
+      "gateComplete": true,
+      "expectedCount": 2,
+      "observedCount": 2,
+      "children": [],
+      "metadata": {
+        "projects": ["chromium"],
+        "workers": "2",
+        "shard": null,
+        "runtime": {
+          "nodeVersion": "v24.22.1",
+          "platform": "darwin",
+          "arch": "arm64",
+          "execPath": "/Users/dio/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node"
+        }
+      },
+      "outcome": "passed"
+    },
+    {
+      "invocationId": "969eb51b-2e9b-4578-942e-9df90c3ef870",
+      "verification": "artifacts/proofline/runs/969eb51b-2e9b-4578-942e-9df90c3ef870/verification.json",
+      "sha256": "add69570b5ce614f289d47deafa3f23f20857f1a238a1d417358070567abef0b",
+      "runner": "vitest",
+      "scope": "selected",
+      "gateKey": "vitest",
+      "gateComplete": false,
+      "expectedCount": 11,
+      "observedCount": 11,
+      "children": [],
+      "metadata": {
+        "projects": [""],
+        "workers": null,
+        "shard": null,
+        "runtime": {
+          "nodeVersion": "v24.22.1",
+          "platform": "darwin",
+          "arch": "arm64",
+          "execPath": "/Users/dio/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node"
+        }
+      },
+      "outcome": "passed"
+    },
+    {
+      "invocationId": "6425b9eb-f937-4988-9463-6de9e5ba4229",
+      "verification": "artifacts/proofline/runs/6425b9eb-f937-4988-9463-6de9e5ba4229/verification.json",
+      "sha256": "e352d09464c5cdaf16da2f66e50917675a32878fc7fecdab2f69bc4216748a1e",
+      "runner": "playwright",
+      "scope": "subset",
+      "gateKey": "playwright",
+      "gateComplete": true,
+      "expectedCount": 2,
+      "observedCount": 2,
+      "children": [],
+      "metadata": {
+        "projects": ["chromium"],
+        "workers": "2",
+        "shard": null,
+        "runtime": {
+          "nodeVersion": "v24.22.1",
+          "platform": "darwin",
+          "arch": "arm64",
+          "execPath": "/Users/dio/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node"
+        }
+      },
+      "outcome": "passed"
+    },
+    {
+      "invocationId": "82e1dce2-cfab-4ecf-970e-33a55b55aa9e",
+      "verification": "artifacts/proofline/runs/82e1dce2-cfab-4ecf-970e-33a55b55aa9e/verification.json",
+      "sha256": "447686010248158e6cdda2c0dc5a0119fdc28049c2c19580f7f94b5c44a1009c",
+      "runner": "playwright",
+      "scope": "subset",
+      "gateKey": "playwright",
+      "gateComplete": true,
+      "expectedCount": 2,
+      "observedCount": 2,
+      "children": [],
+      "metadata": {
+        "projects": ["chromium"],
+        "workers": "2",
+        "shard": null,
+        "runtime": {
+          "nodeVersion": "v24.22.1",
+          "platform": "darwin",
+          "arch": "arm64",
+          "execPath": "/Users/dio/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node"
+        }
+      },
+      "outcome": "passed"
+    },
+    {
+      "invocationId": "6b834583-635b-4b1e-87ac-0e92f1633faa",
+      "verification": "artifacts/proofline/runs/6b834583-635b-4b1e-87ac-0e92f1633faa/verification.json",
+      "sha256": "e560aea4dd94622a34b8e7e06fc94a8f2e2311a37ed240ecb87a12248f49ad3a",
+      "runner": "playwright",
+      "scope": "subset",
+      "gateKey": "playwright",
+      "gateComplete": true,
+      "expectedCount": 1,
+      "observedCount": 1,
+      "children": [],
+      "metadata": {
+        "projects": ["chromium"],
+        "workers": "2",
+        "shard": {
+          "current": 1,
+          "total": 2
+        },
+        "runtime": {
+          "nodeVersion": "v24.22.1",
+          "platform": "darwin",
+          "arch": "arm64",
+          "execPath": "/Users/dio/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node"
+        }
+      },
+      "outcome": "passed"
+    },
+    {
+      "invocationId": "28769d54-ddb6-4fe8-834e-9ec84ff0a230",
+      "verification": "artifacts/proofline/runs/28769d54-ddb6-4fe8-834e-9ec84ff0a230/verification.json",
+      "sha256": "86d43fa37f18ac843f1ea7402dc6663b13b2a77ebf00119a8a7dcfb53f571819",
+      "runner": "playwright",
+      "scope": "subset",
+      "gateKey": "playwright",
+      "gateComplete": true,
+      "expectedCount": 1,
+      "observedCount": 1,
+      "children": [],
+      "metadata": {
+        "projects": ["chromium"],
+        "workers": "2",
+        "shard": {
+          "current": 2,
+          "total": 2
+        },
+        "runtime": {
+          "nodeVersion": "v24.22.1",
+          "platform": "darwin",
+          "arch": "arm64",
+          "execPath": "/Users/dio/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node"
+        }
+      },
+      "outcome": "passed"
+    },
+    {
+      "invocationId": "970065c6-2053-498d-bcff-9836533c3473",
+      "verification": "artifacts/proofline/runs/970065c6-2053-498d-bcff-9836533c3473/verification.json",
+      "sha256": "2e035ba3828800ba0eda5e0c35cd722565281fdf27c32239736997a1c66d6843",
+      "runner": "vitest",
+      "scope": "full",
+      "gateKey": "unit",
+      "gateComplete": false,
+      "expectedCount": 11,
+      "observedCount": 11,
+      "children": [],
+      "metadata": {
+        "projects": [""],
+        "workers": null,
+        "shard": null,
+        "runtime": {
+          "nodeVersion": "v24.22.1",
+          "platform": "darwin",
+          "arch": "arm64",
+          "execPath": "/Users/dio/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node"
+        }
+      },
+      "outcome": "passed"
+    },
+    {
+      "invocationId": "d7431471-ea5f-4ce1-93a4-a547a36d663a",
+      "verification": "artifacts/proofline/runs/d7431471-ea5f-4ce1-93a4-a547a36d663a/verification.json",
+      "sha256": "b0a9fed8ac8c33147ae6583f72a082fcfaaa0fc6ac745aa9475d3d63ad92eddc",
+      "runner": "aggregate",
+      "scope": "full",
+      "gateKey": "unit",
+      "gateComplete": true,
+      "expectedCount": 11,
+      "observedCount": 11,
+      "children": [
+        {
+          "version": 1,
+          "invocationId": "970065c6-2053-498d-bcff-9836533c3473",
+          "verification": "runs/970065c6-2053-498d-bcff-9836533c3473/verification.json",
+          "sha256": "2e035ba3828800ba0eda5e0c35cd722565281fdf27c32239736997a1c66d6843"
+        }
+      ],
+      "metadata": {
+        "projects": [],
+        "workers": null,
+        "shard": null,
+        "runtime": {
+          "nodeVersion": "v24.22.1",
+          "platform": "darwin",
+          "arch": "arm64",
+          "execPath": "/Users/dio/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node"
+        }
+      },
+      "outcome": "passed"
+    },
+    {
+      "invocationId": "a666d82d-48a6-46da-9f64-bf780f816dee",
+      "verification": "artifacts/proofline/runs/a666d82d-48a6-46da-9f64-bf780f816dee/verification.json",
+      "sha256": "24ca282454e0624220fb20c9ee1fb3efc89f65b837b44d278fd840aa8c77c713",
+      "runner": "playwright",
+      "scope": "full",
+      "gateKey": "browser",
+      "gateComplete": true,
+      "expectedCount": 2,
+      "observedCount": 2,
+      "children": [],
+      "metadata": {
+        "projects": ["chromium"],
+        "workers": "2",
+        "shard": null,
+        "runtime": {
+          "nodeVersion": "v24.22.1",
+          "platform": "darwin",
+          "arch": "arm64",
+          "execPath": "/Users/dio/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node"
+        }
+      },
+      "outcome": "passed"
+    },
+    {
+      "invocationId": "1db08d67-4c54-4164-8e56-bec490ac1e79",
+      "verification": "artifacts/proofline/runs/1db08d67-4c54-4164-8e56-bec490ac1e79/verification.json",
+      "sha256": "57f13dae3c8a00476403fbcb8672fc723623e32720402a77acd0920db771be95",
+      "runner": "playwright",
+      "scope": "subset",
+      "gateKey": "playwright",
+      "gateComplete": true,
+      "expectedCount": 2,
+      "observedCount": 2,
+      "children": [],
+      "metadata": {
+        "projects": ["chromium"],
+        "workers": "2",
+        "shard": null,
+        "runtime": {
+          "nodeVersion": "v24.22.1",
+          "platform": "darwin",
+          "arch": "arm64",
+          "execPath": "/Users/dio/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node"
+        }
+      },
+      "outcome": "passed"
+    },
+    {
+      "invocationId": "5e630896-8ff8-4e9d-bc44-0d6bd7f11f07",
+      "verification": "artifacts/proofline/runs/5e630896-8ff8-4e9d-bc44-0d6bd7f11f07/verification.json",
+      "sha256": "09600b4e0496f72936eda5e39195ed781a7670b803455a70d47674d3f234c279",
+      "runner": "playwright",
+      "scope": "subset",
+      "gateKey": "playwright",
+      "gateComplete": true,
+      "expectedCount": 1,
+      "observedCount": 1,
+      "children": [],
+      "metadata": {
+        "projects": ["chromium"],
+        "workers": "2",
+        "shard": {
+          "current": 1,
+          "total": 2
+        },
+        "runtime": {
+          "nodeVersion": "v24.22.1",
+          "platform": "darwin",
+          "arch": "arm64",
+          "execPath": "/Users/dio/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node"
+        }
+      },
+      "outcome": "passed"
+    },
+    {
+      "invocationId": "b3835a60-aece-47cf-bb1a-1682635d73f1",
+      "verification": "artifacts/proofline/runs/b3835a60-aece-47cf-bb1a-1682635d73f1/verification.json",
+      "sha256": "644009a16cb64ec4b5cf5dc12cd39dc602daf2bd5da431478bead12232a4cf2d",
+      "runner": "playwright",
+      "scope": "subset",
+      "gateKey": "playwright",
+      "gateComplete": true,
+      "expectedCount": 1,
+      "observedCount": 1,
+      "children": [],
+      "metadata": {
+        "projects": ["chromium"],
+        "workers": "2",
+        "shard": {
+          "current": 2,
+          "total": 2
+        },
+        "runtime": {
+          "nodeVersion": "v24.22.1",
+          "platform": "darwin",
+          "arch": "arm64",
+          "execPath": "/Users/dio/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node"
+        }
+      },
+      "outcome": "passed"
+    },
+    {
+      "invocationId": "c865940a-ae23-43b3-8a02-c655b83ba145",
+      "verification": "artifacts/proofline/runs/c865940a-ae23-43b3-8a02-c655b83ba145/verification.json",
+      "sha256": "027db789034b294f4b3c2476c5cfc5cf62a1185b60f2b45e92731d8c0bb60ee3",
+      "runner": "vitest",
+      "scope": "selected",
+      "gateKey": "vitest",
+      "gateComplete": false,
+      "expectedCount": 11,
+      "observedCount": 11,
+      "children": [],
+      "metadata": {
+        "projects": [""],
+        "workers": null,
+        "shard": null,
+        "runtime": {
+          "nodeVersion": "v24.22.1",
+          "platform": "darwin",
+          "arch": "arm64",
+          "execPath": "/Users/dio/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node"
+        }
+      },
+      "outcome": "passed"
+    }
+  ],
+  "coverage": {
+    "total": {
+      "lines": {
+        "total": 240,
+        "covered": 237,
+        "skipped": 0,
+        "pct": 98.75
+      },
+      "statements": {
+        "total": 240,
+        "covered": 237,
+        "skipped": 0,
+        "pct": 98.75
+      },
+      "functions": {
+        "total": 18,
+        "covered": 14,
+        "skipped": 0,
+        "pct": 77.77
+      },
+      "branches": {
+        "total": 82,
+        "covered": 75,
+        "skipped": 0,
+        "pct": 91.46
+      },
+      "branchesTrue": {
+        "total": 0,
+        "covered": 0,
+        "skipped": 0,
+        "pct": "Unknown"
+      }
+    },
+    "src/main.jsx": {
+      "lines": {
+        "total": 156,
+        "covered": 153,
+        "skipped": 0,
+        "pct": 98.07
+      },
+      "functions": {
+        "total": 12,
+        "covered": 8,
+        "skipped": 0,
+        "pct": 66.66
+      },
+      "statements": {
+        "total": 156,
+        "covered": 153,
+        "skipped": 0,
+        "pct": 98.07
+      },
+      "branches": {
+        "total": 39,
+        "covered": 34,
+        "skipped": 0,
+        "pct": 87.17
+      }
+    },
+    "src/model.mjs": {
+      "lines": {
+        "total": 78,
+        "covered": 78,
+        "skipped": 0,
+        "pct": 100
+      },
+      "functions": {
+        "total": 5,
+        "covered": 5,
+        "skipped": 0,
+        "pct": 100
+      },
+      "statements": {
+        "total": 78,
+        "covered": 78,
+        "skipped": 0,
+        "pct": 100
+      },
+      "branches": {
+        "total": 37,
+        "covered": 36,
+        "skipped": 0,
+        "pct": 97.29
+      }
+    },
+    "src/test-mode.mjs": {
+      "lines": {
+        "total": 6,
+        "covered": 6,
+        "skipped": 0,
+        "pct": 100
+      },
+      "functions": {
+        "total": 1,
+        "covered": 1,
+        "skipped": 0,
+        "pct": 100
+      },
+      "statements": {
+        "total": 6,
+        "covered": 6,
+        "skipped": 0,
+        "pct": 100
+      },
+      "branches": {
+        "total": 6,
+        "covered": 5,
+        "skipped": 0,
+        "pct": 83.33
+      }
+    }
+  },
+  "ratchet": "evidence-cohort-upgrade/final-ratchet.json",
+  "recordCheck": "evidence-cohort-upgrade/final-record-check.json",
+  "fallback": {
+    "executed": true,
+    "selection": "evidence-cohort-upgrade/impact-fallback-execute.json",
+    "reason": "core/manifest/fixture metadata change and real temporary unmapped source require canonical full"
+  },
+  "exactSelection": {
+    "classification": "historical proof only, not relabeled as H narrow-selection run",
+    "base": "170e9e785a887d93be6c6ac3a85a4430491ba92f",
+    "head": "af8afaacd18b15b9b15339b69f8ca425da1d1763",
+    "path": "evidence-retry/impact-controlled-execute"
+  },
+  "failures": {
+    "ownNewRedStages": 2,
+    "newFinalGateFailures": [],
+    "allPriorFailureFilesRetained": true
+  },
+  "limits": [
+    "Assisted maintenance and own reused original setup, not fresh install/blind/human/hosted evidence.",
+    "Local Darwin arm64 Chromium; no remote publication/deployment/provider writes.",
+    "Absent auth/role/tenant/provider/backend/database contracts remain absent.",
+    "Coverage scope/floors unchanged; no whole-core or browser coverage claim.",
+    "Independent review pending; target frozen, no further upgrades planned."
+  ],
+  "timing": {
+    "startedAt": "2026-11-05T22:06:57.743558+00:00",
+    "finishedAt": "2026-11-05T22:10:30.869241+00:00"
+  },
+  "paths": {
+    "target": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard",
+    "evidence": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/evidence-cohort-upgrade",
+    "nativeExecutionRoot": "/private/var/folders/53/tczzd1xs309dz5gqx3h41lnm0000gn/T/proofline-roomboard-adopter-k8xehgkh/roomboard/artifacts/proofline"
+  }
+}

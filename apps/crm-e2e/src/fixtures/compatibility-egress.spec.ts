@@ -17,18 +17,13 @@ test("compatibility_document_fakes_fonts_and_denies_every_browser_egress_plane",
     const deniedFetch = await fetch("https://compatibility.invalid/private?secret=value")
       .then(() => "opened")
       .catch(() => "denied");
-    const worker = await new Promise<string>((resolve) => {
-      const instance = new Worker(
-        URL.createObjectURL(
-          new Blob(
-            [
-              `fetch("https://compatibility-worker.invalid/private", {headers:{"X-Proofline-Plane":"worker"}}).then(() => postMessage("opened")).catch(() => postMessage("denied"))`,
-            ],
-            { type: "text/javascript" },
-          ),
-        ),
-      );
-      instance.onmessage = (event) => resolve(String(event.data));
+    const worker = (["Worker", "SharedWorker"] as const).map((name) => {
+      try {
+        new globalThis[name]("/unsupported-worker.js");
+        return "opened";
+      } catch (error) {
+        return String(error);
+      }
     });
     const websocket = await new Promise<string>((resolve) => {
       const socket = new WebSocket("wss://compatibility-socket.invalid/private");
@@ -45,12 +40,15 @@ test("compatibility_document_fakes_fonts_and_denies_every_browser_egress_plane",
   });
   expect(results).toEqual({
     deniedFetch: "denied",
-    worker: "denied",
+    worker: [
+      "Error: PROOFLINE_UNSUPPORTED_PLANE plane=Worker",
+      "Error: PROOFLINE_UNSUPPORTED_PLANE plane=SharedWorker",
+    ],
     websocket: "denied",
     serviceWorker: "denied",
   });
   expect((await compatibilityScenario.inspect()).serviceWorkers).toBe(0);
   await expect(() => compatibilityScenario.assertNoUnexpectedRequests()).rejects.toThrow(
-    /plane=page[\s\S]*plane=worker[\s\S]*plane=websocket/,
+    /plane=page[\s\S]*plane=websocket/,
   );
 });

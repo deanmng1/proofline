@@ -1,4 +1,4 @@
-import { execFile, execFileSync, spawn, spawnSync } from "node:child_process";
+import { execFile, execFileSync, fork, spawn, spawnSync } from "node:child_process";
 import {
   appendFileSync,
   chmodSync,
@@ -11,8 +11,10 @@ import {
 } from "node:fs";
 import http from "node:http";
 import https from "node:https";
+import { register } from "node:module";
 import { tmpdir } from "node:os";
 import path from "node:path";
+import { MessageChannel, Worker } from "node:worker_threads";
 import { afterAll, beforeAll, expect, test } from "vitest";
 
 let origin = "";
@@ -349,4 +351,225 @@ test("canonical_unit_runner_establishes_manifest_artifacts_before_vitest", () =>
   const testIndex = unitBranch.indexOf("for (const target of execution.unitTargets)");
   expect(buildIndex).toBeGreaterThanOrEqual(0);
   expect(testIndex).toBeGreaterThan(buildIndex);
+});
+
+test("canonical_unit_runner_rejects_operand_hidden_preloads_before_all_child_dispatches", async () => {
+  const sentinel = path.join(temporary, "preload.cjs");
+  const marker = path.join(temporary, "preload-ran");
+  const childFile = path.join(temporary, "ordinary-child.mjs");
+  writeFileSync(sentinel, `require("node:fs").writeFileSync(${JSON.stringify(marker)}, "ran");`);
+  writeFileSync(childFile, "process.exitCode = 0;");
+  const completed = (child: ReturnType<typeof spawn>) =>
+    new Promise<void>((resolve, reject) => {
+      child.once("error", reject);
+      child.once("close", () => resolve());
+    });
+  const optionCases = [
+    ["--conditions", "proofline", "--require", sentinel],
+    ["--conditions=proofline", "--require", sentinel],
+    ["-C", "proofline", "--require", sentinel],
+    ...["-p", "--print"].flatMap((option) => [
+      [option, "-r", sentinel, "-e", "0"],
+      [option, `-r${sentinel}`, "-e", "0"],
+      [option, "--no-warnings", "-r", sentinel, "-e", "0"],
+    ]),
+    ["--print=1", "0", "-r", sentinel, "-e", "0"],
+  ];
+  for (const options of optionCases) {
+    const argv = [...options, childFile];
+    const attempts = {
+      spawn: () => completed(spawn(process.execPath, argv)),
+      spawnSync: () => {
+        spawnSync(process.execPath, argv);
+      },
+      execFile: () =>
+        new Promise<void>((resolve, reject) =>
+          execFile(process.execPath, argv, (error) => (error ? reject(error) : resolve())),
+        ),
+      execFileSync: () => {
+        execFileSync(process.execPath, argv);
+      },
+      fork: () => completed(fork(childFile, [], { execArgv: options, silent: true })),
+    };
+    for (const [method, attempt] of Object.entries(attempts)) {
+      let denial = "dispatched";
+      try {
+        await attempt();
+      } catch (error) {
+        denial = String(error);
+      }
+      expect
+        .soft({ denial, sentinelRan: existsSync(marker) }, `${JSON.stringify(options)} ${method}`)
+        .toEqual({
+          denial: expect.stringContaining("unsupported-child-plane"),
+          sentinelRan: false,
+        });
+      rmSync(marker, { force: true });
+    }
+  }
+});
+
+test("canonical_unit_runner_rejects_node_options_preloads_before_all_child_dispatches", async () => {
+  const sentinel = path.join(temporary, "environment-preload.cjs");
+  const marker = path.join(temporary, "environment-preload-ran");
+  const childFile = path.join(temporary, "environment-child.mjs");
+  writeFileSync(sentinel, `require("node:fs").writeFileSync(${JSON.stringify(marker)}, "ran");`);
+  writeFileSync(childFile, "process.exitCode = 0;");
+  const completed = (child: ReturnType<typeof spawn>) =>
+    new Promise<void>((resolve, reject) => {
+      child.once("error", reject);
+      child.once("close", () => resolve());
+    });
+  for (const nodeOptions of [
+    `"--require" ${sentinel}`,
+    `--re""quire ${sentinel}`,
+    `"--requ\\ire" ${sentinel}`,
+    `--require="${sentinel}"`,
+    `--require=${sentinel}`,
+    `--import=${sentinel}`,
+  ]) {
+    const options = { env: { ...process.env, NODE_OPTIONS: nodeOptions } };
+    const attempts = {
+      spawn: () => completed(spawn(process.execPath, [childFile], options)),
+      spawnSync: () => {
+        spawnSync(process.execPath, [childFile], options);
+      },
+      execFile: () =>
+        new Promise<void>((resolve, reject) =>
+          execFile(process.execPath, [childFile], options, (error) =>
+            error ? reject(error) : resolve(),
+          ),
+        ),
+      execFileSync: () => {
+        execFileSync(process.execPath, [childFile], options);
+      },
+      fork: () => completed(fork(childFile, [], { ...options, execArgv: [], silent: true })),
+    };
+    for (const [method, attempt] of Object.entries(attempts)) {
+      let denial = "dispatched";
+      try {
+        await attempt();
+      } catch (error) {
+        denial = String(error);
+      }
+      expect.soft({ denial, sentinelRan: existsSync(marker) }, `${nodeOptions} ${method}`).toEqual({
+        denial: expect.stringMatching(/NODE_OPTIONS.*reviewed/),
+        sentinelRan: false,
+      });
+      rmSync(marker, { force: true });
+    }
+  }
+});
+
+test("canonical_unit_runner_rejects_worker_threads_and_preserves_message_channels", async () => {
+  expect(Object.getPrototypeOf(Worker)).toBe(Function.prototype);
+  expect(Object.getPrototypeOf(Worker.prototype)).toBe(Object.prototype);
+  expect(Worker.prototype.constructor).toBe(Worker);
+  const marker = path.join(temporary, "canonical-worker-ran");
+  const source = `require("node:fs").writeFileSync(${JSON.stringify(marker)}, "ran");`;
+  let denial = "dispatched";
+  let created = false;
+  try {
+    const worker = new Worker(source, { eval: true, execArgv: [], env: {} });
+    created = true;
+    await new Promise<void>((resolve) => {
+      worker.on("error", () => {});
+      worker.on("exit", () => resolve());
+    });
+  } catch (error) {
+    denial = String(error);
+  }
+  expect.soft({ denial, created, targetRan: existsSync(marker) }).toEqual({
+    denial: expect.stringContaining("unsupported-worker-plane"),
+    created: false,
+    targetRan: false,
+  });
+  const { port1, port2 } = new MessageChannel();
+  try {
+    const received = new Promise<string>((resolve) => port2.once("message", resolve));
+    port1.postMessage("message-channel-ok");
+    expect(await received).toBe("message-channel-ok");
+  } finally {
+    port1.close();
+    port2.close();
+  }
+});
+
+test("canonical_unit_runner_rejects_async_loader_registration_before_execution", async () => {
+  const marker = path.join(temporary, "canonical-loader-ran");
+  const file = path.join(temporary, "canonical-loader.mjs");
+  writeFileSync(
+    file,
+    `import { writeFileSync } from "node:fs"; writeFileSync(${JSON.stringify(marker)}, "ran");`,
+  );
+  expect.soft(() => register(file)).toThrow(/unsupported-loader-plane/);
+  expect(existsSync(marker)).toBe(false);
+});
+
+test("canonical_unit_runner_snapshots_child_argv_options_and_environment_once", async () => {
+  const childFile = path.join(temporary, "child-snapshot-control.mjs");
+  writeFileSync(childFile, "console.log(process.env.SNAPSHOT_VALUE);");
+  const completed = (child: ReturnType<typeof spawn>) =>
+    new Promise<{ code: number | null; stdout: string }>((resolve, reject) => {
+      let stdout = "";
+      child.stdout?.on("data", (chunk) => {
+        stdout += chunk;
+      });
+      child.on("error", reject);
+      child.on("close", (code) => resolve({ code, stdout }));
+    });
+  for (const method of ["spawn", "spawnSync", "execFile", "execFileSync", "fork"]) {
+    let argvReads = 0,
+      shellReads = 0,
+      envReads = 0,
+      execArgvReads = 0,
+      execPathReads = 0;
+    const argv = [childFile];
+    Object.defineProperty(argv, "0", {
+      get() {
+        argvReads += 1;
+        return childFile;
+      },
+    });
+    const options = {
+      get shell() {
+        shellReads += 1;
+        return false as const;
+      },
+      encoding: "utf8" as const,
+      get execPath() {
+        execPathReads += 1;
+        return process.execPath;
+      },
+      get execArgv() {
+        execArgvReads += 1;
+        return [];
+      },
+      silent: true,
+      env: {
+        get SNAPSHOT_VALUE() {
+          envReads += 1;
+          return "snapshot-safe";
+        },
+      },
+    };
+    let result: { code: number | null; stdout: string };
+    if (method === "spawn") result = await completed(spawn(process.execPath, argv, options));
+    else if (method === "spawnSync") {
+      const child = spawnSync(process.execPath, argv, options);
+      result = { code: child.status, stdout: child.stdout };
+    } else if (method === "execFile")
+      result = await completed(execFile(process.execPath, argv, options));
+    else if (method === "execFileSync")
+      result = { code: 0, stdout: execFileSync(process.execPath, argv, options) };
+    else result = await completed(fork(childFile, [], options));
+    expect.soft(result, method).toEqual({ code: 0, stdout: "snapshot-safe\n" });
+    expect.soft({ argvReads, shellReads, envReads, execArgvReads, execPathReads }, method).toEqual({
+      argvReads: method === "fork" ? 0 : 1,
+      shellReads: 1,
+      envReads: 1,
+      execArgvReads: 1,
+      execPathReads: 1,
+    });
+  }
 });

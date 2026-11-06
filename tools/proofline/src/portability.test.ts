@@ -899,3 +899,75 @@ describe("Proofline standalone portability", () => {
     }
   });
 });
+
+describe("additive native runtime provenance", () => {
+  it("accepts strict producer runtime while retaining legacy work-orders metadata", () => {
+    const fixture = nativeFixture();
+    try {
+      expect(
+        validatePortabilityResult(fixture.record, {
+          artifactRoot: fixture.artifactRoot,
+          checkLogs: false,
+        }),
+      ).toBe(fixture.record);
+      for (const native of fixture.records)
+        native.metadata.runtime = {
+          nodeVersion: process.version,
+          platform: process.platform,
+          arch: process.arch,
+          execPath: process.execPath,
+        };
+      fixture.seal();
+      expect(
+        validatePortabilityResult(fixture.record, {
+          artifactRoot: fixture.artifactRoot,
+          checkLogs: false,
+        }),
+      ).toBe(fixture.record);
+    } finally {
+      fixture.close();
+    }
+  });
+  it("rejects unknown metadata and malformed additive runtime", () => {
+    for (const mutation of [
+      "unknown",
+      "missing",
+      "extra",
+      "node",
+      "path",
+      "arch",
+      "platform",
+      "null",
+    ]) {
+      const fixture = nativeFixture();
+      try {
+        const aggregate = fixture.records.find(
+          (native: { runner: string }) => native.runner === "aggregate",
+        );
+        aggregate.metadata.runtime = {
+          nodeVersion: process.version,
+          platform: process.platform,
+          arch: process.arch,
+          execPath: process.execPath,
+        };
+        if (mutation === "unknown") aggregate.metadata.surprise = true;
+        if (mutation === "missing") delete aggregate.metadata.runtime.arch;
+        if (mutation === "extra") aggregate.metadata.runtime.verified = true;
+        if (mutation === "node") aggregate.metadata.runtime.nodeVersion = "24.22.1";
+        if (mutation === "path") aggregate.metadata.runtime.execPath = "node";
+        if (mutation === "arch") aggregate.metadata.runtime.arch = "";
+        if (mutation === "platform") aggregate.metadata.runtime.platform = "";
+        if (mutation === "null") aggregate.metadata.runtime = null;
+        fixture.seal();
+        expect(() =>
+          validatePortabilityResult(fixture.record, {
+            artifactRoot: fixture.artifactRoot,
+            checkLogs: false,
+          }),
+        ).toThrow();
+      } finally {
+        fixture.close();
+      }
+    }
+  });
+});

@@ -450,4 +450,153 @@ describe("Proofline production boundary", () => {
       await expect(fetchThroughGuard(origin)).rejects.toThrow();
     }
   }, 30_000);
+  test("rejects_marker_free_module_aliases_escapes_and_duplicate_filesystem_identities", async () => {
+    const forbiddenAlias = "packages/api-contracts/src/../src/test-api.ts?worker";
+    const invalidIds = [
+      forbiddenAlias,
+      "../outside.ts",
+      "././examples/acme/src/main.ts",
+      "examples//acme/src/main.ts",
+      "examples/acme/./src/main.ts",
+      "",
+      "?worker",
+      "virtual:",
+      " examples/acme/src/main.ts",
+      "examples/acme/src/main.ts ",
+      "\\outside.ts",
+      "C:\\outside.ts",
+      "\u0000",
+      "examples/\u0000main.ts",
+    ];
+    const valid = "examples/acme/src/main.ts";
+    const moduleSets = [
+      ...invalidIds.map((id) => [id]),
+      [valid, `./${valid}`],
+      [valid, path.join(repositoryRoot, valid)],
+      [valid, valid.replaceAll("/", "\\")],
+    ];
+    for (const modules of moduleSets) {
+      const fixture = temporaryDirectory();
+      await writePositiveManifests(fixture);
+      await mkdir(path.join(fixture, "assets"));
+      writeFileSync(path.join(fixture, "assets/app.js"), "console.log('ordinary');");
+      writeFileSync(
+        path.join(fixture, ".proofline/modules.json"),
+        JSON.stringify({
+          version: 1,
+          chunks: [{ file: "assets/app.js", modules, imports: [], dynamicImports: [] }],
+        }),
+      );
+      expect
+        .soft(
+          () =>
+            assertProductionNegativeArtifact({
+              directory: fixture,
+              forbiddenModules: referenceForbiddenModules,
+            }),
+          JSON.stringify(modules),
+        )
+        .toThrow(/invalid Proofline module graph|forbidden production module/);
+    }
+    for (const id of invalidIds) {
+      for (const field of ["entry", "src"]) {
+        const fixture = temporaryDirectory();
+        await writePositiveManifests(fixture);
+        await mkdir(path.join(fixture, "assets"));
+        writeFileSync(path.join(fixture, "assets/app.js"), "console.log('ordinary');");
+        writeFileSync(
+          path.join(fixture, ".vite/manifest.json"),
+          JSON.stringify({
+            [field === "entry" ? id : "index.html"]: {
+              file: "assets/app.js",
+              src: field === "src" ? id : valid,
+            },
+          }),
+        );
+        expect
+          .soft(
+            () =>
+              assertProductionNegativeArtifact({
+                directory: fixture,
+                forbiddenModules: referenceForbiddenModules,
+              }),
+            `${field} ${JSON.stringify(id)}`,
+          )
+          .toThrow(/invalid Vite manifest|forbidden production module/);
+      }
+    }
+    const fixture = temporaryDirectory();
+    await writePositiveManifests(fixture);
+    await mkdir(path.join(fixture, "assets"));
+    writeFileSync(path.join(fixture, "assets/app.js"), "console.log('ordinary');");
+    writeFileSync(
+      path.join(fixture, ".vite/manifest.json"),
+      JSON.stringify({
+        [valid]: { file: "assets/app.js" },
+        [path.join(repositoryRoot, valid)]: { file: "assets/app.js" },
+      }),
+    );
+    expect(() => assertProductionNegativeArtifact({ directory: fixture })).toThrow(
+      /invalid Vite manifest/,
+    );
+    await writePositiveManifests(fixture);
+    for (const forbidden of invalidIds)
+      expect
+        .soft(
+          () =>
+            assertProductionNegativeArtifact({ directory: fixture, forbiddenModules: [forbidden] }),
+          `configured ${JSON.stringify(forbidden)}`,
+        )
+        .toThrow();
+  });
+
+  test("preserves_distinct_vite_virtual_and_query_module_identities", async () => {
+    const fixture = temporaryDirectory();
+    await writePositiveManifests(fixture);
+    await mkdir(path.join(fixture, "assets"));
+    writeFileSync(path.join(fixture, "assets/app.js"), "console.log('ordinary');");
+    const modules = [
+      "examples/acme/src/main.ts",
+      "\u0000examples/acme/src/main.ts",
+      "examples/acme/src/main.ts?worker",
+      "examples/acme/src/main.ts?raw",
+      "\u0000examples/acme/src/main.ts?commonjs-proxy",
+      "\u0000vite/modulepreload-polyfill.js",
+      "virtual:plugin-module",
+      "./examples/acme/src/bootstrap.ts",
+      path.join(repositoryRoot, "examples/acme/src/absolute.ts"),
+    ];
+    writeFileSync(
+      path.join(fixture, ".proofline/modules.json"),
+      JSON.stringify({
+        version: 1,
+        chunks: [{ file: "assets/app.js", modules, imports: [], dynamicImports: [] }],
+      }),
+    );
+    writeFileSync(
+      path.join(fixture, ".vite/manifest.json"),
+      JSON.stringify(
+        Object.fromEntries(modules.map((id) => [id, { file: "assets/app.js", src: id }])),
+      ),
+    );
+    expect(() => assertProductionNegativeArtifact({ directory: fixture })).not.toThrow();
+    for (const id of [
+      "examples/acme/src/main.ts?worker",
+      "\u0000examples/acme/src/main.ts?commonjs-proxy",
+    ]) {
+      writeFileSync(
+        path.join(fixture, ".proofline/modules.json"),
+        JSON.stringify({
+          version: 1,
+          chunks: [{ file: "assets/app.js", modules: [id], imports: [], dynamicImports: [] }],
+        }),
+      );
+      expect(() =>
+        assertProductionNegativeArtifact({
+          directory: fixture,
+          forbiddenModules: ["examples/acme/src/main.ts"],
+        }),
+      ).toThrow(/forbidden production module/);
+    }
+  });
 });

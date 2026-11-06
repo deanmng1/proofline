@@ -1,0 +1,31 @@
+{
+  "mode": "separately authored unharnessed application; no independent-adopter claim yet",
+  "baselineCommit": "91ded2ab018324357e7457486b2bc6292fb8c386",
+  "fileHashes": {
+    ".gitignore": "61022f949eb49fe0ee5b774835be844845b3d71d9001f676d9ac82bd433e49a7",
+    ".nvmrc": "d9f318747a126ce2247661af67852b185def7789492eabfad7bba322be087c33",
+    "LICENSE": "c82c18e7a2744a74a7115ca672582b6628e23910fb8a8b0543352f3d0ea2be75",
+    "README.md": "615d3400778c4a56bffe66cee9d3059cfa9f60011c52e6e3403905b8b916985b",
+    "index.html": "f591a48e69d294c358a95de033d5150910f563d92a50d738182d3da77e33df69",
+    "package.json": "106af77674d22158ba10c880d74613323b0d47048752778fae4aa956a3f9c5f1",
+    "pnpm-lock.yaml": "8919ccd786fda5391bd0d5a78572d0789106530377d9829b524c3a8db0f44f72",
+    "pnpm-workspace.yaml": "787f8bb2ca5b1d5e6281785b6548e0a02432adb9fe7e7edfa53081f4a73a64d4",
+    "src/main.jsx": "182113700ed818bd7111b2c8253e86dadb8b6e1138864bc62211e98bbadd0c73",
+    "src/model.mjs": "332ff453fe8be1080ec6c018e4dc8baf3285bc984f7f3db9b2e1606483c1cb71",
+    "src/model.test.mjs": "4cf8e45b9aecdce1e7deb6bf84f4a19cd4966d80c36c2f0bf972695571374c08",
+    "src/styles.css": "898a765a6c05c4568a04178c0273965d959ba290167302cad263c7e62198c669",
+    "vite.config.mjs": "f71397c2fe2a146175f5a7b797c80dc5251a0286bb046b0970f40723bc0a2d25"
+  },
+  "acceptance": [
+    "Reserve Cedar Morning through Rooms UI",
+    "Reject a second active booking for that room and slot",
+    "Navigate to Reservations and cancel visibly",
+    "Return to Rooms and reserve the released slot",
+    "Replay accepted command once; reject changed payload under the same command identity"
+  ],
+  "existingTests": 6,
+  "auth": false,
+  "providers": [],
+  "persistence": "in-memory per page instance",
+  "version": 1
+}

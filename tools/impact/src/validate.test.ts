@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest";
 
 import { fixtureFeatureMap } from "../fixtures/repository.ts";
-import { validateFeatureMap } from "./validate.ts";
+import { renderRules, rulesSchema, validateFeatureMap } from "./validate.ts";
 
 const playwrightTests = [
   {
@@ -31,4 +31,25 @@ describe("feature-map validation", () => {
       validateFeatureMap(staleMap, playwrightTests, fixtureFeatureMap.features[0].vitest).errors,
     ).toEqual(["Feature quote-workflow references stale Playwright tag @does-not-exist."]);
   });
+});
+
+test("renders_target_rules_without_inventing_financial_or_insurance_contracts", () => {
+  const catalog = renderRules(
+    rulesSchema.parse({
+      version: 1,
+      rules: [
+        {
+          id: "ROOM-001",
+          description: "Reservations stay within room capacity.",
+          criticality: "critical",
+          paths: ["src/reservations.ts"],
+          vitest: [{ file: "src/reservations.test.ts", title: "rejects a full room", line: 12 }],
+          playwright: [],
+        },
+      ],
+    }),
+  );
+  expect(catalog).toContain("Reservations stay within room capacity.");
+  expect(catalog).toContain("src/reservations.test.ts:12");
+  expect(catalog).not.toMatch(/insurer|accounting|payroll|integer USD|basis points/i);
 });

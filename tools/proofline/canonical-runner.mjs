@@ -299,6 +299,7 @@ const guarded = async (runner, args, options = {}) => {
         deniedRunnerOrigin,
         "http://127.0.0.1",
         egressOrigin,
+        egressOrigin.replace(/^http:/, "ws:"),
         egressIpv6Origin,
         productionOriginOne,
         productionOriginTwo,

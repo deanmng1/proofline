@@ -100,3 +100,28 @@ test("coverage CLI config and environment destinations cannot erase finalized ev
     fixture.cleanup();
   }
 }, 20000);
+
+test("records executing process runtime on every invocation and overrides claimed runtime", () => {
+  const root = mkdtempSync(path.join(tmpdir(), "proofline-runtime-"));
+  try {
+    for (const runner of ["vitest", "playwright", "aggregate"]) {
+      const invocation = allocateInvocation(root);
+      finishInvocation(invocation, {
+        runner,
+        metadata: { projects: [], runtime: { platform: "forged" } },
+      });
+      const record = JSON.parse(
+        readFileSync(path.join(invocation.directory, "verification.json"), "utf8"),
+      );
+      expect(record.metadata.runtime).toEqual({
+        nodeVersion: process.version,
+        platform: process.platform,
+        arch: process.arch,
+        execPath: process.execPath,
+      });
+      expect(record.metadata.projects).toEqual([]);
+    }
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});

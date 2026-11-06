@@ -9,6 +9,8 @@ import {
   type TestApiSnapshot,
   type TestSeed,
 } from "@testbed/api-contracts";
+// @ts-expect-error Portable JavaScript init script.
+import { blockUnsupportedBrowserWorkers } from "../../../../tools/proofline/browser-runtime-boundary.mjs";
 import type { WorkerScenarioServer } from "./scenario-server";
 
 export type ScenarioIdentity = {
@@ -288,6 +290,7 @@ export function createScenario(options: ScenarioOptions): ProoflineScenario {
 
   const install = async (record: ContextRecord) => {
     const { context, contextId } = record;
+    await context.addInitScript(blockUnsupportedBrowserWorkers);
     await context.addInitScript(
       ({ id, namespace }) => {
         let sequence = 0;

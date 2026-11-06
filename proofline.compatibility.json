@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "policy": {
+    "node": ">=24.22.1 <25",
+    "git": ">=2.48.0"
+  },
+  "stack": {
+    "node": "24.22.1",
+    "pnpm": "11.24.0",
+    "react": "19.2.8",
+    "vite": "6.4.3",
+    "vitest": "3.2.7",
+    "coverageV8": "3.2.7",
+    "playwright": "1.62.1"
+  },
+  "cells": [
+    {
+      "id": "linux-x64-chromium",
+      "runner": "ubuntu-24.04",
+      "platform": "linux",
+      "arch": "x64",
+      "browser": "chromium",
+      "scope": "complete",
+      "targets": ["crm", "work-orders"]
+    },
+    {
+      "id": "darwin-arm64-chromium",
+      "runner": "macos-15",
+      "platform": "darwin",
+      "arch": "arm64",
+      "browser": "chromium",
+      "scope": "complete",
+      "targets": ["crm", "work-orders"]
+    }
+  ]
+}

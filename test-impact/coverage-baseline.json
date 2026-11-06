@@ -168,6 +168,48 @@
       "branches": 50,
       "functions": 50,
       "statements": 52
+    },
+    "tools/proofline/github-release-api.mjs": {
+      "report": "artifacts/coverage/proofline-tools/coverage-summary.json",
+      "lines": 98,
+      "statements": 98,
+      "branches": 90,
+      "functions": 100
+    },
+    "tools/proofline/hosted-proof.mjs": {
+      "report": "artifacts/coverage/proofline-tools/coverage-summary.json",
+      "lines": 86,
+      "statements": 86,
+      "branches": 87,
+      "functions": 100
+    },
+    "tools/proofline/release-recovery.mjs": {
+      "report": "artifacts/coverage/proofline-tools/coverage-summary.json",
+      "lines": 100,
+      "statements": 100,
+      "branches": 100,
+      "functions": 100
+    },
+    "tools/proofline/compatibility.mjs": {
+      "report": "artifacts/coverage/proofline-tools/coverage-summary.json",
+      "lines": 85,
+      "statements": 85,
+      "branches": 92,
+      "functions": 92
+    },
+    "tools/proofline/doctor.mjs": {
+      "report": "artifacts/coverage/proofline-tools/coverage-summary.json",
+      "lines": 91,
+      "statements": 91,
+      "branches": 91,
+      "functions": 83
+    },
+    "tools/proofline/browser-runtime-boundary.mjs": {
+      "report": "artifacts/coverage/proofline-tools/coverage-summary.json",
+      "lines": 100,
+      "statements": 100,
+      "functions": 100,
+      "branches": 100
     }
   }
 }

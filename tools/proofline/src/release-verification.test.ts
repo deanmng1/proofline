@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto";
 import {
+  existsSync,
   mkdirSync,
   mkdtempSync,
   readdirSync,
@@ -14,10 +15,15 @@ import path from "node:path";
 import { deflateRawSync } from "node:zlib";
 import { afterEach, describe, expect, test } from "vitest";
 import { commitGitFixture, initializeGitFixture } from "../../impact/test-fixtures/git.ts";
+// @ts-expect-error Portable JavaScript entrypoint.
+import { createGithubReleaseApi } from "../github-release-api.mjs";
+// @ts-expect-error Portable JavaScript entrypoint.
+import { auditHostedProof } from "../hosted-proof.mjs";
 // @ts-expect-error The release tools are portable JavaScript entrypoints.
 import { createReleaseBundle, REQUIRED_RELEASE_GATES } from "../release-bundle.mjs";
 import {
   resolveAndDownloadRelease,
+  resolveAndDownloadVerification,
   selectTrustedVerification,
   verifyReleaseArchive,
   verifyReleaseDirectory,
@@ -823,6 +829,332 @@ describe("immutable release verification", () => {
     expect(
       readFileSync(path.join(f.root, "verified/.vercel/output/static/assets/app.js"), "utf8"),
     ).toBe("console.log('production');");
+  });
+  test.each([
+    "artifactId",
+    "runId",
+    "attempt",
+    "digest",
+    "conclusion",
+    "expiry",
+    "deletion",
+    "tag",
+  ])("rejects post-download authority change %s", async (attack) => {
+    const f = fixture();
+    createReleaseBundle(f.options);
+    const bytes = zip(bundleFiles(f.outputDirectory));
+    const input = trusted(f.auth);
+    input.artifact.digest = `sha256:${hash(bytes)}`;
+    let downloaded = false;
+    const api = async (_repository: string, route: string) => {
+      if (route === "/git/ref/tags/v1")
+        return {
+          object: {
+            type: "commit",
+            sha: downloaded && attack === "tag" ? "f".repeat(40) : f.auth.sourceCommit,
+          },
+        };
+      if (route === "/actions/workflows/verify.yml") return input.workflow;
+      if (route === "/actions/artifacts/456/zip") {
+        downloaded = true;
+        return bytes;
+      }
+      if (route === "/actions/runs/123")
+        return {
+          ...input.run,
+          ...(attack === "runId" ? { id: 124 } : {}),
+          ...(attack === "attempt" ? { run_attempt: 3 } : {}),
+          ...(attack === "conclusion" ? { conclusion: "failure" } : {}),
+        };
+      if (route === "/actions/artifacts/456") {
+        if (attack === "deletion") throw new Error("Offline artifact absent");
+        return {
+          ...input.artifact,
+          ...(attack === "artifactId" ? { id: 457 } : {}),
+          ...(attack === "runId"
+            ? {
+                name: `proofline-release-${f.auth.sourceCommit}-124-2`,
+                workflow_run: { ...input.artifact.workflow_run, id: 124 },
+              }
+            : {}),
+          ...(attack === "attempt"
+            ? { name: `proofline-release-${f.auth.sourceCommit}-123-3` }
+            : {}),
+          ...(attack === "digest" ? { digest: `sha256:${"f".repeat(64)}` } : {}),
+          ...(attack === "expiry" ? { expired: true } : {}),
+        };
+      }
+      throw new Error(`Unknown offline route ${route}`);
+    };
+    const list = async (_repository: string, route: string, key: string) => {
+      if (
+        route ===
+          `/actions/workflows/9/runs?head_sha=${f.auth.sourceCommit}&event=push&branch=main&status=success` &&
+        key === "workflow_runs"
+      )
+        return [input.run];
+      if (route === "/actions/runs/123/artifacts" && key === "artifacts") return [input.artifact];
+      throw new Error(`Unknown offline collection ${route}`);
+    };
+    await expect(
+      resolveAndDownloadRelease({
+        repository: f.auth.repository,
+        tag: "v1",
+        token: "offline-fixture",
+        directory: path.join(f.root, "verified"),
+        api,
+        list,
+      }),
+    ).rejects.toThrow();
+    expect(downloaded).toBe(true);
+  });
+  test("audits exact commits with the same immutable verification authority", async () => {
+    const f = fixture();
+    createReleaseBundle(f.options);
+    const bytes = zip(bundleFiles(f.outputDirectory));
+    const input = trusted(f.auth);
+    input.artifact.digest = `sha256:${hash(bytes)}`;
+    const api = async (_repository: string, route: string) => {
+      if (route === "/actions/workflows/verify.yml") return input.workflow;
+      if (route === "/actions/artifacts/456/zip") return bytes;
+      if (route === "/actions/runs/123") return input.run;
+      if (route === "/actions/artifacts/456") return input.artifact;
+      throw new Error(`Unknown offline route ${route}`);
+    };
+    const list = async (_repository: string, route: string, key: string) => {
+      if (
+        route ===
+          `/actions/workflows/9/runs?head_sha=${f.auth.sourceCommit}&event=push&branch=main&status=success` &&
+        key === "workflow_runs"
+      )
+        return [input.run];
+      if (route === "/actions/runs/123/artifacts" && key === "artifacts") return [input.artifact];
+      throw new Error(`Unknown offline collection ${route}`);
+    };
+    const result = await resolveAndDownloadVerification({
+      repository: f.auth.repository,
+      sourceCommit: f.auth.sourceCommit,
+      token: "offline-fixture",
+      directory: path.join(f.root, "verified"),
+      api,
+      list,
+    });
+    expect(result.release.sourceCommit).toBe(f.auth.sourceCommit);
+    expect(result.observation).toMatchObject({
+      runId: "123",
+      runAttempt: "2",
+      artifactId: "456",
+      archiveDigest: input.artifact.digest,
+      archiveBytes: bytes.length,
+    });
+  });
+  test("writes fixture observations only after full authority checks and refuses receipt overwrite", async () => {
+    const f = fixture();
+    createReleaseBundle(f.options);
+    const bytes = zip(bundleFiles(f.outputDirectory));
+    const input = trusted(f.auth);
+    input.artifact.digest = `sha256:${hash(bytes)}`;
+    let substitute = false;
+    let moveTag = false;
+    let downloaded = false;
+    const api = async (_repository: string, route: string) => {
+      if (route === "/git/ref/tags/v1")
+        return {
+          object: {
+            type: "commit",
+            sha: moveTag && downloaded ? "f".repeat(40) : f.auth.sourceCommit,
+          },
+        };
+      if (route === "/actions/workflows/verify.yml") return input.workflow;
+      if (route === "/actions/artifacts/456/zip") {
+        downloaded = true;
+        return bytes;
+      }
+      if (route === "/actions/runs/123") return input.run;
+      if (route === "/actions/artifacts/456")
+        return { ...input.artifact, id: substitute ? 999 : input.artifact.id };
+      throw new Error(`Unknown offline route ${route}`);
+    };
+    const list = async (_repository: string, route: string, key: string) => {
+      if (
+        route ===
+          `/actions/workflows/9/runs?head_sha=${f.auth.sourceCommit}&event=push&branch=main&status=success` &&
+        key === "workflow_runs"
+      )
+        return [input.run];
+      if (route === "/actions/runs/123/artifacts" && key === "artifacts") return [input.artifact];
+      throw new Error(`Unknown offline collection ${route}`);
+    };
+    const receipt = path.join(f.root, "observations/receipt.json");
+    const options = {
+      repository: f.auth.repository,
+      sourceCommit: f.auth.sourceCommit,
+      token: "offline-fixture",
+      directory: path.join(f.root, "verified"),
+      receipt,
+      api,
+      list,
+      mode: "hosted",
+      now: new Date("2026-11-05T00:00:00Z"),
+    };
+    const result = await auditHostedProof(options);
+    expect(result).toMatchObject({
+      version: 1,
+      mode: "fixture",
+      provenance: { transport: "injected-offline", authoritative: false },
+      observation: {
+        sourceCommit: f.auth.sourceCommit,
+        artifactId: "456",
+        archiveDigest: input.artifact.digest,
+        archiveBytes: bytes.length,
+      },
+      observedAt: "2026-11-05T00:00:00.000Z",
+    });
+    expect(result.verifier.commit).toMatch(/^[a-f0-9]{40}$/);
+    expect(result.verifier.sourceDigest).toMatch(/^sha256:[a-f0-9]{64}$/);
+    const saved = readFileSync(receipt, "utf8");
+    expect(saved).not.toContain("offline-fixture");
+    expect(saved).toBe(`${JSON.stringify(result, null, 2)}\n`);
+    await expect(
+      auditHostedProof({ ...options, directory: path.join(f.root, "other") }),
+    ).rejects.toThrow(/exists/);
+    expect(readFileSync(receipt, "utf8")).toBe(saved);
+    const transport = createGithubReleaseApi({
+      token: "offline-fixture",
+      fetchImpl: async (url: string) => {
+        const target = new URL(url);
+        expect(target.origin).toBe("https://api.github.com");
+        target.searchParams.delete("page");
+        target.searchParams.delete("per_page");
+        const route = target.pathname.slice(`/repos/${f.auth.repository}`.length) + target.search;
+        if (route.includes("/runs?"))
+          return new Response(
+            JSON.stringify({
+              workflow_runs: await list(f.auth.repository, route, "workflow_runs"),
+            }),
+          );
+        if (route.endsWith("/artifacts"))
+          return new Response(
+            JSON.stringify({ artifacts: await list(f.auth.repository, route, "artifacts") }),
+          );
+        const value = await api(f.auth.repository, route);
+        return route.endsWith("/zip")
+          ? new Response(new Uint8Array(value as Buffer))
+          : new Response(JSON.stringify(value));
+      },
+    });
+    const injectedReceipt = await auditHostedProof({
+      ...options,
+      ...transport,
+      directory: path.join(f.root, "transport-verified"),
+      receipt: path.join(f.root, "transport-receipt.json"),
+    });
+    expect(injectedReceipt.mode).toBe("fixture");
+    downloaded = false;
+    moveTag = true;
+    const movedReceipt = path.join(f.root, "tag-moved.json");
+    await expect(
+      auditHostedProof({
+        ...options,
+        sourceCommit: undefined,
+        tag: "v1",
+        directory: path.join(f.root, "tag-verified"),
+        receipt: movedReceipt,
+      }),
+    ).rejects.toThrow(/tag changed/);
+    expect(existsSync(movedReceipt)).toBe(false);
+    substitute = true;
+    const failedReceipt = path.join(f.root, "failed-observation.json");
+    await expect(
+      auditHostedProof({
+        ...options,
+        directory: path.join(f.root, "failed"),
+        receipt: failedReceipt,
+      }),
+    ).rejects.toThrow(/changed/);
+    expect(existsSync(failedReceipt)).toBe(false);
+  });
+  test.each(["cycle", "depth", "malformed", "invalid-name"])(
+    "rejects invalid bounded tag authority %s before artifact requests",
+    async (kind) => {
+      let count = 0;
+      const api = async (_repository: string, route: string) => {
+        count++;
+        if (kind === "malformed" && route === "/git/ref/tags/v1")
+          return { object: { type: "tag", sha: "unsafe" } };
+        if (route === "/git/ref/tags/v1" || /^\/git\/tags\/[a-f0-9]{40}$/.test(route))
+          return {
+            object: {
+              type: "tag",
+              sha: kind === "cycle" ? "c".repeat(40) : count.toString(16).padStart(40, "0"),
+            },
+          };
+        throw new Error(`Unknown offline route ${route}`);
+      };
+      await expect(
+        resolveAndDownloadRelease({
+          repository: authority.repository,
+          tag: kind === "invalid-name" ? "../bad" : "v1",
+          token: "offline-fixture",
+          directory: path.join(temp(), "verified"),
+          api,
+          list: async () => {
+            throw new Error("Unexpected collection request");
+          },
+        }),
+      ).rejects.toThrow();
+      expect(count).toBeLessThanOrEqual(11);
+      if (kind === "invalid-name") expect(count).toBe(0);
+    },
+  );
+  test("rejects incomplete exact source or default transport input before any network request", async () => {
+    await expect(
+      resolveAndDownloadVerification({
+        repository: "../invalid",
+        sourceCommit: sha,
+        token: "offline-fixture",
+        directory: path.join(temp(), "verified"),
+      }),
+    ).rejects.toThrow(/repository/);
+    await expect(
+      resolveAndDownloadVerification({
+        repository: authority.repository,
+        sourceCommit: "invalid",
+        token: "offline-fixture",
+        directory: path.join(temp(), "verified"),
+      }),
+    ).rejects.toThrow(/commit/);
+    await expect(
+      resolveAndDownloadRelease({
+        repository: authority.repository,
+        tag: "v1",
+        directory: path.join(temp(), "verified"),
+      }),
+    ).rejects.toThrow(/token/);
+  });
+  test("preserves independently optional legacy release transport seams", async () => {
+    await expect(
+      resolveAndDownloadRelease({
+        repository: authority.repository,
+        tag: "v1",
+        token: "offline-fixture",
+        directory: path.join(temp(), "verified"),
+        api: async () => {
+          throw new Error("Offline legacy API reached");
+        },
+      }),
+    ).rejects.toThrow("Offline legacy API reached");
+    await expect(
+      resolveAndDownloadVerification({
+        repository: "../invalid",
+        sourceCommit: sha,
+        token: "offline-fixture",
+        directory: path.join(temp(), "verified"),
+        list: async () => {
+          throw new Error("Must not list");
+        },
+      }),
+    ).rejects.toThrow(/repository/);
   });
   test("workflow publishes only after complete gates and deployment uses trusted prebuilt output", () => {
     const require = createRequire(import.meta.url);

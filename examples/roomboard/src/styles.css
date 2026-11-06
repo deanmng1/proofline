@@ -1,0 +1,115 @@
+:root {
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  color: #183d35;
+  background: #f4f6f0;
+  line-height: 1.5;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+}
+.shell {
+  max-width: 960px;
+  margin: auto;
+  padding: 28px;
+}
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+}
+.brand {
+  font-size: 24px;
+  font-weight: 800;
+  text-decoration: none;
+  color: inherit;
+}
+nav {
+  display: flex;
+  gap: 24px;
+}
+nav a {
+  color: inherit;
+  text-underline-offset: 6px;
+}
+nav [aria-current="page"] {
+  font-weight: 700;
+}
+main {
+  padding: 52px 0;
+}
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 12px;
+}
+h1 {
+  font-family: Georgia, serif;
+  font-size: clamp(32px, 6vw, 48px);
+  line-height: 1.1;
+}
+h2 {
+  font-size: 20px;
+  margin-top: 0;
+}
+.rooms {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 20px;
+}
+article,
+form {
+  padding: 24px;
+  margin-bottom: 20px;
+  background: white;
+  border: 1px solid #cbd9ce;
+  border-radius: 12px;
+}
+form {
+  max-width: 480px;
+}
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 16px 0;
+  font-weight: 600;
+}
+select,
+input,
+button {
+  font: inherit;
+  min-height: 42px;
+  border-radius: 6px;
+  padding: 8px 12px;
+}
+select,
+input {
+  border: 1px solid #8da79a;
+  background: white;
+  color: inherit;
+}
+button {
+  border: 0;
+  background: #183d35;
+  color: white;
+  cursor: pointer;
+}
+[role="alert"] {
+  padding: 16px;
+  border-left: 4px solid #ac3535;
+  background: #fff1ed;
+}
+[role="status"] {
+  padding: 16px;
+  border-left: 4px solid #3e7761;
+  background: #e5f0e5;
+}
+footer {
+  padding-bottom: 24px;
+  font-size: 13px;
+  color: #45675b;
+}

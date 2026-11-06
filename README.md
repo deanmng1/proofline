@@ -5,7 +5,9 @@ A portable regression-testing harness for React/Vite applications. Proofline run
 [![License: MIT](https://img.shields.io/badge/license-MIT-2563eb)](LICENSE)
 [![Source preview](https://img.shields.io/badge/preview-0.9.0--preview.1-2563eb)](CHANGELOG.md)
 
-**Distribution:** unpublished source preview `0.9.0-preview.1`, manifest schema 1. The historical dashboard `v0.8.0` tag predates Proofline. Use the source commit shown by `git rev-parse HEAD`; do not treat that old tag as a harness release. See [project status](docs/PROJECT_STATUS.md) and [preview support](.github/SUPPORT.md).
+**Distribution:** unpublished source preview `0.9.0-preview.2`, manifest schema 1. The historical dashboard `v0.8.0` tag predates Proofline. Use the source commit shown by `git rev-parse HEAD`; do not treat that old tag as a harness release. See [project status](docs/PROJECT_STATUS.md) and [preview support](.github/SUPPORT.md).
+
+The [Roomboard agent-adoption trial](docs/pilots/roomboard-adoption.md) retains a third app’s own-history source bundle, reported onboarding gaps and the reviewed final-core upgrade. Its baseline is separate from the insurance CRM and work-orders reference.
 
 ## What it provides
 
@@ -32,12 +34,16 @@ Install Node with your normal version manager, then install the pinned package m
 ```sh
 git clone https://github.com/deanmng1/proofline.git
 cd proofline
+node tools/proofline/doctor.mjs --stage source
 pnpm install --frozen-lockfile
 pnpm exec playwright install chromium
+node tools/proofline/doctor.mjs --stage installed
 pnpm harness:validate
 ```
 
 On Linux CI, install browser system dependencies with `pnpm exec playwright install --with-deps chromium`. Both the full unit gate and browser gate need Chromium: a harness unit regression deliberately executes a real browser identity. A custom `PLAYWRIGHT_BROWSERS_PATH` is supported; install and run using the same value.
+
+The read-only doctor checks prerequisites and prints concrete remediation. Source mode works without installed dependencies; installed mode also checks package resolution and the exact installed browser companions. Use `--json` for structured output. It performs no installation or repair, and a ready preflight does not establish passed tests or browser operating-system-library readiness.
 
 ## Try the CRM without a backend
 

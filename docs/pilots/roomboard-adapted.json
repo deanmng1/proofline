@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "kind": "repeatable-assisted-agent-adaptation-fixture",
+  "humanEvidence": false,
+  "bundle": "docs/pilots/roomboard-adapted.bundle",
+  "targetHead": "aeaf7a04e99f8e313dde1de6f10d39c6ca201722",
+  "baselineCommit": "91ded2ab018324357e7457486b2bc6292fb8c386",
+  "assistedTrialHead": "9102d0d14701777a97cfa15bff20f5fd5b37db61",
+  "runtimeCohortUpgradeHead": "ee6b8518d72d1ea37e30f2abb594e06fbc9134cd",
+  "prooflineSourceCommit": "8c7614f16e69cb578ef880be961bdd33118e729f",
+  "coreFiles": 37,
+  "bundleBytes": 186467,
+  "bundleSha256": "e0d43251327219aef40df3d371de06b6469f99ecb7c19d3f0d4e3ca582d4aa96",
+  "sourceFiles": 71,
+  "review": {
+    "specCompliance": "approved",
+    "codeQuality": "approved",
+    "reviewedTargetHead": "aeaf7a04e99f8e313dde1de6f10d39c6ca201722",
+    "cleanupFinding": "closed",
+    "equivalentCoreAtRootCommit": "67d83663fcb99cfa9d7d5edf4c998b3ae6af0f46"
+  },
+  "mode": "Local agent trial with separately reviewed assisted maintenance; original blocked trial and failed stages retained. No human/hosted/deployment evidence."
+}

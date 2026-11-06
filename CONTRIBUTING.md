@@ -36,11 +36,13 @@ Before changing behavior, add a failing regression and retain RED/GREEN evidence
 
 Use trusted base/head revisions and run the complete [fresh-state gate](docs/TESTING.md#completion-gate). Full unit/browser checks remain mandatory after impact diagnostics. Independently review both spec compliance and code quality. The single complete CI workflow is `.github/workflows/verify.yml`; its `verify` job installs Chromium before tests. Do not revive the obsolete duplicate workflow without matching prerequisites.
 
+When changing `.github/workflows`, also run semantic validation with [actionlint 1.7.12](https://github.com/rhysd/actionlint/releases/tag/v1.7.12), verified against its published checksum: `actionlint .github/workflows/*.yml`. Shell syntax checking does not validate GitHub expression contexts. Keep runner-only values in runner steps and require the actual full PR matrix before remote main advances; a workflow rejected before jobs start is a failed check.
+
 Use a focused branch/PR for shared contributions and a commit subject explaining the reason for the change. This repository's current agent work has explicit direct-to-main local authorization; that does not authorize pushing or publishing. Husky runs Biome through lint-staged. Preserve binary/raw evidence bytes; retained native JSON commonly uses `.json.txt` to avoid formatter rewriting.
 
 ## Source preview and upgrades
 
-`0.9.0-preview.1` identifies the unpublished Proofline source preview; the old dashboard `v0.8.0` tag is historical. Record an immutable source commit with every issue and verification result. No command in this guide tags, pushes, deploys or claims a published release.
+`0.9.0-preview.2` identifies the unpublished Proofline source preview; the old dashboard `v0.8.0` tag is historical. Record an immutable source commit with every issue and verification result. No command in this guide tags, pushes, deploys or claims a published release.
 
 Before changing runner/dependency versions, review package APIs and capability paths, regenerate compatible reports, preserve ratchets/history, repeat fresh independent installs of the CRM and work-orders targets, and run the complete gates. A coverage-provider/history migration requires a separately reviewed change. [Support and release policy](.github/SUPPORT.md) describes compatibility, artifact expiry and preview support. [Security reporting](.github/SECURITY.md) covers potential harness-boundary failures.
 

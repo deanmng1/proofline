@@ -7,9 +7,17 @@ import {
   assertSafeNodeArgv,
   guardedEnvironment,
   prooflineDelegatedPolicy,
+  snapshotChildOptions,
+  snapshotStringArray,
 } from "./guard-policy.mjs";
 
 export const withProoflineGuard = (command, options = {}) => {
+  try {
+    command = snapshotStringArray(command, "guarded commands");
+  } catch {
+    throw new Error("Proofline guarded commands require a non-empty structured argv array.");
+  }
+  options = snapshotChildOptions(options);
   if (
     !Array.isArray(command) ||
     command.length === 0 ||
@@ -61,6 +69,7 @@ export const withProoflineGuard = (command, options = {}) => {
 };
 
 export const launchProoflineTestApp = (command, options = {}) => {
+  options = snapshotChildOptions(options);
   const capability = randomBytes(32).toString("base64url");
   let guardedChild;
   let readinessBuffer = "";

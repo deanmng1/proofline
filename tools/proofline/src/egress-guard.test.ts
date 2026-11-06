@@ -1,4 +1,5 @@
 import { execFileSync } from "node:child_process";
+import { createHash } from "node:crypto";
 import {
   chmodSync,
   existsSync,
@@ -15,6 +16,8 @@ import path from "node:path";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 import {
   assertSafeNodeArgv,
+  guardImportOption,
+  mergeGuardNodeOptions,
   normalizeAllowedChildCapabilities,
   parseAllowedChildCapabilitiesEnvironment,
   // @ts-expect-error The preload policy stays runtime-native JavaScript; this test exercises it directly.
@@ -30,6 +33,7 @@ let ipv6Server: Server;
 let allowedOrigin: string;
 let ipv6Origin: string;
 let ipv6Requests = 0;
+let workerRequests = 0;
 const repositoryRoot = path.resolve(import.meta.dirname, "../../..");
 const temporaryRoot = mkdtempSync(path.join(tmpdir(), "proofline-egress-"));
 const executableOnPath = (name: string) => {
@@ -58,6 +62,7 @@ const runNode = (
 
 beforeAll(async () => {
   server = createServer((request, response) => {
+    if (request.url === "/worker-thread-sentinel") workerRequests += 1;
     if (request.url === "/redirect") {
       response.writeHead(302, { location: "https://example.com/credential?token=secret" });
       response.end();
@@ -90,6 +95,17 @@ beforeAll(async () => {
     }
     response.writeHead(200, { "content-type": "text/plain" });
     response.end("loopback-ok");
+  });
+  server.on("upgrade", (request, socket) => {
+    const accept = createHash("sha1")
+      .update(`${request.headers["sec-websocket-key"]}258EAFA5-E914-47DA-95CA-C5AB0DC85B11`)
+      .digest("base64");
+    socket.write(
+      `HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: ${accept}\r\n\r\n`,
+    );
+    socket.write(Buffer.from([0x81, 2, 0x6f, 0x6b]));
+    socket.on("data", () => socket.end(Buffer.from([0x88, 0])));
+    socket.on("error", () => socket.destroy());
   });
   const declaredOrigin = process.env.PROOFLINE_EGRESS_TEST_ORIGIN;
   const declaredUrl = declaredOrigin ? new URL(declaredOrigin) : undefined;
@@ -943,5 +959,918 @@ describe("Proofline egress guard", () => {
         },
       ] as never),
     ).toThrow(/only executable and purpose/i);
+  });
+  test("rejects_node_execution_overrides_after_supported_option_operands", () => {
+    for (const prefix of [
+      ["--conditions", "proofline"],
+      ["--conditions=proofline"],
+      ["-C", "proofline"],
+      ["--input-type", "module"],
+    ]) {
+      for (const forbidden of [
+        "--require",
+        "-r",
+        "--import",
+        "--loader",
+        "--experimental-loader",
+        "--inspect",
+        "--inspect-brk",
+        "--inspect-port",
+        "--run",
+      ]) {
+        expect
+          .soft(
+            () => assertSafeNodeArgv([...prefix, forbidden, "sentinel", "-e", "0"]),
+            `${prefix} ${forbidden}`,
+          )
+          .toThrow(/unsupported-child-plane/);
+        expect
+          .soft(() => assertSafeNodeArgv([...prefix, `${forbidden}=sentinel`, "-e", "0"]))
+          .toThrow(/unsupported-child-plane/);
+      }
+    }
+    for (const argv of [
+      ["--unknown-option", "value", "--require", "sentinel"],
+      ["--conditions"],
+      ["--conditions="],
+      ["--conditions", "--require", "sentinel"],
+      ["-rsentinel"],
+      ["--no-warnings=false"],
+      ["--input-type", "invalid"],
+      ["--max-old-space-size=0"],
+      ["--max-old-space-size", "256"],
+      ["--max-semi-space-size", "8"],
+      ["--stack-trace-limit", "10"],
+      ["--max-semi-space-size", "invalid"],
+      ["--stack-trace-limit=-1"],
+      ["--unhandled-rejections=invalid"],
+    ])
+      expect
+        .soft(() => assertSafeNodeArgv(argv), JSON.stringify(argv))
+        .toThrow(/unsupported-child-plane/);
+  });
+
+  test("preserves_supported_node_operands_and_true_script_boundaries", async () => {
+    const child = script("argv-control.mjs", "console.log(JSON.stringify(process.argv.slice(2)));");
+    const cases = [
+      ["--conditions", "proofline", "-e", "console.log('[]')"],
+      ["--conditions=proofline", child],
+      ["-C", "proofline", child],
+      ["--input-type", "module", "--no-warnings", "-e", "console.log('[]')"],
+      [
+        "--input-type=module",
+        "--experimental-strip-types",
+        "--enable-source-maps",
+        "-e",
+        "console.log('[]')",
+      ],
+      ["--unhandled-rejections", "strict", "--max-old-space-size=256", child],
+      ["--max-semi-space-size=8", "--stack-trace-limit=10", "-p", "JSON.stringify([])"],
+      [child, "--require", "ordinary-app-argument"],
+      ["--", child, "--import=ordinary-app-argument"],
+      [
+        "-e",
+        "console.log(JSON.stringify(process.argv.slice(1)))",
+        "--",
+        "--require",
+        "ordinary-app-argument",
+      ],
+    ];
+    const expected = [
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      ["--require", "ordinary-app-argument"],
+      ["--import=ordinary-app-argument"],
+      ["--require", "ordinary-app-argument"],
+    ];
+    for (const [index, argv] of cases.entries()) {
+      const result = await withProoflineGuard([process.execPath, ...argv], {
+        allowedOrigins: [allowedOrigin],
+      });
+      expect(result.code, result.stderr).toBe(0);
+      expect(JSON.parse(result.stdout)).toEqual(expected[index]);
+    }
+  });
+
+  test("rejects_direct_operand_hidden_preloads_before_sentinel_execution", async () => {
+    const marker = path.join(temporaryRoot, "direct-preload-ran");
+    const sentinel = script(
+      "direct-preload.cjs",
+      `require("node:fs").writeFileSync(${JSON.stringify(marker)}, "ran");`,
+    );
+    const attempts = [
+      ...["--require", "--import"].map((option) => [
+        "--conditions",
+        "proofline",
+        option,
+        sentinel,
+        "-e",
+        "0",
+      ]),
+      ...["-p", "--print"].flatMap((option) => [
+        [option, "-r", sentinel, "-e", "0"],
+        [option, `-r${sentinel}`, "-e", "0"],
+        [option, "--no-warnings", "-r", sentinel, "-e", "0"],
+      ]),
+      ["--print=1", "0", "-r", sentinel, "-e", "0"],
+    ];
+    for (const argv of attempts) {
+      let denial = "dispatched";
+      try {
+        await withProoflineGuard([process.execPath, ...argv], { allowedOrigins: [allowedOrigin] });
+      } catch (error) {
+        denial = String(error);
+      }
+      expect.soft({ denial, sentinelRan: existsSync(marker) }, JSON.stringify(argv)).toEqual({
+        denial: expect.stringContaining("unsupported-child-plane"),
+        sentinelRan: false,
+      });
+      rmSync(marker, { force: true });
+    }
+  });
+
+  test("rejects_unreviewed_node_options_syntax_before_startup", () => {
+    const rejected = [
+      '"--require" sentinel.cjs',
+      '--require="sentinel.cjs"',
+      "--require=sentinel.cjs",
+      "-r sentinel.cjs",
+      "-rsentinel.cjs",
+      '--re""quire sentinel.cjs',
+      '"--requ\\ire" sentinel.cjs',
+      "'--require' sentinel.cjs",
+      "--import=sentinel.mjs",
+      "--loader=sentinel.mjs",
+      "--experimental-loader sentinel.mjs",
+      "--inspect",
+      "--inspect=127.0.0.1:0",
+      '"--inspect=127.0.0.1:0"',
+      "--inspect-brk=0",
+      "--inspect-port=0",
+      "--unknown-option value",
+      "--conditions",
+      "--conditions --require sentinel.cjs",
+      "--conditions=",
+      "--conditions=--require",
+      "--trace-warnings=1",
+      "--max-old-space-size 256",
+      "--max-old-space-size=0",
+      "--input-type=invalid",
+      "--eval=0",
+      "-e 0",
+      "--print",
+      "--",
+      "ordinary-operand",
+      "--trace-warnings\t--require sentinel.cjs",
+      "--trace-warnings\n--require sentinel.cjs",
+      "--trace-warnings\0",
+      '"--trace-warnings"',
+      "--trace-warnings\\",
+      "--trace-warnings\u00a0",
+      `${guardImportOption}suffix`,
+      `prefix${guardImportOption}`,
+      `${guardImportOption} ${guardImportOption}`,
+      `"${guardImportOption}"`,
+      `--import ${guardImportOption.slice("--import=".length)}`,
+      `--conditions ${guardImportOption}`,
+      `--conditions=${guardImportOption}`,
+      null,
+      42,
+      {},
+    ];
+    for (const value of rejected)
+      expect
+        .soft(() => mergeGuardNodeOptions(value), JSON.stringify(value))
+        .toThrow(/NODE_OPTIONS.*reviewed/);
+    const secret = "private-environment-value";
+    expect(() => mergeGuardNodeOptions(`--unknown=${secret}`)).toThrow(/NODE_OPTIONS/);
+    try {
+      mergeGuardNodeOptions(`--unknown=${secret}`);
+    } catch (error) {
+      expect(String(error)).not.toContain(secret);
+    }
+  });
+
+  test("rejects_direct_node_options_preloads_before_sentinel_execution", async () => {
+    const marker = path.join(temporaryRoot, "environment-preload-ran");
+    const sentinel = script(
+      "environment-preload.cjs",
+      `require("node:fs").writeFileSync(${JSON.stringify(marker)}, "ran");`,
+    );
+    for (const nodeOptions of [
+      `"--require" ${sentinel}`,
+      `--re""quire ${sentinel}`,
+      `"--requ\\ire" ${sentinel}`,
+      `--require="${sentinel}"`,
+      `--require=${sentinel}`,
+      `--import=${sentinel}`,
+    ]) {
+      let denial = "dispatched";
+      try {
+        await withProoflineGuard([process.execPath, "-e", "0"], {
+          allowedOrigins: [allowedOrigin],
+          env: { NODE_OPTIONS: nodeOptions },
+        });
+      } catch (error) {
+        denial = String(error);
+      }
+      expect.soft({ denial, sentinelRan: existsSync(marker) }, nodeOptions).toEqual({
+        denial: expect.stringMatching(/NODE_OPTIONS.*reviewed/),
+        sentinelRan: false,
+      });
+      rmSync(marker, { force: true });
+    }
+  });
+
+  test("preserves_reviewed_node_options_and_exact_guard_inheritance", async () => {
+    expect(mergeGuardNodeOptions()).toBe(guardImportOption);
+    expect(mergeGuardNodeOptions(`  --trace-warnings  ${guardImportOption}  `)).toBe(
+      `--trace-warnings ${guardImportOption}`,
+    );
+    for (const nodeOptions of [
+      "--trace-warnings --trace-deprecation --no-deprecation --no-warnings",
+      "--enable-source-maps --experimental-strip-types --experimental-transform-types",
+      "--experimental-import-meta-resolve --no-experimental-detect-module --no-experimental-require-module",
+      "--conditions proofline -C development --conditions=test --input-type=module",
+      "--unhandled-rejections strict --max-old-space-size=256 --max-semi-space-size=8 --stack-trace-limit=0",
+      `--trace-warnings ${guardImportOption}`,
+    ]) {
+      const result = await withProoflineGuard(
+        [process.execPath, "-e", "console.log('safe-options')"],
+        {
+          allowedOrigins: [allowedOrigin],
+          env: { NODE_OPTIONS: nodeOptions },
+        },
+      );
+      expect(result.code, result.stderr).toBe(0);
+      expect(result.stdout.trim()).toBe("safe-options");
+    }
+  });
+
+  test("preserves_exact_guard_token_in_apostrophe_checkout_paths", async () => {
+    const relocated = path.join(temporaryRoot, "Dean's checkout");
+    mkdirSync(relocated);
+    for (const name of ["guard-policy.mjs", "egress-guard.mjs", "run-guarded.mjs"])
+      writeFileSync(
+        path.join(relocated, name),
+        readFileSync(path.join(repositoryRoot, "tools/proofline", name)),
+      );
+    const probe = script(
+      "relocated-policy-probe.mjs",
+      `
+      import { fileURLToPath } from "node:url";
+      const policy = await import(${JSON.stringify(path.join(relocated, "guard-policy.mjs"))});
+      const initial = policy.mergeGuardNodeOptions("");
+      const inherited = policy.mergeGuardNodeOptions(initial);
+      const repeated = policy.mergeGuardNodeOptions(inherited);
+      console.log(JSON.stringify({ initial, inherited, repeated, resolved: fileURLToPath(policy.guardPreloadUrl) }));
+    `,
+    );
+    const result = await runNode(probe);
+    expect(result.code, result.stderr).toBe(0);
+    const output = JSON.parse(result.stdout);
+    expect(output.initial).not.toMatch(/["'\\]/);
+    expect(output.inherited).toBe(output.initial);
+    expect(output.repeated).toBe(output.initial);
+    expect(output.resolved).toBe(realpathSync(path.join(relocated, "egress-guard.mjs")));
+  });
+
+  test("rejects_node_worker_threads_before_local_requests_or_target_execution", async () => {
+    const marker = path.join(temporaryRoot, "worker-thread-ran");
+    const source = `
+      const { parentPort } = require("node:worker_threads");
+      require("node:fs").writeFileSync(${JSON.stringify(marker)}, "ran");
+      fetch(${JSON.stringify(`${allowedOrigin}/worker-thread-sentinel`)})
+        .then(response => response.text()).then(value => parentPort.postMessage(value))
+        .catch(error => parentPort.postMessage(String(error)));
+    `;
+    const probe = script(
+      "worker-planes.mjs",
+      `
+      import prefixed, { Worker as NamedWorker } from "node:worker_threads";
+      import legacy, * as legacyNamespace from "worker_threads";
+      import { createRequire } from "node:module";
+      import { existsSync, rmSync } from "node:fs";
+      const require = createRequire(import.meta.url);
+      const constructors = {
+        named: NamedWorker, default: prefixed.Worker, legacyDefault: legacy.Worker,
+        legacyNamed: legacyNamespace.Worker, requirePrefixed: require("node:worker_threads").Worker,
+        requireLegacy: require("worker_threads").Worker,
+        builtinPrefixed: process.getBuiltinModule("node:worker_threads").Worker,
+        builtinLegacy: process.getBuiltinModule("worker_threads").Worker,
+        prototypeConstructor: NamedWorker.prototype.constructor,
+      };
+      const results = [];
+      for (const [api, Worker] of Object.entries(constructors)) {
+        for (const mode of ["inherited", "empty", "replaced"]) {
+          const options = mode === "inherited" ? { eval: true } : {
+            eval: true, execArgv: [], env: mode === "empty" ? {} : {
+              NODE_OPTIONS: "", PROOFLINE_ALLOWED_ORIGINS: ${JSON.stringify(JSON.stringify([allowedOrigin]))},
+            },
+          };
+          let denial = "dispatched", created = false;
+          try {
+            const worker = new Worker(${JSON.stringify(source)}, options);
+            created = true;
+            await new Promise(resolve => {
+              worker.on("error", () => {});
+              worker.on("exit", resolve);
+            });
+          } catch (error) { denial = String(error); }
+          results.push({ api, mode, denial, created, targetRan: existsSync(${JSON.stringify(marker)}) });
+          rmSync(${JSON.stringify(marker)}, { force: true });
+        }
+      }
+      // Refuse the outer thread before it can start a stripped-environment nested thread.
+      const nested = 'new (require("node:worker_threads").Worker)(' + ${JSON.stringify(JSON.stringify(source))} + ', {eval:true, execArgv:[], env:{}})';
+      let denial = "dispatched", created = false;
+      try {
+        const worker = new NamedWorker(nested, { eval: true, execArgv: [], env: {} });
+        created = true;
+        await new Promise(resolve => { worker.on("error", () => {}); worker.on("exit", resolve); });
+      } catch (error) { denial = String(error); }
+      results.push({ api: "nested", mode: "empty", denial, created, targetRan: existsSync(${JSON.stringify(marker)}) });
+      console.log(JSON.stringify(results));
+    `,
+    );
+    const before = workerRequests;
+    const result = await runNode(probe, { allowedOrigins: ["http://127.0.0.1:1"] });
+    expect(result.code, result.stderr).toBe(0);
+    const outcomes = JSON.parse(result.stdout);
+    expect(outcomes).toHaveLength(28);
+    for (const outcome of outcomes)
+      expect.soft(outcome, `${outcome.api} ${outcome.mode}`).toMatchObject({
+        denial: expect.stringContaining("unsupported-worker-plane"),
+        created: false,
+        targetRan: false,
+      });
+    expect(workerRequests - before).toBe(0);
+    expect(existsSync(marker)).toBe(false);
+  });
+
+  test("rejects_async_module_loader_threads_before_local_requests_or_target_execution", async () => {
+    const marker = path.join(temporaryRoot, "loader-thread-ran");
+    const loaderSource = `
+      import { writeFileSync } from "node:fs";
+      writeFileSync(${JSON.stringify(marker)}, "ran");
+      await fetch(${JSON.stringify(`${allowedOrigin}/worker-thread-sentinel`)});
+    `;
+    const probe = script(
+      "loader-planes.mjs",
+      `
+      import prefixed, { register, Module } from "node:module";
+      import legacy, * as legacyNamespace from "module";
+      import { createRequire } from "node:module";
+      import { writeFileSync, existsSync, rmSync } from "node:fs";
+      import { pathToFileURL } from "node:url";
+      import path from "node:path";
+      const require = createRequire(import.meta.url);
+      const registrations = {
+        named: register, default: prefixed.register, moduleClass: Module.register,
+        legacyDefault: legacy.register, legacyNamed: legacyNamespace.register,
+        requirePrefixed: require("node:module").register, requireLegacy: require("module").register,
+        builtinPrefixed: process.getBuiltinModule("node:module").register,
+        builtinLegacy: process.getBuiltinModule("module").register,
+      };
+      const results = [];
+      for (const [api, registerLoader] of Object.entries(registrations)) {
+        const file = path.join(${JSON.stringify(temporaryRoot)}, 'loader-' + api + '.mjs');
+        writeFileSync(file, ${JSON.stringify(loaderSource)});
+        let denial = "dispatched", registered = false;
+        try { registerLoader(pathToFileURL(file).href); registered = true; }
+        catch (error) { denial = String(error); }
+        results.push({ api, denial, registered, targetRan: existsSync(${JSON.stringify(marker)}) });
+        rmSync(${JSON.stringify(marker)}, { force: true });
+      }
+      console.log(JSON.stringify(results));
+    `,
+    );
+    const before = workerRequests;
+    const result = await runNode(probe, { allowedOrigins: ["http://127.0.0.1:1"] });
+    expect(result.code, result.stderr).toBe(0);
+    const outcomes = JSON.parse(result.stdout);
+    expect(outcomes).toHaveLength(9);
+    for (const outcome of outcomes)
+      expect.soft(outcome, outcome.api).toMatchObject({
+        denial: expect.stringContaining("unsupported-loader-plane"),
+        registered: false,
+        targetRan: false,
+      });
+    expect(workerRequests - before).toBe(0);
+    expect(existsSync(marker)).toBe(false);
+  });
+
+  test("preserves_synchronous_module_hooks_inside_the_guarded_runtime", async () => {
+    const probe = script(
+      "synchronous-hooks.mjs",
+      `
+      import { registerHooks } from "node:module";
+      let pending, hookRan = false;
+      const hook = registerHooks({
+        resolve(specifier, context, nextResolve) {
+          if (specifier === "data:text/javascript,export default 1") {
+            hookRan = true;
+            pending = fetch(${JSON.stringify(`${allowedOrigin}/worker-thread-sentinel`)})
+              .then(() => "dispatched", error => String(error));
+          }
+          return nextResolve(specifier, context);
+        },
+      });
+      try {
+        const target = await import("data:text/javascript,export default 1");
+        console.log(JSON.stringify({ hookRan, denial: await pending, value: target.default }));
+      } finally { hook.deregister(); }
+    `,
+    );
+    const before = workerRequests;
+    const result = await runNode(probe, { allowedOrigins: ["http://127.0.0.1:1"] });
+    expect(result.code, result.stderr).toBe(0);
+    expect(JSON.parse(result.stdout)).toEqual({
+      hookRan: true,
+      denial: expect.stringContaining("Proofline egress denied plane=fetch"),
+      value: 1,
+    });
+    expect(workerRequests - before).toBe(0);
+  });
+
+  test("snapshots_direct_launcher_argv_and_environment_before_validation", async () => {
+    let argvReads = 0;
+    let envReads = 0;
+    let nodeOptionsReads = 0;
+    let shellReads = 0;
+    const command = [process.execPath, "-e", "console.log(process.env.SNAPSHOT_VALUE)"];
+    Object.defineProperty(command, "2", {
+      get() {
+        argvReads += 1;
+        return "console.log(process.env.SNAPSHOT_VALUE)";
+      },
+    });
+    const result = await withProoflineGuard(command, {
+      allowedOrigins: [allowedOrigin],
+      get shell() {
+        shellReads += 1;
+        return false as const;
+      },
+      env: {
+        get SNAPSHOT_VALUE() {
+          envReads += 1;
+          return "snapshot-safe";
+        },
+        get NODE_OPTIONS() {
+          nodeOptionsReads += 1;
+          return "--trace-warnings";
+        },
+      },
+    });
+    expect(result.code, result.stderr).toBe(0);
+    expect(result.stdout.trim()).toBe("snapshot-safe");
+    expect({ argvReads, envReads, nodeOptionsReads, shellReads }).toEqual({
+      argvReads: 1,
+      envReads: 1,
+      nodeOptionsReads: 1,
+      shellReads: 1,
+    });
+  });
+
+  test("binds_http_effective_options_and_public_constructors_to_the_guard", async () => {
+    const file = script(
+      "http-stable-options.mjs",
+      `
+      import http from "node:http";
+      const origin = new URL(process.env.TEST_ORIGIN);
+      let portReads = 0;
+      const read = options => new Promise((resolve, reject) => {
+        http.get(options, response => { let body = ""; response.on("data", chunk => body += chunk); response.on("end", () => resolve(body)); }).on("error", reject);
+      });
+      const viaDefault = await read({ hostname: origin.hostname, defaultPort: Number(origin.port) });
+      const viaGetter = await read({ hostname: origin.hostname, get port() { portReads += 1; return origin.port; } });
+      const request = http.request(origin.href);
+      const constructor = request.constructor;
+      request.on("error", () => {}); request.destroy();
+      console.log(JSON.stringify({ viaDefault, viaGetter, portReads,
+        exportedPrototypeIsFunction: Object.getPrototypeOf(http.ClientRequest) === Function.prototype,
+        instanceConstructorGuarded: constructor === http.ClientRequest,
+        prototypeConstructorGuarded: http.ClientRequest.prototype.constructor === http.ClientRequest,
+      }));
+    `,
+    );
+    const result = await runNode(file, { env: { TEST_ORIGIN: allowedOrigin } });
+    expect(result.code, result.stderr).toBe(0);
+    expect(JSON.parse(result.stdout)).toEqual({
+      viaDefault: "loopback-ok",
+      viaGetter: "loopback-ok",
+      portReads: 1,
+      exportedPrototypeIsFunction: true,
+      instanceConstructorGuarded: true,
+      prototypeConstructorGuarded: true,
+    });
+  });
+
+  test("snapshots_websocket_urls_and_denies_custom_transport_options", async () => {
+    const file = script(
+      "websocket-stable-options.mjs",
+      `
+      let reads = 0;
+      const value = { toString() { reads += 1; return process.env.TEST_ORIGIN.replace("http:", "ws:"); } };
+      const socket = new WebSocket(value);
+      socket.addEventListener("error", () => {}); socket.close();
+      const errors = [];
+      for (const options of [{ dispatcher: {} }, { agent: {} }, { proxy: "unused" }, { lookup() {} }, { createConnection() {} }]) {
+        try { new WebSocket(process.env.TEST_ORIGIN.replace("http:", "ws:"), options); }
+        catch (error) { errors.push(String(error)); }
+      }
+      console.log(JSON.stringify({ reads, errors,
+        exportedPrototypeIsFunction: Object.getPrototypeOf(WebSocket) === EventTarget,
+        instanceConstructorGuarded: socket.constructor === WebSocket,
+        prototypeConstructorGuarded: WebSocket.prototype.constructor === WebSocket,
+      }));
+    `,
+    );
+    const result = await runNode(file, {
+      allowedOrigins: [allowedOrigin.replace("http:", "ws:")],
+      env: { TEST_ORIGIN: allowedOrigin },
+    });
+    expect(result.code, result.stderr).toBe(0);
+    const output = JSON.parse(result.stdout);
+    expect(output).toMatchObject({
+      reads: 1,
+      exportedPrototypeIsFunction: true,
+      instanceConstructorGuarded: true,
+      prototypeConstructorGuarded: true,
+    });
+    expect(output.errors).toHaveLength(5);
+    for (const error of output.errors) expect(error).toContain("Proofline egress denied");
+  });
+
+  test("guards_socket_connect_aliases_and_preserves_allowed_numeric_loopback", async () => {
+    const file = script(
+      "socket-boundaries.mjs",
+      `
+      import net from "node:net";
+      import tls from "node:tls";
+      import http from "node:http";
+      const allowed = new URL(process.env.TEST_ORIGIN);
+      const forbidden = new URL(process.env.OTHER_ORIGIN);
+      const attempt = create => new Promise(resolve => {
+        try {
+          const socket = create();
+          socket.once("error", error => { socket.destroy(); resolve(String(error)); });
+          socket.once("connect", () => { socket.destroy(); resolve("connected"); });
+        } catch (error) { resolve(String(error)); }
+      });
+      const positive = await attempt(() => net.connect({ host: allowed.hostname, port: Number(allowed.port) }));
+      const options = { host: forbidden.hostname.replaceAll("[", "").replaceAll("]", ""), port: Number(forbidden.port) };
+      const results = [];
+      for (const create of [() => net.connect(options), () => net.createConnection(options),
+        () => new net.Socket().connect(options), () => new http.Agent().createConnection(options),
+        () => tls.connect(options), () => new tls.TLSSocket().connect(options)]) results.push(await attempt(create));
+      console.log(JSON.stringify({ positive, results }));
+    `,
+    );
+    const result = await runNode(file, {
+      env: { TEST_ORIGIN: allowedOrigin, OTHER_ORIGIN: ipv6Origin },
+    });
+    expect(result.code, result.stderr).toBe(0);
+    const output = JSON.parse(result.stdout);
+    expect(output.positive).toBe("connected");
+    expect(output.results).toHaveLength(6);
+    for (const outcome of output.results) expect(outcome).toContain("Proofline egress denied");
+  });
+
+  test("rejects_unsupported_datagram_http2_and_dns_query_aliases_before_dispatch", async () => {
+    const file = script(
+      "unsupported-network-planes.mjs",
+      `
+      import dgram from "node:dgram";
+      import http2 from "node:http2";
+      import dns from "node:dns";
+      import dnsPromises from "node:dns/promises";
+      import { createRequire } from "node:module";
+      const require = createRequire(import.meta.url);
+      const results = [];
+      const check = async call => {
+        try { const result = await call(); result?.close?.(); results.push("accepted"); }
+        catch (error) { results.push(String(error)); }
+      };
+      await check(() => dgram.createSocket("udp4"));
+      await check(() => new dgram.Socket("udp4"));
+      await check(() => dgram.Socket.prototype.send.call({}));
+      await check(() => dgram.Socket.prototype.connect.call({}));
+      await check(() => http2.connect());
+      for (const module of [dns, dnsPromises, dns.promises, require("dns"), require("dns/promises")]) {
+        for (const key of Object.keys(module).filter(key => key === "lookup" || key === "lookupService" || key === "reverse" || /^resolve/.test(key)))
+          if (typeof module[key] === "function") await check(() => module[key]());
+        for (const key of Object.getOwnPropertyNames(module.Resolver.prototype).filter(key => key === "reverse" || /^resolve/.test(key)))
+          await check(() => module.Resolver.prototype[key].call(new module.Resolver()));
+      }
+      console.log(JSON.stringify(results));
+    `,
+    );
+    const result = await runNode(file);
+    expect(result.code, result.stderr).toBe(0);
+    const output = JSON.parse(result.stdout);
+    expect(output.length).toBeGreaterThan(50);
+    for (const outcome of output) expect(outcome).toContain("Proofline unsupported-network-plane");
+  });
+
+  test("resolves_only_synthetic_loopback_lookup_names_without_network_queries", async () => {
+    const file = script(
+      "synthetic-loopback-lookup.mjs",
+      `
+      import dns from "node:dns";
+      import dnsPromises from "node:dns/promises";
+      import { promisify } from "node:util";
+      const callback = await new Promise((resolve, reject) => dns.lookup("localhost", (error, address, family) => error ? reject(error) : resolve({ address, family })));
+      const promise = await dnsPromises.lookup("127.0.0.1");
+      const all = await dns.promises.lookup("localhost", { all: true, family: 6 });
+      const custom = await promisify(dns.lookup)("::1");
+      console.log(JSON.stringify({ callback, promise, all, custom }));
+    `,
+    );
+    const result = await runNode(file);
+    expect(result.code, result.stderr).toBe(0);
+    expect(JSON.parse(result.stdout)).toEqual({
+      callback: { address: "127.0.0.1", family: 4 },
+      promise: { address: "127.0.0.1", family: 4 },
+      all: [{ address: "::1", family: 6 }],
+      custom: { address: "::1", family: 6 },
+    });
+  });
+
+  test("uses_stable_fetch_options_and_effective_websocket_protocols", async () => {
+    const file = script(
+      "effective-network-options.mjs",
+      `
+      let methodReads = 0;
+      const response = await fetch(process.env.TEST_ORIGIN, { get method() { methodReads += 1; return "GET"; } });
+      const socket = new WebSocket(process.env.TEST_ORIGIN);
+      socket.addEventListener("error", () => {}); socket.close();
+      let rejected;
+      try { new WebSocket(process.env.TEST_ORIGIN.replace("http:", "ws:"), { _defaultAgent: {} }); }
+      catch (error) { rejected = String(error); }
+      console.log(JSON.stringify({ methodReads, response: await response.text(), rejected }));
+    `,
+    );
+    const result = await runNode(file, {
+      allowedOrigins: [allowedOrigin, allowedOrigin.replace("http:", "ws:")],
+      env: { TEST_ORIGIN: allowedOrigin },
+    });
+    expect(result.code, result.stderr).toBe(0);
+    expect(JSON.parse(result.stdout)).toEqual({
+      methodReads: 1,
+      response: "loopback-ok",
+      rejected: expect.stringContaining("Proofline egress denied"),
+    });
+    const deniedFile = script(
+      "websocket-effective-protocol-denied.mjs",
+      `
+      try { new WebSocket(process.env.TEST_ORIGIN); }
+      catch (error) { console.log(String(error)); }
+    `,
+    );
+    const denied = await runNode(deniedFile, { env: { TEST_ORIGIN: allowedOrigin } });
+    expect(denied.code, denied.stderr).toBe(0);
+    expect(denied.stdout).toContain("Proofline egress denied");
+  });
+
+  test("rejects_unapproved_low_level_child_dispatch_before_native_execution", async () => {
+    const file = script(
+      "low-level-child-policy.mjs",
+      `
+      import childProcess, { ChildProcess } from "node:child_process";
+      import { createRequire } from "node:module";
+      const require = createRequire(import.meta.url);
+      const results = [];
+      for (const Constructor of [ChildProcess, childProcess.ChildProcess, require("child_process").ChildProcess]) {
+        const child = new Constructor();
+        let denial;
+        try { child.spawn({ file: process.execPath, args: [process.execPath, "--version"], envPairs: [], stdio: "ignore" }); }
+        catch (error) { denial = String(error); }
+        if (child.pid) await new Promise(resolve => child.once("close", resolve));
+        results.push({ denial, dispatched: !!child.pid });
+      }
+      console.log(JSON.stringify(results));
+    `,
+    );
+    const result = await runNode(file);
+    expect(result.code, result.stderr).toBe(0);
+    expect(JSON.parse(result.stdout)).toEqual(
+      Array.from({ length: 3 }, () => ({
+        denial: expect.stringContaining("Proofline unsupported-child-plane"),
+        dispatched: false,
+      })),
+    );
+  });
+
+  test("preserves_loopback_websocket_events_subclasses_and_static_constants", async () => {
+    const file = script(
+      "websocket-positive-control.mjs",
+      `
+      class LocalSocket extends WebSocket {}
+      const result = await new Promise((resolve, reject) => {
+        const socket = new LocalSocket(process.env.TEST_ORIGIN);
+        let opened = false;
+        socket.addEventListener("open", () => { opened = socket.readyState === WebSocket.OPEN; });
+        socket.addEventListener("error", reject);
+        socket.addEventListener("message", event => {
+          const value = { opened, message: event.data, subclass: socket instanceof LocalSocket, base: socket instanceof WebSocket,
+            constructor: socket.constructor === LocalSocket, constants: [WebSocket.CONNECTING, WebSocket.OPEN, WebSocket.CLOSING, WebSocket.CLOSED] };
+          socket.addEventListener("close", () => resolve(value));
+          socket.close();
+        });
+      });
+      console.log(JSON.stringify(result));
+    `,
+    );
+    const result = await runNode(file, {
+      allowedOrigins: [allowedOrigin.replace("http:", "ws:")],
+      env: { TEST_ORIGIN: allowedOrigin.replace("http:", "ws:") },
+    });
+    expect(result.code, result.stderr).toBe(0);
+    expect(JSON.parse(result.stdout)).toEqual({
+      opened: true,
+      message: "ok",
+      subclass: true,
+      base: true,
+      constructor: true,
+      constants: [0, 1, 2, 3],
+    });
+  });
+
+  test("coerces_fetch_method_values_once_before_constructing_the_request", async () => {
+    const file = script(
+      "fetch-method-value.mjs",
+      `
+      let reads = 0;
+      const method = { toString() { reads += 1; return "GET"; } };
+      const response = await fetch(process.env.TEST_ORIGIN, { method });
+      console.log(JSON.stringify({ reads, response: await response.text() }));
+    `,
+    );
+    const result = await runNode(file, { env: { TEST_ORIGIN: allowedOrigin } });
+    expect(result.code, result.stderr).toBe(0);
+    expect(JSON.parse(result.stdout)).toEqual({ reads: 1, response: "loopback-ok" });
+  });
+
+  test("copies_raw_http_header_array_members_without_calling_collection_overrides", async () => {
+    const file = script(
+      "http-header-array.mjs",
+      `
+      import http from "node:http";
+      let mapReads = 0, valueReads = 0;
+      const headers = ["x-proofline", "preserved", "host", new URL(process.env.TEST_ORIGIN).host];
+      headers.map = function(callback) { mapReads += 1; return Array.prototype.map.call(this, callback); };
+      Object.defineProperty(headers, "1", { get() { valueReads += 1; return "preserved"; } });
+      const body = await new Promise((resolve, reject) => http.get(process.env.TEST_ORIGIN + "/request-semantics", { headers }, response => {
+        let body = ""; response.on("data", chunk => body += chunk); response.on("end", () => resolve(body));
+      }).on("error", reject));
+      console.log(JSON.stringify({ mapReads, valueReads, body }));
+    `,
+    );
+    const result = await runNode(file, { env: { TEST_ORIGIN: allowedOrigin } });
+    expect(result.code, result.stderr).toBe(0);
+    expect(JSON.parse(result.stdout)).toEqual({ mapReads: 0, valueReads: 1, body: "preserved:" });
+  });
+
+  test("preserves_raw_and_array_valued_headers_without_array_species_or_iterators", async () => {
+    const file = script(
+      "http-header-plain-capture.mjs",
+      `
+      import http from "node:http";
+      let speciesReads = 0, constructorReads = 0, mapReads = 0, iteratorReads = 0, rawReads = 0, namedReads = 0;
+      class HeaderList extends Array {
+        static get [Symbol.species]() { speciesReads += 1; return class HeaderRecord {}; }
+      }
+      const decorate = values => {
+        Object.defineProperty(values, "constructor", { get() { constructorReads += 1; return HeaderList; } });
+        Object.defineProperty(values, "map", { get() { mapReads += 1; return Array.prototype.map; } });
+        Object.defineProperty(values, Symbol.iterator, { get() { iteratorReads += 1; return Array.prototype[Symbol.iterator]; } });
+        return values;
+      };
+      const raw = decorate(new HeaderList("x-proofline", "preserved", "host", new URL(process.env.TEST_ORIGIN).host));
+      Object.defineProperty(raw, "1", { get() { rawReads += 1; return "preserved"; } });
+      const values = decorate(new HeaderList("first", "second"));
+      Object.defineProperty(values, "0", { get() { namedReads += 1; return "first"; } });
+      Object.defineProperty(values, "1", { get() { namedReads += 1; return "second"; } });
+      const read = headers => new Promise((resolve, reject) => http.get(process.env.TEST_ORIGIN + "/request-semantics", { headers }, response => {
+        let body = ""; response.on("data", chunk => body += chunk); response.on("end", () => resolve(body));
+      }).on("error", reject));
+      const rawBody = await read(raw);
+      const namedBody = await read({ "x-proofline": values });
+      console.log(JSON.stringify({ rawBody, namedBody, speciesReads, constructorReads, mapReads, iteratorReads, rawReads, namedReads }));
+    `,
+    );
+    const result = await runNode(file, { env: { TEST_ORIGIN: allowedOrigin } });
+    expect(result.code, result.stderr).toBe(0);
+    expect(JSON.parse(result.stdout)).toEqual({
+      rawBody: "preserved:",
+      namedBody: "first, second:",
+      speciesReads: 0,
+      constructorReads: 0,
+      mapReads: 0,
+      iteratorReads: 0,
+      rawReads: 1,
+      namedReads: 2,
+    });
+  });
+
+  test("protects_in_process_nx_environment_in_default_overridden_and_nested_launches", async () => {
+    const leaf = script(
+      "guarded-tool-environment-leaf.mjs",
+      `
+      console.log(JSON.stringify({ daemon: process.env.NX_DAEMON, plugins: process.env.NX_ISOLATE_PLUGINS }));
+    `,
+    );
+    const parent = script(
+      "guarded-tool-environment-parent.mjs",
+      `
+      import { spawnSync } from "node:child_process";
+      let daemonReads = 0, pluginReads = 0;
+      const env = {
+        get NX_DAEMON() { daemonReads += 1; return "true"; },
+        get NX_ISOLATE_PLUGINS() { pluginReads += 1; return "true"; },
+      };
+      const child = spawnSync(process.execPath, [${JSON.stringify(leaf)}], { env, encoding: "utf8" });
+      if (child.status !== 0) throw new Error(child.stderr);
+      console.log(JSON.stringify({ current: { daemon: process.env.NX_DAEMON, plugins: process.env.NX_ISOLATE_PLUGINS },
+        nested: JSON.parse(child.stdout), daemonReads, pluginReads }));
+    `,
+    );
+    const expected = { daemon: "false", plugins: "false" };
+    const defaults = await runNode(leaf);
+    expect(defaults.code, defaults.stderr).toBe(0);
+    expect(JSON.parse(defaults.stdout)).toEqual(expected);
+    let daemonReads = 0,
+      pluginReads = 0;
+    const overridden = await runNode(parent, {
+      env: {
+        get NX_DAEMON() {
+          daemonReads += 1;
+          return "true";
+        },
+        get NX_ISOLATE_PLUGINS() {
+          pluginReads += 1;
+          return "true";
+        },
+      },
+    });
+    expect(overridden.code, overridden.stderr).toBe(0);
+    expect(JSON.parse(overridden.stdout)).toEqual({
+      current: expected,
+      nested: expected,
+      daemonReads: 1,
+      pluginReads: 1,
+    });
+    expect({ daemonReads, pluginReads }).toEqual({ daemonReads: 1, pluginReads: 1 });
+  });
+
+  test("preserves_optional_print_expressions_without_hiding_node_options", async () => {
+    const child = script(
+      "print-control.mjs",
+      "console.log(JSON.stringify(process.argv.slice(2)));",
+    );
+    for (const option of ["-p", "--print"]) {
+      const cases = [
+        { argv: [option], output: "undefined" },
+        { argv: [option, "JSON.stringify([])"], output: "[]" },
+        { argv: [option, "\\-1"], output: "-1" },
+        { argv: [option, "-e", "JSON.stringify([])"], output: "[]" },
+        { argv: [option, "--no-warnings", "-e", "JSON.stringify([])"], output: "[]" },
+        {
+          argv: [option, "--", child, "-r", "ordinary-app-argument"],
+          output: '["-r","ordinary-app-argument"]',
+        },
+      ];
+      for (const { argv, output } of cases) {
+        let result: GuardedRunResult | undefined;
+        let error: unknown;
+        try {
+          result = await withProoflineGuard([process.execPath, ...argv], {
+            allowedOrigins: [allowedOrigin],
+            env: { FORCE_COLOR: "0" },
+          });
+        } catch (caught) {
+          error = caught;
+        }
+        expect.soft(error, JSON.stringify(argv)).toBeUndefined();
+        expect.soft(result?.code, result?.stderr).toBe(0);
+        expect.soft(result?.stdout.trim(), JSON.stringify(argv)).toBe(output);
+      }
+    }
+    for (const argv of [
+      ["--print=1"],
+      ["-p=1"],
+      ["-p", "-1"],
+      ["--eval", "-r"],
+      ["--conditions", "-r"],
+    ])
+      expect
+        .soft(() => assertSafeNodeArgv(argv), JSON.stringify(argv))
+        .toThrow(/unsupported-child-plane/);
   });
 });

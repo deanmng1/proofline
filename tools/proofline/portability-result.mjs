@@ -453,7 +453,12 @@ const validateNativePortability = (record, artifactRoot, authority) => {
         ]) &&
           native.cwd === native.repositoryRoot &&
           Object.keys(native.artifacts).length === 0 &&
-          isDeepStrictEqual(native.metadata, { projects: [], workers: null, shard: null }),
+          isDeepStrictEqual(
+            Object.fromEntries(
+              Object.entries(native.metadata).filter(([key]) => key !== "runtime"),
+            ),
+            { projects: [], workers: null, shard: null },
+          ),
         "Substituted canonical aggregate argv or metadata",
       );
       continue;
@@ -734,6 +739,21 @@ const validateNativeRecordContract = (native) => {
       native.exitCode === 0,
     "Malformed native gate contract",
   );
+  if (Object.hasOwn(native.metadata ?? {}, "runtime")) {
+    const runtime = native.metadata.runtime;
+    requireCondition(
+      plainObject(runtime) &&
+        Object.keys(runtime).sort().join() === "arch,execPath,nodeVersion,platform" &&
+        /^v\d+\.\d+\.\d+$/.test(runtime.nodeVersion ?? "") &&
+        typeof runtime.platform === "string" &&
+        runtime.platform.length > 0 &&
+        typeof runtime.arch === "string" &&
+        runtime.arch.length > 0 &&
+        typeof runtime.execPath === "string" &&
+        path.isAbsolute(runtime.execPath),
+      "Malformed native runtime provenance",
+    );
+  }
   requireCondition(
     Array.isArray(native.expected) &&
       native.expected.every((identity) =>
@@ -746,6 +766,9 @@ const validateNativeRecordContract = (native) => {
       Array.isArray(native.children) &&
       plainObject(native.artifacts) &&
       plainObject(native.metadata) &&
+      Object.keys(native.metadata).every((key) =>
+        ["projects", "workers", "shard", "runtime"].includes(key),
+      ) &&
       Array.isArray(native.metadata.projects) &&
       native.metadata.projects.every((project) => typeof project === "string") &&
       new Set(native.metadata.projects).size === native.metadata.projects.length &&

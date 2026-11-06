@@ -21,7 +21,19 @@ export const allocateInvocation = (root) => {
 };
 export const finishInvocation = (invocation, record) => {
   const verification = `${invocation.relative}/verification.json`;
-  const bytes = `${JSON.stringify(record, null, 2)}\n`;
+  const finalized = {
+    ...record,
+    metadata: {
+      ...record.metadata,
+      runtime: {
+        nodeVersion: process.version,
+        platform: process.platform,
+        arch: process.arch,
+        execPath: process.execPath,
+      },
+    },
+  };
+  const bytes = `${JSON.stringify(finalized, null, 2)}\n`;
   writeFileSync(path.join(invocation.executionRoot, verification), bytes, { flag: "wx" });
   const reference = {
     version: 1,

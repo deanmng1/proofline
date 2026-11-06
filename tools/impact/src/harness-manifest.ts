@@ -427,13 +427,23 @@ const goldenRow = z
             message: `Golden evidence claims rule ${rule} outside workflow ${row.id}`,
           });
   });
-export const goldenWorkflowMatrixSchema = z
-  .object({
-    version: z.literal(1),
-    tenantIsolationMode: z.enum(["visible-switch", "authenticated-contexts"]),
-    rows: z.array(goldenRow).min(1),
-  })
-  .strict();
+export const goldenWorkflowMatrixSchema = z.discriminatedUnion("tenantIsolationMode", [
+  z
+    .object({
+      version: z.literal(1),
+      tenantIsolationMode: z.enum(["visible-switch", "authenticated-contexts"]),
+      rows: z.array(goldenRow).min(1),
+    })
+    .strict(),
+  z
+    .object({
+      version: z.literal(1),
+      tenantIsolationMode: z.literal("not-applicable"),
+      tenantIsolationReason: text,
+      rows: z.array(goldenRow).min(1),
+    })
+    .strict(),
+]);
 export type GoldenWorkflowMatrix = z.infer<typeof goldenWorkflowMatrixSchema>;
 
 const discoveredSchema = z

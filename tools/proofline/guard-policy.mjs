@@ -2,6 +2,75 @@ import { realpathSync, statSync } from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 
+// Read caller-owned accessors once. Validation and native dispatch only consume
+// these plain snapshots, never the original arrays/options/environment again.
+export const snapshotStringArray = (value, label = "argv") => {
+  if (!Array.isArray(value)) throw new Error(`Proofline ${label} must be a string array.`);
+  const length = value.length;
+  const snapshot = [];
+  for (let index = 0; index < length; index += 1) {
+    const member = value[index];
+    if (typeof member !== "string" || member.includes("\0"))
+      throw new Error(`Proofline ${label} must contain only primitive strings.`);
+    snapshot.push(member);
+  }
+  return snapshot;
+};
+
+export const snapshotOptions = (value = {}, inheritedKeys = []) => {
+  if (value === null || typeof value !== "object" || Array.isArray(value))
+    throw new Error("Proofline options must be an object.");
+  const result = Object.create(null);
+  for (const key of new Set([...Reflect.ownKeys(value), ...inheritedKeys]))
+    if (key in value) result[key] = value[key];
+  return result;
+};
+
+export const snapshotEnvironment = (value = {}) => {
+  const values = snapshotOptions(value);
+  for (const key of Object.keys(values)) {
+    const member = values[key];
+    if (member !== undefined) values[key] = String(member);
+  }
+  return values;
+};
+
+export const snapshotChildOptions = (value = {}) => {
+  const options = snapshotOptions(value, [
+    "shell",
+    "env",
+    "cwd",
+    "execArgv",
+    "execPath",
+    "argv0",
+    "stdio",
+    "silent",
+    "encoding",
+    "detached",
+    "uid",
+    "gid",
+    "timeout",
+    "killSignal",
+    "maxBuffer",
+    "windowsHide",
+    "windowsVerbatimArguments",
+    "serialization",
+    "signal",
+    "input",
+  ]);
+  if (options.env !== undefined) options.env = snapshotEnvironment(options.env);
+  if (options.execArgv !== undefined)
+    options.execArgv = snapshotStringArray(options.execArgv, "execArgv");
+  for (const key of ["execPath", "argv0", "encoding"])
+    if (options[key] !== undefined && typeof options[key] !== "string")
+      throw new Error(`Proofline child ${key} must be a primitive string.`);
+  if (options.cwd instanceof URL) options.cwd = new URL(options.cwd.href);
+  else if (options.cwd !== undefined && typeof options.cwd !== "string")
+    throw new Error("Proofline child cwd must be a string or URL.");
+  if (Array.isArray(options.stdio)) options.stdio = Array.from(options.stdio);
+  return options;
+};
+
 const numericLoopback = (hostname) => {
   if (hostname === "[::1]") return true;
   const octets = hostname.split(".");
@@ -64,6 +133,7 @@ export const normalizeAllowedChildCapabilities = (capabilities = []) => {
   const normalized = capabilities.map((value, index) => {
     if (!value || typeof value !== "object" || Array.isArray(value))
       throw new Error(`Proofline child capability ${index} must be an object.`);
+    value = snapshotOptions(value);
     const keys = Object.keys(value).sort();
     if (keys.join(",") !== "executable,purpose")
       throw new Error(
@@ -98,9 +168,11 @@ export const parseAllowedChildCapabilitiesEnvironment = (value) => {
   return normalizeAllowedChildCapabilities(parsed);
 };
 
+// URL permits literal apostrophes; encode them so our own import always fits the
+// strict NODE_OPTIONS grammar, including in ordinary apostrophe-containing paths.
 export const guardPreloadUrl = pathToFileURL(
   path.join(import.meta.dirname, "egress-guard.mjs"),
-).href;
+).href.replaceAll("'", "%27");
 export const guardImportOption = `--import=${guardPreloadUrl}`;
 // Only the reviewed structured launcher attaches this in-memory marker. It lets a guarded runner
 // create a more specific guarded child (for a newly allocated loopback server or exact browser
@@ -117,18 +189,52 @@ const safeGitIdentityEnvironment = new Set([
 export const unsafeGitEnvironmentKey = (key) =>
   key.startsWith("GIT_") && !safeGitIdentityEnvironment.has(key);
 
-const unsafePreload = /(?:^|\s)(?:--require|-r|--import|--loader|--experimental-loader)(?:=|\s)/;
-
+// NODE_OPTIONS is parsed by Node before any preload runs. Node accepts double-quoted
+// segments and backslash escapes inside them; a raw-string denylist cannot identify
+// its option boundaries. Support only the unambiguous ASCII, space-separated subset
+// here, rejecting all quotes/escapes/control characters before Node can interpret them.
 export const mergeGuardNodeOptions = (value = "") => {
-  const withoutGuard = value.split(guardImportOption).join(" ").trim();
-  if (unsafePreload.test(withoutGuard))
+  const reject = () => {
     throw new Error(
-      "Proofline child NODE_OPTIONS cannot add a preload or loader that overrides the guard.",
+      "Proofline child NODE_OPTIONS must use reviewed plain space-separated options; preloads, loaders, inspectors, quotes, escapes, and unknown forms are unsupported.",
     );
-  return [withoutGuard, guardImportOption].filter(Boolean).join(" ");
+  };
+  if (typeof value !== "string" || /[^\x20-\x7e]|["'\\]/.test(value)) reject();
+  const tokens = value.trim() ? value.trim().split(/ +/) : [];
+  const accepted = [];
+  let guardSeen = false;
+  for (let index = 0; index < tokens.length; index += 1) {
+    const token = tokens[index];
+    if (token === guardImportOption) {
+      if (guardSeen) reject();
+      guardSeen = true;
+      continue;
+    }
+    if (nodeBooleanOptions.has(token)) {
+      accepted.push(token);
+      continue;
+    }
+    const equals = token.indexOf("=");
+    const option = equals < 0 ? token : token.slice(0, equals);
+    const validate = nodeEnvironmentOperandOptions.get(option);
+    if (!validate || (equals < 0 && nodeEqualsOnlyOptions.has(option))) reject();
+    const operand = equals < 0 ? tokens[++index] : token.slice(equals + 1);
+    if (typeof operand !== "string" || operand.startsWith("-") || !validate(operand)) reject();
+    accepted.push(token);
+    if (equals < 0) accepted.push(operand);
+  }
+  return [...accepted, guardImportOption].join(" ");
 };
 
+// Nx's daemon/plugin isolation requires Unix sockets. Keep optional Nx work
+// inside the already guarded process rather than enabling an unreviewed plane.
+export const guardedToolEnvironment = Object.freeze({
+  NX_DAEMON: "false",
+  NX_ISOLATE_PLUGINS: "false",
+});
+
 export const guardedEnvironment = ({ env = {}, allowedOrigins, allowedChildCapabilities = [] }) => {
+  env = snapshotEnvironment(env);
   const normalized = normalizeAllowedOrigins(allowedOrigins);
   const childCapabilities = normalizeAllowedChildCapabilities(allowedChildCapabilities);
   const guarded = {
@@ -138,22 +244,91 @@ export const guardedEnvironment = ({ env = {}, allowedOrigins, allowedChildCapab
     PROOFLINE_ALLOWED_CHILD_CAPABILITIES: JSON.stringify(childCapabilities),
     PROOFLINE_GUARD_PRELOAD: guardPreloadUrl,
     NODE_OPTIONS: mergeGuardNodeOptions(env.NODE_OPTIONS ?? process.env.NODE_OPTIONS ?? ""),
+    ...guardedToolEnvironment,
   };
   for (const key of Object.keys(guarded)) if (unsafeGitEnvironmentKey(key)) delete guarded[key];
   return guarded;
 };
 
+// This is an argv grammar, not Node's complete option catalog. An unknown option must
+// not turn its next token into an apparent script and conceal a later preload.
+const nodeBooleanOptions = new Set([
+  "--enable-source-maps",
+  "--experimental-strip-types",
+  "--experimental-transform-types",
+  "--experimental-import-meta-resolve",
+  "--no-deprecation",
+  "--no-warnings",
+  "--trace-warnings",
+  "--trace-deprecation",
+  "--no-experimental-detect-module",
+  "--no-experimental-require-module",
+]);
+const nodeOperandOptions = new Map([
+  ["--conditions", (value) => value.length > 0],
+  ["-C", (value) => value.length > 0],
+  [
+    "--input-type",
+    (value) => ["module", "commonjs", "module-typescript", "commonjs-typescript"].includes(value),
+  ],
+  [
+    "--unhandled-rejections",
+    (value) => ["strict", "throw", "warn", "none", "warn-with-error-code"].includes(value),
+  ],
+  ["--max-old-space-size", (value) => /^[1-9]\d*$/.test(value)],
+  ["--max-semi-space-size", (value) => /^[1-9]\d*$/.test(value)],
+  ["--stack-trace-limit", (value) => /^\d+$/.test(value)],
+  ["--eval", () => true],
+  ["-e", () => true],
+]);
+// Environment options never accept eval/print/script boundaries. Reuse only the
+// reviewed value validators; unknown options cannot swallow a following token.
+const nodeEnvironmentOperandOptions = new Map(
+  [...nodeOperandOptions].filter(([option]) => option !== "--eval" && option !== "-e"),
+);
+// Print's expression is optional. Only the separate form is supported: Node's
+// --print=... spelling can still consume the next token as its expression.
+const nodeOptionalPrintOptions = new Set(["--print", "-p"]);
+// V8's numeric options require their operand in the same argv token.
+const nodeEqualsOnlyOptions = new Set([
+  "--max-old-space-size",
+  "--max-semi-space-size",
+  "--stack-trace-limit",
+]);
+
 export const assertSafeNodeArgv = (argv = []) => {
-  for (const value of argv) {
-    if (value === "--") break;
-    if (!value.startsWith("-")) break;
+  const reject = () => {
+    throw new Error(
+      "Proofline unsupported-child-plane: Node argv cannot replace preload execution or use an unreviewed option boundary.",
+    );
+  };
+  if (
+    !Array.isArray(argv) ||
+    argv.some((value) => typeof value !== "string" || value.includes("\0"))
+  )
+    reject();
+  for (let index = 0; index < argv.length; index += 1) {
+    const value = argv[index];
+    // Node stops option processing at a script, stdin, or the explicit separator.
+    if (value === "--" || value === "-" || !value.startsWith("-")) return;
+    if (nodeBooleanOptions.has(value)) continue;
+    if (nodeOptionalPrintOptions.has(value)) {
+      const next = argv[index + 1];
+      // A dash-prefixed token remains an option (or --/stdin), never source.
+      if (next !== undefined && !next.startsWith("-")) index += 1;
+      continue;
+    }
+    const equals = value.indexOf("=");
+    const option = equals < 0 ? value : value.slice(0, equals);
+    const validate = nodeOperandOptions.get(option);
+    if (!validate || (equals < 0 && nodeEqualsOnlyOptions.has(option))) reject();
+    const operand = equals < 0 ? argv[++index] : value.slice(equals + 1);
     if (
-      /^(?:--require|-r|--import|--loader|--experimental-loader)(?:=|$)/.test(value) ||
-      /^--inspect(?:-brk|-port)?(?:=|$)/.test(value) ||
-      /^--run(?:=|$)/.test(value)
+      typeof operand !== "string" ||
+      (equals < 0 && operand.startsWith("-")) ||
+      !validate(operand)
     )
-      throw new Error(
-        "Proofline unsupported-child-plane: Node argv cannot replace preload execution.",
-      );
+      reject();
+    // Eval consumes source, but does not end Node option parsing.
   }
 };
