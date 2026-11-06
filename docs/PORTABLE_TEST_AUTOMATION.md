@@ -47,6 +47,8 @@ Impact selection records the requested and resolved base/head plus the unique me
 
 Coverage groups declare compatible source globs, exact exclusions, report format, aggregation, producer command, adapter, provider, and installed provider version. The merge-base manifest and baseline are immutable comparison authority. Every critical metric is monotonic in ordinary changes. `artifacts/coverage/ratchet.json` records measurements and failures.
 
+For a newly added `.test.ts`, `.test.tsx`, `.spec.ts` or `.spec.tsx` source, an exact test-only exclusion uses the established reason `Test sources are not instrumented production sources.` The existing governance rule requires that explicit classification; a custom description that omits it fails closed. This does not permit new wildcard exclusions, hidden runtime sources or lower coverage floors. Test files still execute through their declared canonical commands and required bindings.
+
 `test-impact/execution-record.jsonl` is append-only. Each line uses repository-relative scopes/artifacts and records real outcomes, including failures and review decisions. `pnpm record:check -- --base <trusted-base> --head <head>` proves byte-exact merge-base prefix preservation, schema validity, one trailing LF, new evidence for every changed governed path, generated rule parity, and the command-table parity below. Old or unrelated records cannot authorize a new change.
 
 ## Canonical command contract

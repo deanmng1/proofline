@@ -630,19 +630,19 @@
         },
         {
           "glob": "tools/proofline/src/core-inventory.test.ts",
-          "reason": "Source inventory regression tests are not instrumented production sources."
+          "reason": "Test sources are not instrumented production sources."
         },
         {
           "glob": "tools/proofline/src/repository-safeguards.test.ts",
-          "reason": "Repository safeguard contract tests are not instrumented production sources."
+          "reason": "Test sources are not instrumented production sources."
         },
         {
           "glob": "tools/proofline/src/onboarding.test.ts",
-          "reason": "Source onboarding real-repository tests are not instrumented production sources."
+          "reason": "Test sources are not instrumented production sources."
         },
         {
           "glob": "tools/proofline/src/reliability.test.ts",
-          "reason": "Offline reliability API and workflow regression tests are not instrumented production sources."
+          "reason": "Test sources are not instrumented production sources."
         }
       ],
       "report": "artifacts/coverage/proofline-tools/coverage-summary.json",

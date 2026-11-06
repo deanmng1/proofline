@@ -8,6 +8,8 @@ The source-native [onboarding guide](GETTING_STARTED.md), [effective repository 
 
 Integration retained and repaired ambiguous parameterized test bindings, an aggregate test-budget failure and starter preflight ordering. The manifest now validates; full proofline-tools coverage passes422 tests under unchanged per-test deadlines. These local component results do not establish the full project/fresh/hosted gate. Actual main protection/private-reporting activation, normal required-check PR/main verification and final independent rating remain pending.
 
+The first clean clone at candidate `d1d2f42` passed unit, browser and coverage execution, then correctly stopped at coverage governance: four new test-only exclusion descriptions lacked the established classification wording. The correction uses the existing policy without changing validator code, exclusion paths or any floor. The complete fresh gate will run again at the corrected committed source; the failed run remains retained.
+
 Live staging remains pending. This increment does not add human adoption, elapsed operating history, a support SLA or package/tag/release publication claims. Actual repository safeguards and any necessary source PR are separate recorded operations after review and local verification.
 
 ## Previous verified outcome
