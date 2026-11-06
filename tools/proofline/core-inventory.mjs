@@ -26,12 +26,13 @@ export const selectReusableCorePaths = (paths) => {
       );
       if (!directory) return false;
       const relative = file.slice(directory.length);
+      const basename = relative.slice(relative.lastIndexOf("/") + 1);
       return (
         !file.endsWith(".test.ts") &&
         !relative.startsWith("fixtures/") &&
         !(directory === "tools/proofline/" && relative.startsWith("test-fixtures/")) &&
         relative !== "project.json" &&
-        !(directory === "tools/proofline/" && operator.test(relative))
+        !(directory === "tools/proofline/" && operator.test(basename))
       );
     })
     .sort();
