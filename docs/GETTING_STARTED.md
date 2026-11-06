@@ -29,11 +29,11 @@ node --version
 pnpm --version
 pnpm install --frozen-lockfile --store-dir "$PROOFLINE_SETUP/store" --registry https://registry.npmjs.org
 pnpm exec playwright install chromium
-node tools/proofline/doctor.mjs --stage installed --independent
 # Own history is explicit; use your configured local Git identity.
 git init
 git add .
 git commit -m "Declare work-desk adaptation"
+node tools/proofline/doctor.mjs --stage installed --independent
 ```
 
 The starter owns organization/role boundaries, replay of command identities, two unit rule outcomes and four required browser outcomes. Canonical runners reconcile the actual full test identities; skipped or missing required outcomes fail. Run the following setup and ten gates in order, stopping on any unexpected failure.
