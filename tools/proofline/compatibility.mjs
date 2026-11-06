@@ -5,6 +5,7 @@ import { createRequire } from "node:module";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { isDeepStrictEqual } from "node:util";
+import { selectReusableCorePaths } from "./core-inventory.mjs";
 import { validatePortabilityResult } from "./portability-result.mjs";
 import {
   filesBelow,
@@ -108,16 +109,10 @@ const coreInventory = (root) => {
         requireCondition(!entry.isSymbolicLink(), "Reusable core contains a symlink");
         return entry.isDirectory() ? walk(directory, relative) : entry.isFile() ? [relative] : [];
       });
-  const files = ["tools/impact", "tools/proofline"].flatMap((directory) =>
-    walk(directory)
-      .filter(
-        (file) =>
-          !file.endsWith(".test.ts") &&
-          !file.startsWith("fixtures/") &&
-          !(directory === "tools/proofline" && file.startsWith("test-fixtures/")) &&
-          file !== "project.json",
-      )
-      .map((file) => `${directory}/${file}`),
+  const files = selectReusableCorePaths(
+    ["tools/impact", "tools/proofline"].flatMap((directory) =>
+      walk(directory).map((file) => `${directory}/${file}`),
+    ),
   );
   requireCondition(files.length > 0, "Missing reusable core inventory");
   return Object.fromEntries(files.map((file) => [file, hash(path.join(root, file))]));

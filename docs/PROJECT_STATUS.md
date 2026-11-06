@@ -10,6 +10,8 @@ Integration retained and repaired ambiguous parameterized test bindings, an aggr
 
 The first clean clone at candidate `d1d2f42` passed unit, browser and coverage execution, then correctly stopped at coverage governance: four new test-only exclusion descriptions lacked the established classification wording. The correction uses the existing policy without changing validator code, exclusion paths or any floor. The complete fresh gate will run again at the corrected committed source; the failed run remains retained.
 
+The next clean clone at `16f55c5` passed all preceding full gates, worker/shard checks and independent work-orders validation, then compatibility rejected a duplicated core inventory. Its older scanner included five source-operator modules that the canonical installer correctly excluded. Compatibility is being joined to the shared selector with retained causal regression tests; no compatibility or release success is credited to that failed run. Full fresh verification will repeat after the reviewed repair.
+
 Live staging remains pending. This increment does not add human adoption, elapsed operating history, a support SLA or package/tag/release publication claims. Actual repository safeguards and any necessary source PR are separate recorded operations after review and local verification.
 
 ## Previous verified outcome

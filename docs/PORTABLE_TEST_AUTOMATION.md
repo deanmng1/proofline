@@ -110,6 +110,8 @@ CI retains harness, impact, record, coverage, production module manifests, full-
 
 ## Measurement scope
 
+The canonical reusable-core selector is shared by source-pinned onboarding, portability generation and compatibility reconciliation. Source-operator CLIs and their helpers stay outside adopted core. Compatibility still checks the full selected file/hash inventory against the immutable source; a matching count alone is insufficient.
+
 The existing critical coverage thresholds are unchanged. New helper thresholds start at the whole-percent floor of their measured V8 counters. The native execution shim and reporter execute in child processes and remain zero in the parent coverage report; real child-process regressions separately prove their behavior. These explicit measurement limits do not imply whole-product or browser coverage. The standalone lifecycle runtime has its own fixed 100% four-metric baseline.
 
 ## Applications without tenancy
