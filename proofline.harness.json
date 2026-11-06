@@ -627,6 +627,22 @@
         {
           "glob": "tools/proofline/src/browser-runtime-boundary.test.ts",
           "reason": "Test sources are not instrumented production sources."
+        },
+        {
+          "glob": "tools/proofline/src/core-inventory.test.ts",
+          "reason": "Source inventory regression tests are not instrumented production sources."
+        },
+        {
+          "glob": "tools/proofline/src/repository-safeguards.test.ts",
+          "reason": "Repository safeguard contract tests are not instrumented production sources."
+        },
+        {
+          "glob": "tools/proofline/src/onboarding.test.ts",
+          "reason": "Source onboarding real-repository tests are not instrumented production sources."
+        },
+        {
+          "glob": "tools/proofline/src/reliability.test.ts",
+          "reason": "Offline reliability API and workflow regression tests are not instrumented production sources."
         }
       ],
       "report": "artifacts/coverage/proofline-tools/coverage-summary.json",
@@ -703,7 +719,13 @@
         "tools/proofline/release-recovery.mjs",
         "tools/proofline/compatibility.mjs",
         "tools/proofline/doctor.mjs",
-        "tools/proofline/browser-runtime-boundary.mjs"
+        "tools/proofline/browser-runtime-boundary.mjs",
+        "tools/proofline/core-inventory.mjs",
+        "tools/proofline/repository-safeguards.mjs",
+        "tools/proofline/onboarding.mjs",
+        "tools/proofline/onboarding-source.mjs",
+        "tools/proofline/reliability.mjs",
+        "tools/proofline/reliability-api.mjs"
       ],
       "ruleIds": [
         "SAFE-001",
@@ -712,7 +734,10 @@
         "REL-001",
         "PORT-001",
         "CMP-001",
-        "SETUP-001"
+        "SETUP-001",
+        "REPO-001",
+        "ADOPT-001",
+        "OBS-001"
       ],
       "layers": ["contract", "playwright"],
       "testBindings": [
@@ -1979,6 +2004,1236 @@
           "file": "tools/proofline/src/required-execution.test.ts",
           "title": "canonical browser tuning 'timeout' cannot omit required browser identities",
           "line": 383
+        },
+        {
+          "ruleId": "ADOPT-001",
+          "layer": "contract",
+          "testId": "binding-adopt-ecd5e8118fb20dd0b4fd",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/onboarding.test.ts",
+          "title": "safe source-native onboarding > plans read-only and installs exact pinned core without app config or dependency reuse",
+          "line": 70
+        },
+        {
+          "ruleId": "ADOPT-001",
+          "layer": "contract",
+          "testId": "binding-adopt-4ba15272987effabd66c",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/onboarding.test.ts",
+          "title": "safe source-native onboarding > creates a new starter with separately pinned templates and initial evidence but no Git or installs",
+          "line": 91
+        },
+        {
+          "ruleId": "ADOPT-001",
+          "layer": "contract",
+          "testId": "binding-adopt-696c70d91e14ddab9d42",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/onboarding.test.ts",
+          "title": "safe source-native onboarding > rejects non-full commits dirty relevant bytes missing pins and added untracked core",
+          "line": 115
+        },
+        {
+          "ruleId": "ADOPT-001",
+          "layer": "contract",
+          "testId": "binding-adopt-5ab0d323cc34d72248a3",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/onboarding.test.ts",
+          "title": "safe source-native onboarding > preflights every collision before writing any target files",
+          "line": 129
+        },
+        {
+          "ruleId": "ADOPT-001",
+          "layer": "contract",
+          "testId": "binding-adopt-93c284c25e9f78841361",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/onboarding.test.ts",
+          "title": "safe source-native onboarding > plans changed added removed core and upgrades only unchanged prior installation",
+          "line": 142
+        },
+        {
+          "ruleId": "ADOPT-001",
+          "layer": "contract",
+          "testId": "binding-adopt-066b545d4e562a39b10d",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/onboarding.test.ts",
+          "title": "safe source-native onboarding > refuses user edits partial installs forged receipt paths and missing prior Git authority",
+          "line": 167
+        },
+        {
+          "ruleId": "ADOPT-001",
+          "layer": "contract",
+          "testId": "binding-adopt-54aa23896adef2463898",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/onboarding.test.ts",
+          "title": "safe source-native onboarding > rejects traversal overlap symlink source and destination paths",
+          "line": 213
+        },
+        {
+          "ruleId": "ADOPT-001",
+          "layer": "contract",
+          "testId": "binding-adopt-24b3652b5b86971cd82a",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/onboarding.test.ts",
+          "title": "safe source-native onboarding > retains incomplete staging and safely resumes final receipt promotion without deleting user bytes",
+          "line": 239
+        },
+        {
+          "ruleId": "ADOPT-001",
+          "layer": "contract",
+          "testId": "binding-adopt-1def5dce1b19b4482915",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/onboarding.test.ts",
+          "title": "safe source-native onboarding > revalidates physical paths and target bytes before promotion and recognizes completed receipt interruption",
+          "line": 257
+        },
+        {
+          "ruleId": "ADOPT-001",
+          "layer": "contract",
+          "testId": "binding-adopt-14a34b0199655909ea9d",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/onboarding.test.ts",
+          "title": "safe source-native onboarding > parses explicit source and destination with plan default and rejects arbitrary commands",
+          "line": 286
+        },
+        {
+          "ruleId": "ADOPT-001",
+          "layer": "contract",
+          "testId": "binding-adopt-12983244449fa39330cd",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/onboarding.test.ts",
+          "title": "safe source-native onboarding > refuses receipt edits during upgrade promotion and untrusted pure upgrade inventories",
+          "line": 313
+        },
+        {
+          "ruleId": "ADOPT-001",
+          "layer": "contract",
+          "testId": "binding-adopt-32d28a4ce2637155bf6c",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/onboarding.test.ts",
+          "title": "safe source-native onboarding > preflights a receipt replaced during staging before any upgrade target mutation",
+          "line": 338
+        },
+        {
+          "ruleId": "ADOPT-001",
+          "layer": "contract",
+          "testId": "binding-adopt-fcdf49f7fd82ac1b2f52",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/onboarding.test.ts",
+          "title": "safe source-native onboarding > preflights a receipt introduced during staging before any initial installation target mutation",
+          "line": 365
+        },
+        {
+          "ruleId": "ADOPT-001",
+          "layer": "contract",
+          "testId": "binding-adopt-5751517dd9ca0cb65d46",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/onboarding.test.ts",
+          "title": "safe source-native onboarding > rejects untrusted staged inventories and target edits during interrupted recovery",
+          "line": 385
+        },
+        {
+          "ruleId": "ADOPT-001",
+          "layer": "contract",
+          "testId": "binding-adopt-1fb54dd3daa810e67503",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/onboarding.test.ts",
+          "title": "safe source-native onboarding > rejects physical destination replacement before receipt and finishes cleanup after completed receipt",
+          "line": 412
+        },
+        {
+          "ruleId": "PORT-001",
+          "layer": "contract",
+          "testId": "binding-port-core-inventory-1",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/core-inventory.test.ts",
+          "title": "portability generator copies the shared core inventory without source operator tooling",
+          "line": 10
+        },
+        {
+          "ruleId": "PORT-001",
+          "layer": "contract",
+          "testId": "binding-port-core-inventory-2",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/core-inventory.test.ts",
+          "title": "core inventory selects reusable files while keeping source operators and target products out",
+          "line": 58
+        },
+        {
+          "ruleId": "PORT-001",
+          "layer": "contract",
+          "testId": "binding-port-core-inventory-3",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/core-inventory.test.ts",
+          "title": "core inventory rejects unsafe or duplicate source paths before returning an inventory",
+          "line": 105
+        },
+        {
+          "ruleId": "PORT-001",
+          "layer": "contract",
+          "testId": "binding-port-core-inventory-4",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/core-inventory.test.ts",
+          "title": "core inventory preserves input and gives deterministic sorted output",
+          "line": 123
+        },
+        {
+          "ruleId": "OBS-001",
+          "layer": "contract",
+          "testId": "binding-obs-73a91fb49548ce83bb95",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/reliability.test.ts",
+          "title": "supplementary canonical verification reliability > preserves an original failure and later retry pass with separate identities and gate counts",
+          "line": 226
+        },
+        {
+          "ruleId": "OBS-001",
+          "layer": "contract",
+          "testId": "binding-obs-12e321d94cdb23628377",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/reliability.test.ts",
+          "title": "supplementary canonical verification reliability > keeps a later different source success from rewriting an original failed run",
+          "line": 263
+        },
+        {
+          "ruleId": "OBS-001",
+          "layer": "contract",
+          "testId": "binding-obs-7056890605f60234ea7a",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/reliability.test.ts",
+          "title": "supplementary canonical verification reliability > reports unavailable first attempts and sparse retries as unknown denominators",
+          "line": 277
+        },
+        {
+          "ruleId": "OBS-001",
+          "layer": "contract",
+          "testId": "binding-obs-d571380ceb0c37d17ae6",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/reliability.test.ts",
+          "title": "supplementary canonical verification reliability > keeps cancelled and pending outcomes separate and does not call absent gates successful",
+          "line": 304
+        },
+        {
+          "ruleId": "OBS-001",
+          "layer": "contract",
+          "testId": "binding-obs-a3fc74b292997aa444f7",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/reliability.test.ts",
+          "title": "supplementary canonical verification reliability > retains failure evidence before required gates without inventing an infrastructure cause",
+          "line": 319
+        },
+        {
+          "ruleId": "OBS-001",
+          "layer": "contract",
+          "testId": "binding-obs-8de4df910651a34b061d",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/reliability.test.ts",
+          "title": "supplementary canonical verification reliability > retains pending evolution and idempotent duplicates but rejects conflicting terminal facts",
+          "line": 341
+        },
+        {
+          "ruleId": "OBS-001",
+          "layer": "contract",
+          "testId": "binding-obs-13c02498cb6570f7b750",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/reliability.test.ts",
+          "title": "supplementary canonical verification reliability > excludes PR runs while requiring exact repository workflow branch and run identity",
+          "line": 366
+        },
+        {
+          "ruleId": "OBS-001",
+          "layer": "contract",
+          "testId": "binding-obs-72e10adc9a7ea16ad2e9",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/reliability.test.ts",
+          "title": "supplementary canonical verification reliability > excludes valid fork PRs named main before applying selected-run origin restrictions",
+          "line": 397
+        },
+        {
+          "ruleId": "OBS-001",
+          "layer": "contract",
+          "testId": "binding-obs-650fdfcce33f72ba571d",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/reliability.test.ts",
+          "title": "supplementary canonical verification reliability > preserves completed and partial pending terminal facts through later unavailable job snapshots",
+          "line": 408
+        },
+        {
+          "ruleId": "OBS-001",
+          "layer": "contract",
+          "testId": "binding-obs-5c18fbc9c92a8d185a1b",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/reliability.test.ts",
+          "title": "supplementary canonical verification reliability > rejects child timestamps outside run and job intervals in collection and imported summaries while preserving null unknowns",
+          "line": 449
+        },
+        {
+          "ruleId": "OBS-001",
+          "layer": "contract",
+          "testId": "binding-obs-5f486d2f0eecd3788b99",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/reliability.test.ts",
+          "title": "supplementary canonical verification reliability > accepts stable endpoint-specific update timestamps without weakening identity state or reread advancement checks",
+          "line": 517
+        },
+        {
+          "ruleId": "OBS-001",
+          "layer": "contract",
+          "testId": "binding-obs-680bb8dabf1e0b1ddcfb",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/reliability.test.ts",
+          "title": "supplementary canonical verification reliability > rejects substituted terminal jobs and loss of already observed terminal gate facts",
+          "line": 575
+        },
+        {
+          "ruleId": "OBS-001",
+          "layer": "contract",
+          "testId": "binding-obs-57c571a7e83e8c3edeeb",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/reliability.test.ts",
+          "title": "supplementary canonical verification reliability > fails closed on malformed imported observations rather than reporting invented healthy denominators",
+          "line": 601
+        },
+        {
+          "ruleId": "OBS-001",
+          "layer": "contract",
+          "testId": "binding-obs-5af52dcaa6a013d6944e",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/reliability.test.ts",
+          "title": "supplementary canonical verification reliability > rejects invalid timestamps, contradictory attempt jobs and concurrently advancing runs",
+          "line": 625
+        },
+        {
+          "ruleId": "OBS-001",
+          "layer": "contract",
+          "testId": "binding-obs-7804af60e60997649e2f",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/reliability.test.ts",
+          "title": "supplementary canonical verification reliability > paginates complete histories and rejects truncation missing pages and conflicting duplicates",
+          "line": 651
+        },
+        {
+          "ruleId": "OBS-001",
+          "layer": "contract",
+          "testId": "binding-obs-6bd1f8dfd2954252160e",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/reliability.test.ts",
+          "title": "supplementary canonical verification reliability > rejects malformed jobs steps status and unknown metadata rather than silently accepting green",
+          "line": 675
+        },
+        {
+          "ruleId": "OBS-001",
+          "layer": "contract",
+          "testId": "binding-obs-05289c821877909b3c0f",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/reliability.test.ts",
+          "title": "supplementary canonical verification reliability > requires an explicit bounded window and does not forward API error secrets",
+          "line": 705
+        },
+        {
+          "ruleId": "OBS-001",
+          "layer": "contract",
+          "testId": "binding-obs-4cebb620d6206ca4235f",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/reliability.test.ts",
+          "title": "supplementary canonical verification reliability > writes exclusive immutable observations and readable finite-sample summaries in real temporary directories",
+          "line": 732
+        },
+        {
+          "ruleId": "OBS-001",
+          "layer": "contract",
+          "testId": "binding-obs-6f59cab25f963489214a",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/reliability.test.ts",
+          "title": "supplementary canonical verification reliability > parses only explicit secret-free CLI inputs with no ambient repository or output",
+          "line": 754
+        },
+        {
+          "ruleId": "OBS-001",
+          "layer": "contract",
+          "testId": "binding-obs-39690bba4ade07e52c11",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/reliability.test.ts",
+          "title": "read-only reliability API transport > uses only fixed-origin allowlisted GET routes without redirects or credential forwarding",
+          "line": 786
+        },
+        {
+          "ruleId": "OBS-001",
+          "layer": "contract",
+          "testId": "binding-obs-b9a8682066bbcf189a97",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/reliability.test.ts",
+          "title": "read-only reliability API transport > distinguishes unavailable attempt metadata from fatal API and bounded body failures",
+          "line": 809
+        },
+        {
+          "ruleId": "OBS-001",
+          "layer": "contract",
+          "testId": "binding-obs-0b63cdd0c6537ac69e2c",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/reliability.test.ts",
+          "title": "read-only reliability API transport > sanitizes hostile response accessors and enforces request deadlines and complete response lengths",
+          "line": 834
+        },
+        {
+          "ruleId": "OBS-001",
+          "layer": "contract",
+          "testId": "binding-obs-8034eb0354b2b0419cd7",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/reliability.test.ts",
+          "title": "trusted reliability workflow controls > accepts canonical completion only by exact identity path repository push and actual default branch",
+          "line": 873
+        },
+        {
+          "ruleId": "OBS-001",
+          "layer": "contract",
+          "testId": "binding-obs-c556edc8f8b31bcfcfee",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/reliability.test.ts",
+          "title": "trusted reliability workflow controls > orchestrates only approved triggers into immutable output using trusted metadata and fixed bounded window",
+          "line": 925
+        },
+        {
+          "ruleId": "OBS-001",
+          "layer": "contract",
+          "testId": "binding-obs-bccd83c417a6cecb32ef",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/reliability.test.ts",
+          "title": "trusted reliability workflow controls > workflow uses pinned read-only trusted checkout and exports unique artifacts without executing event head",
+          "line": 973
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-5ac68a0450b55c7cdf4a",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 114,
+          "title": "repository safeguard policy and effective audit > accepts the checked-in exact policy and preserves stricter observations without mutation"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-a15560a8b5f59c80ad73",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 135,
+          "title": "repository safeguard policy and effective audit > rejects wrong repository in minimum policy"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-d2bd8281b4230ec9ccbd",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 144,
+          "title": "repository safeguard policy and effective audit > rejects wrong ref in minimum policy"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-76e0310150b23ba31ef0",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 153,
+          "title": "repository safeguard policy and effective audit > rejects missing check in minimum policy"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-8f1464ea5a0bb1a154cd",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 162,
+          "title": "repository safeguard policy and effective audit > rejects wrong source app in minimum policy"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-1fedb3f73de9bab3c7df",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 171,
+          "title": "repository safeguard policy and effective audit > rejects duplicate check in minimum policy"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-951762cac6c5bfdd7587",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 180,
+          "title": "repository safeguard policy and effective audit > rejects unknown policy field in minimum policy"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-80fc36b4e892e753629a",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 189,
+          "title": "repository safeguard policy and effective audit > rejects unknown control in minimum policy"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-4694ea2a6647c40f6efd",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 198,
+          "title": "repository safeguard policy and effective audit > rejects missing control in minimum policy"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-e39422259253bb036c83",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 207,
+          "title": "repository safeguard policy and effective audit > rejects weakened control in minimum policy"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-adcae2c9312c2682d5e1",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 216,
+          "title": "repository safeguard policy and effective audit > rejects invalid approval count in minimum policy"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-986ac901848aadafa495",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 225,
+          "title": "repository safeguard policy and effective audit > fails closed on wrong observation repository"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-876ec60a3e781496877f",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 236,
+          "title": "repository safeguard policy and effective audit > fails closed on wrong observation ref"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-5a9903d385da202247bd",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 247,
+          "title": "repository safeguard policy and effective audit > fails closed on wrong API repository"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-d32462303e2ea0927f29",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 258,
+          "title": "repository safeguard policy and effective audit > fails closed on wrong API path"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-b6c67a5cd684aed703ba",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 269,
+          "title": "repository safeguard policy and effective audit > fails closed on wrong API branch"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-43b60c3d2d6347fe6a18",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 280,
+          "title": "repository safeguard policy and effective audit > fails closed on unprotected branch"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-5584e358f3450551e507",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 291,
+          "title": "repository safeguard policy and effective audit > fails closed on missing protection"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-aec9da433bb24c8a3750",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 303,
+          "title": "repository safeguard policy and effective audit > fails closed on unavailable enforcement"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-27e07b58e34061a7d6d9",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 314,
+          "title": "repository safeguard policy and effective audit > fails closed on missing check"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-01e01747e60dfb12c800",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 325,
+          "title": "repository safeguard policy and effective audit > fails closed on wrong check context"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-cb1de1e049e83b94183e",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 336,
+          "title": "repository safeguard policy and effective audit > fails closed on wrong check app"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-0b4e7a9a97117b40824e",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 347,
+          "title": "repository safeguard policy and effective audit > fails closed on unbound check app"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-117e5f09f18b9cee17c3",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 358,
+          "title": "repository safeguard policy and effective audit > fails closed on stale checks"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-f220e8d9872420355241",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 369,
+          "title": "repository safeguard policy and effective audit > fails closed on missing PR control"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-69d817ee7c867bcae2b9",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 380,
+          "title": "repository safeguard policy and effective audit > fails closed on administrator bypass"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-f9f644be8dc4d8c6cd7f",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 391,
+          "title": "repository safeguard policy and effective audit > fails closed on PR bypass actor"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-8d1c05a6d4a50c51b7a2",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 405,
+          "title": "repository safeguard policy and effective audit > fails closed on missing bypass evidence"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-e2c813bd41d641e290ff",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 419,
+          "title": "repository safeguard policy and effective audit > fails closed on deletion allowed"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-78e9ef825c43514cbe73",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 430,
+          "title": "repository safeguard policy and effective audit > fails closed on force allowed"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-0bc5394febf08b6c1e20",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 441,
+          "title": "repository safeguard policy and effective audit > fails closed on unresolved conversations"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-a059fca23d14c83efc55",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 452,
+          "title": "repository safeguard policy and effective audit > fails closed on missing critical field"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-2a0a5f37919d5de353fa",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 463,
+          "title": "repository safeguard policy and effective audit > fails closed on disabled reporting"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-c8037c4ec97f58bad9b4",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 474,
+          "title": "repository safeguard policy and effective audit > fails closed on unknown reporting"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-e60aee1aad8405e3ec87",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 485,
+          "title": "repository safeguard policy and effective audit > fails closed on truncated rules"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-191b174fa9ef8f5590d9",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 496,
+          "title": "repository safeguard policy and effective audit > fails closed on missing active-rules response"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-41f6d8e3efa21cc11f6f",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 507,
+          "title": "repository safeguard policy and effective audit > fails closed on unknown input field"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-b1e1d92d6c6c7e17e60c",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 518,
+          "title": "repository safeguard policy and effective audit > fails closed on invalid timestamp"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-2b70525375f7d386e883",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 529,
+          "title": "repository safeguard policy and effective audit > reports every absent minimum and provides an additive ruleset payload with explicit recovery"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-3190a75423b7334248b5",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 558,
+          "title": "repository safeguard policy and effective audit > accepts applicable active rulesets and retains additional signature controls"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-eebaac33b90b6f8ce91b",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 573,
+          "title": "repository safeguard policy and effective audit > accepts explicit 404/null protection absence with sufficient active rules"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-e3521b48cb6da520d9ef",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 578,
+          "title": "repository safeguard policy and effective audit > rejects malformed protection 200/null despite sufficient alternate enforcement"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-b4a5bcfa5cb805fa216a",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 591,
+          "title": "repository safeguard policy and effective audit > rejects malformed protection 200/false despite sufficient alternate enforcement"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-90d0694fdc5889762286",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 604,
+          "title": "repository safeguard policy and effective audit > rejects malformed protection 200/zero despite sufficient alternate enforcement"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-f8942551a72f4eede4a1",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 617,
+          "title": "repository safeguard policy and effective audit > rejects malformed protection 200/empty string despite sufficient alternate enforcement"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-0b173473d6e53d1dcceb",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 630,
+          "title": "repository safeguard policy and effective audit > rejects malformed protection 200/array despite sufficient alternate enforcement"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-0e1cde538106898aee2b",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 643,
+          "title": "repository safeguard policy and effective audit > rejects malformed protection 200/empty object despite sufficient alternate enforcement"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-a9c04c04e7294a6a3811",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 656,
+          "title": "repository safeguard policy and effective audit > rejects malformed protection 404/object despite sufficient alternate enforcement"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-3e840d36902bc25ea651",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 669,
+          "title": "repository safeguard policy and effective audit > rejects malformed protection 404/false despite sufficient alternate enforcement"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-c2c7abad2fc05303778a",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 682,
+          "title": "repository safeguard policy and effective audit > rejects malformed protection 404/zero despite sufficient alternate enforcement"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-84732fb849edd7c4aff1",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 695,
+          "title": "repository safeguard policy and effective audit > rejects malformed protection 404/empty string despite sufficient alternate enforcement"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-95e7bfab5a1e5ce0f6f4",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 708,
+          "title": "repository safeguard policy and effective audit > rejects malformed protection 404/array despite sufficient alternate enforcement"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-6a571acff789275ad1b1",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 721,
+          "title": "repository safeguard policy and effective audit > rejects malformed protection 403/null despite sufficient alternate enforcement"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-192b03f300df52417864",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 734,
+          "title": "repository safeguard policy and effective audit > withholds absence-dependent PUT for malformed protection 200/null"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-d00d5040c7c5c27396d5",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 743,
+          "title": "repository safeguard policy and effective audit > withholds absence-dependent PUT for malformed protection 404/object"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-e3d1faedcac382c9334f",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 752,
+          "title": "repository safeguard policy and effective audit > withholds absence-dependent PUT for malformed protection 404/false"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-4a30457cfee59ac30e05",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 761,
+          "title": "repository safeguard policy and effective audit > withholds absence-dependent PUT for malformed protection 404/zero"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-10d05aaf057e183bb3c8",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 770,
+          "title": "repository safeguard policy and effective audit > withholds absence-dependent PUT for malformed protection 404/empty string"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-16580432ce91430bca7f",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 779,
+          "title": "repository safeguard policy and effective audit > withholds absence-dependent PUT for malformed protection 404/array"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-64bc87c49a468092141b",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 788,
+          "title": "repository safeguard policy and effective audit > does not accept inert/ambiguous rules: evaluate"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-a5fef40d7d111a965d6f",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 797,
+          "title": "repository safeguard policy and effective audit > does not accept inert/ambiguous rules: disabled"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-82d15e76fe5dd5aa4dbf",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 806,
+          "title": "repository safeguard policy and effective audit > does not accept inert/ambiguous rules: tag target"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-f38984e45b0d13303b97",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 815,
+          "title": "repository safeguard policy and effective audit > does not accept inert/ambiguous rules: inapplicable ref"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-35b187ad32b962c034cf",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 826,
+          "title": "repository safeguard policy and effective audit > does not accept inert/ambiguous rules: excluded ref"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-7983400182c8db07f1b9",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 837,
+          "title": "repository safeguard policy and effective audit > does not accept inert/ambiguous rules: bypass"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-d501e43ee46ced559fdb",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 848,
+          "title": "repository safeguard policy and effective audit > does not accept inert/ambiguous rules: unknown bypasses"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-19568fb94f093e518fa6",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 857,
+          "title": "repository safeguard policy and effective audit > does not accept inert/ambiguous rules: wrong source"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-3cb44e0b796574774c3e",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 866,
+          "title": "repository safeguard policy and effective audit > does not accept inert/ambiguous rules: missing detail"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-e88371e08b46d683fe3d",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 875,
+          "title": "repository safeguard policy and effective audit > does not accept inert/ambiguous rules: inactive rules absent from effective API"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-43d207fc73d46596b8a6",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 884,
+          "title": "repository safeguard policy and effective audit > does not accept inert/ambiguous rules: missing rule"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-47f98925dbb97ac0c165",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 893,
+          "title": "repository safeguard policy and effective audit > does not accept inert/ambiguous rules: wrong app"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-bd8f727f6004be793b07",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 908,
+          "title": "repository safeguard policy and effective audit > does not accept inert/ambiguous rules: unknown rule"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-e4b3e7590a41c3a5152d",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 922,
+          "title": "repository safeguard policy and effective audit > exposes bypass as a failed minimum"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-9da4842c9fab4411bb0f",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 931,
+          "title": "repository safeguard policy and effective audit > offers PUT only for absent protection and empty active rules"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-8cdb025818232d75ed49",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 967,
+          "title": "repository safeguard policy and effective audit > validates stronger policy approvals and preserves ruleset approval requirements"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-30e90ef78d25ffa3655c",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 981,
+          "title": "repository safeguard policy and effective audit > retains high positive approval counts as a stronger minimum"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-be5b1544c188acc00c7b",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 989,
+          "title": "repository safeguard policy and effective audit > importing the module performs no audit or network operation"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract",
+          "testId": "binding-repo-d62676286b93701e88a8",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/repository-safeguards.test.ts",
+          "line": 1002,
+          "title": "repository safeguard policy and effective audit > CLI is offline, explicit, non-mutating and exits nonzero for a failed observation"
+        },
+        {
+          "ruleId": "SAFE-001",
+          "layer": "contract",
+          "testId": "binding-safe-canonical-manifest-validity",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/product-e2e-boundary.test.ts",
+          "title": "Proofline product E2E boundary > canonical_test_commands_and_manifest_validate_with_the_declared_runner_egress_adapter",
+          "line": 145
         }
       ],
       "ruleLayers": [
@@ -2012,6 +3267,18 @@
         },
         {
           "ruleId": "SETUP-001",
+          "layer": "contract"
+        },
+        {
+          "ruleId": "REPO-001",
+          "layer": "contract"
+        },
+        {
+          "ruleId": "ADOPT-001",
+          "layer": "contract"
+        },
+        {
+          "ruleId": "OBS-001",
           "layer": "contract"
         }
       ]

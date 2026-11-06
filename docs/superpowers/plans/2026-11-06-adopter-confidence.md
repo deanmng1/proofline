@@ -44,11 +44,11 @@
 
 Required check identities are `verify (linux-x64-chromium)` and `verify (darwin-arm64-chromium)`, app15368. Controls are minimums: preserve additional checks and a positive existing approval count; reject inactive/not-applicable rules and effective bypass or unavailable enforcement. Zero approvals is the initial minimum, not a reset instruction.
 
-- [ ] Write failing deterministic tests for missing/wrong checks or app, wrong repo/ref, absent/disabled protection, PR/bypass/delete/force weakness, unknown/missing fields, disabled reporting and non-mutating CLI behavior.
-- [ ] Run the focused file through `node tools/proofline/canonical-runner.mjs vitest run tools/proofline/src/repository-safeguards.test.ts`; retain RED output.
-- [ ] Implement strict policy/audit and actionable output, plus the single-maintainer limitation and exact administrator procedure/recovery in the guide. Preserve stronger settings.
-- [ ] Run focused GREEN and lint/typecheck applicable to owned files; report test commands/results and concrete concerns to the controller. Do not call live GitHub in tests or apply remote settings.
-- [ ] Controller makes a scoped commit and obtains independent spec and quality review before actual settings activation.
+- [x] Write failing deterministic tests for missing/wrong checks or app, wrong repo/ref, absent/disabled protection, PR/bypass/delete/force weakness, unknown/missing fields, disabled reporting and non-mutating CLI behavior.
+- [x] Run the focused file through `node tools/proofline/canonical-runner.mjs vitest run tools/proofline/src/repository-safeguards.test.ts`; retain RED output.
+- [x] Implement strict policy/audit and actionable output, plus the single-maintainer limitation and exact administrator procedure/recovery in the guide. Preserve stronger settings.
+- [x] Run focused GREEN and lint/typecheck applicable to owned files; report test commands/results and concrete concerns to the controller. Do not call live GitHub in tests or apply remote settings.
+- [x] Controller makes a scoped commit and obtains independent spec and quality review before actual settings activation.
 
 ### Task 2: Safe self-service starter, core installation and upgrade planning
 
@@ -56,10 +56,10 @@ Required check identities are `verify (linux-x64-chromium)` and `verify (darwin-
 
 Use controller-provided `selectReusableCorePaths(paths)` from `tools/proofline/core-inventory.mjs` for selected and prior trusted Git inventories. Source-operator modules with onboarding/reliability/repository-safeguards basenames (including hyphenated helper suffixes) are excluded from copied core; the selector is included. Separately pin starter templates. Require receipt's exact equality to trusted prior commit inventory; no implicit fetch. Upgrade apply refuses any removed files. Validate forged protected/invented paths, missing/altered prior inventory, physical path changes, and interruptions around final receipt promotion. Incomplete markers never authorize a completed install.
 
-- [ ] Write failing tests using real temporary repositories for read-only planning, pinned clean source, byte-identical install, new starter versus existing app, collisions/edited files, malformed receipt, traversal/symlink/overlap and interrupted staging recovery.
-- [ ] Retain focused RED with `node tools/proofline/canonical-runner.mjs vitest run tools/proofline/src/onboarding.test.ts`.
-- [ ] Implement dependency-free plan/apply/upgrade path without implicit installs, arbitrary target command execution or overwrite of app/config/history. Keep helpers focused if needed.
-- [ ] Write the concise first-run/adaptation guide and human worksheet. Explain commands the user runs next and their meaning, including doctor, required outcomes, expected failing regression and full gate. Use source identity rather than an invented release tag.
+- [x] Write failing tests using real temporary repositories for read-only planning, pinned clean source, byte-identical install, new starter versus existing app, collisions/edited files, malformed receipt, traversal/symlink/overlap and interrupted staging recovery.
+- [x] Retain focused RED with `node tools/proofline/canonical-runner.mjs vitest run tools/proofline/src/onboarding.test.ts`.
+- [x] Implement dependency-free plan/apply/upgrade path without implicit installs, arbitrary target command execution or overwrite of app/config/history. Keep helpers focused if needed.
+- [x] Write the concise first-run/adaptation guide and human worksheet. Explain commands the user runs next and their meaning, including doctor, required outcomes, expected failing regression and full gate. Use source identity rather than an invented release tag.
 - [ ] Retain focused GREEN; provide commands and evidence plus file list. Controller commits and obtains independent task review, then actually validates a new independently installed starter.
 
 ### Task 3: Honest verification reliability tracking
@@ -68,17 +68,19 @@ Use controller-provided `selectReusableCorePaths(paths)` from `tools/proofline/c
 
 Sample only default-branch push/manual canonical runs, explicitly excluding PRs. Enumerate attempt1..observed run_attempt using attempt-scoped metadata/jobs and bounded pages; unavailable prior attempts are unknown. Re-read run identity/attempt and reject concurrent advance. Preserve timestamped pending evolution/idempotent duplicates and reject conflicting terminal facts. Trusted default-branch checkout has persist-credentials false. Completion triggers require same repo, exact workflow identity/path, push/default branch; no event-head execution, interpolation or artifact download. Test these cases and unknown first-attempt denominators.
 
-- [ ] Write failing fixtures for original fail/later pass, retries, cancellation, pending and missing cells/gates, conflicting observations, wrong workflow/repo/ref, timestamps, pagination/bounds and API errors; verify no per-test flake inference.
-- [ ] Retain focused RED with `node tools/proofline/canonical-runner.mjs vitest run tools/proofline/src/reliability.test.ts`.
-- [ ] Implement strict bounded collection, summary/CLI and immutable output. Reject malformed API data; expose finite samples and observation window. No downloaded code execution.
-- [ ] Add `.github/workflows/reliability.yml` with minimum read permissions, immutable output names, safe event filtering and collection-failure visibility; test these meaningful controls. Write the operator/retention guide.
-- [ ] Retain focused GREEN and owned-file checks. Controller commits and obtains independent task review, then collects actual API history outside tests.
+- [x] Write failing fixtures for original fail/later pass, retries, cancellation, pending and missing cells/gates, conflicting observations, wrong workflow/repo/ref, timestamps, pagination/bounds and API errors; verify no per-test flake inference.
+- [x] Retain focused RED with `node tools/proofline/canonical-runner.mjs vitest run tools/proofline/src/reliability.test.ts`.
+- [x] Implement strict bounded collection, summary/CLI and immutable output. Reject malformed API data; expose finite samples and observation window. No downloaded code execution.
+- [x] Add `.github/workflows/reliability.yml` with minimum read permissions, immutable output names, safe event filtering and collection-failure visibility; test these meaningful controls. Write the operator/retention guide.
+- [x] Retain focused GREEN and owned-file checks. Controller commits and obtains independent task review, then collects actual API history outside tests.
 
 ### Task 4: Integrate governance and operator controls
 
-- [ ] TDD the canonical selector on literal path inventories: prior core preserved, new source-operator modules excluded, helper included, deterministic sorted safe paths, invalid/duplicate paths rejected. Integrate existing generator and onboarding with that same selector and independently compare inventories. Update active status/recovery links before implementation.
-- [ ] Reconcile shared scripts, source entrypoints, explicit ownership/rule/test identity bindings, source-group coverage and generated catalog. Add measured floors for new runtime modules without reducing any existing floor. Update canonical command documentation only if manifest commands change.
-- [ ] Correct stale current compatibility/publication language and link the three concise guides. Keep historical snapshots and the presentation unchanged.
+**Operation prerequisite:** complete the committed fresh/local checks in Task5 and independent integrated-source approval before activating controls. Then return here for activation/read-back and continue the normal PR/main proof in Task5. Source implementation and operational evidence intentionally interleave; an unchecked settings step never authorizes bypassing the verification prerequisite.
+
+- [x] TDD the canonical selector on literal path inventories: prior core preserved, new source-operator modules excluded, helper included, deterministic sorted safe paths, invalid/duplicate paths rejected. Integrate existing generator and onboarding with that same selector and independently compare inventories. Update active status/recovery links before implementation.
+- [x] Reconcile shared scripts, source entrypoints, explicit ownership/rule/test identity bindings, source-group coverage and generated catalog. Add measured floors for new runtime modules without reducing any existing floor. Update canonical command documentation only if manifest commands change.
+- [x] Correct stale current compatibility/publication language and link the three concise guides. Keep historical snapshots and the presentation unchanged.
 - [ ] Save prior GitHub settings; review exact desired request against the accepted policy and sole-maintainer recovery; apply only necessary settings and enable private reporting using authorized admin operations. Read back and audit the actual result; retain immutable observations.
 - [ ] Verify safeguards via safe rule evaluation/check enforcement and report any unavailable proof or capability, without destructive main writes. Collect a bounded actual reliability snapshot and preserve failures/rerun attempts.
 - [ ] Retain integration RED/GREEN where behavior changes, append factual implementation/review/operation records, run manifest/typecheck/lint/record/coverage checks and obtain independent integration review.

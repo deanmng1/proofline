@@ -1,6 +1,8 @@
 # Upgrading Proofline source
 
-Proofline `0.9.0-preview.2` is an **unpublished source candidate**, manifest schema 1. A version string does not identify verified bytes: record the full old/new Git commits, target commit and copied-core SHA-256 inventories. [Project status](PROJECT_STATUS.md) names the active evidence and limitations. The [support policy](../.github/SUPPORT.md) names the maintainer and supported scope.
+Proofline `0.9.0-preview.2` is a **public source preview with unpublished packaged distribution**, manifest schema 1. A version string does not identify verified bytes: record the full old/new Git commits, target commit and copied-core SHA-256 inventories. [Project status](PROJECT_STATUS.md) names the active evidence and limitations. The [support policy](../.github/SUPPORT.md) names the maintainer and supported scope.
+
+The [source-native onboarding operator](GETTING_STARTED.md#upgrade-and-interruptions) provides a read-only upgrade plan and explicit apply for unchanged previously installed core. It recomputes prior inventories from trusted local Git objects and refuses target edits or removed files; incomplete transactions retain evidence for review. The manual protocol below remains the authority for an application's full adaptation, governance and verification.
 
 ## Prepare a compatible upgrade
 
