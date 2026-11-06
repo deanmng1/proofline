@@ -132,243 +132,394 @@ describe("repository safeguard policy and effective audit", () => {
     expect(JSON.stringify(data)).toBe(before);
     expect(report.remediation.automaticMutation).toBe(false);
   });
-  test.each([
-    [
-      "wrong repository",
-      (p: ReturnType<typeof policy>) => {
-        p.repository = "elsewhere/proofline";
-      },
-    ],
-    [
-      "wrong ref",
-      (p: ReturnType<typeof policy>) => {
-        p.ref = "refs/heads/develop";
-      },
-    ],
-    [
-      "missing check",
-      (p: ReturnType<typeof policy>) => {
-        p.requiredChecks.pop();
-      },
-    ],
-    [
-      "wrong source app",
-      (p: ReturnType<typeof policy>) => {
-        p.requiredChecks[0].appId = 999;
-      },
-    ],
-    [
-      "duplicate check",
-      (p: ReturnType<typeof policy>) => {
-        p.requiredChecks.push(p.requiredChecks[0]);
-      },
-    ],
-    [
-      "unknown policy field",
-      (p: ReturnType<typeof policy>) => {
-        Object.assign(p, { bypass: true });
-      },
-    ],
-    [
-      "unknown control",
-      (p: ReturnType<typeof policy>) => {
-        Object.assign(p.controls, { bypass: false });
-      },
-    ],
-    [
-      "missing control",
-      (p: ReturnType<typeof policy>) => {
-        Reflect.deleteProperty(p.controls, "noBypass");
-      },
-    ],
-    [
-      "weakened control",
-      (p: ReturnType<typeof policy>) => {
-        Object.assign(p.controls, { blockDeletion: false });
-      },
-    ],
-    [
-      "invalid approval count",
-      (p: ReturnType<typeof policy>) => {
-        p.controls.minimumApprovals = -1;
-      },
-    ],
-  ])("rejects %s in minimum policy", (_name, mutate) => {
+  test("rejects wrong repository in minimum policy", () => {
+    const mutate = (p: ReturnType<typeof policy>) => {
+      p.repository = "elsewhere/proofline";
+    };
+
     const value = policy();
     mutate(value);
     expect(() => validateSafeguardPolicy(value)).toThrow();
   });
-  test.each([
-    [
-      "wrong observation repository",
-      (d: ReturnType<typeof observation>) => {
-        d.repository = "other/repo";
-      },
-    ],
-    [
-      "wrong observation ref",
-      (d: ReturnType<typeof observation>) => {
-        d.ref = "refs/heads/other";
-      },
-    ],
-    [
-      "wrong API repository",
-      (d: ReturnType<typeof observation>) => {
-        d.repositoryResponse.body.full_name = "other/repo";
-      },
-    ],
-    [
-      "wrong API path",
-      (d: ReturnType<typeof observation>) => {
-        d.branch.path = "/repos/other/repo/branches/main";
-      },
-    ],
-    [
-      "wrong API branch",
-      (d: ReturnType<typeof observation>) => {
-        d.branch.body.name = "develop";
-      },
-    ],
-    [
-      "unprotected branch",
-      (d: ReturnType<typeof observation>) => {
-        d.branch.body.protected = false;
-      },
-    ],
-    [
-      "missing protection",
-      (d: ReturnType<typeof observation>) => {
-        d.protection.status = 404;
-        d.protection.body = null as never;
-      },
-    ],
-    [
-      "unavailable enforcement",
-      (d: ReturnType<typeof observation>) => {
-        d.protection.status = 403;
-      },
-    ],
-    [
-      "missing check",
-      (d: ReturnType<typeof observation>) => {
-        d.protection.body.required_status_checks.checks.pop();
-      },
-    ],
-    [
-      "wrong check context",
-      (d: ReturnType<typeof observation>) => {
-        d.protection.body.required_status_checks.checks[0].context = "verify";
-      },
-    ],
-    [
-      "wrong check app",
-      (d: ReturnType<typeof observation>) => {
-        d.protection.body.required_status_checks.checks[0].app_id = 999;
-      },
-    ],
-    [
-      "unbound check app",
-      (d: ReturnType<typeof observation>) => {
-        Reflect.deleteProperty(d.protection.body.required_status_checks.checks[0], "app_id");
-      },
-    ],
-    [
-      "stale checks",
-      (d: ReturnType<typeof observation>) => {
-        d.protection.body.required_status_checks.strict = false;
-      },
-    ],
-    [
-      "missing PR control",
-      (d: ReturnType<typeof observation>) => {
-        d.protection.body.required_pull_request_reviews = null as never;
-      },
-    ],
-    [
-      "administrator bypass",
-      (d: ReturnType<typeof observation>) => {
-        d.protection.body.enforce_admins.enabled = false;
-      },
-    ],
-    [
-      "PR bypass actor",
-      (d: ReturnType<typeof observation>) => {
-        Object.assign(
-          d.protection.body.required_pull_request_reviews.bypass_pull_request_allowances,
-          { users: [{ login: "owner" }] },
-        );
-      },
-    ],
-    [
-      "missing bypass evidence",
-      (d: ReturnType<typeof observation>) => {
-        Reflect.deleteProperty(
-          d.protection.body.required_pull_request_reviews,
-          "bypass_pull_request_allowances",
-        );
-      },
-    ],
-    [
-      "deletion allowed",
-      (d: ReturnType<typeof observation>) => {
-        d.protection.body.allow_deletions.enabled = true;
-      },
-    ],
-    [
-      "force allowed",
-      (d: ReturnType<typeof observation>) => {
-        d.protection.body.allow_force_pushes.enabled = true;
-      },
-    ],
-    [
-      "unresolved conversations",
-      (d: ReturnType<typeof observation>) => {
-        d.protection.body.required_conversation_resolution.enabled = false;
-      },
-    ],
-    [
-      "missing critical field",
-      (d: ReturnType<typeof observation>) => {
-        Reflect.deleteProperty(d.protection.body, "allow_force_pushes");
-      },
-    ],
-    [
-      "disabled reporting",
-      (d: ReturnType<typeof observation>) => {
-        d.privateReporting.body.enabled = false;
-      },
-    ],
-    [
-      "unknown reporting",
-      (d: ReturnType<typeof observation>) => {
-        d.privateReporting.status = 404;
-      },
-    ],
-    [
-      "truncated rules",
-      (d: ReturnType<typeof observation>) => {
-        d.effectiveRules.complete = false;
-      },
-    ],
-    [
-      "missing active-rules response",
-      (d: ReturnType<typeof observation>) => {
-        Reflect.deleteProperty(d, "effectiveRules");
-      },
-    ],
-    [
-      "unknown input field",
-      (d: ReturnType<typeof observation>) => {
-        Object.assign(d, { enforced: true });
-      },
-    ],
-    [
-      "invalid timestamp",
-      (d: ReturnType<typeof observation>) => {
-        d.observedAt = "yesterday";
-      },
-    ],
-  ])("fails closed on %s", (_name, mutate) => {
+  test("rejects wrong ref in minimum policy", () => {
+    const mutate = (p: ReturnType<typeof policy>) => {
+      p.ref = "refs/heads/develop";
+    };
+
+    const value = policy();
+    mutate(value);
+    expect(() => validateSafeguardPolicy(value)).toThrow();
+  });
+  test("rejects missing check in minimum policy", () => {
+    const mutate = (p: ReturnType<typeof policy>) => {
+      p.requiredChecks.pop();
+    };
+
+    const value = policy();
+    mutate(value);
+    expect(() => validateSafeguardPolicy(value)).toThrow();
+  });
+  test("rejects wrong source app in minimum policy", () => {
+    const mutate = (p: ReturnType<typeof policy>) => {
+      p.requiredChecks[0].appId = 999;
+    };
+
+    const value = policy();
+    mutate(value);
+    expect(() => validateSafeguardPolicy(value)).toThrow();
+  });
+  test("rejects duplicate check in minimum policy", () => {
+    const mutate = (p: ReturnType<typeof policy>) => {
+      p.requiredChecks.push(p.requiredChecks[0]);
+    };
+
+    const value = policy();
+    mutate(value);
+    expect(() => validateSafeguardPolicy(value)).toThrow();
+  });
+  test("rejects unknown policy field in minimum policy", () => {
+    const mutate = (p: ReturnType<typeof policy>) => {
+      Object.assign(p, { bypass: true });
+    };
+
+    const value = policy();
+    mutate(value);
+    expect(() => validateSafeguardPolicy(value)).toThrow();
+  });
+  test("rejects unknown control in minimum policy", () => {
+    const mutate = (p: ReturnType<typeof policy>) => {
+      Object.assign(p.controls, { bypass: false });
+    };
+
+    const value = policy();
+    mutate(value);
+    expect(() => validateSafeguardPolicy(value)).toThrow();
+  });
+  test("rejects missing control in minimum policy", () => {
+    const mutate = (p: ReturnType<typeof policy>) => {
+      Reflect.deleteProperty(p.controls, "noBypass");
+    };
+
+    const value = policy();
+    mutate(value);
+    expect(() => validateSafeguardPolicy(value)).toThrow();
+  });
+  test("rejects weakened control in minimum policy", () => {
+    const mutate = (p: ReturnType<typeof policy>) => {
+      Object.assign(p.controls, { blockDeletion: false });
+    };
+
+    const value = policy();
+    mutate(value);
+    expect(() => validateSafeguardPolicy(value)).toThrow();
+  });
+  test("rejects invalid approval count in minimum policy", () => {
+    const mutate = (p: ReturnType<typeof policy>) => {
+      p.controls.minimumApprovals = -1;
+    };
+
+    const value = policy();
+    mutate(value);
+    expect(() => validateSafeguardPolicy(value)).toThrow();
+  });
+  test("fails closed on wrong observation repository", () => {
+    const mutate = (d: ReturnType<typeof observation>) => {
+      d.repository = "other/repo";
+    };
+
+    const data = observation();
+    mutate(data);
+    const report = auditRepositorySafeguards(policy(), data);
+    expect(report.ok).toBe(false);
+    expect(report.mismatches.length).toBeGreaterThan(0);
+  });
+  test("fails closed on wrong observation ref", () => {
+    const mutate = (d: ReturnType<typeof observation>) => {
+      d.ref = "refs/heads/other";
+    };
+
+    const data = observation();
+    mutate(data);
+    const report = auditRepositorySafeguards(policy(), data);
+    expect(report.ok).toBe(false);
+    expect(report.mismatches.length).toBeGreaterThan(0);
+  });
+  test("fails closed on wrong API repository", () => {
+    const mutate = (d: ReturnType<typeof observation>) => {
+      d.repositoryResponse.body.full_name = "other/repo";
+    };
+
+    const data = observation();
+    mutate(data);
+    const report = auditRepositorySafeguards(policy(), data);
+    expect(report.ok).toBe(false);
+    expect(report.mismatches.length).toBeGreaterThan(0);
+  });
+  test("fails closed on wrong API path", () => {
+    const mutate = (d: ReturnType<typeof observation>) => {
+      d.branch.path = "/repos/other/repo/branches/main";
+    };
+
+    const data = observation();
+    mutate(data);
+    const report = auditRepositorySafeguards(policy(), data);
+    expect(report.ok).toBe(false);
+    expect(report.mismatches.length).toBeGreaterThan(0);
+  });
+  test("fails closed on wrong API branch", () => {
+    const mutate = (d: ReturnType<typeof observation>) => {
+      d.branch.body.name = "develop";
+    };
+
+    const data = observation();
+    mutate(data);
+    const report = auditRepositorySafeguards(policy(), data);
+    expect(report.ok).toBe(false);
+    expect(report.mismatches.length).toBeGreaterThan(0);
+  });
+  test("fails closed on unprotected branch", () => {
+    const mutate = (d: ReturnType<typeof observation>) => {
+      d.branch.body.protected = false;
+    };
+
+    const data = observation();
+    mutate(data);
+    const report = auditRepositorySafeguards(policy(), data);
+    expect(report.ok).toBe(false);
+    expect(report.mismatches.length).toBeGreaterThan(0);
+  });
+  test("fails closed on missing protection", () => {
+    const mutate = (d: ReturnType<typeof observation>) => {
+      d.protection.status = 404;
+      d.protection.body = null as never;
+    };
+
+    const data = observation();
+    mutate(data);
+    const report = auditRepositorySafeguards(policy(), data);
+    expect(report.ok).toBe(false);
+    expect(report.mismatches.length).toBeGreaterThan(0);
+  });
+  test("fails closed on unavailable enforcement", () => {
+    const mutate = (d: ReturnType<typeof observation>) => {
+      d.protection.status = 403;
+    };
+
+    const data = observation();
+    mutate(data);
+    const report = auditRepositorySafeguards(policy(), data);
+    expect(report.ok).toBe(false);
+    expect(report.mismatches.length).toBeGreaterThan(0);
+  });
+  test("fails closed on missing check", () => {
+    const mutate = (d: ReturnType<typeof observation>) => {
+      d.protection.body.required_status_checks.checks.pop();
+    };
+
+    const data = observation();
+    mutate(data);
+    const report = auditRepositorySafeguards(policy(), data);
+    expect(report.ok).toBe(false);
+    expect(report.mismatches.length).toBeGreaterThan(0);
+  });
+  test("fails closed on wrong check context", () => {
+    const mutate = (d: ReturnType<typeof observation>) => {
+      d.protection.body.required_status_checks.checks[0].context = "verify";
+    };
+
+    const data = observation();
+    mutate(data);
+    const report = auditRepositorySafeguards(policy(), data);
+    expect(report.ok).toBe(false);
+    expect(report.mismatches.length).toBeGreaterThan(0);
+  });
+  test("fails closed on wrong check app", () => {
+    const mutate = (d: ReturnType<typeof observation>) => {
+      d.protection.body.required_status_checks.checks[0].app_id = 999;
+    };
+
+    const data = observation();
+    mutate(data);
+    const report = auditRepositorySafeguards(policy(), data);
+    expect(report.ok).toBe(false);
+    expect(report.mismatches.length).toBeGreaterThan(0);
+  });
+  test("fails closed on unbound check app", () => {
+    const mutate = (d: ReturnType<typeof observation>) => {
+      Reflect.deleteProperty(d.protection.body.required_status_checks.checks[0], "app_id");
+    };
+
+    const data = observation();
+    mutate(data);
+    const report = auditRepositorySafeguards(policy(), data);
+    expect(report.ok).toBe(false);
+    expect(report.mismatches.length).toBeGreaterThan(0);
+  });
+  test("fails closed on stale checks", () => {
+    const mutate = (d: ReturnType<typeof observation>) => {
+      d.protection.body.required_status_checks.strict = false;
+    };
+
+    const data = observation();
+    mutate(data);
+    const report = auditRepositorySafeguards(policy(), data);
+    expect(report.ok).toBe(false);
+    expect(report.mismatches.length).toBeGreaterThan(0);
+  });
+  test("fails closed on missing PR control", () => {
+    const mutate = (d: ReturnType<typeof observation>) => {
+      d.protection.body.required_pull_request_reviews = null as never;
+    };
+
+    const data = observation();
+    mutate(data);
+    const report = auditRepositorySafeguards(policy(), data);
+    expect(report.ok).toBe(false);
+    expect(report.mismatches.length).toBeGreaterThan(0);
+  });
+  test("fails closed on administrator bypass", () => {
+    const mutate = (d: ReturnType<typeof observation>) => {
+      d.protection.body.enforce_admins.enabled = false;
+    };
+
+    const data = observation();
+    mutate(data);
+    const report = auditRepositorySafeguards(policy(), data);
+    expect(report.ok).toBe(false);
+    expect(report.mismatches.length).toBeGreaterThan(0);
+  });
+  test("fails closed on PR bypass actor", () => {
+    const mutate = (d: ReturnType<typeof observation>) => {
+      Object.assign(
+        d.protection.body.required_pull_request_reviews.bypass_pull_request_allowances,
+        { users: [{ login: "owner" }] },
+      );
+    };
+
+    const data = observation();
+    mutate(data);
+    const report = auditRepositorySafeguards(policy(), data);
+    expect(report.ok).toBe(false);
+    expect(report.mismatches.length).toBeGreaterThan(0);
+  });
+  test("fails closed on missing bypass evidence", () => {
+    const mutate = (d: ReturnType<typeof observation>) => {
+      Reflect.deleteProperty(
+        d.protection.body.required_pull_request_reviews,
+        "bypass_pull_request_allowances",
+      );
+    };
+
+    const data = observation();
+    mutate(data);
+    const report = auditRepositorySafeguards(policy(), data);
+    expect(report.ok).toBe(false);
+    expect(report.mismatches.length).toBeGreaterThan(0);
+  });
+  test("fails closed on deletion allowed", () => {
+    const mutate = (d: ReturnType<typeof observation>) => {
+      d.protection.body.allow_deletions.enabled = true;
+    };
+
+    const data = observation();
+    mutate(data);
+    const report = auditRepositorySafeguards(policy(), data);
+    expect(report.ok).toBe(false);
+    expect(report.mismatches.length).toBeGreaterThan(0);
+  });
+  test("fails closed on force allowed", () => {
+    const mutate = (d: ReturnType<typeof observation>) => {
+      d.protection.body.allow_force_pushes.enabled = true;
+    };
+
+    const data = observation();
+    mutate(data);
+    const report = auditRepositorySafeguards(policy(), data);
+    expect(report.ok).toBe(false);
+    expect(report.mismatches.length).toBeGreaterThan(0);
+  });
+  test("fails closed on unresolved conversations", () => {
+    const mutate = (d: ReturnType<typeof observation>) => {
+      d.protection.body.required_conversation_resolution.enabled = false;
+    };
+
+    const data = observation();
+    mutate(data);
+    const report = auditRepositorySafeguards(policy(), data);
+    expect(report.ok).toBe(false);
+    expect(report.mismatches.length).toBeGreaterThan(0);
+  });
+  test("fails closed on missing critical field", () => {
+    const mutate = (d: ReturnType<typeof observation>) => {
+      Reflect.deleteProperty(d.protection.body, "allow_force_pushes");
+    };
+
+    const data = observation();
+    mutate(data);
+    const report = auditRepositorySafeguards(policy(), data);
+    expect(report.ok).toBe(false);
+    expect(report.mismatches.length).toBeGreaterThan(0);
+  });
+  test("fails closed on disabled reporting", () => {
+    const mutate = (d: ReturnType<typeof observation>) => {
+      d.privateReporting.body.enabled = false;
+    };
+
+    const data = observation();
+    mutate(data);
+    const report = auditRepositorySafeguards(policy(), data);
+    expect(report.ok).toBe(false);
+    expect(report.mismatches.length).toBeGreaterThan(0);
+  });
+  test("fails closed on unknown reporting", () => {
+    const mutate = (d: ReturnType<typeof observation>) => {
+      d.privateReporting.status = 404;
+    };
+
+    const data = observation();
+    mutate(data);
+    const report = auditRepositorySafeguards(policy(), data);
+    expect(report.ok).toBe(false);
+    expect(report.mismatches.length).toBeGreaterThan(0);
+  });
+  test("fails closed on truncated rules", () => {
+    const mutate = (d: ReturnType<typeof observation>) => {
+      d.effectiveRules.complete = false;
+    };
+
+    const data = observation();
+    mutate(data);
+    const report = auditRepositorySafeguards(policy(), data);
+    expect(report.ok).toBe(false);
+    expect(report.mismatches.length).toBeGreaterThan(0);
+  });
+  test("fails closed on missing active-rules response", () => {
+    const mutate = (d: ReturnType<typeof observation>) => {
+      Reflect.deleteProperty(d, "effectiveRules");
+    };
+
+    const data = observation();
+    mutate(data);
+    const report = auditRepositorySafeguards(policy(), data);
+    expect(report.ok).toBe(false);
+    expect(report.mismatches.length).toBeGreaterThan(0);
+  });
+  test("fails closed on unknown input field", () => {
+    const mutate = (d: ReturnType<typeof observation>) => {
+      Object.assign(d, { enforced: true });
+    };
+
+    const data = observation();
+    mutate(data);
+    const report = auditRepositorySafeguards(policy(), data);
+    expect(report.ok).toBe(false);
+    expect(report.mismatches.length).toBeGreaterThan(0);
+  });
+  test("fails closed on invalid timestamp", () => {
+    const mutate = (d: ReturnType<typeof observation>) => {
+      d.observedAt = "yesterday";
+    };
+
     const data = observation();
     mutate(data);
     const report = auditRepositorySafeguards(policy(), data);
@@ -424,142 +575,346 @@ describe("repository safeguard policy and effective audit", () => {
     expect(data.protection).toMatchObject({ status: 404, body: null });
     expect(auditRepositorySafeguards(policy(), data)).toMatchObject({ ok: true, mismatches: [] });
   });
-  test.each([
-    ["200/null", 200, null],
-    ["200/false", 200, false],
-    ["200/zero", 200, 0],
-    ["200/empty string", 200, ""],
-    ["200/array", 200, []],
-    ["200/empty object", 200, {}],
-    ["404/object", 404, { unexpected: "native failure" }],
-    ["404/false", 404, false],
-    ["404/zero", 404, 0],
-    ["404/empty string", 404, ""],
-    ["404/array", 404, []],
-    ["403/null", 403, null],
-  ])(
-    "rejects malformed protection %s despite sufficient alternate enforcement",
-    (_label, status, body) => {
-      const data = rulesObservation();
-      data.protection.status = status as number;
-      data.protection.body = body as never;
-      const result = auditRepositorySafeguards(policy(), data);
-      expect(result.ok).toBe(false);
-      expect(result.mismatches).toEqual(
-        expect.arrayContaining([expect.objectContaining({ code: "protection" })]),
-      );
-    },
-  );
-  test.each([
-    ["200/null", 200, null],
-    ["404/object", 404, { unexpected: "native failure" }],
-    ["404/false", 404, false],
-    ["404/zero", 404, 0],
-    ["404/empty string", 404, ""],
-    ["404/array", 404, []],
-  ])("withholds absence-dependent PUT for malformed protection %s", (_label, status, body) => {
+  test("rejects malformed protection 200/null despite sufficient alternate enforcement", () => {
+    const status = 200;
+    const body = null;
+
+    const data = rulesObservation();
+    data.protection.status = status as number;
+    data.protection.body = body as never;
+    const result = auditRepositorySafeguards(policy(), data);
+    expect(result.ok).toBe(false);
+    expect(result.mismatches).toEqual(
+      expect.arrayContaining([expect.objectContaining({ code: "protection" })]),
+    );
+  });
+  test("rejects malformed protection 200/false despite sufficient alternate enforcement", () => {
+    const status = 200;
+    const body = false;
+
+    const data = rulesObservation();
+    data.protection.status = status as number;
+    data.protection.body = body as never;
+    const result = auditRepositorySafeguards(policy(), data);
+    expect(result.ok).toBe(false);
+    expect(result.mismatches).toEqual(
+      expect.arrayContaining([expect.objectContaining({ code: "protection" })]),
+    );
+  });
+  test("rejects malformed protection 200/zero despite sufficient alternate enforcement", () => {
+    const status = 200;
+    const body = 0;
+
+    const data = rulesObservation();
+    data.protection.status = status as number;
+    data.protection.body = body as never;
+    const result = auditRepositorySafeguards(policy(), data);
+    expect(result.ok).toBe(false);
+    expect(result.mismatches).toEqual(
+      expect.arrayContaining([expect.objectContaining({ code: "protection" })]),
+    );
+  });
+  test("rejects malformed protection 200/empty string despite sufficient alternate enforcement", () => {
+    const status = 200;
+    const body = "";
+
+    const data = rulesObservation();
+    data.protection.status = status as number;
+    data.protection.body = body as never;
+    const result = auditRepositorySafeguards(policy(), data);
+    expect(result.ok).toBe(false);
+    expect(result.mismatches).toEqual(
+      expect.arrayContaining([expect.objectContaining({ code: "protection" })]),
+    );
+  });
+  test("rejects malformed protection 200/array despite sufficient alternate enforcement", () => {
+    const status = 200;
+    const body: unknown[] = [];
+
+    const data = rulesObservation();
+    data.protection.status = status as number;
+    data.protection.body = body as never;
+    const result = auditRepositorySafeguards(policy(), data);
+    expect(result.ok).toBe(false);
+    expect(result.mismatches).toEqual(
+      expect.arrayContaining([expect.objectContaining({ code: "protection" })]),
+    );
+  });
+  test("rejects malformed protection 200/empty object despite sufficient alternate enforcement", () => {
+    const status = 200;
+    const body = {};
+
+    const data = rulesObservation();
+    data.protection.status = status as number;
+    data.protection.body = body as never;
+    const result = auditRepositorySafeguards(policy(), data);
+    expect(result.ok).toBe(false);
+    expect(result.mismatches).toEqual(
+      expect.arrayContaining([expect.objectContaining({ code: "protection" })]),
+    );
+  });
+  test("rejects malformed protection 404/object despite sufficient alternate enforcement", () => {
+    const status = 404;
+    const body = { unexpected: "native failure" };
+
+    const data = rulesObservation();
+    data.protection.status = status as number;
+    data.protection.body = body as never;
+    const result = auditRepositorySafeguards(policy(), data);
+    expect(result.ok).toBe(false);
+    expect(result.mismatches).toEqual(
+      expect.arrayContaining([expect.objectContaining({ code: "protection" })]),
+    );
+  });
+  test("rejects malformed protection 404/false despite sufficient alternate enforcement", () => {
+    const status = 404;
+    const body = false;
+
+    const data = rulesObservation();
+    data.protection.status = status as number;
+    data.protection.body = body as never;
+    const result = auditRepositorySafeguards(policy(), data);
+    expect(result.ok).toBe(false);
+    expect(result.mismatches).toEqual(
+      expect.arrayContaining([expect.objectContaining({ code: "protection" })]),
+    );
+  });
+  test("rejects malformed protection 404/zero despite sufficient alternate enforcement", () => {
+    const status = 404;
+    const body = 0;
+
+    const data = rulesObservation();
+    data.protection.status = status as number;
+    data.protection.body = body as never;
+    const result = auditRepositorySafeguards(policy(), data);
+    expect(result.ok).toBe(false);
+    expect(result.mismatches).toEqual(
+      expect.arrayContaining([expect.objectContaining({ code: "protection" })]),
+    );
+  });
+  test("rejects malformed protection 404/empty string despite sufficient alternate enforcement", () => {
+    const status = 404;
+    const body = "";
+
+    const data = rulesObservation();
+    data.protection.status = status as number;
+    data.protection.body = body as never;
+    const result = auditRepositorySafeguards(policy(), data);
+    expect(result.ok).toBe(false);
+    expect(result.mismatches).toEqual(
+      expect.arrayContaining([expect.objectContaining({ code: "protection" })]),
+    );
+  });
+  test("rejects malformed protection 404/array despite sufficient alternate enforcement", () => {
+    const status = 404;
+    const body: unknown[] = [];
+
+    const data = rulesObservation();
+    data.protection.status = status as number;
+    data.protection.body = body as never;
+    const result = auditRepositorySafeguards(policy(), data);
+    expect(result.ok).toBe(false);
+    expect(result.mismatches).toEqual(
+      expect.arrayContaining([expect.objectContaining({ code: "protection" })]),
+    );
+  });
+  test("rejects malformed protection 403/null despite sufficient alternate enforcement", () => {
+    const status = 403;
+    const body = null;
+
+    const data = rulesObservation();
+    data.protection.status = status as number;
+    data.protection.body = body as never;
+    const result = auditRepositorySafeguards(policy(), data);
+    expect(result.ok).toBe(false);
+    expect(result.mismatches).toEqual(
+      expect.arrayContaining([expect.objectContaining({ code: "protection" })]),
+    );
+  });
+  test("withholds absence-dependent PUT for malformed protection 200/null", () => {
+    const status = 200;
+    const body = null;
+
     const data = observation();
     data.protection.status = status as number;
     data.protection.body = body as never;
     expect(auditRepositorySafeguards(policy(), data).remediation.branchProtection).toBeNull();
   });
-  test.each([
-    [
-      "evaluate",
-      (d: ReturnType<typeof rulesObservation>) => {
-        Object.assign(d.rulesets[0].body as object, { enforcement: "evaluate" });
-      },
-    ],
-    [
-      "disabled",
-      (d: ReturnType<typeof rulesObservation>) => {
-        Object.assign(d.rulesets[0].body as object, { enforcement: "disabled" });
-      },
-    ],
-    [
-      "tag target",
-      (d: ReturnType<typeof rulesObservation>) => {
-        Object.assign(d.rulesets[0].body as object, { target: "tag" });
-      },
-    ],
-    [
-      "inapplicable ref",
-      (d: ReturnType<typeof rulesObservation>) => {
-        Object.assign(d.rulesets[0].body as object, {
-          conditions: { ref_name: { include: ["refs/heads/develop"], exclude: [] } },
-        });
-      },
-    ],
-    [
-      "excluded ref",
-      (d: ReturnType<typeof rulesObservation>) => {
-        Object.assign(d.rulesets[0].body as object, {
-          conditions: { ref_name: { include: ["~ALL"], exclude: ["refs/heads/main"] } },
-        });
-      },
-    ],
-    [
-      "bypass",
-      (d: ReturnType<typeof rulesObservation>) => {
-        Object.assign(d.rulesets[0].body as object, {
-          bypass_actors: [{ actor_type: "RepositoryRole", actor_id: 5, bypass_mode: "always" }],
-        });
-      },
-    ],
-    [
-      "unknown bypasses",
-      (d: ReturnType<typeof rulesObservation>) => {
-        Reflect.deleteProperty(d.rulesets[0].body as object, "bypass_actors");
-      },
-    ],
-    [
-      "wrong source",
-      (d: ReturnType<typeof rulesObservation>) => {
-        d.effectiveRules.body[0].ruleset_source = "elsewhere/proofline";
-      },
-    ],
-    [
-      "missing detail",
-      (d: ReturnType<typeof rulesObservation>) => {
-        d.rulesets = [];
-      },
-    ],
-    [
-      "inactive rules absent from effective API",
-      (d: ReturnType<typeof rulesObservation>) => {
-        d.effectiveRules.body = [];
-      },
-    ],
-    [
-      "missing rule",
-      (d: ReturnType<typeof rulesObservation>) => {
-        d.effectiveRules.body.pop();
-      },
-    ],
-    [
-      "wrong app",
-      (d: ReturnType<typeof rulesObservation>) => {
-        const detail = d.rulesets[0].body as {
-          rules: Array<{
-            parameters?: { required_status_checks?: Array<{ integration_id: number }> };
-          }>;
-        };
-        const check = detail.rules[1].parameters?.required_status_checks?.[0];
-        if (check) check.integration_id = 999;
-      },
-    ],
-    [
-      "unknown rule",
-      (d: ReturnType<typeof rulesObservation>) => {
-        d.effectiveRules.body.push({
-          type: "future_bypass_control",
-          ruleset_id: 42,
-          ruleset_source_type: "Repository",
-          ruleset_source: "deanmng1/proofline",
-        });
-      },
-    ],
-  ])("does not accept inert/ambiguous rules: %s", (_name, mutate) => {
+  test("withholds absence-dependent PUT for malformed protection 404/object", () => {
+    const status = 404;
+    const body = { unexpected: "native failure" };
+
+    const data = observation();
+    data.protection.status = status as number;
+    data.protection.body = body as never;
+    expect(auditRepositorySafeguards(policy(), data).remediation.branchProtection).toBeNull();
+  });
+  test("withholds absence-dependent PUT for malformed protection 404/false", () => {
+    const status = 404;
+    const body = false;
+
+    const data = observation();
+    data.protection.status = status as number;
+    data.protection.body = body as never;
+    expect(auditRepositorySafeguards(policy(), data).remediation.branchProtection).toBeNull();
+  });
+  test("withholds absence-dependent PUT for malformed protection 404/zero", () => {
+    const status = 404;
+    const body = 0;
+
+    const data = observation();
+    data.protection.status = status as number;
+    data.protection.body = body as never;
+    expect(auditRepositorySafeguards(policy(), data).remediation.branchProtection).toBeNull();
+  });
+  test("withholds absence-dependent PUT for malformed protection 404/empty string", () => {
+    const status = 404;
+    const body = "";
+
+    const data = observation();
+    data.protection.status = status as number;
+    data.protection.body = body as never;
+    expect(auditRepositorySafeguards(policy(), data).remediation.branchProtection).toBeNull();
+  });
+  test("withholds absence-dependent PUT for malformed protection 404/array", () => {
+    const status = 404;
+    const body: unknown[] = [];
+
+    const data = observation();
+    data.protection.status = status as number;
+    data.protection.body = body as never;
+    expect(auditRepositorySafeguards(policy(), data).remediation.branchProtection).toBeNull();
+  });
+  test("does not accept inert/ambiguous rules: evaluate", () => {
+    const mutate = (d: ReturnType<typeof rulesObservation>) => {
+      Object.assign(d.rulesets[0].body as object, { enforcement: "evaluate" });
+    };
+
+    const data = rulesObservation();
+    mutate(data);
+    expect(auditRepositorySafeguards(policy(), data).ok).toBe(false);
+  });
+  test("does not accept inert/ambiguous rules: disabled", () => {
+    const mutate = (d: ReturnType<typeof rulesObservation>) => {
+      Object.assign(d.rulesets[0].body as object, { enforcement: "disabled" });
+    };
+
+    const data = rulesObservation();
+    mutate(data);
+    expect(auditRepositorySafeguards(policy(), data).ok).toBe(false);
+  });
+  test("does not accept inert/ambiguous rules: tag target", () => {
+    const mutate = (d: ReturnType<typeof rulesObservation>) => {
+      Object.assign(d.rulesets[0].body as object, { target: "tag" });
+    };
+
+    const data = rulesObservation();
+    mutate(data);
+    expect(auditRepositorySafeguards(policy(), data).ok).toBe(false);
+  });
+  test("does not accept inert/ambiguous rules: inapplicable ref", () => {
+    const mutate = (d: ReturnType<typeof rulesObservation>) => {
+      Object.assign(d.rulesets[0].body as object, {
+        conditions: { ref_name: { include: ["refs/heads/develop"], exclude: [] } },
+      });
+    };
+
+    const data = rulesObservation();
+    mutate(data);
+    expect(auditRepositorySafeguards(policy(), data).ok).toBe(false);
+  });
+  test("does not accept inert/ambiguous rules: excluded ref", () => {
+    const mutate = (d: ReturnType<typeof rulesObservation>) => {
+      Object.assign(d.rulesets[0].body as object, {
+        conditions: { ref_name: { include: ["~ALL"], exclude: ["refs/heads/main"] } },
+      });
+    };
+
+    const data = rulesObservation();
+    mutate(data);
+    expect(auditRepositorySafeguards(policy(), data).ok).toBe(false);
+  });
+  test("does not accept inert/ambiguous rules: bypass", () => {
+    const mutate = (d: ReturnType<typeof rulesObservation>) => {
+      Object.assign(d.rulesets[0].body as object, {
+        bypass_actors: [{ actor_type: "RepositoryRole", actor_id: 5, bypass_mode: "always" }],
+      });
+    };
+
+    const data = rulesObservation();
+    mutate(data);
+    expect(auditRepositorySafeguards(policy(), data).ok).toBe(false);
+  });
+  test("does not accept inert/ambiguous rules: unknown bypasses", () => {
+    const mutate = (d: ReturnType<typeof rulesObservation>) => {
+      Reflect.deleteProperty(d.rulesets[0].body as object, "bypass_actors");
+    };
+
+    const data = rulesObservation();
+    mutate(data);
+    expect(auditRepositorySafeguards(policy(), data).ok).toBe(false);
+  });
+  test("does not accept inert/ambiguous rules: wrong source", () => {
+    const mutate = (d: ReturnType<typeof rulesObservation>) => {
+      d.effectiveRules.body[0].ruleset_source = "elsewhere/proofline";
+    };
+
+    const data = rulesObservation();
+    mutate(data);
+    expect(auditRepositorySafeguards(policy(), data).ok).toBe(false);
+  });
+  test("does not accept inert/ambiguous rules: missing detail", () => {
+    const mutate = (d: ReturnType<typeof rulesObservation>) => {
+      d.rulesets = [];
+    };
+
+    const data = rulesObservation();
+    mutate(data);
+    expect(auditRepositorySafeguards(policy(), data).ok).toBe(false);
+  });
+  test("does not accept inert/ambiguous rules: inactive rules absent from effective API", () => {
+    const mutate = (d: ReturnType<typeof rulesObservation>) => {
+      d.effectiveRules.body = [];
+    };
+
+    const data = rulesObservation();
+    mutate(data);
+    expect(auditRepositorySafeguards(policy(), data).ok).toBe(false);
+  });
+  test("does not accept inert/ambiguous rules: missing rule", () => {
+    const mutate = (d: ReturnType<typeof rulesObservation>) => {
+      d.effectiveRules.body.pop();
+    };
+
+    const data = rulesObservation();
+    mutate(data);
+    expect(auditRepositorySafeguards(policy(), data).ok).toBe(false);
+  });
+  test("does not accept inert/ambiguous rules: wrong app", () => {
+    const mutate = (d: ReturnType<typeof rulesObservation>) => {
+      const detail = d.rulesets[0].body as {
+        rules: Array<{
+          parameters?: { required_status_checks?: Array<{ integration_id: number }> };
+        }>;
+      };
+      const check = detail.rules[1].parameters?.required_status_checks?.[0];
+      if (check) check.integration_id = 999;
+    };
+
+    const data = rulesObservation();
+    mutate(data);
+    expect(auditRepositorySafeguards(policy(), data).ok).toBe(false);
+  });
+  test("does not accept inert/ambiguous rules: unknown rule", () => {
+    const mutate = (d: ReturnType<typeof rulesObservation>) => {
+      d.effectiveRules.body.push({
+        type: "future_bypass_control",
+        ruleset_id: 42,
+        ruleset_source_type: "Repository",
+        ruleset_source: "deanmng1/proofline",
+      });
+    };
+
     const data = rulesObservation();
     mutate(data);
     expect(auditRepositorySafeguards(policy(), data).ok).toBe(false);
