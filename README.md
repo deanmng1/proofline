@@ -3,9 +3,11 @@
 A portable regression-testing harness for React/Vite applications. Proofline runs deterministic Vitest and Playwright checks, verifies that required tests actually pass, preserves failure evidence, and checks the exact build before release.
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-2563eb)](LICENSE)
-[![Source preview](https://img.shields.io/badge/preview-0.9.0--preview.1-2563eb)](CHANGELOG.md)
+[![Source preview](https://img.shields.io/badge/preview-0.9.0--preview.2-2563eb)](CHANGELOG.md)
 
-**Distribution:** unpublished source preview `0.9.0-preview.2`, manifest schema 1. The historical dashboard `v0.8.0` tag predates Proofline. Use the source commit shown by `git rev-parse HEAD`; do not treat that old tag as a harness release. See [project status](docs/PROJECT_STATUS.md) and [preview support](.github/SUPPORT.md).
+**Distribution:** public GitHub source preview `0.9.0-preview.2`, manifest schema 1. The historical dashboard `v0.8.0` tag predates Proofline. Use the source commit shown by `git rev-parse HEAD`; do not treat that old tag as a harness release. See [project status](docs/PROJECT_STATUS.md) and [preview support](.github/SUPPORT.md).
+
+Verified source `775c6208` passes both full Linux/macOS main cells and the [actual API/native/release-artifact audit](docs/verification/2026-11-05-hosted-main-verification.md). The [independent reassessment](docs/reviews/2026-11-05-production-readiness.md) rates the scoped preview **8.6/10**. Package publication and live staging remain pending.
 
 The [Roomboard agent-adoption trial](docs/pilots/roomboard-adoption.md) retains a third app’s own-history source bundle, reported onboarding gaps and the reviewed final-core upgrade. Its baseline is separate from the insurance CRM and work-orders reference.
 
