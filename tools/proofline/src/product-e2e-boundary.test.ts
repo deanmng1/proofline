@@ -75,7 +75,7 @@ await revisitProtectedPath(page, policyPath);`,
   test("canonical_test_commands_cannot_bypass_the_declared_runner_egress_adapter", async () => {
     const manifest = JSON.parse(await readFile("proofline.harness.json", "utf8"));
     expect(manifest.adapters.runnerEgress).toBe("tools/proofline/canonical-runner.mjs");
-    expect(validateHarness({ cwd: process.cwd(), manifest }).errors).toEqual([]);
+
     manifest.commands.browser = {
       argv: ["pnpm", "exec", "playwright", "test"],
       cwd: ".",
@@ -140,6 +140,12 @@ await revisitProtectedPath(page, policyPath);`,
         "tools/proofline/canonical-runner.mjs",
         "playwright",
       ]);
+  });
+
+  test("canonical_test_commands_and_manifest_validate_with_the_declared_runner_egress_adapter", async () => {
+    const manifest = JSON.parse(await readFile("proofline.harness.json", "utf8"));
+    expect(manifest.adapters.runnerEgress).toBe("tools/proofline/canonical-runner.mjs");
+    expect(validateHarness({ cwd: process.cwd(), manifest }).errors).toEqual([]);
   });
 });
 
