@@ -419,6 +419,50 @@ describe("repository safeguard policy and effective audit", () => {
     });
     expect(auditRepositorySafeguards(policy(), data).ok).toBe(true);
   });
+  test("accepts explicit 404/null protection absence with sufficient active rules", () => {
+    const data = rulesObservation();
+    expect(data.protection).toMatchObject({ status: 404, body: null });
+    expect(auditRepositorySafeguards(policy(), data)).toMatchObject({ ok: true, mismatches: [] });
+  });
+  test.each([
+    ["200/null", 200, null],
+    ["200/false", 200, false],
+    ["200/zero", 200, 0],
+    ["200/empty string", 200, ""],
+    ["200/array", 200, []],
+    ["200/empty object", 200, {}],
+    ["404/object", 404, { unexpected: "native failure" }],
+    ["404/false", 404, false],
+    ["404/zero", 404, 0],
+    ["404/empty string", 404, ""],
+    ["404/array", 404, []],
+    ["403/null", 403, null],
+  ])(
+    "rejects malformed protection %s despite sufficient alternate enforcement",
+    (_label, status, body) => {
+      const data = rulesObservation();
+      data.protection.status = status as number;
+      data.protection.body = body as never;
+      const result = auditRepositorySafeguards(policy(), data);
+      expect(result.ok).toBe(false);
+      expect(result.mismatches).toEqual(
+        expect.arrayContaining([expect.objectContaining({ code: "protection" })]),
+      );
+    },
+  );
+  test.each([
+    ["200/null", 200, null],
+    ["404/object", 404, { unexpected: "native failure" }],
+    ["404/false", 404, false],
+    ["404/zero", 404, 0],
+    ["404/empty string", 404, ""],
+    ["404/array", 404, []],
+  ])("withholds absence-dependent PUT for malformed protection %s", (_label, status, body) => {
+    const data = observation();
+    data.protection.status = status as number;
+    data.protection.body = body as never;
+    expect(auditRepositorySafeguards(policy(), data).remediation.branchProtection).toBeNull();
+  });
   test.each([
     [
       "evaluate",

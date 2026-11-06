@@ -347,7 +347,7 @@ export const auditRepositorySafeguards = (inputPolicy, observation) => {
     );
     if (paginated)
       requireValue(response.complete === true, "Effective rules pagination is missing/truncated");
-    return response.status === 200 ? response.body : null;
+    return response.body;
   };
   attempt("observation", () => {
     keys(observation, [
@@ -395,12 +395,18 @@ export const auditRepositorySafeguards = (inputPolicy, observation) => {
       "main is absent, unprotected or ambiguous",
     );
   });
-  const protection = attempt("protection", () =>
-    readResponse(observation?.protection, "/branches/main/protection", [200, 404]),
-  );
-  if (protection)
+  const protection = attempt("protection", () => {
+    const body = readResponse(observation?.protection, "/branches/main/protection", [200, 404]);
+    if (observation.protection.status === 404) {
+      requireValue(body === null, "Absent protection requires status 404 with body null");
+      return { kind: "absent" };
+    }
+    requireValue(object(body), "Status 200 requires a branch protection object");
+    return { kind: "present", body };
+  });
+  if (protection?.kind === "present")
     attempt("protection", () => {
-      const source = parseProtection(protection);
+      const source = parseProtection(protection.body);
       if (source.noBypass) mergeControls(effective, source.controls);
       else
         warnings.push("Branch protection permits bypass; its controls cannot satisfy this policy.");
@@ -525,7 +531,7 @@ export const auditRepositorySafeguards = (inputPolicy, observation) => {
     ],
     remediation: remediation(
       policy,
-      protection === null &&
+      protection?.kind === "absent" &&
         rules?.length === 0 &&
         !!repo &&
         observation?.repository === repository &&
