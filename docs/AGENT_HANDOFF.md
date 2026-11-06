@@ -4,11 +4,13 @@
 
 [PROJECT_STATUS.md](PROJECT_STATUS.md) is the clone-visible recovery map. It names the active tracked design and execution checklist; resume from that checklist's first unchecked item. Do not infer unfinished work from historical plans or require an ignored `.superpowers/` directory or prior chat.
 
+The active [adopter-confidence design](superpowers/specs/2026-11-06-adopter-confidence-design.md) and [plan](superpowers/plans/2026-11-06-adopter-confidence.md) implement the user's requested parallel repository safeguards, self-service onboarding and reliability tracking, followed by full testing and independent rerating. Design review and baseline verification are in progress before implementation. The user authorized the bounded safeguards and necessary reviewed source PR/normal integration; live staging and package/tag/GitHub Release publication remain outside scope.
+
 The original harness, enterprise improvements, seven adoption repairs and approved three-milestone readiness increment are complete. **Verified executable source is F `775c62087aa2f443fc409aba750911215ba2aa2e`**, published on public GitHub main. The [independent reassessment](reviews/2026-11-05-production-readiness.md) is **8.6/10**, up from8.0. The administrative local documentation closeout continues naming verified F; it does not claim a later executable revision was run.
 
 The [fresh F0 gate](verification/2026-11-05-fresh-overview-successor.md) passes all 25 steps; F has identical executable/test/manifest inputs. The [actual main/API audit](verification/2026-11-05-hosted-main-verification.md) accepts main run42163108445attempt1: both full16-gate cells,186 required / 683 observed unit and34 required / 47 observed browser passes per cell, workers/shards, independent target, all 30 floors and the719-file release inventory. Actual native GitHub CLI acquisition and all9archive digests are independently checked. Earlier failures remain failed and retained.
 
-No implementation item remains in the completed [readiness plan](superpowers/plans/2026-11-05-production-readiness.md). Future code work needs its own agreed scope. Staging workflow preparation/testing is complete; live staging remains pending by explicit user choice. No deployment, package/tag/GitHub Release publication, support SLA, unassisted human adoption or broad platform support is implied.
+No implementation item remains in the completed [readiness plan](superpowers/plans/2026-11-05-production-readiness.md). The new agreed scope is the adopter-confidence increment above. Staging workflow preparation/testing is complete; live staging remains pending by explicit user choice. No deployment, package/tag/GitHub Release publication, support SLA, unassisted human adoption or broad platform support is implied.
 
 ## Product and boundaries
 

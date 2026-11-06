@@ -1,6 +1,12 @@
 # Proofline project status
 
-## Current outcome
+## Active increment
+
+The user authorized parallel implementation of repository safeguards, self-service onboarding and reliability tracking, followed by complete testing and an independent reassessment. The active [design](superpowers/specs/2026-11-06-adopter-confidence-design.md) and [execution checklist](superpowers/plans/2026-11-06-adopter-confidence.md) define that work; resume from their first unchecked task. Design/plan review and baseline verification precede implementation. The previous8.6 rating is historical until the new committed implementation is independently reviewed.
+
+Live staging remains pending. This increment does not add human adoption, elapsed operating history, a support SLA or package/tag/release publication claims. Actual repository safeguards and any necessary source PR are separate recorded operations after review and local verification.
+
+## Previous verified outcome
 
 The approved production-readiness increment is complete at **verified executable source `775c62087aa2f443fc409aba750911215ba2aa2e` (F)**. The independent reassessment is **8.6/10**, up from 8.0 with the same weights. Source/spec quality, fresh validation and actual hosted release evidence are accepted, with no unresolved material finding in this scope. See the [independent review](reviews/2026-11-05-production-readiness.md) and [actual main/API audit](verification/2026-11-05-hosted-main-verification.md).
 
@@ -38,4 +44,4 @@ Live staging remains pending by user choice. Other platforms/browsers/version tu
 - [Original portable design](superpowers/specs/2026-10-28-portable-hybrid-workflow-harness-design.md) and [enterprise design](superpowers/specs/2026-11-04-enterprise-verification-design.md).
 - [Append-only authored outcomes](../test-impact/execution-record.jsonl) and [portable contract](PORTABLE_TEST_AUTOMATION.md).
 
-There is no unfinished implementation task in this approved increment. Historical plans and measurement snapshots describe their named sources; ignored logs supplement the clone-visible reports rather than define the current action queue.
+There is no unfinished implementation task in that previous approved increment. The new active increment is linked above. Historical plans and measurement snapshots describe their named sources; ignored logs supplement the clone-visible reports rather than define the current action queue.
