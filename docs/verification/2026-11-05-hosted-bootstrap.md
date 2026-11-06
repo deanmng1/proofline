@@ -1,6 +1,6 @@
 # Hosted bootstrap verification sequence
 
-Execution is pending. This is the independently reviewed operational plan; actual run and artifact results must be recorded separately.
+The first candidate PR and main migration are now observed; see the [actual results](2026-11-05-hosted-bootstrap-observation.md). This is the independently reviewed operational sequence. Later successor verification and eligible API/native proof remain pending.
 
 Remote main `f4f10c727edd2622182b93131f1eb7c31553f411` is an ancestor of the reviewed local foundation `024aa838ade882fdcca46e63a4ae665569c16fd0` and current source. It predates `proofline.harness.json`. The real record preflight rejects comparison against that absent manifest. The strict resolver, historical metadata checks and release policy remain unchanged.
 
@@ -8,9 +8,13 @@ The foundation differs from the previously verified implementation `b368d85` onl
 
 1. After local verification and source review, publish the pinned foundation as `codex/readiness-foundation` and the reviewed candidate on a separate `codex/` branch. Open a candidate PR targeting that foundation. Its actual base/head must remain pinned to the intended source. Require the entire canonical workflow, including both complete compatibility cells, to succeed. Recheck actual refs, head, run attempt and check conclusions before advancing main.
 2. Fast-forward main normally to that exact checked candidate. Do not merge/rebase the foundation PR into a different unchecked head. No force push or remote settings change is permitted. The first main migration still compares the pre-harness `push.before` commit with the candidate; retain its missing-manifest failure and diagnostics. This run is release-ineligible. A rerun or multiple commits in one push cannot change the original event base.
-3. Wait for and preserve the first migration run's actual conclusion. Append a documentation/evidence-only observation identifying the actual source, base, run and failure. Open its **own** `codex/` PR targeting the now-bootstrapped main. Require both full compatibility cells and independent source review before advancing main again.
+3. Wait for and preserve the first migration run's actual conclusion. Append an observation identifying the actual source, base, run and failures. If the actual hosted run exposes additional defects, the successor may include their causally justified, independently tested and reviewed repairs; name those changes accurately rather than calling it documentation-only. Open its **own** `codex/` PR targeting the now-bootstrapped main. Require both full compatibility cells and independent source review before advancing main again.
 4. Advance main normally to the checked observation successor. Require the complete new main workflow and both cells to pass at that exact source, then verify its unambiguous eligible artifact through the bounded authenticated API transport, archive digest, inventory and native/portability validators. Only this successful push/main run can supply release authority. PR, foundation, fixture, dispatch and first-failed-migration artifacts remain ineligible.
 
 This handles a first-adoption baseline without changing comparison authority or converting a rejected result into success. Any unrelated hosted failure requires an ordinary tested/reviewed repair and affected gate reruns. All source/ref/run relationships and failed attempts remain visible.
 
 The user authorized reviewed-source publication for the hosted PR/main milestone. This sequence does not authorize tags/releases, protection/reporting settings, Vercel or production deployment. Live staging remains pending by explicit user choice.
+
+## Observed first-main adjustment
+
+Candidate `63ae8d66a443843897f61d786d4ec5babb42d9aa` passed both full PR cells, then advanced main normally after an independent actual-check/ref/native audit. Actual first-main run `42137240862`, attempt 1, completed with the anticipated missing-manifest history rejection and two additional macOS test failures. All logs and eight API-digest-checked archives are retained. Independent operational review permits a repair-and-observation successor in its own PR against C4. Each repair still needs causal evidence and independent spec/quality approval; exact successor publication, both full PR cells, normal main advancement and actual successful main/API/native verification remain unchanged requirements. No failed or PR artifact becomes release authority.

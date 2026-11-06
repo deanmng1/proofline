@@ -548,7 +548,7 @@
         {
           "file": "apps/crm-web/src/test/app-router.test.tsx",
           "title": "app routing > denies_crm_direct_routes_to_an_authenticated_unauthorized_role",
-          "line": 8
+          "line": 9
         }
       ],
       "playwright": [
@@ -745,17 +745,17 @@
         {
           "file": "tools/proofline/src/egress-guard.test.ts",
           "title": "Proofline egress guard > rejects_node_execution_overrides_after_supported_option_operands",
-          "line": 963
+          "line": 965
         },
         {
           "file": "tools/proofline/src/egress-guard.test.ts",
           "title": "Proofline egress guard > preserves_supported_node_operands_and_true_script_boundaries",
-          "line": 1013
+          "line": 1015
         },
         {
           "file": "tools/proofline/src/egress-guard.test.ts",
           "title": "Proofline egress guard > rejects_direct_operand_hidden_preloads_before_sentinel_execution",
-          "line": 1060
+          "line": 1062
         },
         {
           "file": "tools/proofline/src/canonical-runner-egress.test.ts",
@@ -775,27 +775,27 @@
         {
           "file": "tools/proofline/src/egress-guard.test.ts",
           "title": "Proofline egress guard > preserves_optional_print_expressions_without_hiding_node_options",
-          "line": 1832
+          "line": 1834
         },
         {
           "file": "tools/proofline/src/egress-guard.test.ts",
           "title": "Proofline egress guard > rejects_unreviewed_node_options_syntax_before_startup",
-          "line": 1097
+          "line": 1099
         },
         {
           "file": "tools/proofline/src/egress-guard.test.ts",
           "title": "Proofline egress guard > rejects_direct_node_options_preloads_before_sentinel_execution",
-          "line": 1159
+          "line": 1161
         },
         {
           "file": "tools/proofline/src/egress-guard.test.ts",
           "title": "Proofline egress guard > preserves_reviewed_node_options_and_exact_guard_inheritance",
-          "line": 1190
+          "line": 1192
         },
         {
           "file": "tools/proofline/src/egress-guard.test.ts",
           "title": "Proofline egress guard > preserves_exact_guard_token_in_apostrophe_checkout_paths",
-          "line": 1215
+          "line": 1217
         },
         {
           "file": "tools/proofline/src/canonical-runner-egress.test.ts",
@@ -805,72 +805,72 @@
         {
           "file": "tools/proofline/src/egress-guard.test.ts",
           "title": "Proofline egress guard > rejects_node_worker_threads_before_local_requests_or_target_execution",
-          "line": 1243
+          "line": 1245
         },
         {
           "file": "tools/proofline/src/egress-guard.test.ts",
           "title": "Proofline egress guard > rejects_async_module_loader_threads_before_local_requests_or_target_execution",
-          "line": 1316
+          "line": 1318
         },
         {
           "file": "tools/proofline/src/egress-guard.test.ts",
           "title": "Proofline egress guard > preserves_synchronous_module_hooks_inside_the_guarded_runtime",
-          "line": 1368
+          "line": 1370
         },
         {
           "file": "tools/proofline/src/egress-guard.test.ts",
           "title": "Proofline egress guard > snapshots_direct_launcher_argv_and_environment_before_validation",
-          "line": 1401
+          "line": 1403
         },
         {
           "file": "tools/proofline/src/egress-guard.test.ts",
           "title": "Proofline egress guard > binds_http_effective_options_and_public_constructors_to_the_guard",
-          "line": 1440
+          "line": 1442
         },
         {
           "file": "tools/proofline/src/egress-guard.test.ts",
           "title": "Proofline egress guard > snapshots_websocket_urls_and_denies_custom_transport_options",
-          "line": 1474
+          "line": 1476
         },
         {
           "file": "tools/proofline/src/egress-guard.test.ts",
           "title": "Proofline egress guard > guards_socket_connect_aliases_and_preserves_allowed_numeric_loopback",
-          "line": 1510
+          "line": 1512
         },
         {
           "file": "tools/proofline/src/egress-guard.test.ts",
           "title": "Proofline egress guard > rejects_unsupported_datagram_http2_and_dns_query_aliases_before_dispatch",
-          "line": 1545
+          "line": 1547
         },
         {
           "file": "tools/proofline/src/egress-guard.test.ts",
           "title": "Proofline egress guard > resolves_only_synthetic_loopback_lookup_names_without_network_queries",
-          "line": 1581
+          "line": 1583
         },
         {
           "file": "tools/proofline/src/egress-guard.test.ts",
           "title": "Proofline egress guard > uses_stable_fetch_options_and_effective_websocket_protocols",
-          "line": 1605
+          "line": 1607
         },
         {
           "file": "tools/proofline/src/egress-guard.test.ts",
           "title": "Proofline egress guard > rejects_unapproved_low_level_child_dispatch_before_native_execution",
-          "line": 1641
+          "line": 1643
         },
         {
           "file": "tools/proofline/src/egress-guard.test.ts",
           "title": "Proofline egress guard > preserves_loopback_websocket_events_subclasses_and_static_constants",
-          "line": 1670
+          "line": 1672
         },
         {
           "file": "tools/proofline/src/egress-guard.test.ts",
           "title": "Proofline egress guard > coerces_fetch_method_values_once_before_constructing_the_request",
-          "line": 1705
+          "line": 1707
         },
         {
           "file": "tools/proofline/src/egress-guard.test.ts",
           "title": "Proofline egress guard > copies_raw_http_header_array_members_without_calling_collection_overrides",
-          "line": 1720
+          "line": 1722
         },
         {
           "file": "tools/proofline/src/canonical-runner-egress.test.ts",
@@ -915,12 +915,12 @@
         {
           "file": "tools/proofline/src/egress-guard.test.ts",
           "title": "Proofline egress guard > preserves_raw_and_array_valued_headers_without_array_species_or_iterators",
-          "line": 1740
+          "line": 1742
         },
         {
           "file": "tools/proofline/src/egress-guard.test.ts",
           "title": "Proofline egress guard > protects_in_process_nx_environment_in_default_overridden_and_nested_launches",
-          "line": 1782
+          "line": 1784
         }
       ],
       "playwright": [
@@ -1216,12 +1216,47 @@
         {
           "file": "tools/proofline/src/required-execution.test.ts",
           "title": "canonical tuning flags cannot omit required unit targets or browser identities",
-          "line": 288
+          "line": 313
         },
         {
           "file": "tools/proofline/src/required-execution.test.ts",
           "title": "standalone native discovery and execution require no undeclared Nx binary",
-          "line": 334
+          "line": 392
+        },
+        {
+          "file": "tools/proofline/src/required-execution.test.ts",
+          "title": "canonical unit tuning 'separate maxWorkers' cannot omit required unit targets",
+          "line": 329
+        },
+        {
+          "file": "tools/proofline/src/required-execution.test.ts",
+          "title": "canonical unit tuning 'equals retry' cannot omit required unit targets",
+          "line": 338
+        },
+        {
+          "file": "tools/proofline/src/required-execution.test.ts",
+          "title": "canonical unit tuning 'separate retry' cannot omit required unit targets",
+          "line": 347
+        },
+        {
+          "file": "tools/proofline/src/required-execution.test.ts",
+          "title": "canonical unit tuning 'coverage' cannot omit required unit targets",
+          "line": 356
+        },
+        {
+          "file": "tools/proofline/src/required-execution.test.ts",
+          "title": "canonical browser tuning 'separate workers' cannot omit required browser identities",
+          "line": 365
+        },
+        {
+          "file": "tools/proofline/src/required-execution.test.ts",
+          "title": "canonical browser tuning 'retries' cannot omit required browser identities",
+          "line": 374
+        },
+        {
+          "file": "tools/proofline/src/required-execution.test.ts",
+          "title": "canonical browser tuning 'timeout' cannot omit required browser identities",
+          "line": 383
         }
       ],
       "playwright": []

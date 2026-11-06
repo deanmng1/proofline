@@ -779,8 +779,8 @@ describe("Proofline egress guard", () => {
     const target = script(
       "programmatic-test-app.mjs",
       `
+        process.on("SIGUSR2", () => console.log(process.env.PROOFLINE_TEST_CAPABILITY));
         console.log(JSON.stringify({ origin: "http://127.0.0.1:4173" }));
-        console.log(process.env.PROOFLINE_TEST_CAPABILITY);
         setInterval(() => {}, 1_000);
       `,
     );
@@ -805,12 +805,14 @@ describe("Proofline egress guard", () => {
     const first = launchOnce();
     const second = launchOnce();
     try {
-      const [firstReady, secondReady, firstObserved, secondObserved] = await Promise.all([
+      const [firstReady, secondReady] = await Promise.all([
         first.launch.ready,
         second.launch.ready,
-        first.observed,
-        second.observed,
       ]);
+      // A native signal after readiness makes this a separate stdout delivery.
+      expect(first.launch.stop("SIGUSR2")).toBe(true);
+      expect(second.launch.stop("SIGUSR2")).toBe(true);
+      const [firstObserved, secondObserved] = await Promise.all([first.observed, second.observed]);
       expect(firstReady.capability).toMatch(/^[A-Za-z0-9_-]{32,128}$/);
       expect(secondReady.capability).toMatch(/^[A-Za-z0-9_-]{32,128}$/);
       expect(firstReady.capability).not.toBe(secondReady.capability);

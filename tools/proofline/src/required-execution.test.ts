@@ -285,47 +285,105 @@ test("cannot hide native suite errors behind a zero exit code", () => {
   ).toBe("failed");
 });
 
+const expectFullUnitTargets = (fixture: ReturnType<typeof runnerFixture>, args: string[]) => {
+  const result = fixture.run(["unit", ...args]);
+  expect(result.status, `${args}: ${result.stderr}`).toBe(1);
+  const aggregate = fixture
+    .records()
+    .reverse()
+    .find((record) => record.runner === "aggregate");
+  expect(aggregate.scope).toBe("full");
+  expect(
+    fixture
+      .records()
+      .reverse()
+      .find((record) => record.runner === "vitest").outcome,
+  ).toBe("passed");
+  expect(aggregate.errors.join(" ")).toContain("b.test.ts");
+};
+
+const expectFullBrowserIdentities = (fixture: ReturnType<typeof runnerFixture>, args: string[]) => {
+  const result = fixture.run(["browser", ...args]);
+  expect(result.status, `${args}: ${result.stderr}`).toBe(1);
+  const record = fixture.records().at(-1);
+  expect(record.scope).toBe("full");
+  expect(record.errors.join(" ")).toContain("browser/b.spec.ts");
+};
+
 test("canonical tuning flags cannot omit required unit targets or browser identities", () => {
   const fixture = runnerFixture();
   try {
-    for (const args of [
-      ["--maxWorkers=1"],
-      ["--maxWorkers", "1"],
-      ["--retry=1"],
-      ["--retry", "1"],
-      ["--coverage"],
-    ]) {
-      const result = fixture.run(["unit", ...args]);
-      expect(result.status, `${args}: ${result.stderr}`).toBe(1);
-      const aggregate = fixture
-        .records()
-        .reverse()
-        .find((record) => record.runner === "aggregate");
-      expect(aggregate.scope).toBe("full");
-      expect(
-        fixture
-          .records()
-          .reverse()
-          .find((record) => record.runner === "vitest").outcome,
-      ).toBe("passed");
-      expect(aggregate.errors.join(" ")).toContain("b.test.ts");
-    }
-    for (const args of [
-      ["--workers=1"],
-      ["--workers", "1"],
-      ["--retries", "1"],
-      ["--timeout=10000"],
-    ]) {
-      const result = fixture.run(["browser", ...args]);
-      expect(result.status, `${args}: ${result.stderr}`).toBe(1);
-      const record = fixture.records().at(-1);
-      expect(record.scope).toBe("full");
-      expect(record.errors.join(" ")).toContain("browser/b.spec.ts");
-    }
+    expectFullUnitTargets(fixture, ["--maxWorkers=1"]);
+    expectFullBrowserIdentities(fixture, ["--workers=1"]);
     expect(fixture.run(["unit", "--testNamePattern=first"]).status).toBe(0);
     expect(fixture.records().at(-1).scope).toBe("subset");
     expect(fixture.run(["browser", "--grep", "first browser"]).status).toBe(0);
     expect(fixture.records().at(-1).scope).toBe("subset");
+  } finally {
+    fixture.cleanup();
+  }
+}, 30000);
+
+// Each remaining spelling owns its fixture and the same bounded deadline.
+// Independent CLI startup costs must not accumulate against one test budget.
+test("canonical unit tuning 'separate maxWorkers' cannot omit required unit targets", () => {
+  const fixture = runnerFixture();
+  try {
+    expectFullUnitTargets(fixture, ["--maxWorkers", "1"]);
+  } finally {
+    fixture.cleanup();
+  }
+}, 30000);
+
+test("canonical unit tuning 'equals retry' cannot omit required unit targets", () => {
+  const fixture = runnerFixture();
+  try {
+    expectFullUnitTargets(fixture, ["--retry=1"]);
+  } finally {
+    fixture.cleanup();
+  }
+}, 30000);
+
+test("canonical unit tuning 'separate retry' cannot omit required unit targets", () => {
+  const fixture = runnerFixture();
+  try {
+    expectFullUnitTargets(fixture, ["--retry", "1"]);
+  } finally {
+    fixture.cleanup();
+  }
+}, 30000);
+
+test("canonical unit tuning 'coverage' cannot omit required unit targets", () => {
+  const fixture = runnerFixture();
+  try {
+    expectFullUnitTargets(fixture, ["--coverage"]);
+  } finally {
+    fixture.cleanup();
+  }
+}, 30000);
+
+test("canonical browser tuning 'separate workers' cannot omit required browser identities", () => {
+  const fixture = runnerFixture();
+  try {
+    expectFullBrowserIdentities(fixture, ["--workers", "1"]);
+  } finally {
+    fixture.cleanup();
+  }
+}, 30000);
+
+test("canonical browser tuning 'retries' cannot omit required browser identities", () => {
+  const fixture = runnerFixture();
+  try {
+    expectFullBrowserIdentities(fixture, ["--retries", "1"]);
+  } finally {
+    fixture.cleanup();
+  }
+}, 30000);
+
+test("canonical browser tuning 'timeout' cannot omit required browser identities", () => {
+  const fixture = runnerFixture();
+  try {
+    expectFullBrowserIdentities(fixture, ["--timeout=10000"]);
   } finally {
     fixture.cleanup();
   }

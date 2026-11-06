@@ -1,0 +1,25 @@
+# Required CLI probes with independent test budgets
+
+The actual first-main macOS unit run at C4 fails one tools test after 30.397 seconds, native `29a3f761-df76-45f4-b5f8-57ac500d6098`. The existing case executes eleven independent canonical CLI probes serially under one 30-second deadline. Earlier hosted runs pass at 23.653, 29.336 and 29.815 seconds; main coverage passes at 22.635 seconds. Installed Vitest also checks elapsed time when a synchronous callback completes. A controlled local run of the exact old body passes every assertion in 10.901 seconds, with individual probes taking 0.852–1.095 seconds. This supports an aggregate test-budget failure rather than a demonstrated product hang or assertion defect.
+
+The repair preserves all eleven argv forms and their original assertions. The original required title still exercises representative unit and browser full-scope failures plus both legitimate subset controls. Seven other flag forms now have separate literal test declarations, fresh fixtures and cleanup. Each retains the same 30-second limit; no retry, timeout, guard, application or portable API changes. All seven cases are explicitly required in the manifest and registry, increasing required unit identities from 170 to 177. Tools outcomes increase from 292 to 299 by separating existing probes; this is finer test identity, not seven new product capabilities. Browser requirements remain 34.
+
+The first parameterized form passes native testing but correctly fails static manifest validation. Seven literal declarations resolve that mismatch while preserving the validator's fail-closed policy. Actual static RED/GREEN logs, both discovery inventories and all intermediate source snapshots remain retained. Controller-owned line anchors and the generated catalog are refreshed from final native discovery.
+
+| Verification | Actual result | Native invocation |
+| --- | --- | --- |
+| Exact old eleven-probe body, controlled local context | All original assertions pass | `80e93bc1` |
+| Final literal required-execution group | 31/31 pass | `d262fa86-661c-4ed4-b7cd-4540a02c0bcb` |
+| Complete tools suite | 299/299, 16 files pass | `4e5bdb92-823d-48eb-b477-1955723b4f1d` |
+| Initial tools coverage | 299/299 pass; one coverage-floor shortfall retained | `9e2c82ff-4d25-44e2-8757-56fd78155f62` |
+| Final tools coverage after deterministic stdout conformance | 299/299 pass; all 21 files/all 84 floor metrics meet | `a9480380-ac3b-43c4-9360-90a74a06135a` |
+
+## Post-readiness stdout conformance
+
+The initial coverage result measures unchanged `run-guarded.mjs` at 69.72% lines/statements against its unchanged 69.82% floor. Its only lost lines forward stdout arriving after readiness. The existing capability test prints readiness and capability consecutively; the pipe may combine those writes, exercising the same-chunk remainder path instead. That measurement failure remains preserved, and no floor is lowered.
+
+The existing test now registers a controlled child SIGUSR2 handler before emitting readiness. The parent awaits both real readiness promises, signals each owned child, then awaits the original capability observations. This forces public stdout delivery after readiness without a sleep or simulated callback. Original private/distinct-capability assertions and normal SIGTERM/finally cleanup remain intact. The 40-case egress group passes (`3e2aad7b`); the final complete 299-case coverage run measures 71.35% lines/statements for this file, and lines 95–97 each have two actual hits. All 21 critical tools files satisfy every existing metric. This is test-only conformance for the declared Linux/macOS scope, not a runtime change or a Windows claim.
+
+Both test sources pass strict tools TypeScript, Biome and patch whitespace. Final source hashes are `d2be971f43a3d3d701da376b2ddd052ba921a3fe8c61fcebed9657b0d50ff0a7` (required-execution) and `3f9445c5cf407b74b9138de7b49692f95b660438b78d32f11694741e068d4a1f` (egress test). All 37 portable core hashes remain unchanged. Independent spec/quality review approves both exact frozen sources with zero findings. Its focused required/egress run passes 71/71 (`cf0ebaf9-5fd8-4596-b2f1-f4864f72b167`), and it independently verifies all 84 unchanged tools floor metrics and the actual post-readiness LCOV hits. A first reviewer command named a nonexistent config and failed before running tests; the retained corrected default-config invocation passes. Combined successor source review remains separate.
+
+All local checks use the pinned toolchain and reused dependencies/browser cache, with selected synthetic main identity `900000020`, attempt 1, legacy-F/C4 revision variables and actual source parent C4 plus captured working bytes. They are not hosted or fresh-install results. Raw native reports, old failure extracts, per-probe timings, source/argv invariants, static validation evidence and both coverage measurements are under `output/readiness-milestones/required-tuning-diagnostic/`. The successor still needs committed fresh validation, exact source review, both complete hosted PR cells and actual main/API audit. Live staging remains pending.

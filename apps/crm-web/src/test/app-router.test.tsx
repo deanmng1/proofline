@@ -1,11 +1,14 @@
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { defaultSession } from "@/mocks/data";
+import { HttpResponse, http } from "msw";
+import { defaultSession, tenantsPayload } from "@/mocks/data";
 import { server } from "@/test/server";
 import { renderApp } from "@/test/test-app";
 
 describe("app routing", () => {
   it("denies_crm_direct_routes_to_an_authenticated_unauthorized_role", async () => {
+    // Keep the real tenant/role gates independent of the demo membership response delay.
+    server.use(http.get("/api/tenants", () => HttpResponse.json(tenantsPayload)));
     const crmRequests: string[] = [];
     const recordRequest = ({ request }: { request: Request }) => {
       const url = new URL(request.url);
