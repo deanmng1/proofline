@@ -84,7 +84,7 @@ function run(id = 101, attempt = 1, conclusion: string | null = "success", event
     pull_requests: [],
     created_at: "2026-11-02T00:00:00Z",
     updated_at: "2026-11-02T00:05:00Z",
-    run_started_at: "2026-11-02T00:00:00Z",
+    run_started_at: "2026-11-02T00:00:00Z" as string | null,
     run_attempt: attempt,
     jobs_url: `https://api.github.com/repos/${repository}/actions/runs/${id}/jobs`,
     logs_url: `https://api.github.com/repos/${repository}/actions/runs/${id}/logs`,
@@ -123,7 +123,7 @@ function jobs(runId = 101, attempt = 1, conclusion: string | null = "success") {
     name: `verify (${platform})`,
     status: conclusion ? "completed" : "in_progress",
     conclusion,
-    started_at: "2026-11-02T00:00:00Z",
+    started_at: "2026-11-02T00:00:00Z" as string | null,
     completed_at: conclusion ? "2026-11-02T00:04:00Z" : null,
     check_run_url: `https://api.github.com/repos/${repository}/check-runs/${runId * 1000 + attempt * 10 + index}`,
     labels: index ? ["macos-15"] : ["ubuntu-24.04"],
@@ -138,7 +138,7 @@ function jobs(runId = 101, attempt = 1, conclusion: string | null = "success") {
       number: i + 1,
       status: conclusion ? "completed" : "in_progress",
       conclusion,
-      started_at: "2026-11-02T00:00:00Z",
+      started_at: "2026-11-02T00:00:00Z" as string | null,
       completed_at: conclusion ? "2026-11-02T00:04:00Z" : null,
     })),
   }));
@@ -392,6 +392,184 @@ describe("supplementary canonical verification reliability", () => {
       const bad = fixture();
       mutate(bad.runs[0]);
       await expect(collect(bad)).rejects.toThrow();
+    }
+  });
+  test("excludes valid fork PRs named main before applying selected-run origin restrictions", async () => {
+    const f = fixture([run(101, 1, "failure", "pull_request"), run(102)]);
+    f.runs[0].head_repository = { ...repo, full_name: "fork/proofline" };
+    const observation = await collect(f);
+    expect(observation.excludedPullRequests).toBe(1);
+    expect(observation.runs.map((r: { runId: string }) => r.runId)).toEqual(["102"]);
+    expect(observation.attempts.map((a: { runId: string }) => a.runId)).toEqual(["102"]);
+    expect(summarizeReliability(observation).sample.firstAttempt.outcomes).toEqual({ success: 1 });
+    f.runs[0].event = "push";
+    await expect(collect(f)).rejects.toThrow(/identity/);
+  });
+  test("preserves completed and partial pending terminal facts through later unavailable job snapshots", async () => {
+    for (const pending of [false, true]) {
+      const f = fixture([run(101, 1, pending ? null : "failure")]);
+      if (pending) {
+        f.jobs["101/1"][0].status = "completed";
+        f.jobs["101/1"][0].conclusion = "failure";
+        f.jobs["101/1"][0].completed_at = "2026-11-02T00:04:00Z";
+        f.jobs["101/1"][0].steps = jobs(101, 1, "failure")[0].steps;
+      }
+      const original = await collect(f);
+      f.override = (route) =>
+        route === "/actions/runs/101/attempts/1/jobs?per_page=100&page=1"
+          ? { unavailable: 404 }
+          : undefined;
+      const unavailable = await collect(f, { observedAt: "2026-11-06T02:00:00Z" });
+      const summary = summarizeReliability([original, unavailable]);
+      expect(summary.platforms["linux-x64-chromium"].gates.lint).toMatchObject({
+        known: 1,
+        unknown: 0,
+        outcomes: { failure: 1 },
+      });
+      expect(summary.attempts[0].jobs).toEqual(original.attempts[0].jobs);
+      expect(summary.snapshots).toHaveLength(2);
+      expect(summary.snapshots[1].attempts[0].availability).toBe("jobs-unavailable");
+      expect(summary.snapshots[1].attempts[0].jobs).toEqual([]);
+      if (pending) {
+        const completedButUnavailable = clone(unavailable);
+        completedButUnavailable.observedAt = "2026-11-06T03:00:00Z";
+        completedButUnavailable.window.cutoff = completedButUnavailable.observedAt;
+        completedButUnavailable.attempts[0].status = "completed";
+        completedButUnavailable.attempts[0].conclusion = "failure";
+        completedButUnavailable.attempts[0].unknownReasons =
+          completedButUnavailable.attempts[0].unknownReasons.filter(
+            (reason: string) => reason !== "run-not-completed",
+          );
+        expect(() => summarizeReliability([original, completedButUnavailable])).toThrow(
+          /conflict|unavailable/i,
+        );
+      }
+    }
+  });
+  test("rejects child timestamps outside run and job intervals in collection and imported summaries while preserving null unknowns", async () => {
+    for (const edit of [
+      (f: Fixture) => {
+        f.jobs["101/1"].forEach((j) => {
+          j.started_at = "2026-11-01T00:00:00Z";
+          j.completed_at = "2026-11-01T00:04:00Z";
+          j.steps = [];
+        });
+      },
+      (f: Fixture) => {
+        f.attempts["101/1"] = { ...run(), run_started_at: "2026-11-02T00:01:00Z" };
+      },
+      (f: Fixture) => {
+        f.jobs["101/1"][0].steps[0].started_at = "2026-11-01T23:59:00Z";
+      },
+      (f: Fixture) => {
+        f.jobs["101/1"][0].steps[0].completed_at = "2026-11-02T00:04:01Z";
+      },
+    ]) {
+      const f = fixture();
+      edit(f);
+      await expect(collect(f)).rejects.toThrow(/timestamp|interval|start|duration/i);
+    }
+    const original = await collect();
+    for (const edit of [
+      (v: typeof original) => {
+        const a = v.attempts[0];
+        a.jobs.forEach((j: (typeof a.jobs)[0]) => {
+          j.startedAt = "2026-11-01T00:00:00Z";
+          j.completedAt = "2026-11-01T00:04:00Z";
+        });
+        a.completedAt = "2026-11-01T00:04:00Z";
+        a.durationMs = -86160000;
+      },
+      (v: typeof original) => {
+        v.attempts[0].startedAt = "2026-11-02T00:01:00Z";
+        v.attempts[0].durationMs = 180000;
+      },
+      (v: typeof original) => {
+        const j = v.attempts[0].jobs[0];
+        j.steps[0].startedAt = "2026-11-01T23:59:00Z";
+        j.gates[0].startedAt = j.steps[0].startedAt;
+      },
+      (v: typeof original) => {
+        const j = v.attempts[0].jobs[0];
+        j.steps[0].completedAt = "2026-11-02T00:04:01Z";
+        j.gates[0].completedAt = j.steps[0].completedAt;
+      },
+    ]) {
+      const changed = clone(original);
+      edit(changed);
+      expect(() => summarizeReliability(changed)).toThrow(/timestamp|interval|start|duration/i);
+    }
+    const unknown = fixture();
+    unknown.attempts["101/1"] = { ...run(), run_started_at: null };
+    unknown.runs[0].run_started_at = null;
+    unknown.jobs["101/1"].forEach((j) => {
+      j.started_at = null;
+      j.completed_at = null;
+      j.steps.forEach((s) => {
+        s.started_at = null;
+        s.completed_at = null;
+      });
+    });
+    const unknownObservation = await collect(unknown);
+    expect(unknownObservation.attempts[0].durationMs).toBe(null);
+    expect(summarizeReliability(unknownObservation).attempts[0].completedAt).toBe(null);
+  });
+  test("accepts stable endpoint-specific update timestamps without weakening identity state or reread advancement checks", async () => {
+    // Actual read-only F observation: list/run 04:59:00, attempt 04:59:01 before and after.
+    const f = fixture();
+    for (const value of [f.runs[0], f.attempts["101/1"]]) {
+      if (!value) throw new Error("Missing fixture run");
+      value.created_at = "2026-11-06T04:32:27Z";
+      value.run_started_at = "2026-11-06T04:32:27Z";
+      value.updated_at = "2026-11-06T04:59:00Z";
+    }
+    const attempt = f.attempts["101/1"];
+    if (!attempt) throw new Error("Missing fixture attempt");
+    attempt.updated_at = "2026-11-06T04:59:01Z";
+    f.jobs["101/1"].forEach((j) => {
+      j.started_at = "2026-11-06T04:32:30Z";
+      j.completed_at = "2026-11-06T04:59:00Z";
+      j.steps.forEach((s) => {
+        s.started_at = j.started_at;
+        s.completed_at = j.completed_at;
+      });
+    });
+    f.override = (route) =>
+      route.startsWith("/actions/workflows/17/runs?")
+        ? { total_count: 1, workflow_runs: f.runs }
+        : undefined;
+    const collectAt = (value: Fixture) =>
+      collect(value, { until: "2026-11-06T17:42:52Z", observedAt: "2026-11-06T17:45:47Z" });
+    const observation = await collectAt(f);
+    expect(observation.attempts[0].updatedAt).toBe("2026-11-06T04:59:01Z");
+    expect(summarizeReliability(observation).sample.firstAttempt.outcomes).toEqual({ success: 1 });
+    for (const edit of [
+      (v: Fixture) => {
+        if (v.attempts["101/1"]) v.attempts["101/1"].head_sha = "b".repeat(40);
+      },
+      (v: Fixture) => {
+        if (v.attempts["101/1"]) v.attempts["101/1"].status = "in_progress";
+      },
+      (v: Fixture) => {
+        if (v.attempts["101/1"]) v.attempts["101/1"].conclusion = "failure";
+      },
+      (v: Fixture) => {
+        const initial = v.override;
+        v.override = (route) =>
+          route === "/actions/runs/101" ? { ...v.runs[0], run_attempt: 2 } : initial?.(route);
+      },
+      (v: Fixture) => {
+        const initial = v.override;
+        v.override = (route) =>
+          route === "/actions/runs/101"
+            ? { ...v.runs[0], updated_at: "2026-11-06T04:59:02Z" }
+            : initial?.(route);
+      },
+    ]) {
+      const changed = clone(f);
+      changed.override = f.override;
+      edit(changed);
+      await expect(collectAt(changed)).rejects.toThrow();
     }
   });
   test("rejects substituted terminal jobs and loss of already observed terminal gate facts", async () => {

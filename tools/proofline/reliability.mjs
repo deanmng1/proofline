@@ -132,7 +132,9 @@ function validateRun(run, context) {
       run.workflow_id === workflowId &&
       run.path === WORKFLOW &&
       run.repository?.full_name === repository &&
-      run.head_repository?.full_name === repository &&
+      (run.event === "pull_request"
+        ? reliabilityRepository(run.head_repository?.full_name)
+        : run.head_repository?.full_name === repository) &&
       run.head_branch === branch &&
       /^[a-f0-9]{40}$/.test(run.head_sha ?? "") &&
       ["push", "workflow_dispatch", "pull_request"].includes(run.event),
@@ -206,9 +208,22 @@ function deduplicate(values, key, label, counter) {
   }
   return [...seen.values()];
 }
+function withinParentInterval(value, lower, upper, label) {
+  for (const key of ["startedAt", "completedAt"]) {
+    const time = timestamp(value[key], true);
+    check(
+      time === null || (time >= lower && (upper === null || time <= upper)),
+      `${label} timestamp outside parent interval`,
+    );
+  }
+}
 function normalizeJobs(values, run, cutoff, counter) {
   const jobs = deduplicate(values, (job) => job.id, "job", counter);
   const platforms = new Set();
+  const runStart = Math.max(
+    timestamp(run.created_at),
+    timestamp(run.run_started_at, true) ?? -Infinity,
+  );
   return jobs
     .map((job) => {
       const platform = PLATFORMS.find((p) => job.name === `verify (${p})`);
@@ -222,6 +237,8 @@ function normalizeJobs(values, run, cutoff, counter) {
         "job identity or platform mismatch",
       );
       platforms.add(platform);
+      const jobState = timedState(job, "started_at", "completed_at", cutoff);
+      withinParentInterval(jobState, runStart, null, "job");
       check(Array.isArray(job.steps) && job.steps.length <= 200, "invalid steps");
       const names = new Set();
       const numbers = new Set();
@@ -237,11 +254,18 @@ function normalizeJobs(values, run, cutoff, counter) {
         );
         names.add(step.name);
         numbers.add(step.number);
-        return {
+        const stepState = {
           name: step.name,
           number: step.number,
           ...timedState(step, "started_at", "completed_at", cutoff),
         };
+        withinParentInterval(
+          stepState,
+          Math.max(runStart, timestamp(jobState.startedAt, true) ?? -Infinity),
+          timestamp(jobState.completedAt, true),
+          "step",
+        );
+        return stepState;
       });
       const gateValues = Object.entries(GATES).map(([key, name]) => {
         const step = normalized.find((s) => s.name === name);
@@ -264,7 +288,7 @@ function normalizeJobs(values, run, cutoff, counter) {
         attempt: run.run_attempt,
         platform,
         name: job.name,
-        ...timedState(job, "started_at", "completed_at", cutoff),
+        ...jobState,
         steps: normalized,
         gates: gateValues,
         failedSteps: normalized
@@ -306,6 +330,8 @@ function normalizeAttempt(run, jobs, availability, reason = null) {
           .at(-1)
       : null;
   const start = timestamp(run.run_started_at, true);
+  const durationMs = start !== null && completedAt !== null ? timestamp(completedAt) - start : null;
+  check(durationMs === null || durationMs >= 0, "negative attempt duration");
   return {
     runId: String(run.id),
     attempt: run.run_attempt,
@@ -319,7 +345,7 @@ function normalizeAttempt(run, jobs, availability, reason = null) {
     startedAt: run.run_started_at,
     updatedAt: run.updated_at,
     completedAt,
-    durationMs: start !== null && completedAt !== null ? timestamp(completedAt) - start : null,
+    durationMs,
     completionBasis: completedAt === null ? "unknown" : "last-observed-job",
     jobs,
     unknownReasons,
@@ -425,9 +451,7 @@ export async function collectVerificationHistory(options) {
       );
       if (attempt === listed.run_attempt)
         check(
-          raw.status === listed.status &&
-            raw.conclusion === listed.conclusion &&
-            raw.updated_at === listed.updated_at,
+          raw.status === listed.status && raw.conclusion === listed.conclusion,
           "run advanced during collection",
         );
       const jobValues = await pages(`${base}/jobs`, "jobs", bounds.maxJobs, true);
@@ -711,10 +735,21 @@ export function summarizeReliability(input) {
         terminal.set(identity, value);
       }
       facts.set(key, terminal);
+      const retainKnownJobs =
+        attempt.availability === "jobs-unavailable" &&
+        previous?.value.availability === "observed" &&
+        previous.value.jobs.length > 0;
+      if (retainKnownJobs)
+        check(
+          attempt.status === previous.value.status &&
+            attempt.conclusion === previous.value.conclusion,
+          "unavailable jobs with changed run state conflict",
+        );
       if (
-        !previous ||
-        (previous.value.status !== "completed" && attempt.availability !== "unavailable") ||
-        attempt.status === "completed"
+        !retainKnownJobs &&
+        (!previous ||
+          (previous.value.status !== "completed" && attempt.availability !== "unavailable") ||
+          attempt.status === "completed")
       )
         latest.set(key, { value: attempt, observedAt: observation.observedAt });
     }
