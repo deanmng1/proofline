@@ -1611,6 +1611,66 @@
         }
       ],
       "playwright": []
+    },
+    {
+      "id": "FIX-001",
+      "description": "Reference fixtures preserve default demo wiring, response and state semantics while deterministic unit defaults omit incidental latency; held provider ordering, loaded accessibility and a single logical HTTP refresh retry remain verified.",
+      "criticality": "critical",
+      "paths": [
+        "apps/crm-web/src/mocks/handlers.ts",
+        "apps/crm-web/src/test/server.ts",
+        "apps/crm-web/src/test/mock-handler-latency.test.tsx",
+        "apps/crm-web/src/test/a11y.test.tsx",
+        "apps/crm-web/src/test/auth.test.tsx"
+      ],
+      "vitest": [
+        {
+          "file": "apps/crm-web/src/test/mock-handler-latency.test.tsx",
+          "title": "mock handler response policy > holds an injected membership response until explicitly released",
+          "line": 81
+        },
+        {
+          "file": "apps/crm-web/src/test/mock-handler-latency.test.tsx",
+          "title": "mock handler response policy > preserves tenant updates across immediate handler factories",
+          "line": 118
+        },
+        {
+          "file": "apps/crm-web/src/test/mock-handler-latency.test.tsx",
+          "title": "mock handler response policy > preserves membership responses from default and browser handler factories",
+          "line": 143
+        },
+        {
+          "file": "apps/crm-web/src/test/mock-handler-latency.test.tsx",
+          "title": "mock handler response policy > keeps a custom response pending alongside immediate server defaults",
+          "line": 166
+        },
+        {
+          "file": "apps/crm-web/src/test/mock-handler-latency.test.tsx",
+          "title": "mock handler response policy > keeps protected UI and data pending until membership delivery",
+          "line": 193
+        },
+        {
+          "file": "apps/crm-web/src/test/mock-handler-latency.test.tsx",
+          "title": "mock handler response policy > keeps membership and protected requests pending until login delivery",
+          "line": 215
+        },
+        {
+          "file": "apps/crm-web/src/test/a11y.test.tsx",
+          "title": "accessibility > overview page has no detectable violations",
+          "line": 35
+        },
+        {
+          "file": "apps/crm-web/src/test/a11y.test.tsx",
+          "title": "accessibility > users page has no detectable violations",
+          "line": 43
+        },
+        {
+          "file": "apps/crm-web/src/test/auth.test.tsx",
+          "title": "auth & session > retries a 401 with a refreshed token and resolves the request",
+          "line": 11
+        }
+      ],
+      "playwright": []
     }
   ]
 }

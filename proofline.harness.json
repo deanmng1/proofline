@@ -4184,6 +4184,120 @@
           "layer": "playwright"
         }
       ]
+    },
+    {
+      "glob": "apps/crm-web/src/{mocks/handlers.ts,test/server.ts,test/mock-handler-latency.test.tsx,test/a11y.test.tsx,test/auth.test.tsx}",
+      "entrypoints": [
+        "apps/crm-web/src/mocks/handlers.ts",
+        "apps/crm-web/src/test/server.ts",
+        "apps/crm-web/src/test/mock-handler-latency.test.tsx",
+        "apps/crm-web/src/test/a11y.test.tsx",
+        "apps/crm-web/src/test/auth.test.tsx"
+      ],
+      "ruleIds": ["FIX-001"],
+      "layers": ["contract", "ui"],
+      "testBindings": [
+        {
+          "ruleId": "FIX-001",
+          "layer": "contract",
+          "testId": "binding-fix-001-membership-deferred",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "apps/crm-web/src/test/mock-handler-latency.test.tsx",
+          "title": "mock handler response policy > holds an injected membership response until explicitly released",
+          "line": 81
+        },
+        {
+          "ruleId": "FIX-001",
+          "layer": "contract",
+          "testId": "binding-fix-001-tenant-state",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "apps/crm-web/src/test/mock-handler-latency.test.tsx",
+          "title": "mock handler response policy > preserves tenant updates across immediate handler factories",
+          "line": 118
+        },
+        {
+          "ruleId": "FIX-001",
+          "layer": "contract",
+          "testId": "binding-fix-001-default-response",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "apps/crm-web/src/test/mock-handler-latency.test.tsx",
+          "title": "mock handler response policy > preserves membership responses from default and browser handler factories",
+          "line": 143
+        },
+        {
+          "ruleId": "FIX-001",
+          "layer": "contract",
+          "testId": "binding-fix-001-server-overrides",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "apps/crm-web/src/test/mock-handler-latency.test.tsx",
+          "title": "mock handler response policy > keeps a custom response pending alongside immediate server defaults",
+          "line": 166
+        },
+        {
+          "ruleId": "FIX-001",
+          "layer": "ui",
+          "testId": "binding-fix-001-held-membership-ui",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "apps/crm-web/src/test/mock-handler-latency.test.tsx",
+          "title": "mock handler response policy > keeps protected UI and data pending until membership delivery",
+          "line": 193
+        },
+        {
+          "ruleId": "FIX-001",
+          "layer": "ui",
+          "testId": "binding-fix-001-held-login-ui",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "apps/crm-web/src/test/mock-handler-latency.test.tsx",
+          "title": "mock handler response policy > keeps membership and protected requests pending until login delivery",
+          "line": 215
+        },
+        {
+          "ruleId": "FIX-001",
+          "layer": "ui",
+          "testId": "binding-fix-001-overview-readiness",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "apps/crm-web/src/test/a11y.test.tsx",
+          "title": "accessibility > overview page has no detectable violations",
+          "line": 35
+        },
+        {
+          "ruleId": "FIX-001",
+          "layer": "ui",
+          "testId": "binding-fix-001-loaded-users-a11y",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "apps/crm-web/src/test/a11y.test.tsx",
+          "title": "accessibility > users page has no detectable violations",
+          "line": 43
+        },
+        {
+          "ruleId": "FIX-001",
+          "layer": "contract",
+          "testId": "binding-fix-001-logical-auth-retry",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "apps/crm-web/src/test/auth.test.tsx",
+          "title": "auth & session > retries a 401 with a refreshed token and resolves the request",
+          "line": 11
+        }
+      ],
+      "ruleLayers": [
+        {
+          "ruleId": "FIX-001",
+          "layer": "contract"
+        },
+        {
+          "ruleId": "FIX-001",
+          "layer": "ui"
+        }
+      ]
     }
   ],
   "lifecycleMatrix": "test-impact/lifecycle-matrix.json",

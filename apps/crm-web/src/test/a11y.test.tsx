@@ -1,4 +1,4 @@
-import { screen, waitFor } from "@testing-library/react";
+import { screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, expect, it } from "vitest";
@@ -47,7 +47,11 @@ describe("accessibility", () => {
     await waitFor(() =>
       expect(screen.getByText(/access control and roster visibility/i)).toBeInTheDocument(),
     );
-    await waitFor(() => expect(screen.getByText(/avery stone/i)).toBeInTheDocument());
+    expect(within(screen.getByRole("banner")).getByText(/avery stone/i)).toBeInTheDocument();
+    expect(await screen.findByText("Workspace roster")).toBeInTheDocument();
+    await waitFor(() =>
+      expect(screen.getByRole("button", { name: /export roster/i })).toBeEnabled(),
+    );
     const results = await axe(container);
     expect(results.violations).toHaveLength(0);
   });

@@ -60,24 +60,24 @@ export const resetMockState = () => {
 const readQuery = (request: Request, key: string) =>
   new URL(request.url).searchParams.get(key)?.toLowerCase() ?? "";
 
-export const handlers = [
+export const createHandlers = (responseDelay: typeof delay = delay) => [
   // Auth
   http.get("/api/auth/session", async () => {
-    await delay(250);
+    await responseDelay(250);
     return HttpResponse.json(activeSession);
   }),
   http.post("/api/auth/login", async () => {
-    await delay(450);
+    await responseDelay(450);
     activeSession = defaultSession;
     return HttpResponse.json(activeSession);
   }),
   http.post("/api/auth/logout", async () => {
-    await delay(120);
+    await responseDelay(120);
     activeSession = { ...defaultSession, isAuthenticated: false };
     return HttpResponse.json({ success: true });
   }),
   http.post("/api/auth/refresh", async () => {
-    await delay(300);
+    await responseDelay(300);
     activeSession = {
       ...defaultSession,
       accessToken: "mock-access-token-refreshed",
@@ -88,11 +88,11 @@ export const handlers = [
 
   // Dashboard
   http.get("/api/dashboard/overview", async () => {
-    await delay(320);
+    await responseDelay(320);
     return HttpResponse.json(overviewPayload);
   }),
   http.get("/api/users", async ({ request }) => {
-    await delay(260);
+    await responseDelay(260);
     const search = readQuery(request, "search");
     if (!search) {
       return HttpResponse.json(usersPayload);
@@ -105,7 +105,7 @@ export const handlers = [
     );
   }),
   http.post("/api/users/invite", async ({ request }) => {
-    await delay(320);
+    await responseDelay(320);
     const body = (await request.json()) as { name: string; email: string; role: string };
     const allowed = ["Owner", "Admin", "Support", "Analyst"] as const;
     const role = (allowed as readonly string[]).includes(body.role)
@@ -124,7 +124,7 @@ export const handlers = [
     return HttpResponse.json(invited, { status: 201 });
   }),
   http.patch("/api/users/:id", async ({ params, request }) => {
-    await delay(240);
+    await responseDelay(240);
     const { id } = params;
     const body = (await request.json()) as { status?: string };
     const user = usersPayload.find((entry) => entry.id === id);
@@ -137,11 +137,11 @@ export const handlers = [
     return HttpResponse.json(user);
   }),
   http.get("/api/settings", async () => {
-    await delay(220);
+    await responseDelay(220);
     return HttpResponse.json(activeSettings);
   }),
   http.patch("/api/settings", async ({ request }) => {
-    await delay(420);
+    await responseDelay(420);
     const updates = (await request.json()) as SettingsPayload;
     activeSettings = updates;
     return HttpResponse.json(activeSettings);
@@ -149,11 +149,11 @@ export const handlers = [
 
   // Billing & Plans
   http.get("/api/billing", async () => {
-    await delay(280);
+    await responseDelay(280);
     return HttpResponse.json(activeBilling);
   }),
   http.post("/api/billing/subscriptions", async ({ request }) => {
-    await delay(380);
+    await responseDelay(380);
     const { planId } = (await request.json()) as { planId: string };
     const plan = activeBilling.plans.find((entry) => entry.id === planId);
     if (!plan) {
@@ -174,13 +174,13 @@ export const handlers = [
 
   // Analytics & Reports
   http.get("/api/analytics/summary", async () => {
-    await delay(300);
+    await responseDelay(300);
     return HttpResponse.json(analyticsPayload);
   }),
 
   // Team & Roles
   http.get("/api/team", async ({ request }) => {
-    await delay(240);
+    await responseDelay(240);
     const search = readQuery(request, "search");
     if (!search) {
       return HttpResponse.json(activeTeam);
@@ -192,7 +192,7 @@ export const handlers = [
     );
   }),
   http.post("/api/team/invite", async ({ request }) => {
-    await delay(360);
+    await responseDelay(360);
     const next = (await request.json()) as {
       name: string;
       email: string;
@@ -210,14 +210,14 @@ export const handlers = [
     return HttpResponse.json(member);
   }),
   http.patch("/api/team/:id", async ({ params, request }) => {
-    await delay(280);
+    await responseDelay(280);
     const { id } = params as { id: string };
     const { role } = (await request.json()) as { role: TeamMember["role"] };
     activeTeam = activeTeam.map((member) => (member.id === id ? { ...member, role } : member));
     return HttpResponse.json(activeTeam.find((member) => member.id === id));
   }),
   http.delete("/api/team/:id", async ({ params }) => {
-    await delay(220);
+    await responseDelay(220);
     const { id } = params as { id: string };
     activeTeam = activeTeam.filter((member) => member.id !== id);
     return new HttpResponse(null, { status: 204 });
@@ -225,11 +225,11 @@ export const handlers = [
 
   // Notifications
   http.get("/api/notifications", async () => {
-    await delay(220);
+    await responseDelay(220);
     return HttpResponse.json(activeNotifications);
   }),
   http.patch("/api/notifications/:id/read", async ({ params }) => {
-    await delay(160);
+    await responseDelay(160);
     const { id } = params as { id: string };
     activeNotifications = activeNotifications.map((item) =>
       item.id === id ? { ...item, read: true } : item,
@@ -237,14 +237,14 @@ export const handlers = [
     return HttpResponse.json(activeNotifications.find((item) => item.id === id));
   }),
   http.post("/api/notifications/read-all", async () => {
-    await delay(200);
+    await responseDelay(200);
     activeNotifications = activeNotifications.map((item) => ({ ...item, read: true }));
     return HttpResponse.json(activeNotifications);
   }),
 
   // Transactions
   http.get("/api/transactions", async ({ request }) => {
-    await delay(260);
+    await responseDelay(260);
     const status = readQuery(request, "status");
     const search = readQuery(request, "search");
     return HttpResponse.json(
@@ -260,11 +260,11 @@ export const handlers = [
 
   // Integrations & API keys
   http.get("/api/integrations", async () => {
-    await delay(240);
+    await responseDelay(240);
     return HttpResponse.json(activeIntegrations);
   }),
   http.post("/api/integrations/:id/connect", async ({ params }) => {
-    await delay(320);
+    await responseDelay(320);
     const { id } = params as { id: string };
     activeIntegrations = activeIntegrations.map((integration) =>
       integration.id === id
@@ -278,11 +278,11 @@ export const handlers = [
     return HttpResponse.json(activeIntegrations.find((integration) => integration.id === id));
   }),
   http.get("/api/integrations/api-keys", async () => {
-    await delay(220);
+    await responseDelay(220);
     return HttpResponse.json(activeApiKeys);
   }),
   http.post("/api/integrations/api-keys", async ({ request }) => {
-    await delay(340);
+    await responseDelay(340);
     const next = (await request.json()) as { label: string; scopes: string[] };
     const key: ApiKey = {
       id: `key_${Date.now()}`,
@@ -297,7 +297,7 @@ export const handlers = [
     return HttpResponse.json(key);
   }),
   http.delete("/api/integrations/api-keys/:id", async ({ params }) => {
-    await delay(220);
+    await responseDelay(220);
     const { id } = params as { id: string };
     activeApiKeys = activeApiKeys.map((key) => (key.id === id ? { ...key, revoked: true } : key));
     return new HttpResponse(null, { status: 204 });
@@ -305,7 +305,7 @@ export const handlers = [
 
   // Support & Feedback
   http.get("/api/support/tickets", async ({ request }) => {
-    await delay(260);
+    await responseDelay(260);
     const status = readQuery(request, "status");
     const priority = readQuery(request, "priority");
     return HttpResponse.json(
@@ -317,7 +317,7 @@ export const handlers = [
     );
   }),
   http.post("/api/support/tickets", async ({ request }) => {
-    await delay(360);
+    await responseDelay(360);
     const next = (await request.json()) as {
       subject: string;
       requester: string;
@@ -335,7 +335,7 @@ export const handlers = [
     return HttpResponse.json(ticket);
   }),
   http.patch("/api/support/tickets/:id", async ({ params, request }) => {
-    await delay(280);
+    await responseDelay(280);
     const { id } = params as { id: string };
     const { status } = (await request.json()) as { status: Ticket["status"] };
     activeTickets = activeTickets.map((ticket) =>
@@ -346,11 +346,11 @@ export const handlers = [
 
   // Tenants
   http.get("/api/tenants", async () => {
-    await delay(200);
+    await responseDelay(200);
     return HttpResponse.json(activeTenants);
   }),
   http.get("/api/tenants/:id", async ({ params }) => {
-    await delay(160);
+    await responseDelay(160);
     const { id } = params as { id: string };
     const tenant = activeTenants.find((entry) => entry.id === id);
     if (!tenant) {
@@ -359,7 +359,7 @@ export const handlers = [
     return HttpResponse.json(tenant);
   }),
   http.put("/api/tenants/:id", async ({ params, request }) => {
-    await delay(240);
+    await responseDelay(240);
     const { id } = params as { id: string };
     const updates = (await request.json()) as Partial<Tenant>;
     activeTenants = activeTenants.map((tenant) =>
@@ -370,12 +370,12 @@ export const handlers = [
 
   // Mail
   http.get("/api/mail", async ({ request }) => {
-    await delay(260);
+    await responseDelay(260);
     const folder = readQuery(request, "folder") === "sent" ? "sent" : "inbox";
     return HttpResponse.json(activeMail.filter((message) => message.folder === folder));
   }),
   http.patch("/api/mail/:id/read", async ({ params, request }) => {
-    await delay(140);
+    await responseDelay(140);
     const { id } = params as { id: string };
     const body = (await request.json().catch(() => ({}))) as { read?: boolean };
     const read = body.read ?? true;
@@ -385,7 +385,7 @@ export const handlers = [
 
   // Calendar
   http.get("/api/calendar", async ({ request }) => {
-    await delay(240);
+    await responseDelay(240);
     const month = readQuery(request, "month");
     const events = month
       ? activeCalendar.filter((event) => event.date.startsWith(month))
@@ -395,7 +395,9 @@ export const handlers = [
 
   // Profile
   http.get("/api/profile", async () => {
-    await delay(220);
+    await responseDelay(220);
     return HttpResponse.json(profilePayload);
   }),
 ];
+
+export const handlers = createHandlers();
