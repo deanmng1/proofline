@@ -18,6 +18,7 @@ import { fileURLToPath } from "node:url";
 import { renderCanonicalCommandTable } from "../impact/src/record-check.ts";
 import { renderRules } from "../impact/src/validate.ts";
 import { commitGitFixture } from "../impact/test-fixtures/git.ts";
+import { selectReusableCorePaths } from "./core-inventory.mjs";
 import {
   collectPortabilityNativeEvidence,
   requiredPortabilityEvidence,
@@ -90,16 +91,10 @@ export const prepareTarget = ({
           ].includes(part),
         ),
   });
-  const files = ["tools/impact", "tools/proofline"].flatMap((directory) =>
-    walk(path.join(repositoryRoot, directory))
-      .filter(
-        (file) =>
-          !file.endsWith(".test.ts") &&
-          !file.startsWith("fixtures/") &&
-          !(directory === "tools/proofline" && file.startsWith("test-fixtures/")) &&
-          file !== "project.json",
-      )
-      .map((file) => `${directory}/${file}`),
+  const files = selectReusableCorePaths(
+    ["tools/impact", "tools/proofline"].flatMap((directory) =>
+      walk(path.join(repositoryRoot, directory)).map((file) => `${directory}/${file}`),
+    ),
   );
   for (const file of files) {
     mkdirSync(path.dirname(path.join(target, file)), { recursive: true });
