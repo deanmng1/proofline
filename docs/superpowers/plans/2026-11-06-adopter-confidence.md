@@ -81,8 +81,8 @@ The initial work below is accepted at K3/M; this later repair remains necessary 
 - [x] Retain actual failed collector/run/job evidence and reproduce the source/data cause with a separately labeled read-only API diagnostic and offline replay.
 - [x] Independently review the bounded contract: exact sole legacy job named `verify`, platform null, original facts retained, both current cells/all current gates unknown; unsupported/malformed/mixed layouts still reject.
 - [x] Retain permanent literal failing tests, implement the reviewed representation, preserve all old identities/assertions and archived legacy-free summaries, and run focused GREEN plus owned checks.
-- [ ] Bind new exact required outcomes, preserve all36 coverage floors and append-only history, measure coverage and obtain independent scoped spec/quality approval.
-- [ ] At the new committed source, repeat the required fresh/full gate and normal protected PR/main verification; prove a corrected automatic collector artifact with the older failures and unknown applicability preserved.
+- [x] Bind new exact required outcomes, preserve all36 coverage floors and append-only history, measure coverage and obtain independent scoped spec/quality approval.
+- [x] At the new committed source, repeat the required fresh/full gate and normal protected PR/main verification; prove a corrected automatic collector artifact with the older failures and unknown applicability preserved.
 
 ### Task 4: Integrate governance and operator controls
 
@@ -93,7 +93,7 @@ The initial work below is accepted at K3/M; this later repair remains necessary 
 - [x] Correct stale current compatibility/publication language and link the three concise guides. Keep historical snapshots and the presentation unchanged.
 - [x] Save prior GitHub settings; review exact desired request against the accepted policy and sole-maintainer recovery; apply only necessary settings and enable private reporting using authorized admin operations. Read back and audit the actual result; retain immutable observations.
 - [x] Verify safeguards via safe rule evaluation/check enforcement and report any unavailable proof or capability, without destructive main writes. Collect a bounded actual reliability snapshot and preserve failures/rerun attempts.
-- [ ] Retain integration RED/GREEN where behavior changes, append factual implementation/review/operation records, run manifest/typecheck/lint/record/coverage checks and obtain independent integration review.
+- [x] Retain integration RED/GREEN where behavior changes, append factual implementation/review/operation records, run manifest/typecheck/lint/record/coverage checks and obtain independent integration review.
 
 ### Task 5: Fresh, hosted and independent completion
 

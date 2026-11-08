@@ -52,3 +52,7 @@ Each successful collector invocation uploads `proofline-reliability-<collector-r
 Artifacts expire and repositories can lose API history. For reviewed milestones, a maintainer should copy the exact immutable JSON/Markdown files into a new dated source-controlled evidence directory, record their SHA-256 hashes, collector source commit, command, collection time and actual API provenance, then review/commit through the normal required checks. Never overwrite prior snapshots or append invented elapsed history. Offline fixture snapshots must remain labeled `injected-offline`; only a native transport snapshot is labeled `github-api`. Retain separate operational failure evidence as well as successes.
 
 Source-controlled verbatim JSON payloads may use the .json.txt extension with an explicit native-filename mapping so source formatters cannot rewrite evidence whitespace. Preserve exact bytes and the SHA-256 inventory; the native collector still writes its documented .json files.
+
+## Actual automatic observation
+
+The [November8 automatic observation](verification/2026-11-08-automatic-reliability.md) is independently corroborated at source N. Its full30-day sample preserves seven runs, including all four failures and two unknown-platform legacy jobs. The exact native snapshot and SHA256 inventory are retained with that report. This is supplementary history; it does not establish a per-test flake rate, an SLA or release authority. Earlier failed collector runs remain failed.
