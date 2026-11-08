@@ -3234,6 +3234,36 @@
           "file": "tools/proofline/src/product-e2e-boundary.test.ts",
           "title": "Proofline product E2E boundary > canonical_test_commands_and_manifest_validate_with_the_declared_runner_egress_adapter",
           "line": 145
+        },
+        {
+          "ruleId": "OBS-001",
+          "layer": "contract",
+          "testId": "binding-obs-e85423db69b222a13a5b",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/reliability.test.ts",
+          "title": "unmapped historical canonical verification > retains a sole legacy failure beside a current pass with unknown platforms and gates and unchanged legacy-free archives",
+          "line": 1052
+        },
+        {
+          "ruleId": "OBS-001",
+          "layer": "contract",
+          "testId": "binding-obs-a45ec2cf0e983b765c14",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/reliability.test.ts",
+          "title": "unmapped historical canonical verification > preserves legacy retries duplicate identities unavailable snapshots and terminal job and step facts",
+          "line": 1176
+        },
+        {
+          "ruleId": "OBS-001",
+          "layer": "contract",
+          "testId": "binding-obs-61170cf3eda84e0b1c7f",
+          "commandKey": "unit",
+          "runner": "vitest",
+          "file": "tools/proofline/src/reliability.test.ts",
+          "title": "unmapped historical canonical verification > rejects malformed forged mixed and multiple legacy contracts while preserving source attempt name and interval guards",
+          "line": 1284
         }
       ],
       "ruleLayers": [

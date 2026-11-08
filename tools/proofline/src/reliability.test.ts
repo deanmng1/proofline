@@ -1012,3 +1012,373 @@ describe("trusted reliability workflow controls", () => {
     ).toBe(true);
   });
 });
+
+function legacyJob(runId = 101, attempt = 1, conclusion = "failure") {
+  return {
+    ...jobs(runId, attempt, conclusion)[0],
+    name: "verify",
+    workflow_name: "Verify CRM regression harness",
+    steps: [
+      {
+        name: "Lint",
+        number: 1,
+        status: "completed",
+        conclusion,
+        started_at: "2026-11-02T00:00:00Z",
+        completed_at: "2026-11-02T00:01:00Z",
+      },
+      {
+        name: "Legacy detail [untrusted](https://example.invalid)",
+        number: 2,
+        status: "completed",
+        conclusion: "success",
+        started_at: "2026-11-02T00:01:00Z",
+        completed_at: "2026-11-02T00:04:00Z",
+      },
+    ],
+  };
+}
+function legacyHistory() {
+  const value = fixture([run(101, 1, "failure")]);
+  value.runs[0].name = "Verify CRM regression harness";
+  const attempt = value.attempts["101/1"];
+  if (!attempt) throw new Error("Missing legacy fixture attempt");
+  attempt.name = "Verify CRM regression harness";
+  value.jobs["101/1"] = [legacyJob()];
+  return value;
+}
+
+describe("unmapped historical canonical verification", () => {
+  test("retains a sole legacy failure beside a current pass with unknown platforms and gates and unchanged legacy-free archives", async () => {
+    const value = legacyHistory();
+    value.runs.push(run(102));
+    value.attempts["102/1"] = run(102);
+    value.jobs["102/1"] = jobs(102);
+    const observation = await collect(value);
+    expect(observation.schemaVersion).toBe(1);
+    expect(
+      observation.attempts.map((a: { runId: string; conclusion: string }) => [
+        a.runId,
+        a.conclusion,
+      ]),
+    ).toEqual([
+      ["101", "failure"],
+      ["102", "success"],
+    ]);
+    const legacy = observation.attempts[0].jobs[0];
+    expect(legacy).toMatchObject({
+      jobId: "101010",
+      runId: "101",
+      attempt: 1,
+      name: "verify",
+      platform: null,
+      status: "completed",
+      conclusion: "failure",
+      startedAt: "2026-11-02T00:00:00Z",
+      completedAt: "2026-11-02T00:04:00Z",
+      durationMs: 240000,
+      failedSteps: ["Lint"],
+      failedGates: [],
+    });
+    expect(legacy.steps).toEqual([
+      {
+        name: "Lint",
+        number: 1,
+        status: "completed",
+        conclusion: "failure",
+        startedAt: "2026-11-02T00:00:00Z",
+        completedAt: "2026-11-02T00:01:00Z",
+        durationMs: 60000,
+      },
+      {
+        name: "Legacy detail [untrusted](https://example.invalid)",
+        number: 2,
+        status: "completed",
+        conclusion: "success",
+        startedAt: "2026-11-02T00:01:00Z",
+        completedAt: "2026-11-02T00:04:00Z",
+        durationMs: 180000,
+      },
+    ]);
+    expect(
+      legacy.gates.map((g: { key: string; status: string; conclusion: string | null }) => [
+        g.key,
+        g.status,
+        g.conclusion,
+      ]),
+    ).toEqual(gates.map(([key]) => [key, "unknown", null]));
+    expect(observation.attempts[0].unknownReasons).toEqual([
+      "unclassified-legacy-job:101010",
+      "missing-platform:linux-x64-chromium",
+      "missing-platform:darwin-arm64-chromium",
+    ]);
+    const summary = summarizeReliability(observation);
+    expect(summary.sample).toMatchObject({
+      runs: 2,
+      attempts: 2,
+      firstAttempt: { total: 2, known: 2, unknown: 0, outcomes: { failure: 1, success: 1 } },
+      retry: { total: 0, known: 0, unknown: 0, outcomes: {} },
+    });
+    expect(summary.unclassifiedLegacyJobs).toBe(1);
+    for (const platform of ["linux-x64-chromium", "darwin-arm64-chromium"]) {
+      expect(summary.platforms[platform]).toMatchObject({
+        jobs: 1,
+        missing: 1,
+        outcomes: { success: 1 },
+      });
+      for (const counts of Object.values(summary.platforms[platform].gates))
+        expect(counts).toEqual({ total: 2, known: 1, unknown: 1, outcomes: { success: 1 } });
+    }
+    const temporaryRoot = mkdtempSync(
+      path.join(realpathSync(tmpdir()), "proofline-legacy-history-"),
+    );
+    temporary.push(temporaryRoot);
+    const result = writeReliabilityObservation({
+      observation,
+      output: path.join(temporaryRoot, "legacy"),
+    });
+    expect(readFileSync(result.summaryFile, "utf8")).toContain(
+      "Unclassified legacy jobs: 1. Current platforms and gates are unknown for these jobs.",
+    );
+    expect(readFileSync(result.summaryFile, "utf8")).not.toContain("Legacy detail [untrusted]");
+    const archivedObservationBytes = readFileSync(
+      new URL(
+        "../../../docs/verification/2026-11-06-reliability/observation.json.txt",
+        import.meta.url,
+      ),
+      "utf8",
+    );
+    const archivedSummaryBytes = readFileSync(
+      new URL(
+        "../../../docs/verification/2026-11-06-reliability/summary.json.txt",
+        import.meta.url,
+      ),
+      "utf8",
+    );
+    const archivedReadableBytes = readFileSync(
+      new URL("../../../docs/verification/2026-11-06-reliability/summary.md", import.meta.url),
+      "utf8",
+    );
+    const archivedObservation = JSON.parse(archivedObservationBytes);
+    expect(summarizeReliability(archivedObservation)).toEqual(JSON.parse(archivedSummaryBytes));
+    expect(summarizeReliability(archivedObservation)).not.toHaveProperty("unclassifiedLegacyJobs");
+    const archivedResult = writeReliabilityObservation({
+      observation: archivedObservation,
+      output: path.join(temporaryRoot, "legacy-free-archive"),
+    });
+    expect(readFileSync(archivedResult.observationFile, "utf8")).toBe(archivedObservationBytes);
+    expect(
+      readFileSync(path.join(temporaryRoot, "legacy-free-archive", "summary.json"), "utf8"),
+    ).toBe(archivedSummaryBytes);
+    expect(readFileSync(archivedResult.summaryFile, "utf8")).toBe(archivedReadableBytes);
+  });
+
+  test("preserves legacy retries duplicate identities unavailable snapshots and terminal job and step facts", async () => {
+    const value = legacyHistory();
+    value.runs[0] = run(101, 2);
+    value.attempts["101/2"] = run(101, 2);
+    value.jobs["101/1"].push(clone(value.jobs["101/1"][0]));
+    value.jobs["101/2"] = [legacyJob(101, 2, "success")];
+    const observation = await collect(value);
+    expect(observation.duplicateFacts).toBe(1);
+    expect(
+      observation.attempts.map((a: { attempt: number; conclusion: string; jobs: unknown[] }) => [
+        a.attempt,
+        a.conclusion,
+        a.jobs.length,
+      ]),
+    ).toEqual([
+      [1, "failure", 1],
+      [2, "success", 1],
+    ]);
+    value.override = (route) => (route.includes("/jobs?") ? { unavailable: 404 } : undefined);
+    const unavailable = await collect(value, { observedAt: "2026-11-06T02:00:00Z" });
+    const summary = summarizeReliability([observation, clone(observation), unavailable]);
+    expect(summary.sample).toMatchObject({
+      observations: 2,
+      duplicateObservations: 1,
+      runs: 1,
+      attempts: 2,
+      firstAttempt: { total: 1, known: 1, unknown: 0, outcomes: { failure: 1 } },
+      retry: { total: 1, known: 1, unknown: 0, outcomes: { success: 1 } },
+    });
+    expect(summary.unclassifiedLegacyJobs).toBe(2);
+    expect(summary.attempts.map((a: { jobs: unknown[] }) => a.jobs)).toEqual(
+      observation.attempts.map((a: { jobs: unknown[] }) => a.jobs),
+    );
+    expect(summary.snapshots[1].attempts[0].availability).toBe("jobs-unavailable");
+    for (const counts of Object.values(summary.platforms["linux-x64-chromium"].gates))
+      expect(counts).toEqual({ total: 2, known: 0, unknown: 2, outcomes: {} });
+    const partial = legacyHistory();
+    partial.runs[0] = run(101, 1, null);
+    partial.attempts["101/1"] = run(101, 1, null);
+    partial.jobs["101/1"][0].status = "in_progress";
+    partial.jobs["101/1"][0].conclusion = null;
+    partial.jobs["101/1"][0].completed_at = null;
+    const partialObservation = await collect(partial);
+    const remappedPartial = clone(partialObservation);
+    remappedPartial.observedAt = "2026-11-06T02:00:00Z";
+    remappedPartial.window.cutoff = remappedPartial.observedAt;
+    const remappedJob = remappedPartial.attempts[0].jobs[0];
+    remappedJob.name = "verify (linux-x64-chromium)";
+    remappedJob.platform = "linux-x64-chromium";
+    remappedJob.gates[0] = { key: "lint", ...remappedJob.steps[0] };
+    remappedJob.failedGates = ["lint"];
+    remappedPartial.attempts[0].unknownReasons = [
+      ...gates
+        .filter(([key]) => key !== "lint")
+        .map(([key]) => `missing-gate:linux-x64-chromium:${key}`),
+      "missing-platform:darwin-arm64-chromium",
+      "run-not-completed",
+    ];
+    expect(() => summarizeReliability(remappedPartial)).not.toThrow();
+    expect(() => summarizeReliability([partialObservation, remappedPartial])).toThrow(
+      /conflict|regression/i,
+    );
+    for (const edit of [
+      (v: typeof observation) => {
+        v.attempts[0].jobs[0].conclusion = "success";
+      },
+      (v: typeof observation) => {
+        v.attempts[0].jobs[0].steps[0].conclusion = "success";
+        v.attempts[0].jobs[0].failedSteps = [];
+      },
+      (v: typeof observation) => {
+        v.attempts[0].jobs[0].steps.pop();
+      },
+      (v: typeof observation) => {
+        const a = v.attempts[0];
+        const j = a.jobs[0];
+        j.name = "verify (linux-x64-chromium)";
+        j.platform = "linux-x64-chromium";
+        j.gates[0] = { key: "lint", ...j.steps[0] };
+        j.failedGates = ["lint"];
+        a.unknownReasons = [
+          ...gates
+            .filter(([key]) => key !== "lint")
+            .map(([key]) => `missing-gate:linux-x64-chromium:${key}`),
+          "missing-platform:darwin-arm64-chromium",
+        ];
+      },
+      (v: typeof observation) => {
+        const a = v.attempts[0];
+        a.jobs = [];
+        a.completedAt = null;
+        a.durationMs = null;
+        a.completionBasis = "unknown";
+        a.unknownReasons = [
+          "missing-platform:linux-x64-chromium",
+          "missing-platform:darwin-arm64-chromium",
+        ];
+      },
+    ]) {
+      const changed = clone(observation);
+      changed.observedAt = "2026-11-06T03:00:00Z";
+      changed.window.cutoff = changed.observedAt;
+      edit(changed);
+      expect(() => summarizeReliability(changed)).not.toThrow();
+      expect(() => summarizeReliability([observation, changed])).toThrow(/conflict|regression/i);
+    }
+  });
+
+  test("rejects malformed forged mixed and multiple legacy contracts while preserving source attempt name and interval guards", async () => {
+    const observation = await collect(legacyHistory());
+    expect(observation.attempts[0].jobs[0].platform).toBe(null);
+    for (const edit of [
+      (v: Fixture) => {
+        v.jobs["101/1"].push(jobs()[1]);
+      },
+      (v: Fixture) => {
+        const extra = clone(v.jobs["101/1"][0]);
+        extra.id++;
+        v.jobs["101/1"].push(extra);
+      },
+      (v: Fixture) => {
+        v.jobs["101/1"][0].name = "verify (invented)";
+      },
+      (v: Fixture) => {
+        v.jobs["101/1"][0].name = "verify ";
+      },
+      (v: Fixture) => {
+        const extra = clone(v.jobs["101/1"][0]);
+        extra.conclusion = "success";
+        v.jobs["101/1"].push(extra);
+      },
+      (v: Fixture) => {
+        v.jobs["101/1"][0].id = 0;
+      },
+      (v: Fixture) => {
+        v.jobs["101/1"][0].run_id = 102;
+      },
+      (v: Fixture) => {
+        v.jobs["101/1"][0].run_attempt = 2;
+      },
+      (v: Fixture) => {
+        v.jobs["101/1"][0].head_sha = "b".repeat(40);
+      },
+      (v: Fixture) => {
+        v.jobs["101/1"][0].started_at = "2026-11-01T23:59:59Z";
+      },
+      (v: Fixture) => {
+        v.jobs["101/1"][0].steps[0].completed_at = "2026-11-02T00:04:01Z";
+      },
+      (v: Fixture) => {
+        v.jobs["101/1"][0].conclusion = null;
+      },
+      (v: Fixture) => {
+        v.jobs["101/1"][0].steps.push(clone(v.jobs["101/1"][0].steps[0]));
+      },
+      (v: Fixture) => {
+        v.runs[0].workflow_id = 18;
+      },
+      (v: Fixture) => {
+        v.runs[0].repository = { ...repo, full_name: "wrong/proofline" };
+      },
+      (v: Fixture) => {
+        const attempt = v.attempts["101/1"];
+        if (attempt) attempt.head_sha = "c".repeat(40);
+      },
+    ]) {
+      const malformed = legacyHistory();
+      edit(malformed);
+      await expect(collect(malformed)).rejects.toThrow();
+    }
+    const current = await collect();
+    for (const edit of [
+      (v: typeof observation) => {
+        v.attempts[0].jobs[0].platform = "linux-x64-chromium";
+      },
+      (v: typeof observation) => {
+        v.attempts[0].jobs[0].gates[0] = clone(current.attempts[0].jobs[0].gates[0]);
+      },
+      (v: typeof observation) => {
+        v.attempts[0].unknownReasons = [
+          "missing-platform:linux-x64-chromium",
+          "missing-platform:darwin-arm64-chromium",
+        ];
+      },
+      (v: typeof observation) => {
+        v.attempts[0].jobs.push(clone(current.attempts[0].jobs[1]));
+      },
+      (v: typeof observation) => {
+        v.attempts[0].jobs[0].name = "verify (invented)";
+      },
+      (v: typeof observation) => {
+        v.attempts[0].jobs[0].runId = "102";
+      },
+      (v: typeof observation) => {
+        v.attempts[0].jobs[0].attempt = 2;
+      },
+      (v: typeof observation) => {
+        v.attempts[0].sourceCommit = "b".repeat(40);
+      },
+      (v: typeof observation) => {
+        v.attempts[0].jobs[0].steps[0].startedAt = "2026-11-01T23:59:59Z";
+      },
+    ]) {
+      const forged = clone(observation);
+      edit(forged);
+      expect(() => summarizeReliability(forged)).toThrow();
+    }
+  });
+});

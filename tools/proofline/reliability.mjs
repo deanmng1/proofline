@@ -219,6 +219,7 @@ function withinParentInterval(value, lower, upper, label) {
 }
 function normalizeJobs(values, run, cutoff, counter) {
   const jobs = deduplicate(values, (job) => job.id, "job", counter);
+  const legacy = jobs.length === 1 && jobs[0].name === "verify";
   const platforms = new Set();
   const runStart = Math.max(
     timestamp(run.created_at),
@@ -226,13 +227,13 @@ function normalizeJobs(values, run, cutoff, counter) {
   );
   return jobs
     .map((job) => {
-      const platform = PLATFORMS.find((p) => job.name === `verify (${p})`);
+      const platform = legacy ? null : PLATFORMS.find((p) => job.name === `verify (${p})`);
       check(
         integer(job.id) &&
           job.run_id === run.id &&
           job.run_attempt === run.run_attempt &&
           job.head_sha === run.head_sha &&
-          platform &&
+          (legacy || platform) &&
           !platforms.has(platform),
         "job identity or platform mismatch",
       );
@@ -268,7 +269,7 @@ function normalizeJobs(values, run, cutoff, counter) {
         return stepState;
       });
       const gateValues = Object.entries(GATES).map(([key, name]) => {
-        const step = normalized.find((s) => s.name === name);
+        const step = legacy ? undefined : normalized.find((s) => s.name === name);
         return step
           ? { key, ...step }
           : {
@@ -307,6 +308,8 @@ function normalizeJobs(values, run, cutoff, counter) {
 }
 function normalizeAttempt(run, jobs, availability, reason = null) {
   const unknownReasons = reason ? [reason] : [];
+  for (const job of jobs)
+    if (job.platform === null) unknownReasons.push(`unclassified-legacy-job:${job.jobId}`);
   for (const platform of PLATFORMS) {
     const job = jobs.find((j) => j.platform === platform);
     if (!job) unknownReasons.push(`missing-platform:${platform}`);
@@ -514,12 +517,15 @@ function terminalFacts(attempt) {
   if (attempt.status === "completed") facts.push(["run", attempt.conclusion]);
   for (const job of attempt.jobs) {
     if (job.status === "completed")
-      facts.push([`job:${job.jobId}`, [job.conclusion, job.startedAt, job.completedAt]]);
+      facts.push([
+        `job:${job.jobId}`,
+        [job.conclusion, job.startedAt, job.completedAt, job.name, job.platform],
+      ]);
     for (const step of job.steps)
       if (step.status === "completed")
         facts.push([
           `job:${job.jobId}:step:${step.number}:${step.name}`,
-          [step.conclusion, step.startedAt, step.completedAt],
+          [step.conclusion, step.startedAt, step.completedAt, job.name, job.platform],
         ]);
   }
   return facts;
@@ -814,6 +820,14 @@ export function summarizeReliability(input) {
       retry,
     },
     platforms,
+    ...(attempts.some((attempt) => attempt.jobs.some((job) => job.platform === null))
+      ? {
+          unclassifiedLegacyJobs: attempts.reduce(
+            (count, attempt) => count + attempt.jobs.filter((job) => job.platform === null).length,
+            0,
+          ),
+        }
+      : {}),
     attempts,
     snapshots: observations.map((o) => ({
       observedAt: o.observedAt,
@@ -862,6 +876,11 @@ function readableSummary(summary) {
       lines.push(
         `| ${platform} / ${gate} | ${counts.known} | ${counts.unknown} | ${JSON.stringify(counts.outcomes)} |`,
       );
+  if (summary.unclassifiedLegacyJobs)
+    lines.push(
+      "",
+      `Unclassified legacy jobs: ${summary.unclassifiedLegacyJobs}. Current platforms and gates are unknown for these jobs.`,
+    );
   lines.push("", ...summary.limitations.map((value) => `- ${value}`), "");
   return lines.join("\n");
 }
