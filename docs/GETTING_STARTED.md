@@ -76,6 +76,8 @@ The selected pass is diagnostic; full unit/browser, coverage, record and product
 
 ## Adapt an existing application
 
+Run these commands from your trusted Proofline source checkout. Return there first if you followed the starter instructions into its target directory.
+
 Use `--mode core` to plan and explicitly apply only reusable tooling into an existing repository. Existing application, package/config files, manifests, Git history and evidence are preserved. Any existing core-path collision, even identical bytes without a trusted prior receipt, aborts before installation.
 
 ```sh

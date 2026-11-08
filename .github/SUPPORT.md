@@ -12,7 +12,7 @@ The selected runtime is Node 24.22.1, pnpm 11.24.0 and Git 2.48+. Node support i
 
 The maintainer is [@deanmng1](https://github.com/deanmng1). Support for this preview is best-effort, with no response or maintenance SLA. File ordinary reproducible issues through [deanmng1/proofline Issues](https://github.com/deanmng1/proofline/issues) with the source commit, OS/architecture, `node --version`, `pnpm --version`, `git --version`, browser installation/cache setting, exact command, expected/actual behavior and a sanitized invocation ID/log excerpt. Do not post credentials, one-time launch URLs, real customer data or private artifacts. Follow the [security policy](SECURITY.md) for potential boundary bypasses.
 
-At readiness reconnaissance, main had no branch protection and GitHub private vulnerability reporting was disabled. These observations do not enable remote controls; repository settings may change independently of this source. CODEOWNERS requests review where GitHub applies it, but does not enforce protected-branch approval.
+The [November6 actual read-back](../docs/verification/2026-11-06-repository-safeguards.md) confirms main-only PR/check safeguards without bypass and enabled private vulnerability reporting. Both complete platform checks are required from GitHub Actions. The sole-maintainer minimum requires zero human approvals; CODEOWNERS and agent review do not establish mandatory human approval. Repository settings can change independently of this source, so later enforcement needs its own read-back.
 
 ## Upgrade and release verification
 

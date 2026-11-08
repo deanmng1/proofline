@@ -43,6 +43,8 @@ gh api 'repos/deanmng1/proofline/rulesets/42?includes_parents=true'
 
 Replace `42` with that exact numeric ID. Read repository ruleset details with administrator access so `bypass_actors` is visible. The effective-branch-rules endpoint returns active applicable rules, including inherited rules, and excludes evaluate/disabled rules. Do not substitute the general ruleset inventory for this response. Save every page and verify the terminal page has no next link before marking `complete: true`. Flatten the page arrays without dropping entries. Authentication errors, missing pages, unavailable rule details or hidden bypasses are unknown enforcement and fail the audit. These endpoints and their native shapes are documented in [GitHub's branch-protection API](https://docs.github.com/en/rest/branches/branch-protection) and [rules API](https://docs.github.com/en/rest/repos/rules).
 
+Use a canonical UTC value for observedAt: whole seconds or exactly three millisecond digits, ending in Z (for example, 2026-11-06T18:00:00Z or 2026-11-06T18:00:00.123Z). JavaScript new Date().toISOString() produces the accepted millisecond form. The audit requires this exact timestamp format.
+
 Wrap those native bodies in the following schema. `path` is the exact API resource identity shown here, without the host; the effective rules body is the complete flattened array. The wrapper path omits pagination parameters. Record the actual HTTP status. A genuine absent traditional protection has status `404` and body `null`; other endpoints require `200`. Every envelope must have exactly `path`, `status`, `body`, plus `complete` for effective rules. Unknown wrapper/policy fields fail closed; native API bodies may contain additive metadata such as URLs.
 
 ```json
