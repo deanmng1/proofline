@@ -7,7 +7,7 @@ A portable regression-testing harness for React/Vite applications. Proofline run
 
 **Distribution:** public GitHub source preview `0.9.0-preview.2`, manifest schema 1. The historical dashboard `v0.8.0` tag predates Proofline. Use the source commit shown by `git rev-parse HEAD`; do not treat that old tag as a harness release. See [project status](docs/PROJECT_STATUS.md) and [preview support](.github/SUPPORT.md).
 
-Verified source `775c6208` passes both full Linux/macOS main cells and the [actual API/native/release-artifact audit](docs/verification/2026-11-05-hosted-main-verification.md). The [independent reassessment](docs/reviews/2026-11-05-production-readiness.md) rates the scoped preview **8.6/10**. Package publication and live staging remain pending.
+Verified executable source `a4a6558` passes both full Linux/macOS main cells and the [actual API/native/release-artifact audit](docs/verification/2026-11-08-hosted-adopter-confidence.md). The [independent reassessment](docs/reviews/2026-11-08-adopter-confidence.md) rates the scoped preview **8.9/10**, up from8.6. Package publication and live staging remain pending.
 
 The [Roomboard agent-adoption trial](docs/pilots/roomboard-adoption.md) retains a third app’s own-history source bundle, reported onboarding gaps and the reviewed final-core upgrade. Its baseline is separate from the insurance CRM and work-orders reference.
 
@@ -19,6 +19,9 @@ The [Roomboard agent-adoption trial](docs/pilots/roomboard-adoption.md) retains 
 - Separate invocation logs, native reports, traces, screenshots and video, including failed runs.
 - Deny-by-default test egress, isolated scenarios, and production builds audited to exclude test adapters.
 - Per-file coverage ratchets, append-only execution history and source-bound verified release artifacts.
+- Source-pinned onboarding plans, explicit installs/upgrades and verified core receipts.
+- A read-only repository safeguards audit against the actual required Actions checks.
+- Immutable supplementary verification history that retains failures, retries and unknowns.
 
 The insurance CRM is a reference implementation. The unrelated [work-orders example](examples/work-orders/README.md) demonstrates adaptation; its pages and rules are independent. Normal CI execution never calls an agent or model. Adaptation is checked-in source/configuration, not an npm package or hosted service.
 

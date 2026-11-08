@@ -1,0 +1,413 @@
+{
+  "schemaVersion": 1,
+  "repository": "deanmng1/proofline",
+  "ref": "refs/heads/main",
+  "observedAt": "2026-11-08T21:26:26.998Z",
+  "repositoryResponse": {
+    "path": "/repos/deanmng1/proofline",
+    "status": 200,
+    "body": {
+      "id": 1437545114,
+      "node_id": "R_kgDOVa8ymg",
+      "name": "proofline",
+      "full_name": "deanmng1/proofline",
+      "private": false,
+      "owner": {
+        "login": "deanmng1",
+        "id": 210741321,
+        "node_id": "U_kgDODI-oSQ",
+        "avatar_url": "https://avatars.githubusercontent.com/u/210741321?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/deanmng1",
+        "html_url": "https://github.com/deanmng1",
+        "followers_url": "https://api.github.com/users/deanmng1/followers",
+        "following_url": "https://api.github.com/users/deanmng1/following{/other_user}",
+        "gists_url": "https://api.github.com/users/deanmng1/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/deanmng1/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/deanmng1/subscriptions",
+        "organizations_url": "https://api.github.com/users/deanmng1/orgs",
+        "repos_url": "https://api.github.com/users/deanmng1/repos",
+        "events_url": "https://api.github.com/users/deanmng1/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/deanmng1/received_events",
+        "type": "User",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "html_url": "https://github.com/deanmng1/proofline",
+      "description": "A deterministic, agent-authored regression harness for React/Vite apps\u2014Vitest service and UI tests, Playwright end-to-end journeys, coverage ratchets, change-aware test selection, and portable execution evidence.",
+      "fork": false,
+      "url": "https://api.github.com/repos/deanmng1/proofline",
+      "forks_url": "https://api.github.com/repos/deanmng1/proofline/forks",
+      "keys_url": "https://api.github.com/repos/deanmng1/proofline/keys{/key_id}",
+      "collaborators_url": "https://api.github.com/repos/deanmng1/proofline/collaborators{/collaborator}",
+      "teams_url": "https://api.github.com/repos/deanmng1/proofline/teams",
+      "hooks_url": "https://api.github.com/repos/deanmng1/proofline/hooks",
+      "issue_events_url": "https://api.github.com/repos/deanmng1/proofline/issues/events{/number}",
+      "events_url": "https://api.github.com/repos/deanmng1/proofline/events",
+      "assignees_url": "https://api.github.com/repos/deanmng1/proofline/assignees{/user}",
+      "branches_url": "https://api.github.com/repos/deanmng1/proofline/branches{/branch}",
+      "tags_url": "https://api.github.com/repos/deanmng1/proofline/tags",
+      "blobs_url": "https://api.github.com/repos/deanmng1/proofline/git/blobs{/sha}",
+      "git_tags_url": "https://api.github.com/repos/deanmng1/proofline/git/tags{/sha}",
+      "git_refs_url": "https://api.github.com/repos/deanmng1/proofline/git/refs{/sha}",
+      "trees_url": "https://api.github.com/repos/deanmng1/proofline/git/trees{/sha}",
+      "statuses_url": "https://api.github.com/repos/deanmng1/proofline/statuses/{sha}",
+      "languages_url": "https://api.github.com/repos/deanmng1/proofline/languages",
+      "stargazers_url": "https://api.github.com/repos/deanmng1/proofline/stargazers",
+      "contributors_url": "https://api.github.com/repos/deanmng1/proofline/contributors",
+      "subscribers_url": "https://api.github.com/repos/deanmng1/proofline/subscribers",
+      "subscription_url": "https://api.github.com/repos/deanmng1/proofline/subscription",
+      "commits_url": "https://api.github.com/repos/deanmng1/proofline/commits{/sha}",
+      "git_commits_url": "https://api.github.com/repos/deanmng1/proofline/git/commits{/sha}",
+      "comments_url": "https://api.github.com/repos/deanmng1/proofline/comments{/number}",
+      "issue_comment_url": "https://api.github.com/repos/deanmng1/proofline/issues/comments{/number}",
+      "contents_url": "https://api.github.com/repos/deanmng1/proofline/contents/{+path}",
+      "compare_url": "https://api.github.com/repos/deanmng1/proofline/compare/{base}...{head}",
+      "merges_url": "https://api.github.com/repos/deanmng1/proofline/merges",
+      "archive_url": "https://api.github.com/repos/deanmng1/proofline/{archive_format}{/ref}",
+      "downloads_url": "https://api.github.com/repos/deanmng1/proofline/downloads",
+      "issues_url": "https://api.github.com/repos/deanmng1/proofline/issues{/number}",
+      "pulls_url": "https://api.github.com/repos/deanmng1/proofline/pulls{/number}",
+      "milestones_url": "https://api.github.com/repos/deanmng1/proofline/milestones{/number}",
+      "notifications_url": "https://api.github.com/repos/deanmng1/proofline/notifications{?since,all,participating}",
+      "labels_url": "https://api.github.com/repos/deanmng1/proofline/labels{/name}",
+      "releases_url": "https://api.github.com/repos/deanmng1/proofline/releases{/id}",
+      "deployments_url": "https://api.github.com/repos/deanmng1/proofline/deployments",
+      "created_at": "2026-10-28T19:33:40Z",
+      "updated_at": "2026-11-08T21:06:35Z",
+      "pushed_at": "2026-11-08T21:06:30Z",
+      "git_url": "git://github.com/deanmng1/proofline.git",
+      "ssh_url": "git@github.com:deanmng1/proofline.git",
+      "clone_url": "https://github.com/deanmng1/proofline.git",
+      "svn_url": "https://github.com/deanmng1/proofline",
+      "homepage": null,
+      "size": 12830,
+      "stargazers_count": 0,
+      "watchers_count": 0,
+      "language": "TypeScript",
+      "has_issues": true,
+      "has_projects": true,
+      "has_downloads": false,
+      "has_wiki": true,
+      "has_pages": false,
+      "has_discussions": false,
+      "forks_count": 0,
+      "mirror_url": null,
+      "archived": false,
+      "disabled": false,
+      "open_issues_count": 1,
+      "license": {
+        "key": "mit",
+        "name": "MIT License",
+        "spdx_id": "MIT",
+        "url": "https://api.github.com/licenses/mit",
+        "node_id": "MDc6TGljZW5zZTEz"
+      },
+      "allow_forking": true,
+      "is_template": false,
+      "web_commit_signoff_required": false,
+      "has_pull_requests": true,
+      "pull_request_creation_policy": "all",
+      "topics": [],
+      "visibility": "public",
+      "forks": 0,
+      "open_issues": 1,
+      "watchers": 0,
+      "default_branch": "main",
+      "permissions": {
+        "admin": true,
+        "maintain": true,
+        "push": true,
+        "triage": true,
+        "pull": true
+      },
+      "temp_clone_token": "",
+      "allow_squash_merge": true,
+      "allow_merge_commit": true,
+      "allow_rebase_merge": true,
+      "allow_auto_merge": false,
+      "delete_branch_on_merge": false,
+      "allow_update_branch": false,
+      "use_squash_pr_title_as_default": false,
+      "squash_merge_commit_message": "COMMIT_MESSAGES",
+      "squash_merge_commit_title": "COMMIT_OR_PR_TITLE",
+      "merge_commit_message": "PR_TITLE",
+      "merge_commit_title": "MERGE_MESSAGE",
+      "security_and_analysis": {
+        "secret_scanning": {
+          "status": "enabled"
+        },
+        "secret_scanning_push_protection": {
+          "status": "enabled"
+        },
+        "dependabot_security_updates": {
+          "status": "disabled"
+        },
+        "secret_scanning_non_provider_patterns": {
+          "status": "disabled"
+        },
+        "secret_scanning_validity_checks": {
+          "status": "disabled"
+        }
+      },
+      "network_count": 0,
+      "subscribers_count": 0
+    }
+  },
+  "branch": {
+    "path": "/repos/deanmng1/proofline/branches/main",
+    "status": 200,
+    "body": {
+      "name": "main",
+      "commit": {
+        "sha": "a4a6558344fae88c7398634ad6e5fbd3cac2dda1",
+        "node_id": "C_kwDOVa8ymtoAKGE0YTY1NTgzNDRmYWU4OGM3Mzk4NjM0YWQ2ZTVmYmQzY2FjMmRkYTE",
+        "commit": {
+          "author": {
+            "name": "deanmng1",
+            "email": "deanmng1@gmail.com",
+            "date": "2026-11-08T21:06:29Z"
+          },
+          "committer": {
+            "name": "GitHub",
+            "email": "noreply@github.com",
+            "date": "2026-11-08T21:06:29Z"
+          },
+          "message": "Preserve reviewed historical verification failures\n\nPreserve historical failures in reliability tracking",
+          "tree": {
+            "sha": "58461fe9c7592393afc758ae21fad705c1c2c19f",
+            "url": "https://api.github.com/repos/deanmng1/proofline/git/trees/58461fe9c7592393afc758ae21fad705c1c2c19f"
+          },
+          "url": "https://api.github.com/repos/deanmng1/proofline/git/commits/a4a6558344fae88c7398634ad6e5fbd3cac2dda1",
+          "comment_count": 0,
+          "verification": {
+            "verified": true,
+            "reason": "valid",
+            "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJq8ORVCRC1aQ7uu5UhlAAAs28QAGzKOj5eXY9wMqPMTrduqMsm\nEBWBpQmgGQEf3bewNsm6G6Ta1OerfrTrNYYfRnlTxQsLC9qlUZUFuvh3D3kkkdQD\nxWPXBzVvxiPyL5j91OI5LcKz79ntnPvHCKlr6TibhaFOcFwvExb/+62d7KF216Vl\nr78xlmOp/EoSUgeVUGZ26NpssOF3uCZbcUTEvn3a8rMeyUi8n9ZK46u9biACm6GH\nbRo+MtudjJZYp2XNF2pwX9n+SkNLQStfpd7ijfT5lDadlZn0sRN95iKoRLrzA8dH\n3Y+Npp6+wmiQ3eNjAnKWYl7BxnM41KHzoqJcAydDoWmqZC0pU+7Xk7P3r7G0JuXa\nifFuHr/wkZNz5rfL7bClwZTiSENoEbHUC3QxdOQ/9V43g440/Vlibu9HYUW2bqFx\nK6ttRKwpqjA5O2/E7amSx3uGTHlaOTxOUF87CXXF/sgFHrqtSofc1zrkz4Lmpolf\nGPegNHOT9/EKz/GUMhekhIkO0SHA9yvi5qUiJmVOrRLgHELbUyh2gP8EDZAXpcT7\nilDxHOJdrzCYk4Ad8yTE074tf2n9clnIXGcq4UTnSN94aejPOwBwV3v0T7Ngn8sH\naDWLsso408BrdvmUN83HzRDLCQCVSxVOy2UAhjApeks6f8I2sB2UM4HFz+diiQG4\nGRvESOqbpLZsdtIAE4HZ\n=nU35\n-----END PGP SIGNATURE-----\n",
+            "payload": "tree 58461fe9c7592393afc758ae21fad705c1c2c19f\nparent df13196dcdc50ef5e59163a0273996ff0fe9573d\nparent 30c0c1e2bf88ddecb3fef3a92ebe0eaf32d6e11e\nauthor deanmng1 <deanmng1@gmail.com> 1794171989 -0600\ncommitter GitHub <noreply@github.com> 1794171989 -0600\n\nPreserve reviewed historical verification failures\n\nPreserve historical failures in reliability tracking",
+            "verified_at": "2026-11-08T21:06:30Z"
+          }
+        },
+        "url": "https://api.github.com/repos/deanmng1/proofline/commits/a4a6558344fae88c7398634ad6e5fbd3cac2dda1",
+        "html_url": "https://github.com/deanmng1/proofline/commit/a4a6558344fae88c7398634ad6e5fbd3cac2dda1",
+        "comments_url": "https://api.github.com/repos/deanmng1/proofline/commits/a4a6558344fae88c7398634ad6e5fbd3cac2dda1/comments",
+        "author": {
+          "login": "deanmng1",
+          "id": 210741321,
+          "node_id": "U_kgDODI-oSQ",
+          "avatar_url": "https://avatars.githubusercontent.com/u/210741321?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/deanmng1",
+          "html_url": "https://github.com/deanmng1",
+          "followers_url": "https://api.github.com/users/deanmng1/followers",
+          "following_url": "https://api.github.com/users/deanmng1/following{/other_user}",
+          "gists_url": "https://api.github.com/users/deanmng1/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/deanmng1/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/deanmng1/subscriptions",
+          "organizations_url": "https://api.github.com/users/deanmng1/orgs",
+          "repos_url": "https://api.github.com/users/deanmng1/repos",
+          "events_url": "https://api.github.com/users/deanmng1/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/deanmng1/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "committer": {
+          "login": "web-flow",
+          "id": 19864447,
+          "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
+          "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/web-flow",
+          "html_url": "https://github.com/web-flow",
+          "followers_url": "https://api.github.com/users/web-flow/followers",
+          "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+          "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+          "organizations_url": "https://api.github.com/users/web-flow/orgs",
+          "repos_url": "https://api.github.com/users/web-flow/repos",
+          "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/web-flow/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "parents": [
+          {
+            "sha": "df13196dcdc50ef5e59163a0273996ff0fe9573d",
+            "url": "https://api.github.com/repos/deanmng1/proofline/commits/df13196dcdc50ef5e59163a0273996ff0fe9573d",
+            "html_url": "https://github.com/deanmng1/proofline/commit/df13196dcdc50ef5e59163a0273996ff0fe9573d"
+          },
+          {
+            "sha": "30c0c1e2bf88ddecb3fef3a92ebe0eaf32d6e11e",
+            "url": "https://api.github.com/repos/deanmng1/proofline/commits/30c0c1e2bf88ddecb3fef3a92ebe0eaf32d6e11e",
+            "html_url": "https://github.com/deanmng1/proofline/commit/30c0c1e2bf88ddecb3fef3a92ebe0eaf32d6e11e"
+          }
+        ]
+      },
+      "_links": {
+        "self": "https://api.github.com/repos/deanmng1/proofline/branches/main",
+        "html": "https://github.com/deanmng1/proofline/tree/main"
+      },
+      "protected": true,
+      "protection": {
+        "enabled": false,
+        "required_status_checks": {
+          "enforcement_level": "off",
+          "contexts": [],
+          "checks": []
+        }
+      },
+      "protection_url": "https://api.github.com/repos/deanmng1/proofline/branches/main/protection"
+    }
+  },
+  "protection": {
+    "path": "/repos/deanmng1/proofline/branches/main/protection",
+    "status": 404,
+    "body": null
+  },
+  "effectiveRules": {
+    "path": "/repos/deanmng1/proofline/rules/branches/main",
+    "status": 200,
+    "complete": true,
+    "body": [
+      {
+        "type": "deletion",
+        "ruleset_source_type": "Repository",
+        "ruleset_source": "deanmng1/proofline",
+        "ruleset_id": 26720099
+      },
+      {
+        "type": "non_fast_forward",
+        "ruleset_source_type": "Repository",
+        "ruleset_source": "deanmng1/proofline",
+        "ruleset_id": 26720099
+      },
+      {
+        "type": "pull_request",
+        "parameters": {
+          "required_approving_review_count": 0,
+          "dismiss_stale_reviews_on_push": false,
+          "required_reviewers": [],
+          "require_code_owner_review": false,
+          "require_last_push_approval": false,
+          "required_review_thread_resolution": true,
+          "require_extra_approval_for_unattributed_changes": true,
+          "allowed_merge_methods": [
+            "merge",
+            "squash",
+            "rebase"
+          ]
+        },
+        "ruleset_source_type": "Repository",
+        "ruleset_source": "deanmng1/proofline",
+        "ruleset_id": 26720099
+      },
+      {
+        "type": "required_status_checks",
+        "parameters": {
+          "strict_required_status_checks_policy": true,
+          "do_not_enforce_on_create": false,
+          "required_status_checks": [
+            {
+              "context": "verify (linux-x64-chromium)",
+              "integration_id": 15368
+            },
+            {
+              "context": "verify (darwin-arm64-chromium)",
+              "integration_id": 15368
+            }
+          ]
+        },
+        "ruleset_source_type": "Repository",
+        "ruleset_source": "deanmng1/proofline",
+        "ruleset_id": 26720099
+      }
+    ]
+  },
+  "rulesets": [
+    {
+      "path": "/repos/deanmng1/proofline/rulesets/26720099?includes_parents=true",
+      "status": 200,
+      "body": {
+        "id": 26720099,
+        "name": "Proofline main minimum safeguards",
+        "target": "branch",
+        "source_type": "Repository",
+        "source": "deanmng1/proofline",
+        "enforcement": "active",
+        "conditions": {
+          "ref_name": {
+            "exclude": [],
+            "include": [
+              "refs/heads/main"
+            ]
+          }
+        },
+        "rules": [
+          {
+            "type": "deletion"
+          },
+          {
+            "type": "non_fast_forward"
+          },
+          {
+            "type": "pull_request",
+            "parameters": {
+              "required_approving_review_count": 0,
+              "dismiss_stale_reviews_on_push": false,
+              "required_reviewers": [],
+              "require_code_owner_review": false,
+              "require_last_push_approval": false,
+              "required_review_thread_resolution": true,
+              "require_extra_approval_for_unattributed_changes": true,
+              "allowed_merge_methods": [
+                "merge",
+                "squash",
+                "rebase"
+              ]
+            }
+          },
+          {
+            "type": "required_status_checks",
+            "parameters": {
+              "strict_required_status_checks_policy": true,
+              "do_not_enforce_on_create": false,
+              "required_status_checks": [
+                {
+                  "context": "verify (linux-x64-chromium)",
+                  "integration_id": 15368
+                },
+                {
+                  "context": "verify (darwin-arm64-chromium)",
+                  "integration_id": 15368
+                }
+              ]
+            }
+          }
+        ],
+        "node_id": "RRS_lACqUmVwb3NpdG9yec5VrzKazgGXt2M",
+        "created_at": "2026-11-06T13:20:34.374-06:00",
+        "updated_at": "2026-11-06T13:20:34.516-06:00",
+        "bypass_actors": [],
+        "current_user_can_bypass": "never",
+        "_links": {
+          "self": {
+            "href": "https://api.github.com/repos/deanmng1/proofline/rulesets/26720099"
+          },
+          "html": {
+            "href": "https://github.com/deanmng1/proofline/rules/26720099"
+          }
+        }
+      }
+    }
+  ],
+  "privateReporting": {
+    "path": "/repos/deanmng1/proofline/private-vulnerability-reporting",
+    "status": 200,
+    "body": {
+      "enabled": true
+    }
+  }
+}

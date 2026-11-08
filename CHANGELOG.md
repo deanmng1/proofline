@@ -1,5 +1,12 @@
 # Proofline source history
 
+## 0.9.0-preview.2 — Source-only confidence update (2026-11-08)
+
+- Adds source-pinned starter/core/upgrade planning with explicit application and verified hash receipts.
+- Adds read-only safeguards auditing; actual main rules enforce both required Actions checks, PR/up-to-date/conversation rules, and no bypass/force/delete. Private reporting is enabled; zero required human approvals remains a sole-maintainer limitation.
+- Adds immutable supplementary verification history and trusted-default-branch automatic collection. Exact sole legacy `verify` jobs retain original failures with unknown current platforms/gates.
+- Records fresh CRM/work-orders/starter verification, unchanged coverage floors and source-bound main release-artifact checks. See [current status](docs/PROJECT_STATUS.md); packaged publication and live staging remain pending.
+
 ## 0.9.0-preview.1 — Unpublished source preview (2026-11-05)
 
 - Introduces the Proofline identity for the portable React/Vite regression harness, manifest schema 1, guarded native-outcome verification, preserved invocation evidence, coverage/record governance and verified prebuilt release tooling.
