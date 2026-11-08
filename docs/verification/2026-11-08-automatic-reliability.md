@@ -2,7 +2,7 @@
 
 Collector source: **`a4a6558344fae88c7398634ad6e5fbd3cac2dda1` (N)**. Actual automatic collector [42525501938](https://github.com/deanmng1/proofline/actions/runs/42525501938), attempt1, completes successfully on `workflow_run`. Its sole `collect` job is128868123381. Canonical main run [42523510015](https://github.com/deanmng1/proofline/actions/runs/42523510015) appears in the collected sample at exact N with its original successful first-attempt outcome.
 
-This is supplementary aggregate GitHub history, not native test/release authority. The retained offline audit passes. Independent API, archive/log and content review separately accepts this automatic observation; final whole-project rating is separate. No new project rating is assigned here.
+This is supplementary aggregate GitHub history, not native test/release authority. The retained offline audit passes. Independent API, archive/log and content review separately accepts this automatic observation; final whole-project rating is separate. The separate [independent reassessment](../reviews/2026-11-08-adopter-confidence.md) rates the scoped preview8.9/10; this observation remains supplementary.
 
 ## Actual source, acquisition and immutable artifact
 

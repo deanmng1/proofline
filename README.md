@@ -7,7 +7,7 @@ A portable regression-testing harness for React/Vite applications. Proofline run
 
 **Distribution:** public GitHub source preview `0.9.0-preview.2`, manifest schema 1. The historical dashboard `v0.8.0` tag predates Proofline. Use the source commit shown by `git rev-parse HEAD`; do not treat that old tag as a harness release. See [project status](docs/PROJECT_STATUS.md) and [preview support](.github/SUPPORT.md).
 
-Verified executable source `a4a6558` passes both full Linux/macOS main cells and the [actual API/native/release-artifact audit](docs/verification/2026-11-08-hosted-adopter-confidence.md). The adopter-confidence increment is at final independent review; the previous8.6 rating is historical. Package publication and live staging remain pending.
+Verified executable source `a4a6558` passes both full Linux/macOS main cells and the [actual API/native/release-artifact audit](docs/verification/2026-11-08-hosted-adopter-confidence.md). The [independent reassessment](docs/reviews/2026-11-08-adopter-confidence.md) rates the scoped preview **8.9/10**, up from8.6. Package publication and live staging remain pending.
 
 The [Roomboard agent-adoption trial](docs/pilots/roomboard-adoption.md) retains a third app’s own-history source bundle, reported onboarding gaps and the reviewed final-core upgrade. Its baseline is separate from the insurance CRM and work-orders reference.
 
