@@ -1,0 +1,102 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "repository": "deanmng1/proofline",
+  "ref": "refs/heads/main",
+  "observedAt": "2026-11-06T19:57:54.542Z",
+  "provenance": "offline-observation-unverified",
+  "mismatches": [],
+  "warnings": [],
+  "effective": {
+    "pullRequests": true,
+    "minimumApprovals": 0,
+    "upToDate": true,
+    "conversationsResolved": true,
+    "blockDeletion": true,
+    "blockForcePush": true,
+    "noBypass": true,
+    "checks": [
+      {
+        "context": "verify (linux-x64-chromium)",
+        "appId": 15368
+      },
+      {
+        "context": "verify (darwin-arm64-chromium)",
+        "appId": 15368
+      }
+    ]
+  },
+  "limitations": [
+    "Single maintainer: zero mandatory human approvals is the initial policy minimum; human approval is not enforced by that minimum. Existing positive approval counts remain effective and must not be reduced. Independent agent review is still required.",
+    "This audit observes supplied settings at a time. Offline input cannot authenticate GitHub provenance, freshness, pagination claims or future enforcement. Safe-denial proof is a separate administrator operation and is not established by this report."
+  ],
+  "remediation": {
+    "branchProtection": null,
+    "automaticMutation": false,
+    "strategy": "Add a separately reviewed no-bypass main ruleset; preserve all existing protections, checks and positive approval counts.",
+    "ruleset": {
+      "method": "POST",
+      "path": "/repos/deanmng1/proofline/rulesets",
+      "body": {
+        "name": "Proofline main minimum safeguards",
+        "target": "branch",
+        "enforcement": "active",
+        "bypass_actors": [],
+        "conditions": {
+          "ref_name": {
+            "include": [
+              "refs/heads/main"
+            ],
+            "exclude": []
+          }
+        },
+        "rules": [
+          {
+            "type": "deletion"
+          },
+          {
+            "type": "non_fast_forward"
+          },
+          {
+            "type": "pull_request",
+            "parameters": {
+              "dismiss_stale_reviews_on_push": false,
+              "require_code_owner_review": false,
+              "require_last_push_approval": false,
+              "required_approving_review_count": 0,
+              "required_review_thread_resolution": true
+            }
+          },
+          {
+            "type": "required_status_checks",
+            "parameters": {
+              "strict_required_status_checks_policy": true,
+              "do_not_enforce_on_create": false,
+              "required_status_checks": [
+                {
+                  "context": "verify (linux-x64-chromium)",
+                  "integration_id": 15368
+                },
+                {
+                  "context": "verify (darwin-arm64-chromium)",
+                  "integration_id": 15368
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "privateReporting": {
+      "method": "PUT",
+      "path": "/repos/deanmng1/proofline/private-vulnerability-reporting"
+    },
+    "recovery": [
+      "Before any separate administrator operation, save timestamped prior GET responses and current source identity, verify administrator recovery access, and review the exact additive payload.",
+      "Retain the saved responses and newly created ruleset ID. If activation blocks authorized work, report the conflict; do not bypass or lower stronger settings.",
+      "A separately authorized recovery may DELETE only the newly created ruleset by its saved ID after comparison with saved/current state; never replace existing stronger rules from a stale snapshot.",
+      "For initial branch protection, recovery requires separate authorization, saved genuinely absent prestate, and a fresh full definition matching the installed snapshot with no intervening stronger settings; only then consider DELETE /repos/deanmng1/proofline/branches/main/protection.",
+      "Private reporting should remain enabled; any separately authorized restoration of its prior disabled state requires an explicit recorded decision. Re-read and audit after recovery."
+    ]
+  }
+}

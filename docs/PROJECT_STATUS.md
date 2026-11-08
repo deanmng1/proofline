@@ -2,15 +2,17 @@
 
 ## Active increment
 
-The user authorized parallel implementation of repository safeguards, self-service onboarding and reliability tracking, followed by complete testing and an independent reassessment. The active [design](superpowers/specs/2026-11-06-adopter-confidence-design.md) and [execution checklist](superpowers/plans/2026-11-06-adopter-confidence.md) define that work; resume from their first unchecked task. All three source workstreams and scoped repairs now have independent spec/quality approval. Shared integration and the original fresh completion gate remain in progress; the previous8.6 rating is historical until the new increment is independently reassessed.
+Resume at the reviewed legacy-job collector repair in the [execution checklist](superpowers/plans/2026-11-06-adopter-confidence.md). Exact main source `df13196dcdc50ef5e59163a0273996ff0fe9573d` (M) passes both actual hosted16-gate cells and an independently accepted nine-archive/native/release audit. Repository safeguards are installed and independently read back; the source-native starter and fresh25-step gate pass at its byte-identical K3 input tree. The remaining operational defect is the collector's inability to represent two older canonical runs whose sole job is named `verify`. The first automatic collection and two later scheduled collections fail and remain preserved. A bounded, independently reviewed unknown-platform representation is being implemented; the final rating remains pending that repair and actual successful collection. Previous8.6 scoring remains historical.
+
+The user authorized parallel implementation of repository safeguards, self-service onboarding and reliability tracking, followed by complete testing and an independent reassessment. The active [design](superpowers/specs/2026-11-06-adopter-confidence-design.md) and [execution checklist](superpowers/plans/2026-11-06-adopter-confidence.md) define that work. Initial implementation, integration and K3/M verification have independent acceptance; the later operational collector repair and final reassessment remain open.
 
 The source-native [onboarding guide](GETTING_STARTED.md), [effective repository audit](REPOSITORY_SAFEGUARDS.md) and [reliability tracker](RELIABILITY.md) are implemented. The [first actual supplementary history snapshot](verification/2026-11-06-reliability-snapshot.md) preserves two failed historical main runs and the later success. Source-operator modules are excluded from the adopted core; the shared inventory retains all37 previous paths plus its generic selector,38 total. New exact regressions and six measured coverage floors are integrated without reducing the original30 floors or rewriting authored history.
 
-Integration retained and repaired ambiguous parameterized test bindings, an aggregate test-budget failure and starter preflight ordering. The manifest now validates; full proofline-tools coverage passes422 tests under unchanged per-test deadlines. These local component results do not establish the full project/fresh/hosted gate. Actual main protection/private-reporting activation, normal required-check PR/main verification and final independent rating remain pending.
+Integration retained and repaired ambiguous parameterized test bindings, an aggregate test-budget failure and starter preflight ordering. The [fresh K3 report](verification/2026-11-06-fresh-adopter-confidence.md) records all25 passing steps and the separate starter's ten gates. [Actual safeguards evidence](verification/2026-11-06-repository-safeguards.md) records installed ruleset26720099, private reporting and the blocked-then-clean PR4 evaluation. M then passes both complete hosted cells, with309 required/806 observed unit and34 required/47 observed Chromium outcomes per cell. Those accepted results stay bound to K3/M; they do not establish a later repair source's verification.
 
-The first clean clone at candidate `d1d2f42` passed unit, browser and coverage execution, then correctly stopped at coverage governance: four new test-only exclusion descriptions lacked the established classification wording. The correction uses the existing policy without changing validator code, exclusion paths or any floor. The complete fresh gate will run again at the corrected committed source; the failed run remains retained.
+The first clean clone at candidate `d1d2f42` stopped at coverage governance because four new test-only descriptions lacked the established classification wording. The correction uses the existing policy without changing validator code, exclusion paths or any floor. The failed run remains retained.
 
-The next clean clone at `16f55c5` passed all preceding full gates, worker/shard checks and independent work-orders validation, then compatibility rejected a duplicated core inventory. Its older scanner included five source-operator modules that the canonical installer correctly excluded. Compatibility is being joined to the shared selector with retained causal regression tests; no compatibility or release success is credited to that failed run. Full fresh verification will repeat after the reviewed repair.
+The next clean clone at `16f55c5` stopped at compatibility: its old scanner included five excluded source-operator modules. The reviewed shared-selector correction passes the complete fresh K3 gate. Neither failed run receives downstream credit. The current collector repair requires its own retained tests, fresh/full verification and corrected actual automatic collection.
 
 Live staging remains pending. This increment does not add human adoption, elapsed operating history, a support SLA or package/tag/release publication claims. Actual repository safeguards and any necessary source PR are separate recorded operations after review and local verification.
 
@@ -18,7 +20,7 @@ Live staging remains pending. This increment does not add human adoption, elapse
 
 The approved production-readiness increment is complete at **verified executable source `775c62087aa2f443fc409aba750911215ba2aa2e` (F)**. The independent reassessment is **8.6/10**, up from 8.0 with the same weights. Source/spec quality, fresh validation and actual hosted release evidence are accepted, with no unresolved material finding in this scope. See the [independent review](reviews/2026-11-05-production-readiness.md) and [actual main/API audit](verification/2026-11-05-hosted-main-verification.md).
 
-The administrative local documentation closeout names verified F. It does not claim a later executable revision was run. Public GitHub main is F; package/tag/GitHub Release publication and deployment remain separate maintainer actions. The user explicitly chose to prepare/test staging while leaving live staging pending.
+That milestone's administrative closeout names verified F. Current main and the active repair are identified above. Package/tag/GitHub Release publication and deployment remain separate maintainer actions. The user explicitly chose to prepare/test staging while leaving live staging pending.
 
 | Milestone | Verified outcome |
 | --- | --- |
@@ -30,7 +32,7 @@ The administrative local documentation closeout names verified F. It does not cl
 | Independent adoption and maintenance | Reviewed Roomboard own-history bundle, current37-file core, upgrade/mutation/repetition evidence; agent assistance remains explicit |
 | Final independent reassessment | 8.6/10 at F; implementation and evidence accepted |
 
-## Latest verification
+## Previous milestone verification
 
 [Fresh F0 `389513c`](verification/2026-11-05-fresh-overview-successor.md) passes all 25 steps in a new clone with separate HOME/stores/browser cache. Root/target installs download 464/127 packages with zero reuse;52/11 direct dependency paths remain inside their own installations. F differs only in documentation/history, with identical executable/test/manifest inputs.
 
@@ -44,7 +46,7 @@ All earlier local, PR and main failures remain preserved. Their original outcome
 
 [Roomboard](pilots/roomboard-adoption.md) retains its own baseline/history and reviewed 17 unit / 2 browser outcomes / 19 checks with37 identical core files. Its initial blind agent trial was blocked and later adoption was assisted; no unassisted human or external-organization adoption is claimed. Maintenance drills are bounded samples, not long-term operating history.
 
-Live staging remains pending by user choice. Other platforms/browsers/version tuples, human onboarding, longer reliability history, packaged distribution and stronger support commitments remain outside demonstrated evidence. Main is unprotected and private vulnerability reporting disabled at the final read-only inspection; no settings changes were made. The runtime guard is not an OS sandbox. The review records these limits without treating them as unfinished authorized code work.
+Live staging remains pending by user choice. Other platforms/browsers/version tuples, human onboarding, longer reliability history, packaged distribution and stronger support commitments remain outside demonstrated evidence. The earlier F audit found no protection/private reporting; the later [actual activation and read-back](verification/2026-11-06-repository-safeguards.md) supersedes those settings observations. The runtime guard is not an OS sandbox.
 
 ## Durable authorities
 

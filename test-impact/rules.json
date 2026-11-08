@@ -2311,6 +2311,21 @@
           "file": "tools/proofline/src/reliability.test.ts",
           "title": "trusted reliability workflow controls > workflow uses pinned read-only trusted checkout and exports unique artifacts without executing event head",
           "line": 973
+        },
+        {
+          "file": "tools/proofline/src/reliability.test.ts",
+          "title": "unmapped historical canonical verification > retains a sole legacy failure beside a current pass with unknown platforms and gates and unchanged legacy-free archives",
+          "line": 1052
+        },
+        {
+          "file": "tools/proofline/src/reliability.test.ts",
+          "title": "unmapped historical canonical verification > preserves legacy retries duplicate identities unavailable snapshots and terminal job and step facts",
+          "line": 1176
+        },
+        {
+          "file": "tools/proofline/src/reliability.test.ts",
+          "title": "unmapped historical canonical verification > rejects malformed forged mixed and multiple legacy contracts while preserving source attempt name and interval guards",
+          "line": 1284
         }
       ],
       "playwright": []
